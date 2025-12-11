@@ -16,13 +16,26 @@ import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.entity.EntityCustomNpc;
 
 import java.util.List;
-
-import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.BodyCM;
+import java.util.Set;
 
 @SideOnly(Side.CLIENT)
 public class OverlayContext {
     public Overlay overlay;
     public OverlayChain chain;
+
+    /*
+        Overlay Types disabled, these do not render.
+        For now, they are only disabled by forms.
+
+        exceptFor is the form OverlayChain that's disabling
+        the types, as we do not want any of it disabled.
+     */
+    public Set<Overlay.Type> disabledTypes;
+    public OverlayChain exceptFor;
+
+    public boolean typeDisabled(Overlay.Type type) {
+        return chain != exceptFor && disabledTypes != null && disabledTypes.contains(type);
+    }
 
     /*
      The texture of the current Overlay before it gets bound.

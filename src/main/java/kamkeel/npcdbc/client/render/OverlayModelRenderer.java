@@ -239,15 +239,16 @@ public final class OverlayModelRenderer {
         MODEL_MAP.put(Type.RightArm, ctx -> renderArm(ctx, true));
         MODEL_MAP.put(Type.LeftArm, ctx -> renderArm(ctx, false));
         MODEL_MAP.put(Type.Arms, ctx -> {
-            renderArm(ctx, true);
-            renderArm(ctx, false);
+            render(Type.RightArm, ctx);
+            render(Type.LeftArm, ctx);
+
         });
 
         MODEL_MAP.put(Type.RightLeg, ctx -> renderLeg(ctx, true));
         MODEL_MAP.put(Type.LeftLeg, ctx -> renderLeg(ctx, false));
         MODEL_MAP.put(Type.Legs, ctx -> {
-            renderLeg(ctx, true);
-            renderLeg(ctx, false);
+            render(Type.RightLeg, ctx);
+            render(Type.LeftLeg, ctx);
         });
 
         MODEL_MAP.put(Type.Chest, ctx1 -> renderBody(ctx1));
@@ -261,6 +262,9 @@ public final class OverlayModelRenderer {
     }
 
     public static void render(Type type, OverlayContext ctx) {
+        if (ctx.typeDisabled(type))
+            return;
+
         RenderFunction fn = MODEL_MAP.get(type);
         if (fn != null)
             fn.render(ctx);
