@@ -17,7 +17,7 @@ import noppes.npcs.entity.EntityCustomNpc;
 
 import java.util.List;
 
-import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.Body;
+import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.BodyCM;
 
 @SideOnly(Side.CLIENT)
 public class OverlayContext {
@@ -105,9 +105,7 @@ public class OverlayContext {
         return isNPC ? display.furType : 0;
     }
 
-    public int color(Overlay.ColorType colorType) {
-        return color(colorType == Body ? "bodycm" : colorType.name());
-    }
+
 
     public int color(String type) {
         return isNPC ? display.getColor(type) : dbcData.getColor(type);

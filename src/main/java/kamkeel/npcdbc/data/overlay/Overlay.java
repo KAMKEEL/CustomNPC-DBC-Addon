@@ -379,7 +379,7 @@ public class Overlay {
 
     public enum ColorType {
         Custom(),
-        Body(),
+        BodyCM(),
         Eye(),
         Hair(),
         Fur()

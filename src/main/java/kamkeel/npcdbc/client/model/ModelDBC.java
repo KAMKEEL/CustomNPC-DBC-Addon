@@ -375,7 +375,7 @@ public class ModelDBC extends ModelBase {
         int hairColor = form != null ? form.display.bodyColors.hairColor : npcDisplay.hairColor;
         int eyeColor = form != null ? form.display.bodyColors.eyeColor : npcDisplay.eyeColor;
 
-        return colorType == Overlay.ColorType.Body ?
+        return colorType == Overlay.ColorType.BodyCM ?
             npcDisplay.bodyCM : colorType == Overlay.ColorType.Eye ?
             eyeColor : colorType == Overlay.ColorType.Hair ?
             hairColor : colorType == Overlay.ColorType.Fur ?
@@ -677,7 +677,7 @@ public class ModelDBC extends ModelBase {
 
         // Create the overlays here to test them (easy to hotswap here), then when finished drop them in DBCOverlays
         OverlayChain SSJ4_FACE = OverlayChain.create("SSJ4_Face");
-        SSJ4_FACE.add(Face, Body, (ctx1) -> format(HD("%s/%s/face_%s/ssj4shade.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
+        SSJ4_FACE.add(Face, BodyCM, (ctx1) -> format(HD("%s/%s/face_%s/ssj4shade.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
         SSJ4_FACE.add(Face, 0xFFFFFF, (ctx1) -> format(HD("%s/%s/face_%s/ssj4eyewhite.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
         SSJ4_FACE.add(Face, Fur, (ctx1) -> format(HD("%s/%s/face_%s/ssj4brows.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
         SSJ4_FACE.add(Face, Hair, (ctx1) -> format(HD("%s/%s/face_%s/ssj4brows2.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
@@ -738,7 +738,7 @@ public class ModelDBC extends ModelBase {
                     continue;
 
                 /* ───────── Colors ───────── */
-                int col = overlay.colorType == Custom ? overlay.color : ctx.color(overlay.colorType);
+                int col = overlay.colorType == Custom ? overlay.color : ctx.color(overlay.colorType.name());
                 ctx.color = new Color(col, overlay.alpha);
 
                 if (overlay.applyColor != null)
