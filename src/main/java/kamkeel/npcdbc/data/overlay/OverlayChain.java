@@ -144,6 +144,11 @@ public class OverlayChain {
         return this.enabled;
     }
 
+    public OverlayChain enable(boolean enable) {
+        this.enabled = enable;
+        return this;
+    }
+
     public void readFromNBT(NBTTagCompound compound) {
         enabled = compound.getBoolean("hasOverlays");
 

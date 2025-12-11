@@ -28,12 +28,15 @@ public class FormDisplay implements IFormDisplay {
     public String hairCode = "";
     public String hairType = "";
 
+    public String bodyType = "";
+
+    public BodyColor bodyColors = new BodyColor();
     public int auraColor = -1;
     public int kiBarColor = -1;
-    public String bodyType = "";
-    public int furType = 0;
 
     public boolean hasBodyFur = false;
+    public int furType = 0;
+
     public boolean hasArcoMask = false;
     public boolean effectMajinHair = false;
     public boolean hasPupils = false;
@@ -41,8 +44,7 @@ public class FormDisplay implements IFormDisplay {
 
     public boolean isCustomizable = false;
 
-    public BodyColor bodyColors = new BodyColor();
-    public OverlayChain overlays = new OverlayChain();
+    public OverlayChain overlays = new OverlayChain().enable(false);
     public FacePartData faceData = new FacePartData();
 
     public int auraID = -1, outlineID = -1;
