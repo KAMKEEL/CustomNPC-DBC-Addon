@@ -51,6 +51,12 @@ public class OverlayChain {
         return o;
     }
 
+    public Overlay add(Overlay.Type type, Overlay.TextureFunction texture) {
+        Overlay o = type.create().chain(this).texture(texture);
+        this.overlays.add(o);
+        return o;
+    }
+
     public Overlay add(Overlay.Type type, Overlay.ColorType colorType) {
         Overlay o = type.create().chain(this).colorType(colorType);
         this.overlays.add(o);
@@ -62,25 +68,50 @@ public class OverlayChain {
         this.overlays.add(o);
         return o;
     }
-    public Overlay add(Overlay.Type type, String texture, Overlay.ColorType colorType) {
+
+    public Overlay add(Overlay.Type type, Overlay.ColorType colorType, String texture) {
         Overlay o = type.create().chain(this).texture(texture).colorType(colorType);
         this.overlays.add(o);
         return o;
     }
 
-    public Overlay add(Overlay.Type type, String texture, int color) {
+    public Overlay add(Overlay.Type type, Overlay.ColorType colorType, Overlay.TextureFunction texture) {
+        Overlay o = type.create().chain(this).texture(texture).colorType(colorType);
+        this.overlays.add(o);
+        return o;
+    }
+
+    public Overlay add(Overlay.Type type, int color, String texture) {
         Overlay o = type.create().chain(this).texture(texture).colorType(Overlay.ColorType.Custom).color(color);
         this.overlays.add(o);
         return o;
     }
 
-    public Overlay add(Overlay.Type type, String texture, Overlay.ColorType colorType, boolean glow) {
+    public Overlay add(Overlay.Type type, int color, Overlay.TextureFunction texture) {
+        Overlay o = type.create().chain(this).texture(texture).colorType(Overlay.ColorType.Custom).color(color);
+        this.overlays.add(o);
+        return o;
+    }
+
+    public Overlay add(Overlay.Type type, Overlay.ColorType colorType, boolean glow, String texture) {
         Overlay o = type.create().chain(this).texture(texture).colorType(colorType).glow(glow);
         this.overlays.add(o);
         return o.color(0xffffff);
     }
 
-    public Overlay add(Overlay.Type type, String texture, int color, boolean glow) {
+    public Overlay add(Overlay.Type type, Overlay.ColorType colorType, boolean glow, Overlay.TextureFunction texture) {
+        Overlay o = type.create().chain(this).texture(texture).colorType(colorType).glow(glow);
+        this.overlays.add(o);
+        return o.color(0xffffff);
+    }
+
+    public Overlay add(Overlay.Type type, int color, boolean glow, String texture) {
+        Overlay o = type.create().chain(this).texture(texture).colorType(Overlay.ColorType.Custom).color(color).glow(glow);
+        this.overlays.add(o);
+        return o.color(0xffffff);
+    }
+
+    public Overlay add(Overlay.Type type, int color, boolean glow, Overlay.TextureFunction texture) {
         Overlay o = type.create().chain(this).texture(texture).colorType(Overlay.ColorType.Custom).color(color).glow(glow);
         this.overlays.add(o);
         return o.color(0xffffff);

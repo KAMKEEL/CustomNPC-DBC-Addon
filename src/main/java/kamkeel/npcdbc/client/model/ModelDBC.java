@@ -699,10 +699,10 @@ public class ModelDBC extends ModelBase {
          */
 
         OverlayChain Savior = new OverlayChain();
-        Savior.add(ALL, Fur).texture((tex, ctx1) -> path("ssj4/ss4b" + ctx1.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
-        Savior.add(Face, path("savior/savioreyes.png"), Fur);
-        Savior.add(Face, path("savior/saviormouth.png"), 0XFFFFFF);
-        Savior.add(Chest, path("savior/saviorchest.png"), Hair);
+        Savior.add(ALL, Fur,(tex, ctx1) -> path("ssj4/ss4b" + ctx1.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
+        Savior.add(Face, Fur, path("savior/savioreyes.png"));
+        Savior.add(Face, 0XFFFFFF, path("savior/saviormouth.png"));
+        Savior.add(Chest, Hair, path("savior/saviorchest.png"));
         // chains.add(Savior);
 
         /**
