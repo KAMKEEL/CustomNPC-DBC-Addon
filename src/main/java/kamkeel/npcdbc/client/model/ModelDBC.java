@@ -47,6 +47,7 @@ import static java.lang.String.format;
 import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.*;
 import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.Eye;
 import static kamkeel.npcdbc.data.overlay.Overlay.Type.*;
+import static kamkeel.npcdbc.data.overlay.Overlay.Type;
 
 public class ModelDBC extends ModelBase {
 
@@ -385,18 +386,16 @@ public class ModelDBC extends ModelBase {
             furColor : customColor;
     }
 
-    private boolean bindImageDataTexture(ImageData data) {
-        ResourceLocation location = data.getLocation();
-        if (location != null && !data.invalid()) {
-            try {
-                ClientProxy.bindTexture(location);
-                return true;
-            } catch (Exception exception) {
-                return false;
-            }
-        }
+    public static boolean bindTexture(String texture) {
+        if (texture == null || texture.isEmpty())
+            return false;
 
-        return false;
+        try {
+            ClientProxy.bindTexture(new ResourceLocation(texture));
+            return true;
+        } catch (Exception exception) {
+            return false;
+        }
     }
 
     public void renderSSJ4Face(FormFaceData data, int eyeColor, int furColor, int hairColor, int bodyCM, boolean isBerserk, boolean hasEyebrows, int eyeType, int furType) {
@@ -656,7 +655,9 @@ public class ModelDBC extends ModelBase {
         }
     }
 
-
+    /*
+         Applies for both players and NPCs!
+     */
     public static List<OverlayChain> applyOverlayChains(List<OverlayChain> uniqueChains, OverlayContext ctx) {
         ArrayList<OverlayChain> chains = new ArrayList<>();
 
@@ -672,14 +673,11 @@ public class ModelDBC extends ModelBase {
 
          */
 
-        OverlayChain SSJ4_FUR = OverlayChain.create("SSJ4_Fur");
-        SSJ4_FUR.add(ALL, Fur).texture((ctx1) -> path("ssj4/ss4b" + ctx1.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
-
         if (ctx.oozaru())
             chains.add(DBCOverlays.OOZARU);
 
         if (ctx.hasFur())
-            chains.add(SSJ4_FUR);
+            chains.add(DBCOverlays.SSJ4_FUR);
 
         // Create the overlays here to test them (easy to hotswap here), then when finished drop them in DBCOverlays
         OverlayChain SSJ4_FACE = OverlayChain.create("SSJ4_Face");
@@ -689,7 +687,6 @@ public class ModelDBC extends ModelBase {
         SSJ4_FACE.add(Face, Hair, (ctx1) -> format(HD("%s/%s/face_%s/ssj4brows2.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
         SSJ4_FACE.add(Face, Eye, (ctx1) -> format(HD("%s/%s/face_%s/ssj4eyeleft.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
         SSJ4_FACE.add(Face, Eye, (ctx1) -> format(HD("%s/%s/face_%s/ssj4eyeright.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
-        SSJ4_FACE.enabled = true;
        // chains.add(SSJ4_FACE);
 
         if (uniqueChains != null)
@@ -711,16 +708,15 @@ public class ModelDBC extends ModelBase {
          * They take precedence like form colors do.
          * So add them at the very end, unless something else goes on top.
          */
-        Form form = ctx.form();
-        if (form != null && form.display.overlays.enabled)
-            chains.add(form.display.overlays);
+        if (ctx.form() != null && ctx.form.display.overlays.enabled)
+            chains.add(ctx.form.display.overlays);
 
         return chains;
     }
 
     public void renderOverlays() {
         OverlayContext ctx = OverlayContext.from(display);
-        Form form = ctx.form = display.getForm();
+        ctx.form = display.getForm();
         ctx.modelNpc = this;
 
         List<OverlayChain> chains = applyOverlayChains(display.getOverlayChains(), ctx);
@@ -735,9 +731,10 @@ public class ModelDBC extends ModelBase {
                 if (!overlay.isEnabled() || overlay.condition != null && !overlay.checkCondition(ctx))
                     continue;
 
-                Overlay.Type type = overlay.getType();
-                String texture;
+                Type type = overlay.getType();
 
+                /* ───────── Texture ───────── */
+                String texture;
                 if (type == Face)
                     texture = ((Overlay.Face) overlay).getTexture(display.eyeType);
                 else
@@ -747,25 +744,17 @@ public class ModelDBC extends ModelBase {
                 if (overlay.applyTexture != null)
                     texture = overlay.applyTexture(ctx);
 
-                ImageData imageData = ClientCacheHandler.getImageData(texture);
-                if (imageData == null || !imageData.imageLoaded())
+                if (!bindTexture(texture))
                     continue;
 
-                int color = getProperColor(form, display, overlay.getColor(), overlay.colorType);
+                /* ───────── Colors ───────── */
+                int color = getProperColor(ctx.form, display, overlay.getColor(), overlay.colorType);
                 Color finalColor = ctx.finalCol = new Color(color, overlay.alpha);
 
                 if (overlay.applyColor != null)
                     finalColor = overlay.applyColor(ctx);
 
-                if (!bindImageDataTexture(imageData))
-                    continue;
-
-
-                boolean oldArmor = parent.isArmor; //disables NPC skin binding
-                parent.isArmor = true;
-                if (type == Face)
-                    DBCHair.isHidden = true; //Hair renders by default with head, not needed here
-
+                /* ───────── Glow ───────── */
                 boolean glow = overlay.isGlow();
                 if (glow) {
                     GL11.glDisable(GL11.GL_LIGHTING);
@@ -773,18 +762,25 @@ public class ModelDBC extends ModelBase {
                         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
                 }
 
+                /* ───────── Rendering ───────── */
+                boolean oldArmor = parent.isArmor; //disables NPC skin binding
+                parent.isArmor = true;
+                if (type == Face)
+                    DBCHair.isHidden = true; //Hair renders by default with head, not needed here
+
                 ColorMode.applyModelColor(finalColor.color, finalColor.alpha, isHurt);
                 OverlayModelRenderer.render(type, ctx);
 
+                if (type == Face)
+                    DBCHair.isHidden = false;
+                parent.isArmor = oldArmor;
+
+                /* ───────── Disable Glow ───────── */
                 if (glow) {
                     GL11.glEnable(GL11.GL_LIGHTING);
                     if (!ClientEventHandler.renderingEntityInGUI) //in-game not in GUI
                         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
                 }
-
-                if (type == Face)
-                    DBCHair.isHidden = false;
-                parent.isArmor = oldArmor;
             }
         }
     }

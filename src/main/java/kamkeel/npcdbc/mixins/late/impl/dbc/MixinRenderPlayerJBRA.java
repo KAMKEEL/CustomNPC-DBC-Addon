@@ -443,6 +443,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Unique
     private void renderOverlays(DBCData data) {
         OverlayContext ctx = OverlayContext.from(data);
+        ctx.form = data.getForm();
         ctx.model = modelMain;
 
         List<OverlayChain> chains = ModelDBC.applyOverlayChains(data.getOverlayChains(), ctx);
@@ -458,18 +459,22 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                     continue;
 
                 Type type = overlay.getType();
+
+                /* ───────── Texture ───────── */
                 String texture;
-
-                if (type == Overlay.Type.Face) {
+                if (type == Type.Face)
                     texture = ((Overlay.Face) overlay).getTexture(ctx.eyeType());
-                } else {
+                else
                     texture = overlay.getTexture();
-                }
 
-                ImageData imageData = ClientCacheHandler.getImageData(texture);
-                if (imageData == null || !imageData.imageLoaded())
+                ctx.finalTex = texture;
+                if (overlay.applyTexture != null)
+                    texture = overlay.applyTexture(ctx);
+
+                if (!ModelDBC.bindTexture(texture))
                     continue;
 
+                /* ───────── Colors ───────── */
                 //TODO this stuff needs a method
                 //int furColor = data.currentCustomizedColors.getProperColor(displayData.getFurColor(data), "fur");
                 //int hairColor = data.currentCustomizedColors.getProperColor(displayData.getHairColor(data), "hair");
@@ -478,10 +483,12 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 //int color = overlay.getColorType() == Overlay.ColorType.Body.ordinal() ? bodyCM : overlay.getColorType() == Overlay.ColorType.Eye.ordinal() ? (eyeColor < 0 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor) : overlay.getColorType() == Overlay.ColorType.Hair.ordinal() ? (hairColor < 0 ? defaultHairColor : hairColor) : overlay.getColorType() == Overlay.ColorType.Fur.ordinal() ? furColor : overlay.getColor();
 
                 int color = 0xffffff;
-                if (!bindImageDataTexture(imageData, color))
-                    continue;
+                Color finalColor = ctx.finalCol = new Color(color, overlay.alpha);
 
-                GL11.glPushMatrix();
+                if (overlay.applyColor != null)
+                    finalColor = overlay.applyColor(ctx);
+
+                /* ───────── Glow ───────── */
                 boolean glow = overlay.isGlow();
                 if (glow) {
                     GL11.glDisable(GL11.GL_LIGHTING);
@@ -489,40 +496,28 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
                 }
 
+                /* ───────── Rendering ───────── */
                 GL11.glEnable(GL11.GL_BLEND);
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 GL11.glAlphaFunc(GL11.GL_GREATER, 0.001f);
                 GL11.glEnable(GL11.GL_ALPHA_TEST);
 
-                new Color(color, overlay.alpha).glColor();
+                new Color(finalColor.color, finalColor.alpha).glColor();
                 OverlayModelRenderer.render(type, ctx);
 
+                GL11.glDisable(GL11.GL_BLEND);
+
+                /* ───────── Disable Glow ───────── */
                 if (glow) {
                     GL11.glEnable(GL11.GL_LIGHTING);
                     if (!RenderEventHandler.renderingPlayerInGUI) //in-game not in GUI
                         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
                 }
 
-                GL11.glDisable(GL11.GL_BLEND);
-                GL11.glPopMatrix();
             }
         }
     }
 
-    @Unique
-    private boolean bindImageDataTexture(ImageData data, int color) {
-        ResourceLocation location = data.getLocation();
-        if (location != null && !data.invalid()) {
-            try {
-                this.bindTexture(location);
-                return true;
-            } catch (Exception exception) {
-                return false;
-            }
-        }
-
-        return false;
-    }
 
     @Unique
     private void renderPupils(Form form, int gender, int eyes, DBCData data) {
