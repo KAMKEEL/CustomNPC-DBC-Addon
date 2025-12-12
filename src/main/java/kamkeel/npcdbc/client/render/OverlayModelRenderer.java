@@ -20,6 +20,9 @@ public final class OverlayModelRenderer {
      * HEAD
      * ───────────────────────────── */
     private static void renderHead(OverlayContext ctx) {
+        if (ctx.typeDisabled(Type.Face)) //If Face disabled, disable all other face elements too
+            return;
+
         GL11.glPushMatrix();
         float faceScale = 1.005f;
         GL11.glScalef(faceScale, faceScale, faceScale);
@@ -245,14 +248,7 @@ public final class OverlayModelRenderer {
         MODEL_MAP.put(Type.RightEye, ctx -> renderHead(ctx));
         MODEL_MAP.put(Type.Nose, ctx -> renderHead(ctx));
         MODEL_MAP.put(Type.Mouth, ctx -> renderHead(ctx));
-        MODEL_MAP.put(Type.Face, ctx -> {
-            render(Type.Eyebrows, ctx);
-            render(Type.EyeWhite, ctx);
-            render(Type.LeftEye, ctx);
-            render(Type.RightEye, ctx);
-            render(Type.Nose, ctx);
-            render(Type.Mouth, ctx);
-        });
+        MODEL_MAP.put(Type.Face, ctx -> renderHead(ctx));
 
         MODEL_MAP.put(Type.RightArm, ctx -> renderArm(ctx, true));
         MODEL_MAP.put(Type.LeftArm, ctx -> renderArm(ctx, false));
