@@ -26,6 +26,11 @@ public class Overlay {
     public Overlay() {
     }
 
+    public Overlay type(Type type) {
+        this.type = type;
+        return this;
+    }
+
     public Overlay texture(TextureFunction function) {
         applyTexture = function;
         return this;
@@ -418,7 +423,7 @@ public class Overlay {
         }
 
         public Overlay create() {
-            return factory.get();
+            return factory.get().type(this);
         }
 
         public static Overlay create(int type) {
