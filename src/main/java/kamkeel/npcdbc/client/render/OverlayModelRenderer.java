@@ -20,6 +20,10 @@ public final class OverlayModelRenderer {
      * HEAD
      * ───────────────────────────── */
     private static void renderHead(OverlayContext ctx) {
+        GL11.glPushMatrix();
+        float faceScale = 1.005f;
+        GL11.glScalef(faceScale, faceScale, faceScale);
+
         if (ctx.isNPC) {
             ctx.mpm().renderHead(ctx.npc, SCALE);
         } else {
@@ -42,6 +46,7 @@ public final class OverlayModelRenderer {
             ctx.model.bipedHead.render(SCALE);
             GL11.glPopMatrix();
         }
+        GL11.glPopMatrix();
     }
 
     /* ─────────────────────────────
