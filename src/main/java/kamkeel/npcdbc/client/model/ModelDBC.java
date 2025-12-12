@@ -325,7 +325,7 @@ public class ModelDBC extends ModelBase {
                         GL11.glPopMatrix();
                     }
 
-
+                    // it wasnt this?
                     if (!isBerserk && !hasPupils) {
                         if (!faceData.disabled(Part.LeftEye, display.eyeType)) {
                             ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
@@ -349,11 +349,7 @@ public class ModelDBC extends ModelBase {
 
                         if (!faceData.disabled(Part.RightEye, display.eyeType)) {
                             ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
-                            String texture = "";
-                            if (HD && hasPupils)
-                                texture = HDDir + "base/eyes/pupils/eyeright" + display.eyeType + ".png";
-                            else
-                                texture = getFaceTexture(display, "r" + display.eyeType);
+                            String texture = getFaceTexture(display, "l" + display.eyeType);
 
                             ClientProxy.bindTexture(new ResourceLocation(texture));
                             this.eyeright.rotateAngleY = parent.bipedHead.rotateAngleY;
@@ -374,18 +370,6 @@ public class ModelDBC extends ModelBase {
         }
     }
 
-    private static int getProperColor(Form form, DBCDisplay npcDisplay, int customColor, Overlay.ColorType colorType) {
-        int furColor = form != null ? form.display.bodyColors.furColor : npcDisplay.furColor;
-        int hairColor = form != null ? form.display.bodyColors.hairColor : npcDisplay.hairColor;
-        int eyeColor = form != null ? form.display.bodyColors.eyeColor : npcDisplay.eyeColor;
-
-        return colorType == Overlay.ColorType.BodyCM ?
-            npcDisplay.bodyCM : colorType == Overlay.ColorType.Eye ?
-            eyeColor : colorType == Overlay.ColorType.Hair ?
-            hairColor : colorType == Overlay.ColorType.Fur ?
-            furColor : customColor;
-    }
-
     public static boolean bindTexture(String texture) {
         if (texture == null || texture.isEmpty())
             return false;
@@ -396,110 +380,6 @@ public class ModelDBC extends ModelBase {
         } catch (Exception exception) {
             return false;
         }
-    }
-
-    public void renderSSJ4Face(FacePartData data, int eyeColor, int furColor, int hairColor, int bodyCM, boolean isBerserk, boolean hasEyebrows, int eyeType, int furType) {
-        boolean isHidden = DBCHair.isHidden;
-        DBCHair.isHidden = true;
-
-        // TODO for now all the faces are male, gotta wait for hussar
-        String eyeDir = (furType == 1 ? "ssj4d" : "ssj4") + "/male/face_" + eyeType + "/";
-
-        if (!data.disabled(Part.EyeWhite, eyeType)) {
-            ColorMode.applyModelColor(0xffffff, this.parent.alpha, isHurt);
-            ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4eyewhite.png"));
-            parent.bipedHead.render(1F / 16F);
-        }
-
-        if (!isBerserk) {
-            if (!data.disabled(Part.RightEye, eyeType)) {
-                ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
-                ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4eyeright.png"));
-                parent.bipedHead.render(0.0625F);
-
-                if (furType == 1) {
-                    ColorMode.applyModelColor(0xffffff, this.parent.alpha, isHurt);
-                    ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4glowright.png"));
-                    parent.bipedHead.render(0.0625F);
-                }
-            }
-
-            if (!data.disabled(Part.LeftEye, eyeType)) {
-                ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
-                ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4eyeleft.png"));
-                parent.bipedHead.render(0.0625F);
-
-                if (furType == 1) {
-                    ColorMode.applyModelColor(0xffffff, this.parent.alpha, isHurt);
-                    ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4glowleft.png"));
-                    parent.bipedHead.render(0.0625F);
-                }
-            }
-        }
-
-        if (!data.disabled(Part.Eyebrows, eyeType)) {
-            ColorMode.applyModelColor(furColor, this.parent.alpha, isHurt);
-            ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4brows.png"));
-            parent.bipedHead.render(1F / 16F);
-
-            ColorMode.applyModelColor(hairColor, this.parent.alpha, isHurt);
-            ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4brows2.png"));
-            parent.bipedHead.render(1F / 16F);
-
-            ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
-            ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4shade.png"));
-            parent.bipedHead.render(1F / 16F);
-        }
-
-
-
-        DBCHair.isHidden = isHidden;
-    }
-
-    public void renderSaviorFace(int eyeColor) {
-        boolean isHidden = DBCHair.isHidden;
-        DBCHair.isHidden = true;
-
-        String eyeDir = "savior/";
-        ColorMode.applyModelColor(0xffffff, this.parent.alpha, isHurt);
-        ClientProxy.bindTexture(new ResourceLocation((ConfigDBCClient.EnableHDTextures ? HDDir : SDDir) + eyeDir + "saviormouth.png"));
-        parent.bipedHead.render(1F / 16F);
-
-        ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
-        ClientProxy.bindTexture(new ResourceLocation((ConfigDBCClient.EnableHDTextures ? HDDir : SDDir) + eyeDir + "savioreyes.png"));
-        parent.bipedHead.render(0.0625F);
-
-        ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
-        ClientProxy.bindTexture(new ResourceLocation((ConfigDBCClient.EnableHDTextures ? HDDir : SDDir) + eyeDir + "saviorchest.png"));
-        parent.bipedBody.render(0.0625F);
-
-        DBCHair.isHidden = isHidden;
-    }
-
-    public void renderSSJ3Face(int eyeColor, int hairColor, int bodyCM, boolean isBerserk, int eyeType) {
-        boolean isHidden = DBCHair.isHidden;
-        DBCHair.isHidden = true;
-
-        String eyeDir = "ssj3/face_" + eyeType + "/";
-        ColorMode.applyModelColor(0xffffff, this.parent.alpha, isHurt);
-        ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3eyewhite.png"));
-        parent.bipedHead.render(1F / 16F);
-
-        if (!isBerserk) {
-            ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
-            ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3pupils.png"));
-            parent.bipedHead.render(0.0625F);
-        }
-
-        ColorMode.applyModelColor(hairColor, this.parent.alpha, isHurt);
-        ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3brows.png"));
-        parent.bipedHead.render(1F / 16F);
-
-        ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
-        ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3shade.png"));
-        parent.bipedHead.render(1F / 16F);
-
-        DBCHair.isHidden = isHidden;
     }
 
     public void renderBodySkin(DBCDisplay display, ModelRenderer model) {
@@ -564,53 +444,6 @@ public class ModelDBC extends ModelBase {
             if (race == DBCRace.HUMAN || DBCRace.isSaiyan(race)) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
                 ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
-
-                if (DBCRace.isSaiyan(race)) {
-                    //                    if (hasFur || isSSJ4 || isOozaru) {
-                    //                        ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:cc/") + "hum.png"));
-                    //                       model.render(0.0625F); //important
-                    //                        if (isSSJ4) {
-                    //                            if (furColor == -1)
-                    //                                furColor = 0xDA152C;
-                    //                            if (HD && hasEyebrows && display.furType != 2 && !hasPupils)
-                    //                                renderSSJ4Face(faceData, eyeColor, furColor, hairColor, bodyCM, isBerserk, hasEyebrows, display.eyeType, furType);
-                    //                        }
-                    //
-                    //                        if (!isOozaru && furType == 2) {
-                    //                            renderSaviorFace(eyeColor);
-                    //                        }
-                    //
-                    //                        if (isOozaru) {
-                    //                            if (furColor == -1)
-                    //                                furColor = 6498048;
-                    //                            ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru1.png" : "jinryuudragonbc:cc/oozaru1.png")); //oozaru hairless body
-                    //                            ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
-                    //                            model.render(0.0625F);
-                    //
-                    //                            ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru2.png" : "jinryuudragonbc:cc/oozaru2.png"));  //the fur
-                    //                            ColorMode.applyModelColor(furColor, this.parent.alpha, isHurt);
-                    //                        } else {
-                    //                          //  ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/ss4b" + furType + ".png" : "jinryuudragonbc:cc/ss4b"));
-                    //                        }
-                    //                        ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
-                    //                    }
-                }
-
-                // what the fuck man sure
-                /*
-                if (!isBerserk && !isSSJ3 && !isSSJ4 && hasPupils) {
-                    if (!faceData.hasRightEyeRemoved(display.eyeType)) {
-                        ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
-                        ClientProxy.bindTexture(new ResourceLocation(HDDir + "base/eyes/pupils/eyeright" + display.eyeType + ".png"));
-                        parent.bipedHead.render(0.0625F);
-                    }
-
-                    if (!faceData.hasLeftEyeRemoved(display.eyeType)) {
-                        ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
-                        ClientProxy.bindTexture(new ResourceLocation(HDDir + "base/eyes/pupils/eyeleft" + display.eyeType + ".png"));
-                        parent.bipedHead.render(0.0625F);
-                    }
-                }*/
             } else if (race == DBCRace.NAMEKIAN) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/0nam" + display.bodyType + ".png"));
                 ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
@@ -679,15 +512,24 @@ public class ModelDBC extends ModelBase {
         if (ctx.hasFur())
             chains.add(DBCOverlays.SSJ4_FUR);
 
+        if (ctx.ssj4())
+            chains.add(DBCOverlays.SSJ4_FACE);
+
+        if (!ctx.ssj4() && !ctx.ssj3() && !ctx.oozaru() && ctx.pupils())
+            chains.add(DBCOverlays.PUPILS);
+
+
+
         // Create the overlays here to test them (easy to hotswap here), then when finished drop them in DBCOverlays
-        OverlayChain SSJ4_FACE = OverlayChain.create("SSJ4_Face");
-        SSJ4_FACE.add(Face, BodyCM, (ctx1) -> format(HD("%s/%s/face_%s/ssj4shade.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
-        SSJ4_FACE.add(Face, 0xFFFFFF, (ctx1) -> format(HD("%s/%s/face_%s/ssj4eyewhite.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
-        SSJ4_FACE.add(Face, Fur, (ctx1) -> format(HD("%s/%s/face_%s/ssj4brows.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
-        SSJ4_FACE.add(Face, Hair, (ctx1) -> format(HD("%s/%s/face_%s/ssj4brows2.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
-        SSJ4_FACE.add(Face, Eye, (ctx1) -> format(HD("%s/%s/face_%s/ssj4eyeleft.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
-        SSJ4_FACE.add(Face, Eye, (ctx1) -> format(HD("%s/%s/face_%s/ssj4eyeright.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
-       // chains.add(SSJ4_FACE);
+
+//        OverlayChain SSJ4_FACE = OverlayChain.create("SSJ4_Face");
+//        SSJ4_FACE.add(Face, BodyCM, (ctx1) -> format(HD("%s/%s/face_%s/ssj4shade.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
+//        SSJ4_FACE.add(Face, 0xFFFFFF, (ctx1) -> format(HD("%s/%s/face_%s/ssj4eyewhite.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
+//        SSJ4_FACE.add(Face, Fur, (ctx1) -> format(HD("%s/%s/face_%s/ssj4brows.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
+//        SSJ4_FACE.add(Face, Hair, (ctx1) -> format(HD("%s/%s/face_%s/ssj4brows2.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
+//        SSJ4_FACE.add(Face, Eye, (ctx1) -> format(HD("%s/%s/face_%s/ssj4eyeleft.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
+//        SSJ4_FACE.add(Face, Eye, (ctx1) -> format(HD("%s/%s/face_%s/ssj4eyeright.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
+//        chains.add(SSJ4_FACE);
 
         if (uniqueChains != null)
             chains.addAll(uniqueChains);
@@ -695,13 +537,6 @@ public class ModelDBC extends ModelBase {
          /*
             Whatever you add after gets rendered on top of the above.
          */
-
-        OverlayChain Savior = new OverlayChain();
-        Savior.add(ALL, Fur, (ctx1) -> path("ssj4/ss4b" + ctx1.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
-        Savior.add(Face, Fur, path("savior/savioreyes.png"));
-        Savior.add(Face, 0XFFFFFF, path("savior/saviormouth.png"));
-        Savior.add(Chest, Hair, path("savior/saviorchest.png"));
-        // chains.add(Savior);
 
         /**
          * You usually want form overlays on top of everything else.

@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.render;
 
+import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
 
 import static java.lang.String.format;
@@ -10,16 +11,12 @@ import static kamkeel.npcdbc.data.overlay.Overlay.Type.*;
 
 public class DBCOverlays {
 
-    public static OverlayChain Savior = OverlayChain.create("Savior");
     public static OverlayChain SSJ4_FUR = OverlayChain.create("SSJ4_Fur");
     public static OverlayChain OOZARU = OverlayChain.create("Oozaru");
     public static OverlayChain SSJ4_FACE = OverlayChain.create("SSJ4_Face");
+    public static OverlayChain PUPILS = OverlayChain.create("Pupils");
 
     static {
-        Savior.add(Face, Fur, path("savior/savioreyes.png"));
-        Savior.add(Face, 0XFFFFFF, path("savior/saviormouth.png"));
-        Savior.add(Chest, Hair, path("savior/saviorchest.png"));
-
         SSJ4_FUR.add(ALL, Fur, (ctx) -> path("ssj4/ss4b" + ctx.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
 
         OOZARU.add(ALL, BodyCM, path("oozaru/oozaru1.png", "jinryuudragonbc:cc/oozaru1.png"));
@@ -31,6 +28,9 @@ public class DBCOverlays {
         SSJ4_FACE.add(Eyebrows, Hair, (ctx) -> format(HD("%s/%s/face_%s/ssj4brows2.png"), ctx.furDir(), ctx.genderDir(), ctx.eyeType()));
         SSJ4_FACE.add(LeftEye, Eye, (ctx) -> format(HD("%s/%s/face_%s/ssj4eyeleft.png"), ctx.furDir(), ctx.genderDir(), ctx.eyeType()));
         SSJ4_FACE.add(RightEye, Eye, (ctx) -> format(HD("%s/%s/face_%s/ssj4eyeright.png"), ctx.furDir(), ctx.genderDir(), ctx.eyeType()));
+
+        PUPILS.add(LeftEye, Eye, (ctx) -> format("%s:textures/overlays/eyespupils/left/left_eye_%s.png", CustomNpcPlusDBC.ID, ctx.eyeType()));
+        PUPILS.add(RightEye, Eye, (ctx) -> format("%s:textures/overlays/eyespupils/right/right_eye_%s.png", CustomNpcPlusDBC.ID, ctx.eyeType()));
     }
 }
 /*

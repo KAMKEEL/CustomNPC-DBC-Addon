@@ -178,10 +178,6 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                     disableFace(hair, ci);
                 }
 
-                if (isSaiyan && form.display.furType == 2) {
-                    disableFace(hair, ci);
-                }
-
                 if (HD && usesHumanBody && !isSSJ3 && !isMonke && form.display.hasPupils) {
                     disableFacePart(hair, "EYES", ci);
                 }

@@ -338,16 +338,14 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
             //only saiyans
             if (race.get() == 1 || race.get() == 2) {
-                if (form.display.hasBodyFur() || isSSJ4)
-                    renderBodyFur(form, gender.get(), bodyCM.get(), data, data.skinType);
+//                if (form.display.hasBodyFur() || isSSJ4)
+//                    renderBodyFur(form, gender.get(), bodyCM.get(), data, data.skinType);
 
                 //renders all ssj4
                 if (isSSJ4) {
                     if (form.display.hasEyebrows && data.skinType != 0) {
-                        if (form.display.furType != 2)
-                            renderSSJ4Face(par1AbstractClientPlayer, form, gender.get(), nose.get(), eyes.get(), bodyCM.get(), data.renderingHairColor, age, data.DNS, data);
-                        else
-                            renderSaviorFace(par1AbstractClientPlayer, gender.get(), form, data);
+//                        if (form.display.furType != 2)
+//                            renderSSJ4Face(par1AbstractClientPlayer, form, gender.get(), nose.get(), eyes.get(), bodyCM.get(), data.renderingHairColor, age, data.DNS, data);
                     }
                     if (hairback.get() != 12)
                         this.modelMain.renderHairsV2(0.0625F, "", 0.0F, 0, 0, pl.get(), race.get(), (RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);
@@ -363,20 +361,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                     String hair = form.display.hairType.equals("raditz") ? "D" : "D01";
                     this.modelMain.renderHairs(0.0625F, hair);
                 }
-            }
-
-            if (usesHumanBody && (form.display.hairType.equals("ssj3") || !form.display.hasEyebrows) && data.skinType != 0 && display.furType != 2 && HD) {
-                renderSSJ3Face(par1AbstractClientPlayer, form, gender.get(), nose.get(), eyes.get(), bodyCM.get(), data.renderingHairColor, age, data.DNS, data);
-            }
-
-            if (form.display.hasBodyFur && form.display.furType == 2) {
-                renderSaviorFace(par1AbstractClientPlayer, gender.get(), form, data);
-            }
-
-            boolean hasInvalidHair = form.display.hairType.equals("ssj4") || form.display.hairType.equals("ssj3") || form.display.hairType.equals("oozaru");
-
-            if (usesHumanBody && !hasInvalidHair && !form.display.isBerserk && form.display.hasPupils){
-                renderPupils(form, gender.get(), eyes.get(), data);
             }
         }
     }
@@ -521,41 +505,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         }
     }
 
-
-    @Unique
-    private void renderPupils(Form form, int gender, int eyes, DBCData data) {
-        if (ConfigDBCClient.EnableHDTextures) {
-            FormDisplay display = form.display;
-            FacePartData faceData = display.faceData;
-            FormDisplay.BodyColor playerColors = data.currentCustomizedColors;
-
-            String eyeDir = "base/eyes/pupils/";
-
-            if (!form.display.isBerserk && !faceData.disabled(LeftEye, eyes)) {
-                int eyeColor = playerColors.getProperColor(display, "eye");
-                RenderPlayerJBRA.glColor3f(eyeColor == -1 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor);
-                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "eyeleft" + eyes + ".png"));
-
-                GL11.glPushMatrix();
-                float scale = 1.0021f;
-                GL11.glScalef(scale, scale, scale);
-                this.modelMain.bipedHead.render(0.0625F);
-                GL11.glPopMatrix();
-            }
-
-            if (!form.display.isBerserk && !faceData.disabled(RightEye, eyes)) {
-                int eyeColor = playerColors.getProperColor(display, "eye");
-                RenderPlayerJBRA.glColor3f(eyeColor == -1 ? JRMCoreH.dnsEyeC2(data.DNS) : eyeColor);
-                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "eyeright" + eyes + ".png"));
-
-                GL11.glPushMatrix();
-                float scale = 1.0021f;
-                GL11.glScalef(scale, scale, scale);
-                this.modelMain.bipedHead.render(0.0625F);
-                GL11.glPopMatrix();
-            }
-        }
-    }
 
     /*
      * OVERLAYS NOW HAVE THIS CALCULATION BAKED IN SO NO LONGER NEEDED!
@@ -723,28 +672,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             this.bindTexture(new ResourceLocation((HD ? HDDir + "base/mouth/" : "jinryuumodscore:cc/") + mouthTexture));
             this.modelMain.renderHairs(0.0625F, "FACEMOUTH");
         }
-    }
-
-    @Unique
-    private void renderSaviorFace(AbstractClientPlayer player, int gender, Form form, DBCData data) {
-        GL11.glPushMatrix();
-        applyAgeGenderTransformations(player, gender);
-
-        GL11.glColor3f(1.0f, 1.0f, 1.0f);
-        String eyeDir = "savior/";
-        this.bindTexture(new ResourceLocation((HD ? HDDir : SDDir) + eyeDir + "saviormouth.png"));
-        this.modelMain.bipedHead.render(1F / 16F);
-
-        FormDisplay.BodyColor playerColors = data.currentCustomizedColors;
-        FormDisplay display = form.display;
-
-
-        int eyeColor = playerColors.getProperColor(display, "eye");
-        RenderPlayerJBRA.glColor3f(eyeColor == -1 ? 0xFFFF55 : eyeColor);
-        this.bindTexture(new ResourceLocation((HD ? HDDir : SDDir) + eyeDir + "savioreyes.png"));
-        this.modelMain.bipedHead.render(0.0625F);
-
-        GL11.glPopMatrix();
     }
 
 //    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;DBC()Z", ordinal = 0, shift = At.Shift.AFTER), remap = true)

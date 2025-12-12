@@ -106,7 +106,6 @@ public class OverlayContext {
         return female() ? "female" : "male";
     }
 
-
     public int eyeType() {
         return isNPC ? display.eyeType : JRMCoreH.dnsEyes(dbcData.DNS);
     }
@@ -118,7 +117,19 @@ public class OverlayContext {
         return isNPC ? display.furType : 0;
     }
 
+    public boolean ssj4() {
+        if (form() != null)
+            return form.display.hairType.equals("ssj4");
 
+        return isNPC ? display.hairType.equals("ssj4") : false;
+    }
+
+    public boolean ssj3() {
+        if (form() != null)
+            return form.display.hairType.equals("ssj3");
+
+        return isNPC ? display.hairType.equals("ssj3") : false;
+    }
 
     public int color(String type) {
         return isNPC ? display.getColor(type) : dbcData.getColor(type);
@@ -144,6 +155,13 @@ public class OverlayContext {
             return form.display.hairType.equals("oozaru");
 
         return isNPC ? display.hairType.equals("oozaru") : false;
+    }
+
+    public boolean pupils() {
+        if (form() != null)
+            return form.display.hasPupils;
+
+        return isNPC ? display.hasPupils : false;
     }
 
     public List<OverlayChain> getOverlayChains() {
