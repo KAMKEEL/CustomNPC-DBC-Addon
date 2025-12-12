@@ -78,6 +78,8 @@ public class ModelDBC extends ModelBase {
 
     private static String SDDir = CustomNpcPlusDBC.ID + ":textures/sd/";
     private static String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
+    public static final String OVERLAY_DIR = CustomNpcPlusDBC.ID + ":textures/overlays/";
+
     public DBCDisplay display;
 
     public final boolean alexArms;

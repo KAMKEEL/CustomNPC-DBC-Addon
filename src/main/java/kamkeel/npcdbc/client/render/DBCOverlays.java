@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.client.render;
 
-import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
 
 import static java.lang.String.format;
@@ -29,8 +28,8 @@ public class DBCOverlays {
         SSJ4_FACE.add(LeftEye, Eye, (ctx) -> format(HD("%s/%s/face_%s/ssj4eyeleft.png"), ctx.furDir(), ctx.genderDir(), ctx.eyeType()));
         SSJ4_FACE.add(RightEye, Eye, (ctx) -> format(HD("%s/%s/face_%s/ssj4eyeright.png"), ctx.furDir(), ctx.genderDir(), ctx.eyeType()));
 
-        PUPILS.add(LeftEye, Eye, (ctx) -> format("%s:textures/overlays/eyespupils/left/left_eye_%s.png", CustomNpcPlusDBC.ID, ctx.eyeType()));
-        PUPILS.add(RightEye, Eye, (ctx) -> format("%s:textures/overlays/eyespupils/right/right_eye_%s.png", CustomNpcPlusDBC.ID, ctx.eyeType()));
+        PUPILS.add(LeftEye, Eye, (ctx) -> OVERLAY_DIR + format("eyespupils/left/left_eye_%s.png", ctx.eyeType()));
+        PUPILS.add(RightEye, Eye, (ctx) -> OVERLAY_DIR + format("eyespupils/right/right_eye_%s.png", ctx.eyeType()));
     }
 }
 /*
