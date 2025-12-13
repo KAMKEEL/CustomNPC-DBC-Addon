@@ -466,6 +466,10 @@ public class ModelDBC extends ModelBase {
 
     /*
          Applies for both players and NPCs!
+
+         This should ONLY be called once per entity's render cycle.
+         To retrieve the fully calculated list below, refer to
+         player/NPC's cachedOverlays
      */
     public static List<OverlayChain> applyOverlayChains(List<OverlayChain> uniqueChains, OverlayContext ctx) {
         ArrayList<OverlayChain> chains = new ArrayList<>();
@@ -539,6 +543,7 @@ public class ModelDBC extends ModelBase {
 
     public static void renderOverlays(OverlayContext ctx) {
         List<OverlayChain> chains = applyOverlayChains(ctx.getOverlayChains(), ctx);
+        ctx.cacheOverlays(chains);
 
         for (OverlayChain chain : chains) {
             ctx.chain = chain;

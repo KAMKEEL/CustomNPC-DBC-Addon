@@ -78,6 +78,13 @@ public class OverlayContext {
         return data;
     }
 
+    public void cacheOverlays(List<OverlayChain> overlays) {
+        if (isNPC)
+            display.cachedOverlays = overlays;
+        else
+            dbcData.cachedOverlays = overlays;
+    }
+
     public ModelMPM mpm() {
         return modelNpc.parent;
     }

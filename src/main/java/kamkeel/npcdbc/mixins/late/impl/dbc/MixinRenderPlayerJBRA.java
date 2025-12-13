@@ -48,6 +48,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static kamkeel.npcdbc.data.form.FacePartData.Part.*;
@@ -433,7 +434,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         ctx.form = data.getForm();
         ctx.model = modelMain;
 
-        List<OverlayChain> chains = ModelDBC.applyOverlayChains(data.getOverlayChains(), ctx);
+        List<OverlayChain> chains = new ArrayList<>();//ModelDBC.applyOverlayChains(data.getOverlayChains(), ctx);
 
         for (OverlayChain chain : chains) {
             ctx.chain = chain;

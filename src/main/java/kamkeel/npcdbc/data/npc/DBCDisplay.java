@@ -95,6 +95,10 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public KiWeaponData kiWeaponLeft = new KiWeaponData();
 
     public OverlayManager overlayManager = new OverlayManager();
+    /**
+     * ALL overlay chains that were drawn this tick, forms and everything
+     */
+    public List<OverlayChain> cachedOverlays = new ArrayList<>();
 
     public DBCDisplay(EntityNPCInterface npc) {
         this.npc = npc;
