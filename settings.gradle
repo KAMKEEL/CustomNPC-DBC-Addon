@@ -19,4 +19,8 @@ pluginManagement {
 plugins {
     id 'com.gtnewhorizons.gtnhsettingsconvention' version '1.0.14'
 }
-include(":janino")
+
+includeBuild("janino")
+
+//includeBuild("janino")
+
