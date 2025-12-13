@@ -23,6 +23,7 @@ import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
+import kamkeel.npcdbc.data.form.FacePartData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
@@ -1094,6 +1095,10 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
                 return 0xDA152C; //ssj4 red
         }
         return -1;
+    }
+
+    public Set<FacePartData.Part> getDisabledFaceParts() {
+        return FacePartData.getDisabledParts(null, getForm(), cachedOverlays, JRMCoreH.dnsEyes(DNS));
     }
 
     public void sendCurrentFormColorData() {

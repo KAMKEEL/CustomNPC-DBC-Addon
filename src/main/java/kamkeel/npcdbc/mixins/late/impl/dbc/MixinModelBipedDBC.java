@@ -36,9 +36,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
+import kamkeel.npcdbc.data.form.FacePartData.Part;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 @Mixin(value = ModelBipedDBC.class, remap = false)
 public class MixinModelBipedDBC extends ModelBipedBody {
@@ -118,21 +119,17 @@ public class MixinModelBipedDBC extends ModelBipedBody {
             if (form != null) {
                 hair = Hair.get();
                 DBCData dbcData = DBCData.get(ClientEventHandler.renderingPlayer);
+
+                Set<Part> disabledParts = dbcData.getDisabledFaceParts();
+                if (disabledParts.contains(Part.fromPartId(hair)))
+                    ci.setReturnValue("");
+
                 boolean isMonke = form.display.hasBodyFur || form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru");
                 HD = ConfigDBCClient.EnableHDTextures;
                 boolean isSaiyan = dbcData.Race == 1 || dbcData.Race == 2;
                 boolean usesHumanBody = isSaiyan || dbcData.Race == 0;
 
                 FormDisplay.BodyColor playerColors = dbcData.currentCustomizedColors;
-
-                HashMap<Integer, HashSet<Integer>> facePartsRemoved = form.display.faceData.disabledParts;
-                for (int i = 0; i < 7; i++) {
-                    for (int j = 0; j < FacePartData.Part.values().length; j++) {
-                        if (facePartsRemoved.get(i).contains(j))
-                            disableFacePart(hair, FacePartData.Part.values()[j].getPartId(), ci);
-                    }
-                }
-
 
                 //eye colors for ALL forms except ssj4
                 if ((hair.contains("EYELEFT") || hair.contains("EYERIGHT"))) {

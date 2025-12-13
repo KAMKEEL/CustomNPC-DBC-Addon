@@ -132,7 +132,9 @@ public class FacePartData {
         /*
              disabled parts of entity's default faceData
          */
-        disabledParts.addAll(defaultData.getDisabledParts(eyeType));
+
+        if (defaultData != null)
+            disabledParts.addAll(defaultData.getDisabledParts(eyeType));
 
         return disabledParts;
     }
@@ -203,6 +205,15 @@ public class FacePartData {
 
         public String getPartId() {
             return this.partId;
+        }
+
+        public static Part fromPartId(String id) {
+            for (Part type : values()) {
+                if (type.partId.equalsIgnoreCase(id)) {
+                    return type;
+                }
+            }
+            return null; // or throw
         }
     }
 }
