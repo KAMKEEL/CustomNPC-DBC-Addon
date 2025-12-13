@@ -216,29 +216,20 @@ public class ModelDBC extends ModelBase {
             boolean renderSSJ4Face = isSSJ4 && HD && hasEyebrows && isSaiyan;
             if (isOozaru) {
                 ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir : SDDir) + "oozaru/oozarueyes.png")); //eyes
-                ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
-                this.eyebase.rotateAngleY = parent.bipedHead.rotateAngleY;
-                this.eyebase.rotateAngleX = parent.bipedHead.rotateAngleX;
-                this.eyebase.rotateAngleZ = parent.bipedHead.rotateAngleZ;
-                this.eyebase.rotationPointX = parent.bipedHead.rotationPointX;
-                this.eyebase.rotationPointY = parent.bipedHead.rotationPointY;
-                this.eyebase.rotationPointZ = parent.bipedHead.rotationPointZ;
+                applyHeadRotations(eyebase);
                 GL11.glPushMatrix();
                 GL11.glTranslatef(0, y, 0);
                 GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
+                ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
                 this.eyebase.render(0.0625F);
                 GL11.glPopMatrix();
 
-                ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
-                DBCBody.Oozaru.rotateAngleY = parent.bipedHead.rotateAngleY;
-                DBCBody.Oozaru.rotateAngleX = parent.bipedHead.rotateAngleX;
-                DBCBody.Oozaru.rotateAngleZ = parent.bipedHead.rotateAngleZ;
-                DBCBody.Oozaru.rotationPointX = parent.bipedHead.rotationPointX;
-                DBCBody.Oozaru.rotationPointY = parent.bipedHead.rotationPointY;
-                DBCBody.Oozaru.rotationPointZ = parent.bipedHead.rotationPointZ;
+
+                applyHeadRotations(DBCBody.Oozaru);
                 GL11.glPushMatrix();
                 GL11.glTranslatef(0, y, 0);
                 GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
+                ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
                 DBCBody.Oozaru.render(0.0625f);
                 GL11.glPopMatrix();
 
@@ -249,13 +240,7 @@ public class ModelDBC extends ModelBase {
             if (!isSfH) {
                 if (!faceData.disabled(Part.Nose, display.eyeType)) {
                     ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
-
-                    this.nose.rotateAngleY = parent.bipedHead.rotateAngleY;
-                    this.nose.rotateAngleX = parent.bipedHead.rotateAngleX;
-                    this.nose.rotateAngleZ = parent.bipedHead.rotateAngleZ;
-                    this.nose.rotationPointX = parent.bipedHead.rotationPointX;
-                    this.nose.rotationPointY = parent.bipedHead.rotationPointY;
-                    this.nose.rotationPointZ = parent.bipedHead.rotationPointZ;
+                    applyHeadRotations(nose);
 
                     GL11.glPushMatrix();
                     GL11.glTranslatef(0, y, 0);
@@ -272,12 +257,7 @@ public class ModelDBC extends ModelBase {
                         mouthDir = getFaceTexture(display, "m" + display.mouthType);
 
                     ClientProxy.bindTexture(new ResourceLocation(mouthDir));
-                    this.mouth.rotateAngleY = parent.bipedHead.rotateAngleY;
-                    this.mouth.rotateAngleX = parent.bipedHead.rotateAngleX;
-                    this.mouth.rotateAngleZ = parent.bipedHead.rotateAngleZ;
-                    this.mouth.rotationPointX = parent.bipedHead.rotationPointX;
-                    this.mouth.rotationPointY = parent.bipedHead.rotationPointY;
-                    this.mouth.rotationPointZ = parent.bipedHead.rotationPointZ;
+                    applyHeadRotations(mouth);
 
                     GL11.glPushMatrix();
                     GL11.glTranslatef(0, y, 0);
@@ -288,18 +268,13 @@ public class ModelDBC extends ModelBase {
 
                 if (!renderSSJ4Face) {
                     if (!faceData.disabled(Part.EyeWhite, display.eyeType)) {
-                        GL11.glColor4f(1.0f, 1.0f, 1.0f, this.parent.alpha);
                         ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "b" + display.eyeType)));
-                        this.eyebase.rotateAngleY = parent.bipedHead.rotateAngleY;
-                        this.eyebase.rotateAngleX = parent.bipedHead.rotateAngleX;
-                        this.eyebase.rotateAngleZ = parent.bipedHead.rotateAngleZ;
-                        this.eyebase.rotationPointX = parent.bipedHead.rotationPointX;
-                        this.eyebase.rotationPointY = parent.bipedHead.rotationPointY;
-                        this.eyebase.rotationPointZ = parent.bipedHead.rotationPointZ;
+                        applyHeadRotations(eyebase);
 
                         GL11.glPushMatrix();
                         GL11.glTranslatef(0, y, 0);
                         GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
+                        GL11.glColor4f(1.0f, 1.0f, 1.0f, this.parent.alpha);
                         this.eyebase.render(0.0625F);
                         GL11.glPopMatrix();
                     }
@@ -334,15 +309,8 @@ public class ModelDBC extends ModelBase {
                         if (!faceData.disabled(Part.LeftEye, display.eyeType)) {
                             ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
                             String texture = getFaceTexture(display, "l" + display.eyeType);
-
                             ClientProxy.bindTexture(new ResourceLocation(texture));
-                            this.eyeleft.rotateAngleY = parent.bipedHead.rotateAngleY;
-                            this.eyeleft.rotateAngleX = parent.bipedHead.rotateAngleX;
-                            this.eyeleft.rotateAngleZ = parent.bipedHead.rotateAngleZ;
-                            this.eyeleft.rotationPointX = parent.bipedHead.rotationPointX;
-                            this.eyeleft.rotationPointY = parent.bipedHead.rotationPointY;
-                            this.eyeleft.rotationPointZ = parent.bipedHead.rotationPointZ;
-
+                            applyHeadRotations(eyeleft);
 
                             GL11.glPushMatrix();
                             GL11.glTranslatef(0, y, 0);
@@ -354,14 +322,9 @@ public class ModelDBC extends ModelBase {
                         if (!faceData.disabled(Part.RightEye, display.eyeType)) {
                             ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
                             String texture = getFaceTexture(display, "r" + display.eyeType);
-
                             ClientProxy.bindTexture(new ResourceLocation(texture));
-                            this.eyeright.rotateAngleY = parent.bipedHead.rotateAngleY;
-                            this.eyeright.rotateAngleX = parent.bipedHead.rotateAngleX;
-                            this.eyeright.rotateAngleZ = parent.bipedHead.rotateAngleZ;
-                            this.eyeright.rotationPointX = parent.bipedHead.rotationPointX;
-                            this.eyeright.rotationPointY = parent.bipedHead.rotationPointY;
-                            this.eyeright.rotationPointZ = parent.bipedHead.rotationPointZ;
+                            applyHeadRotations(eyeright);
+
                             GL11.glPushMatrix();
                             GL11.glTranslatef(0, y, 0);
                             GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
@@ -372,6 +335,15 @@ public class ModelDBC extends ModelBase {
                 }
             }
         }
+    }
+
+    public void applyHeadRotations(ModelRenderer model) {
+        model.rotateAngleY = parent.bipedHead.rotateAngleY;
+        model.rotateAngleX = parent.bipedHead.rotateAngleX;
+        model.rotateAngleZ = parent.bipedHead.rotateAngleZ;
+        model.rotationPointX = parent.bipedHead.rotationPointX;
+        model.rotationPointY = parent.bipedHead.rotationPointY;
+        model.rotationPointZ = parent.bipedHead.rotationPointZ;
     }
 
     public static boolean bindTexture(String texture) {
