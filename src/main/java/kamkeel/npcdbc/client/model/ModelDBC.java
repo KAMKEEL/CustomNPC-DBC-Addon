@@ -329,6 +329,7 @@ public class ModelDBC extends ModelBase {
                     }
 
                     // it wasnt this?
+                    //TODO DBC EYE LEFT IS RIGHT AND RIGHT IS LEFT, GOTTA SWITCH THEM FOR OVERLAYS TOO
                     if (!isBerserk && !hasPupils) {
                         if (!faceData.disabled(Part.LeftEye, display.eyeType)) {
                             ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
@@ -352,7 +353,7 @@ public class ModelDBC extends ModelBase {
 
                         if (!faceData.disabled(Part.RightEye, display.eyeType)) {
                             ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
-                            String texture = getFaceTexture(display, "l" + display.eyeType);
+                            String texture = getFaceTexture(display, "r" + display.eyeType);
 
                             ClientProxy.bindTexture(new ResourceLocation(texture));
                             this.eyeright.rotateAngleY = parent.bipedHead.rotateAngleY;
