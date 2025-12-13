@@ -266,71 +266,74 @@ public class ModelDBC extends ModelBase {
                     GL11.glPopMatrix();
                 }
 
-                if (!renderSSJ4Face) {
-                    if (!disabledParts.contains(Part.EyeWhite)) {
-                        ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "b" + display.eyeType)));
-                        applyHeadRotations(eyebase);
+                if (!disabledParts.contains(Part.EyeWhite)) {
+                    ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "b" + display.eyeType)));
+                    applyHeadRotations(eyebase);
+
+                    GL11.glPushMatrix();
+                    GL11.glTranslatef(0, y, 0);
+                    GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
+                    GL11.glColor4f(1.0f, 1.0f, 1.0f, this.parent.alpha);
+                    this.eyebase.render(0.0625F);
+                    GL11.glPopMatrix();
+                }
+
+                if (display.race < 4 && !disabledParts.contains(Part.Eyebrows)) {
+                    if (display.race != DBCRace.NAMEKIAN)
+                        ColorMode.applyModelColor(eyeBrowColor, this.parent.alpha, isHurt);
+                    else {
+                        ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
+                    }
+                    if (!hasEyebrows && display.race != DBCRace.NAMEKIAN)
+                        ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + "humw" + display.eyeType + ".png"));
+                    else
+                        ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "w" + display.eyeType)));
+                    this.eyebrow.rotateAngleY = parent.bipedHead.rotateAngleY;
+                    this.eyebrow.rotateAngleX = parent.bipedHead.rotateAngleX;
+                    this.eyebrow.rotateAngleZ = parent.bipedHead.rotateAngleZ;
+                    this.eyebrow.rotationPointX = parent.bipedHead.rotationPointX;
+                    this.eyebrow.rotationPointY = parent.bipedHead.rotationPointY;
+                    this.eyebrow.rotationPointZ = parent.bipedHead.rotationPointZ;
+
+                    GL11.glPushMatrix();
+                    GL11.glTranslatef(0, y, 0);
+                    GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
+                    this.eyebrow.render(0.0625F);
+                    GL11.glPopMatrix();
+                }
+
+                // it wasnt this?
+                //TODO DBC EYE LEFT IS RIGHT AND RIGHT IS LEFT, GOTTA SWITCH THEM FOR OVERLAYS TOO
+                if (!isBerserk && !hasPupils) {
+                    if (!disabledParts.contains(Part.LeftEye)) {
+                        ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
+                        String texture = getFaceTexture(display, "l" + display.eyeType);
+                        ClientProxy.bindTexture(new ResourceLocation(texture));
+                        applyHeadRotations(eyeleft);
 
                         GL11.glPushMatrix();
                         GL11.glTranslatef(0, y, 0);
                         GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-                        GL11.glColor4f(1.0f, 1.0f, 1.0f, this.parent.alpha);
-                        this.eyebase.render(0.0625F);
+                        this.eyeleft.render(0.0625F);
                         GL11.glPopMatrix();
                     }
-
-                    if (display.race < 4 && !disabledParts.contains(Part.Eyebrows)) {
-                        if (display.race != DBCRace.NAMEKIAN)
-                            ColorMode.applyModelColor(eyeBrowColor, this.parent.alpha, isHurt);
-                        else {
-                            ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
-                        }
-                        if (!hasEyebrows && display.race != DBCRace.NAMEKIAN)
-                            ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + "humw" + display.eyeType + ".png"));
-                        else
-                            ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "w" + display.eyeType)));
-                        this.eyebrow.rotateAngleY = parent.bipedHead.rotateAngleY;
-                        this.eyebrow.rotateAngleX = parent.bipedHead.rotateAngleX;
-                        this.eyebrow.rotateAngleZ = parent.bipedHead.rotateAngleZ;
-                        this.eyebrow.rotationPointX = parent.bipedHead.rotationPointX;
-                        this.eyebrow.rotationPointY = parent.bipedHead.rotationPointY;
-                        this.eyebrow.rotationPointZ = parent.bipedHead.rotationPointZ;
-
-                        GL11.glPushMatrix();
-                        GL11.glTranslatef(0, y, 0);
-                        GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-                        this.eyebrow.render(0.0625F);
-                        GL11.glPopMatrix();
-                    }
-
-                    // it wasnt this?
-                    //TODO DBC EYE LEFT IS RIGHT AND RIGHT IS LEFT, GOTTA SWITCH THEM FOR OVERLAYS TOO
-                    if (!isBerserk && !hasPupils) {
-                        if (!disabledParts.contains(Part.LeftEye)) {
-                            ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
-                            String texture = getFaceTexture(display, "l" + display.eyeType);
-                            ClientProxy.bindTexture(new ResourceLocation(texture));
-                            applyHeadRotations(eyeleft);
-
-                            GL11.glPushMatrix();
-                            GL11.glTranslatef(0, y, 0);
-                            GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-                            this.eyeleft.render(0.0625F);
-                            GL11.glPopMatrix();
-                        }
 
                         if (!disabledParts.contains(Part.RightEye)) {
                             ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
                             String texture = getFaceTexture(display, "r" + display.eyeType);
                             ClientProxy.bindTexture(new ResourceLocation(texture));
                             applyHeadRotations(eyeright);
+                    if (!disabledParts.contains(Part.RightEye)) {
+                        ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
+                        String texture = getFaceTexture(display, "r" + display.eyeType);
+                        ClientProxy.bindTexture(new ResourceLocation(texture));
+                        applyHeadRotations(eyeright);
 
-                            GL11.glPushMatrix();
-                            GL11.glTranslatef(0, y, 0);
-                            GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-                            this.eyeright.render(0.0625F);
-                            GL11.glPopMatrix();
-                        }
+                        GL11.glPushMatrix();
+                        GL11.glTranslatef(0, y, 0);
+                        GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
+                        this.eyeright.render(0.0625F);
+                        GL11.glPopMatrix();
                     }
                 }
             }

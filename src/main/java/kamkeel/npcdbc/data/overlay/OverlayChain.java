@@ -2,6 +2,7 @@ package kamkeel.npcdbc.data.overlay;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.data.form.FacePartData;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 
@@ -15,6 +16,8 @@ public class OverlayChain {
     public String name = "";
     public boolean enabled = true;
 
+    public Set<FacePartData.Part> disabledParts = new HashSet<>();
+
     public Function<OverlayContext, Boolean> condition;
 
     public OverlayChain() {
@@ -22,6 +25,13 @@ public class OverlayChain {
 
     public OverlayChain(String name) {
         this.name = name;
+    }
+
+    public OverlayChain disable(FacePartData.Part... parts) {
+        for (FacePartData.Part part : parts)
+            disabledParts.add(part);
+
+        return this;
     }
 
     public static OverlayChain create(String name) {
@@ -167,6 +177,15 @@ public class OverlayChain {
             }
             i++;
         }
+
+        if (compound.hasKey("disabledParts")) {
+            disabledParts.clear();
+            FacePartData.Part[] values = FacePartData.Part.values();
+            for (byte ordinal : compound.getByteArray("disabledParts")) {
+                if (ordinal >= 0 && ordinal < values.length)
+                    disabledParts.add(values[ordinal]);
+            }
+        }
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -176,6 +195,14 @@ public class OverlayChain {
 
         for (int i = 0; i < overlays.size(); i++) {
             rendering.setTag("overlay" + i, overlays.get(i).writeToNBT());
+        }
+
+        if (!disabledParts.isEmpty()) {
+            byte[] arr = new byte[disabledParts.size()];
+            int i = 0;
+            for (FacePartData.Part t : disabledParts)
+                arr[i++] = (byte) t.ordinal();
+            compound.setByteArray("disabledParts", arr);
         }
 
         compound.setTag("overlayData", rendering);
