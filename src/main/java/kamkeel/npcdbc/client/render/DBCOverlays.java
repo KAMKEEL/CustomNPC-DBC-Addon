@@ -35,6 +35,7 @@ public class DBCOverlays {
 
         PUPILS.add(LeftEye, Eye, (ctx) -> OVERLAY_DIR + format("eyespupils/left/left_eye_%s.png", ctx.eyeType()));
         PUPILS.add(RightEye, Eye, (ctx) -> OVERLAY_DIR + format("eyespupils/right/right_eye_%s.png", ctx.eyeType()));
+        PUPILS.disable(Part.LeftEye, Part.RightEye);
     }
 }
 /*
