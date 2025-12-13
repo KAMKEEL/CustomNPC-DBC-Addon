@@ -24,8 +24,9 @@ public final class OverlayModelRenderer {
             return;
 
         GL11.glPushMatrix();
-        float faceScale = 1.005f;
+        float faceScale = 1.00205f;
         GL11.glScalef(faceScale, faceScale, faceScale);
+        GL11.glTranslatef(0, 0.00001f, 0); //Must be this precise
 
         if (ctx.isNPC) {
             ctx.mpm().renderHead(ctx.npc, SCALE);
