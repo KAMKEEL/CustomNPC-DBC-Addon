@@ -503,7 +503,7 @@ public class ModelDBC extends ModelBase {
         if (HD()) {
             if (ssj4)
                 chains.add(SSJ4_FACE);
-            else if (ctx.pupils() && !ssj3 && !oozaru)
+            else if (ctx.pupils() && !oozaru)
                 chains.add(PUPILS);
         }
 
