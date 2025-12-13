@@ -43,8 +43,9 @@ dependencies {
     devOnlyNonPublishable(rfg.deobf(project.files("lib/JFamilyC-v1.2.18.jar")))
 
 //    implementation(file("janino/build"))
-//    implementation("io.github.somehussar.janinoloader:JaninoLoader")
-    implementation(files("janino/build/libs/standalone-JaninoLoader-1.0.1-ALPHA.jar"))
+    annotationProcessor(project(":annotationProcessor"))
+
+
 
 
     // Make sure to comment this out if you're using an actual copy of EDE.
