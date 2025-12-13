@@ -215,23 +215,14 @@ public class ModelDBC extends ModelBase {
             boolean renderSSJ4Face = isSSJ4 && HD && hasEyebrows && isSaiyan;
             if (isOozaru) {
                 ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir : SDDir) + "oozaru/oozarueyes.png")); //eyes
-                applyHeadRotations(eyebase);
-                GL11.glPushMatrix();
-                GL11.glTranslatef(0, y, 0);
-                GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
+
                 ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
-                this.eyebase.render(0.0625F);
-                GL11.glPopMatrix();
+                applyHeadRotations(eyebase);
+                renderOnHead(eyebase, y);
 
-
-                applyHeadRotations(DBCBody.Oozaru);
-                GL11.glPushMatrix();
-                GL11.glTranslatef(0, y, 0);
-                GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
                 ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
-                DBCBody.Oozaru.render(0.0625f);
-                GL11.glPopMatrix();
-
+                applyHeadRotations(DBCBody.Oozaru);
+                renderOnHead(DBCBody.Oozaru, y);
                 return;
             }
             ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
@@ -247,13 +238,9 @@ public class ModelDBC extends ModelBase {
             //  if (!faceData.disabled(Part.Nose, display.eyeType)) {
             if (!disabledParts.contains(Part.Nose)) {
                 ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
-                applyHeadRotations(nose);
 
-                GL11.glPushMatrix();
-                GL11.glTranslatef(0, y, 0);
-                GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-                this.nose.render(0.0625F);
-                GL11.glPopMatrix();
+                applyHeadRotations(nose);
+                renderOnHead(nose, y);
             }
 
             if (!disabledParts.contains(Part.Mouth)) {
@@ -262,70 +249,61 @@ public class ModelDBC extends ModelBase {
                     mouthDir = "jinryuudragonbc:cc/arc/m/0A" + 2 + display.bodyType + "a.png";
                 else
                     mouthDir = getFaceTexture(display, "m" + display.mouthType);
-
                 ClientProxy.bindTexture(new ResourceLocation(mouthDir));
-                applyHeadRotations(mouth);
 
-                GL11.glPushMatrix();
-                GL11.glTranslatef(0, y, 0);
-                GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-                this.mouth.render(0.0625F);
-                GL11.glPopMatrix();
+                applyHeadRotations(mouth);
+                renderOnHead(mouth, y);
             }
 
             if (!disabledParts.contains(Part.EyeWhite)) {
                 ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "b" + display.eyeType)));
-                applyHeadRotations(eyebase);
-
-                GL11.glPushMatrix();
-                GL11.glTranslatef(0, y, 0);
-                GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
                 GL11.glColor4f(1.0f, 1.0f, 1.0f, this.parent.alpha);
-                this.eyebase.render(0.0625F);
-                GL11.glPopMatrix();
+
+                applyHeadRotations(eyebase);
+                renderOnHead(eyebase, y);
             }
 
             if (!disabledParts.contains(Part.Eyebrows)) {
                 boolean namekian = display.race == DBCRace.NAMEKIAN;
                 String texture = hasEyebrows || namekian ? getFaceTexture(display, "w" + display.eyeType) : "jinryuumodscore:cc/ssj3eyebrow/humw" + display.eyeType + ".png";
                 ClientProxy.bindTexture(new ResourceLocation(texture));
-                applyHeadRotations(eyebrow);
 
-                ColorMode.applyModelColor(namekian ? bodyCM : eyeBrowColor, this.parent.alpha, isHurt);
-                GL11.glPushMatrix();
-                GL11.glTranslatef(0, y, 0);
-                GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-                this.eyebrow.render(0.0625F);
-                GL11.glPopMatrix();
+                applyHeadRotations(eyebrow);
+                renderOnHead(eyebrow, y);
             }
 
             //TODO FOR GOATEE: DBC EYE LEFT IS RIGHT AND RIGHT IS LEFT, GOTTA SWITCH THEM FOR OVERLAYS TOO
             if (!disabledParts.contains(Part.LeftEye)) {
-                ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
                 String texture = getFaceTexture(display, "l" + display.eyeType);
                 ClientProxy.bindTexture(new ResourceLocation(texture));
-                applyHeadRotations(eyeleft);
+                ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
 
-                GL11.glPushMatrix();
-                GL11.glTranslatef(0, y, 0);
-                GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-                this.eyeleft.render(0.0625F);
-                GL11.glPopMatrix();
+                applyHeadRotations(eyeleft);
+                renderOnHead(eyeleft, y);
             }
 
             if (!disabledParts.contains(Part.RightEye)) {
-                ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
                 String texture = getFaceTexture(display, "r" + display.eyeType);
                 ClientProxy.bindTexture(new ResourceLocation(texture));
-                applyHeadRotations(eyeright);
+                ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
 
-                GL11.glPushMatrix();
-                GL11.glTranslatef(0, y, 0);
-                GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-                this.eyeright.render(0.0625F);
-                GL11.glPopMatrix();
+                applyHeadRotations(eyeright);
+                renderOnHead(eyeright, y);
             }
         }
+    }
+
+    public void renderOnHead(ModelRenderer model) {
+        renderOnHead(model, parent.npc.modelData.getBodyY());
+    }
+
+    public void renderOnHead(ModelRenderer model, float bodyY) {
+        ModelScalePart head = parent.npc.modelData.modelScale.head;
+        GL11.glPushMatrix();
+        GL11.glTranslatef(0, bodyY, 0);
+        GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
+        model.render(0.0625F);
+        GL11.glPopMatrix();
     }
 
     public void applyHeadRotations(ModelRenderer model) {
