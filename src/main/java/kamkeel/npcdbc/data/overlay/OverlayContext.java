@@ -117,18 +117,11 @@ public class OverlayContext {
         return isNPC ? display.furType : 0;
     }
 
-    public boolean ssj4() {
+    public boolean hairType(String type) {
         if (form() != null)
-            return form.display.hairType.equals("ssj4");
+            return form.display.hairType.equalsIgnoreCase(type);
 
-        return isNPC ? display.hairType.equals("ssj4") : false;
-    }
-
-    public boolean ssj3() {
-        if (form() != null)
-            return form.display.hairType.equals("ssj3");
-
-        return isNPC ? display.hairType.equals("ssj3") : false;
+        return isNPC ? display.hairType.equalsIgnoreCase(type) : false;
     }
 
     public int color(String type) {
@@ -148,13 +141,6 @@ public class OverlayContext {
             return form.display.hasBodyFur;
 
         return isNPC ? display.hasFur : false;
-    }
-
-    public boolean oozaru() {
-        if (form() != null)
-            return form.display.hairType.equals("oozaru");
-
-        return isNPC ? display.hairType.equals("oozaru") : false;
     }
 
     public boolean pupils() {

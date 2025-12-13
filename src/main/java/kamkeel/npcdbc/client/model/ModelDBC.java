@@ -44,6 +44,7 @@ import java.util.Set;
 
 import static java.lang.String.format;
 
+import static kamkeel.npcdbc.client.render.DBCOverlays.*;
 import static kamkeel.npcdbc.data.form.FacePartData.Part;
 import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.*;
 import static kamkeel.npcdbc.data.overlay.Overlay.Type;
@@ -508,31 +509,38 @@ public class ModelDBC extends ModelBase {
 
          */
 
-        if (ctx.oozaru())
-            chains.add(DBCOverlays.OOZARU);
 
-        if (ctx.hasFur())
-            chains.add(DBCOverlays.SSJ4_FUR);
+         /*
+           Create the overlays here to test them (easy to hotswap here), then when finished drop them in DBCOverlays
 
-        if (ctx.ssj4())
-            chains.add(DBCOverlays.SSJ4_FACE);
-
-        if (!ctx.ssj4() && !ctx.ssj3() && !ctx.oozaru() && ctx.pupils())
-            chains.add(DBCOverlays.PUPILS);
+        i.e.:
+        OverlayChain SSJ4_FUR = OverlayChain.create("SSJ4_Fur");
+        SSJ4_FUR.add(ALL, Fur, (ctx1) -> path("ssj4/ss4b" + ctx1.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
+        chains.add(SSJ4_FUR);
+        */
 
 
+        boolean ssj3 = ctx.hairType("ssj3");
+        boolean ssj4 = ctx.hairType("ssj4");
+        boolean oozaru = ctx.hairType("oozaru");
 
-        // Create the overlays here to test them (easy to hotswap here), then when finished drop them in DBCOverlays
+        /* ───────── Fur / Body Overlays ───────── */
+        if (oozaru)
+            chains.add(OOZARU);
 
-//        OverlayChain SSJ4_FACE = OverlayChain.create("SSJ4_Face");
-//        SSJ4_FACE.add(Face, BodyCM, (ctx1) -> format(HD("%s/%s/face_%s/ssj4shade.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
-//        SSJ4_FACE.add(Face, 0xFFFFFF, (ctx1) -> format(HD("%s/%s/face_%s/ssj4eyewhite.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
-//        SSJ4_FACE.add(Face, Fur, (ctx1) -> format(HD("%s/%s/face_%s/ssj4brows.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
-//        SSJ4_FACE.add(Face, Hair, (ctx1) -> format(HD("%s/%s/face_%s/ssj4brows2.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
-//        SSJ4_FACE.add(Face, Eye, (ctx1) -> format(HD("%s/%s/face_%s/ssj4eyeleft.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
-//        SSJ4_FACE.add(Face, Eye, (ctx1) -> format(HD("%s/%s/face_%s/ssj4eyeright.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
-//        chains.add(SSJ4_FACE);
+        if (ssj4 || ctx.hasFur())
+            chains.add(SSJ4_FUR);
 
+        /* ───────── Face Overlays ───────── */
+        if (HD()) {
+            if (ssj4)
+                chains.add(SSJ4_FACE);
+            else if (ctx.pupils() && !ssj3 && !oozaru)
+                chains.add(PUPILS);
+        }
+
+
+        /* ───────── Main Entity Overlays ───────── */
         if (uniqueChains != null)
             chains.addAll(uniqueChains);
 
@@ -836,14 +844,18 @@ public class ModelDBC extends ModelBase {
        apply HD/SD paths
      */
     public static String path(String tex) {
-        return ConfigDBCClient.EnableHDTextures ? HDDir + tex : SDDir + tex;
+        return HD() ? HDDir + tex : SDDir + tex;
     }
 
     public static String path(String texHD, String texSD) {
-        return ConfigDBCClient.EnableHDTextures ? HDDir + texHD : texSD; //for SD textures outside of "textures/sd/"
+        return HD() ? HDDir + texHD : texSD; //for SD textures outside of "textures/sd/"
     }
 
     public static String HD(String texHD) {
         return HDDir + texHD;
+    }
+
+    public static boolean HD() {
+        return ConfigDBCClient.EnableHDTextures;
     }
 }

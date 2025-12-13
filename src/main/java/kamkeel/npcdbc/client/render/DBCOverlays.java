@@ -10,10 +10,10 @@ import static kamkeel.npcdbc.data.overlay.Overlay.Type.*;
 
 public class DBCOverlays {
 
-    public static OverlayChain SSJ4_FUR = OverlayChain.create("SSJ4_Fur");
-    public static OverlayChain OOZARU = OverlayChain.create("Oozaru");
-    public static OverlayChain SSJ4_FACE = OverlayChain.create("SSJ4_Face");
-    public static OverlayChain PUPILS = OverlayChain.create("Pupils");
+    public static final OverlayChain SSJ4_FUR = OverlayChain.create("SSJ4 Fur");
+    public static final OverlayChain OOZARU = OverlayChain.create("Oozaru");
+    public static final OverlayChain SSJ4_FACE = OverlayChain.create("SSJ4 Face");
+    public static final OverlayChain PUPILS = OverlayChain.create("Pupils");
 
     static {
         SSJ4_FUR.add(ALL, Fur, (ctx) -> path("ssj4/ss4b" + ctx.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
