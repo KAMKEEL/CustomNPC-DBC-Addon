@@ -214,7 +214,7 @@ public class ModelDBC extends ModelBase {
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
             boolean renderSSJ4Face = isSSJ4 && HD && hasEyebrows && isSaiyan;
-            if (isOozaru && isSaiyan) {
+            if (isOozaru) {
                 ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir : SDDir) + "oozaru/oozarueyes.png")); //eyes
                 ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
                 this.eyebase.rotateAngleY = parent.bipedHead.rotateAngleY;
