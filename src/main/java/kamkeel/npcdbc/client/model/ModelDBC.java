@@ -539,8 +539,7 @@ public class ModelDBC extends ModelBase {
                     continue;
 
                 /* ───────── Colors ───────── */
-                int col = overlay.colorType == Custom ? overlay.color : ctx.color(overlay.colorType.name());
-                ctx.color = new Color(col, overlay.alpha);
+                ctx.color = ctx.color(overlay.colorType);
 
                 if (overlay.applyColor != null)
                     ctx.color = overlay.applyColor(ctx);
@@ -578,11 +577,7 @@ public class ModelDBC extends ModelBase {
                 GL11.glEnable(GL11.GL_ALPHA_TEST);
                 GL11.glAlphaFunc(GL11.GL_GREATER, 0.001f);
 
-                if (ctx.isNPC)
-                    ColorMode.applyModelColor(ctx.color.color, ctx.color.alpha, isHurt);
-                else
-                    ctx.color.glColor();
-
+                ctx.glColor(ctx.color);
                 OverlayModelRenderer.render(type, ctx);
 
                 /* ───────── Post-Rendering ───────── */

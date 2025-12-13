@@ -5,6 +5,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.ModelBipedBody;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -17,6 +18,8 @@ import noppes.npcs.entity.EntityCustomNpc;
 
 import java.util.List;
 import java.util.Set;
+
+import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.Custom;
 
 @SideOnly(Side.CLIENT)
 public class OverlayContext {
@@ -133,6 +136,22 @@ public class OverlayContext {
 
     public int color(String type) {
         return isNPC ? display.getColor(type) : dbcData.getColor(type);
+    }
+
+    public Color color(Overlay.ColorType type) {
+        return color(type, overlay);
+    }
+
+    public Color color(Overlay.ColorType type, Overlay overlay) {
+        int col = type == Custom ? overlay.color : color(type.name());
+        return new Color(col, overlay.alpha);
+    }
+
+    public void glColor(Color color) {
+        if (isNPC)
+            ColorMode.applyModelColor(color.color, color.alpha, ModelDBC.isHurt);
+        else
+            color.glColor();
     }
 
     public boolean furDaima() {
