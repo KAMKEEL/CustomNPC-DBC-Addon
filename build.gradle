@@ -25,10 +25,17 @@ def findJarBySubstring = { part ->
 //tasks.withType(com.gtnewhorizons.retrofuturagradle.minecraft.RunMinecraftTask) {
 //    dependsOn(gradle.includedBuild("janino").task(":build"))
 //}
-
+//
+//tasks.named("classes").configure {
+//    doFirst {
+//        dependsOn(":janino:jar")
+//    }
+//
+//}
 
 tasks.named("runClient").configure {
-    dependsOn(gradle.includedBuild("janino").task(":build"))
+    dependsOn(":janino:build")
+
     def agent = findJarBySubstring("unimixins")
     extraJvmArgs.addAll("-javaagent:${agent.absolutePath}")
 }
