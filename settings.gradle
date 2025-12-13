@@ -21,6 +21,7 @@ plugins {
 }
 
 
+include(":janino")
 include(":annotationProcessor")
 project(":annotationProcessor").projectDir = file("janino/annotationProcessor")
 

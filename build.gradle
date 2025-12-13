@@ -22,21 +22,17 @@ def findJarBySubstring = { part ->
     return matches.first() // valid in old Gradle
 }
 
-evaluationDependsOn(":annotationProcessor")
-
-sourceSets {
-    named("main").configure {
-        java {
-            srcDirs += ['janino/src/main/java', 'janino/annotationProcessor/src/main/java']
-        }
-    }
-}
+//sourceSets {
+//    named("main").configure {
+//        java {
+//            srcDirs += ['janino/src/main/java', 'janino/annotationProcessor/src/main/java']
+//        }
+//    }
+//}
 
 tasks.named("runClient").configure {
-    dependsOn(":annotationProcessor:jar")
-    doFirst {
-        def agent = findJarBySubstring("unimixins")
-        extraJvmArgs.addAll("-javaagent:${agent.absolutePath}")
-    }
+    def agent = findJarBySubstring("unimixins")
+    extraJvmArgs.addAll("-javaagent:${agent.absolutePath}")
+
 }
 

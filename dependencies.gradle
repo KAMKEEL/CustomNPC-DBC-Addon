@@ -42,7 +42,8 @@ dependencies {
     devOnlyNonPublishable(rfg.deobf(project.files("lib/JBRA-Client-v1.6.52.jar")))
     devOnlyNonPublishable(rfg.deobf(project.files("lib/JFamilyC-v1.2.18.jar")))
 
-//    implementation(file("janino/build"))
+    implementation(project(":janino"))
+    implementation(project(":annotationProcessor"))
     annotationProcessor(project(":annotationProcessor"))
 
 
