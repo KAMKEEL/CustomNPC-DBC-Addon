@@ -241,7 +241,10 @@ public class ModelDBC extends ModelBase {
             if (isBerserk || hasPupils)
                 disabledParts.addAll(EnumSet.of(Part.LeftEye, Part.RightEye));
 
-                //  if (!faceData.disabled(Part.Nose, display.eyeType)) {
+            if (display.race >= DBCRace.ARCOSIAN) //Arcosians and majins have no brows
+                disabledParts.add(Part.Eyebrows);
+
+            //  if (!faceData.disabled(Part.Nose, display.eyeType)) {
             if (!disabledParts.contains(Part.Nose)) {
                 ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
                 applyHeadRotations(nose);
@@ -282,17 +285,13 @@ public class ModelDBC extends ModelBase {
                 GL11.glPopMatrix();
             }
 
-            if (display.race < 4 && !disabledParts.contains(Part.Eyebrows)) {
-                if (display.race != DBCRace.NAMEKIAN)
-                    ColorMode.applyModelColor(eyeBrowColor, this.parent.alpha, isHurt);
-                else {
-                    ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
-                }
-                if (!hasEyebrows && display.race != DBCRace.NAMEKIAN)
-                    ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + "humw" + display.eyeType + ".png"));
-                else
-                    ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "w" + display.eyeType)));
+            if (!disabledParts.contains(Part.Eyebrows)) {
+                boolean namekian = display.race == DBCRace.NAMEKIAN;
+                String texture = hasEyebrows || namekian ? getFaceTexture(display, "w" + display.eyeType) : "jinryuumodscore:cc/ssj3eyebrow/humw" + display.eyeType + ".png";
+                ClientProxy.bindTexture(new ResourceLocation(texture));
                 applyHeadRotations(eyebrow);
+
+                ColorMode.applyModelColor(namekian ? bodyCM : eyeBrowColor, this.parent.alpha, isHurt);
                 GL11.glPushMatrix();
                 GL11.glTranslatef(0, y, 0);
                 GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
