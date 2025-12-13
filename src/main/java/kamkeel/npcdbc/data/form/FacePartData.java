@@ -1,10 +1,9 @@
 package kamkeel.npcdbc.data.form;
 
+import kamkeel.npcdbc.data.overlay.OverlayChain;
 import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 import static kamkeel.npcdbc.data.form.FacePartData.Part.*;
 
@@ -101,14 +100,41 @@ public class FacePartData {
         disable(Mouth, faceType, disable);
     }
 
-    public Integer[] getFacePartsRemoved(int faceType) {
-        ArrayList<Integer> list = new ArrayList<>();
-        for (int i = 0; i < Part.values().length; i++) {
+    public Set<Part> getDisabledParts(int faceType) {
+        Set<Part> parts = EnumSet.noneOf(Part.class);
+        Part[] allParts = Part.values();
+        for (int i = 0; i < allParts.length; i++)
             if (disabledParts.get(faceType).contains(i))
-                list.add(i);
-        }
+                parts.add(allParts[i]);
 
-        return list.toArray(new Integer[0]);
+        return parts;
+    }
+
+    /**
+     * Universal logic for NPCs and players.
+     */
+    public static Set<FacePartData.Part> getDisabledParts(FacePartData defaultData, Form form, List<OverlayChain> overlays, int eyeType) {
+        Set<FacePartData.Part> disabledParts = EnumSet.noneOf(FacePartData.Part.class);
+
+        /*
+           Collect disabled parts of current form
+         */
+
+        if (form != null && form.display.faceData.enabled)
+            disabledParts.addAll(form.display.faceData.getDisabledParts(eyeType));
+
+        /*
+            disabled parts of all active overlays
+         */
+        for (OverlayChain chain : overlays)
+            disabledParts.addAll(chain.disabledParts);
+
+        /*
+             disabled parts of entity's default faceData
+         */
+        disabledParts.addAll(defaultData.getDisabledParts(eyeType));
+
+        return disabledParts;
     }
 
     public void readFromNBT(NBTTagCompound compound, boolean isDBCDisplay) {

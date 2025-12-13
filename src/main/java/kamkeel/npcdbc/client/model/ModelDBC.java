@@ -166,7 +166,6 @@ public class ModelDBC extends ModelBase {
             int eyeColor = display.eyeColor;
             int eyeBrowColor = display.race == DBCRace.NAMEKIAN ? display.bodyCM : display.hairColor;
             int bodyCM = display.bodyCM;
-            FacePartData faceData = display.faceData;
 
             boolean isSaiyan = DBCRace.isSaiyan(display.race);
             boolean hasArcoMask = display.hasArcoMask, isBerserk = false, hasEyebrows = display.hasEyebrows, hasPupils = display.hasPupils;
@@ -209,7 +208,6 @@ public class ModelDBC extends ModelBase {
 
                 isBerserk = d.isBerserk;
                 hasPupils = d.hasPupils;
-                faceData = d.faceData;
             }
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
@@ -237,8 +235,10 @@ public class ModelDBC extends ModelBase {
             }
             ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
 
+            Set<FacePartData.Part> disabledParts = display.getDisabledFaceParts();
             if (!isSfH) {
-                if (!faceData.disabled(Part.Nose, display.eyeType)) {
+                //  if (!faceData.disabled(Part.Nose, display.eyeType)) {
+                if (!disabledParts.contains(Part.Nose)) {
                     ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
                     applyHeadRotations(nose);
 
@@ -249,7 +249,7 @@ public class ModelDBC extends ModelBase {
                     GL11.glPopMatrix();
                 }
 
-                if (!faceData.disabled(Part.Mouth, display.eyeType)) {
+                if (!disabledParts.contains(Part.Mouth)) {
                     String mouthDir = "";
                     if (display.race == 4 && hasArcoMask)
                         mouthDir = "jinryuudragonbc:cc/arc/m/0A" + 2 + display.bodyType + "a.png";
@@ -267,7 +267,7 @@ public class ModelDBC extends ModelBase {
                 }
 
                 if (!renderSSJ4Face) {
-                    if (!faceData.disabled(Part.EyeWhite, display.eyeType)) {
+                    if (!disabledParts.contains(Part.EyeWhite)) {
                         ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "b" + display.eyeType)));
                         applyHeadRotations(eyebase);
 
@@ -279,7 +279,7 @@ public class ModelDBC extends ModelBase {
                         GL11.glPopMatrix();
                     }
 
-                    if (display.race < 4 && !faceData.disabled(Part.Eyebrows, display.eyeType)) {
+                    if (display.race < 4 && !disabledParts.contains(Part.Eyebrows)) {
                         if (display.race != DBCRace.NAMEKIAN)
                             ColorMode.applyModelColor(eyeBrowColor, this.parent.alpha, isHurt);
                         else {
@@ -306,7 +306,7 @@ public class ModelDBC extends ModelBase {
                     // it wasnt this?
                     //TODO DBC EYE LEFT IS RIGHT AND RIGHT IS LEFT, GOTTA SWITCH THEM FOR OVERLAYS TOO
                     if (!isBerserk && !hasPupils) {
-                        if (!faceData.disabled(Part.LeftEye, display.eyeType)) {
+                        if (!disabledParts.contains(Part.LeftEye)) {
                             ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
                             String texture = getFaceTexture(display, "l" + display.eyeType);
                             ClientProxy.bindTexture(new ResourceLocation(texture));
@@ -319,7 +319,7 @@ public class ModelDBC extends ModelBase {
                             GL11.glPopMatrix();
                         }
 
-                        if (!faceData.disabled(Part.RightEye, display.eyeType)) {
+                        if (!disabledParts.contains(Part.RightEye)) {
                             ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
                             String texture = getFaceTexture(display, "r" + display.eyeType);
                             ClientProxy.bindTexture(new ResourceLocation(texture));

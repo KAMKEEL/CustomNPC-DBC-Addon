@@ -20,9 +20,9 @@ import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.form.FacePartData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
-import kamkeel.npcdbc.data.form.FacePartData;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
 import kamkeel.npcdbc.data.overlay.OverlayManager;
@@ -42,10 +42,7 @@ import noppes.npcs.entity.data.ModelPartData;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class DBCDisplay implements IDBCDisplay, IAuraData {
 
@@ -445,6 +442,13 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
     public void setFurType(int furType) {
         this.furType = Math.max(0, Math.min(2, furType));
+    }
+
+    /// //////////////////////////////////////////
+    /// //////////////////////////////////////////
+    // FacePartData
+    public Set<FacePartData.Part> getDisabledFaceParts() {
+        return FacePartData.getDisabledParts(faceData,getForm(),cachedOverlays,eyeType);
     }
 
     /// //////////////////////////////////////////
