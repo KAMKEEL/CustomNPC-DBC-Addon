@@ -117,6 +117,13 @@ public class OverlayContext {
         return isNPC ? display.eyeType : JRMCoreH.dnsEyes(dbcData.DNS);
     }
 
+    public boolean eyebrows() {
+        if (form() != null)
+            return form.display.hasEyebrows;
+
+        return isNPC ? display.hasEyebrows : true;
+    }
+
     public int furType() {
         if (form() != null)
             return form.display.furType;

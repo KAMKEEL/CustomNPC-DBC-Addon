@@ -14,6 +14,7 @@ public class DBCOverlays {
     public static final OverlayChain SSJ4_FUR = OverlayChain.create("SSJ4 Fur");
     public static final OverlayChain OOZARU = OverlayChain.create("Oozaru");
     public static final OverlayChain SSJ4_FACE = OverlayChain.create("SSJ4 Face");
+    public static final OverlayChain SSJ3_FACE = OverlayChain.create("SSJ3 Face");
     public static final OverlayChain PUPILS = OverlayChain.create("Pupils");
 
     static {
@@ -32,6 +33,12 @@ public class DBCOverlays {
         SSJ4_FACE.add(RightEye, Eye, (ctx) -> format(HD("%s/%s/face_%s/ssj4eyeright.png"), ctx.furDir(), ctx.genderDir(), ctx.eyeType()));
         SSJ4_FACE.disable(Part.Eyebrows, Part.EyeWhite, Part.LeftEye, Part.RightEye);
 
+        SSJ3_FACE.add(Face, BodyCM, (ctx) -> format(HD("ssj3/%s/face_%s/ssj3shade.png"), ctx.genderDir(), ctx.eyeType()));
+        SSJ3_FACE.add(EyeWhite, 0xFFFFFF, (ctx) -> format(HD("ssj3/%s/face_%s/ssj3eyewhite.png"), ctx.genderDir(), ctx.eyeType()));
+        SSJ3_FACE.add(Eyebrows, Fur, (ctx) -> format(HD("ssj3/%s/face_%s/ssj3brows.png"), ctx.genderDir(), ctx.eyeType()));
+        SSJ3_FACE.add(LeftEye, Eye, (ctx) -> format(HD("ssj3/%s/face_%s/ssj3eyeleft.png"), ctx.genderDir(), ctx.eyeType()));
+        SSJ3_FACE.add(RightEye, Eye, (ctx) -> format(HD("ssj3/%s/face_%s/ssj3eyeright.png"), ctx.genderDir(), ctx.eyeType()));
+        SSJ3_FACE.disable(Part.Eyebrows, Part.EyeWhite, Part.LeftEye, Part.RightEye);
 
         PUPILS.add(LeftEye, Eye, (ctx) -> OVERLAY_DIR + format("eyespupils/left/left_eye_%s.png", ctx.eyeType()));
         PUPILS.add(RightEye, Eye, (ctx) -> OVERLAY_DIR + format("eyespupils/right/right_eye_%s.png", ctx.eyeType()));

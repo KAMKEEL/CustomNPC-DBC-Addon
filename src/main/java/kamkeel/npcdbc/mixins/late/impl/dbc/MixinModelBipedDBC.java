@@ -150,7 +150,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                     //completely disable face rendering when ssj4, so I could render my own on top of a blank slate
                     if (form.display.hairType.equals("ssj4")) {
                         if (HD && form.display.hasEyebrows && !ClientConstants.renderingMajinSE)
-                            disableFace(hair, ci);
+                            disableFacePart(hair, "FULLEYES", ci);
                         if (isHairPreset(hair))
                             ci.cancel();
                     } else if (form.display.hairType.equals("oozaru")) {
@@ -171,12 +171,12 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 }
 
                 // disable face for hd ssj3 brows
-                if ((isSSJ3 || !form.display.hasEyebrows) && HD) {
-                    disableFace(hair, ci);
-                }
-
-                if (HD && usesHumanBody && !isSSJ3 && !isMonke && form.display.hasPupils) {
-                    disableFacePart(hair, "EYES", ci);
+                if (HD && usesHumanBody && form.display.hasPupils && !isMonke) {
+                    if (isSSJ3 || !form.display.hasEyebrows) {
+                        disableFacePart(hair, "FULLEYES", ci);
+                    } else {
+                        disableFacePart(hair, "EYES", ci);
+                    }
                 }
 
                 //render brows
@@ -330,8 +330,8 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     @Unique
     public void disableFace(String faceType, CallbackInfoReturnable<String> ci) {
         if (
-            (faceType.contains("FACENOSE") && !Utility.stackTraceContains("renderSSJ4Face") && !Utility.stackTraceContains("renderSSJ3Face")) ||
-            (faceType.contains("FACEMOUTH") && !Utility.stackTraceContains("renderSSJ4Face") && !Utility.stackTraceContains("renderSSJ3Face")) ||
+            faceType.contains("FACENOSE")  ||
+            faceType.contains("FACEMOUTH") ||
             faceType.contains("EYEBROW") ||
             (faceType.contains("EYEBASE") && !Utility.stackTraceContains("renderOozaru")) ||
             faceType.contains("EYELEFT") ||
@@ -343,8 +343,16 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     public void disableFacePart(String faceType, String facePart, CallbackInfoReturnable<String> ci) {
         if (
             facePart.equals("EYES") &&
-            (faceType.contains(FacePartData.Part.RightEye.getPartId()) ||
-            faceType.contains(FacePartData.Part.LeftEye.getPartId()))
+            (faceType.contains(Part.RightEye.getPartId()) ||
+            faceType.contains(Part.LeftEye.getPartId()))
+        ) {
+            ci.setReturnValue("");
+        } else if (
+            facePart.equals("FULLEYES") &&
+            (faceType.contains(Part.RightEye.getPartId()) ||
+            faceType.contains(Part.LeftEye.getPartId()) ||
+            faceType.contains(Part.Eyebrows.getPartId()) ||
+            faceType.contains(Part.EyeWhite.getPartId()))
         ) {
             ci.setReturnValue("");
         } else if (faceType.contains(facePart)){
