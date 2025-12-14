@@ -12,7 +12,7 @@ import static kamkeel.npcdbc.data.overlay.Overlay.Type.*;
 public class DBCOverlays {
 
     public static final OverlayChain SSJ4_FUR = OverlayChain.create("SSJ4 Fur");
-    public static final OverlayChain OOZARU = OverlayChain.create("Oozaru");
+    public static final OverlayChain OOZARU_FUR = OverlayChain.create("Oozaru");
     public static final OverlayChain SSJ4_FACE = OverlayChain.create("SSJ4 Face");
     public static final OverlayChain PUPILS = OverlayChain.create("Pupils");
 
@@ -20,8 +20,8 @@ public class DBCOverlays {
         SSJ4_FUR.add(ALL, Fur, (ctx) -> path("ssj4/ss4b" + ctx.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
 
 
-        OOZARU.add(ALL, BodyCM, path("oozaru/oozaru1.png", "jinryuudragonbc:cc/oozaru1.png"));
-        OOZARU.add(ALL, Fur, path("oozaru/oozaru2.png", "jinryuudragonbc:cc/oozaru2.png"));
+        OOZARU_FUR.add(ALL, BodyCM, path("oozaru/oozaru1.png", "jinryuudragonbc:cc/oozaru1.png"));
+        OOZARU_FUR.add(ALL, Fur, path("oozaru/oozaru2.png", "jinryuudragonbc:cc/oozaru2.png"));
 
 
         SSJ4_FACE.add(Face, BodyCM, (ctx) -> format(HD("%s/%s/face_%s/ssj4shade.png"), ctx.furDir(), ctx.genderDir(), ctx.eyeType()));

@@ -7,7 +7,6 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.part.*;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
-import kamkeel.npcdbc.client.render.DBCOverlays;
 import kamkeel.npcdbc.client.render.OverlayModelRenderer;
 import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -47,7 +46,6 @@ import static java.lang.String.format;
 
 import static kamkeel.npcdbc.client.render.DBCOverlays.*;
 import static kamkeel.npcdbc.data.form.FacePartData.Part;
-import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.*;
 import static kamkeel.npcdbc.data.overlay.Overlay.Type;
 import static kamkeel.npcdbc.data.overlay.Overlay.Type.*;
 
@@ -469,7 +467,7 @@ public class ModelDBC extends ModelBase {
 
         /* ───────── Fur / Body Overlays ───────── */
         if (oozaru)
-            chains.add(OOZARU);
+            chains.add(OOZARU_FUR);
 
         if (ssj4 || ctx.hasFur())
             chains.add(SSJ4_FUR);
