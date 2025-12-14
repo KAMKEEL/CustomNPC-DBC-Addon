@@ -54,6 +54,13 @@ public final class OverlayModelRenderer {
         GL11.glPopMatrix();
     }
 
+    private static void renderEyes(OverlayContext ctx, boolean right) {
+        if (ctx.berserk())
+            return;
+
+        renderHead(ctx);
+    }
+
     /* ─────────────────────────────
      * ARMS
      * ───────────────────────────── */
@@ -246,8 +253,8 @@ public final class OverlayModelRenderer {
         /* ───────── Overlay Type -> Render Functions ───────── */
         MODEL_MAP.put(Type.Eyebrows, ctx -> renderHead(ctx));
         MODEL_MAP.put(Type.EyeWhite, ctx -> renderHead(ctx));
-        MODEL_MAP.put(Type.LeftEye, ctx -> renderHead(ctx));
-        MODEL_MAP.put(Type.RightEye, ctx -> renderHead(ctx));
+        MODEL_MAP.put(Type.RightEye, ctx -> renderEyes(ctx, true));
+        MODEL_MAP.put(Type.LeftEye, ctx -> renderEyes(ctx, false));
         MODEL_MAP.put(Type.Nose, ctx -> renderHead(ctx));
         MODEL_MAP.put(Type.Mouth, ctx -> renderHead(ctx));
         MODEL_MAP.put(Type.Face, ctx -> renderHead(ctx));

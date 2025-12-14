@@ -183,6 +183,13 @@ public class OverlayContext {
         return isNPC ? display.hasPupils : false;
     }
 
+    public boolean berserk() {
+        if (form() != null)
+            return form.display.isBerserk;
+
+        return false;
+    }
+
     public List<OverlayChain> getOverlayChains() {
         return isNPC ? display.getOverlayChains() : dbcData.getOverlayChains();
     }
