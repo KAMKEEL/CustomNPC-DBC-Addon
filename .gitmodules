@@ -1,0 +1,4 @@
+[submodule "janino"]
+	path = janino
+	url = https://github.com/somehussar/JaninoLoader.git
+	branch = dev

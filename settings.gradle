@@ -19,3 +19,10 @@ pluginManagement {
 plugins {
     id 'com.gtnewhorizons.gtnhsettingsconvention' version '1.0.14'
 }
+
+
+include(":janino")
+include(":annotationProcessor")
+project(":annotationProcessor").projectDir = file("janino/annotationProcessor")
+
+

@@ -42,6 +42,13 @@ dependencies {
     devOnlyNonPublishable(rfg.deobf(project.files("lib/JBRA-Client-v1.6.52.jar")))
     devOnlyNonPublishable(rfg.deobf(project.files("lib/JFamilyC-v1.2.18.jar")))
 
+    implementation(project(":janino"))
+    implementation(project(":annotationProcessor"))
+    annotationProcessor(project(":annotationProcessor"))
+
+
+
+
     // Make sure to comment this out if you're using an actual copy of EDE.
     //
     // If not, keep this in because this is just a *mostly* empty jar only used for grabbing the right

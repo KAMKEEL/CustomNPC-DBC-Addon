@@ -464,6 +464,8 @@ public class ModelDBC extends ModelBase {
         boolean ssj3 = ctx.hairType("ssj3");
         boolean ssj4 = ctx.hairType("ssj4");
         boolean oozaru = ctx.hairType("oozaru");
+        boolean pupils = ctx.pupils();
+        boolean eyebrows = ctx.eyebrows();
 
         /* ───────── Fur / Body Overlays ───────── */
         if (oozaru)
@@ -476,7 +478,9 @@ public class ModelDBC extends ModelBase {
         if (HD()) {
             if (ssj4)
                 chains.add(SSJ4_FACE);
-            else if (ctx.pupils() && !oozaru)
+            else if (ssj3 || (!eyebrows && pupils))
+                chains.add(SSJ3_FACE);
+            else if (pupils && !oozaru)
                 chains.add(PUPILS);
         }
 
