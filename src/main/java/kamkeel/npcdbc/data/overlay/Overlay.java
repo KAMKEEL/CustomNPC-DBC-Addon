@@ -39,9 +39,9 @@ public class Overlay {
 
     @SideOnly(Side.CLIENT)
     public String applyTexture(OverlayContext ctx) {
-        String scriptTexture = chain.scriptContainer.call(f -> f.applyTexture(ctx));
-        if (scriptTexture != null)
-            return scriptTexture;
+        String script = chain.scriptContainer.call(f -> f.applyTexture(ctx));
+        if (script != null)
+            return script;
 
         return applyTexture.applyTexture(ctx);
     }
@@ -53,9 +53,9 @@ public class Overlay {
 
     @SideOnly(Side.CLIENT)
     public Color applyColor(OverlayContext ctx) {
-        Color color = chain.scriptContainer.call(f -> f.applyColor(ctx));
-        if (color != null)
-            return color;
+        Color script = chain.scriptContainer.call(f -> f.applyColor(ctx));
+        if (script != null)
+            return script;
 
         if (applyColor != null)
             return applyColor.applyColor(ctx);

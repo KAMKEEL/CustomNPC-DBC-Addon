@@ -17,7 +17,6 @@ import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.form.FacePartData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
-
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.npc.KiWeaponData;
 import kamkeel.npcdbc.data.overlay.Overlay;
@@ -33,7 +32,6 @@ import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.ClientProxy;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.constants.EnumAnimation;
-import noppes.npcs.controllers.ScriptContainer;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.data.ModelScalePart;
 import org.lwjgl.opengl.GL11;
@@ -44,7 +42,6 @@ import java.util.List;
 import java.util.Set;
 
 import static java.lang.String.format;
-
 import static kamkeel.npcdbc.client.render.DBCOverlays.*;
 import static kamkeel.npcdbc.data.form.FacePartData.Part;
 import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.*;
@@ -517,13 +514,11 @@ public class ModelDBC extends ModelBase {
             if (!chain.isEnabled() || chain.condition != null && !chain.checkCondition(ctx))
                 continue;
 
-            if (chain.scriptHandler != null && chain.scriptHandler.container != null) {
-                ScriptContainer cont = chain.scriptHandler.container;
-                int x = 10;
-            }
 
             for (Overlay overlay : chain.overlays) {
                 ctx.overlay = overlay;
+                overlay.chain = chain;
+
                 if (!overlay.isEnabled() || overlay.condition != null && !overlay.checkCondition(ctx))
                     continue;
 
@@ -535,8 +530,9 @@ public class ModelDBC extends ModelBase {
                 else
                     ctx.texture = overlay.getTexture();
 
-                if (overlay.applyTexture != null)
-                    ctx.texture = overlay.applyTexture(ctx);
+                String textureFunction = overlay.applyTexture(ctx);
+                if (textureFunction != null)
+                    ctx.texture = textureFunction;
 
                 if (!bindTexture(ctx.texture))
                     continue;
@@ -544,8 +540,9 @@ public class ModelDBC extends ModelBase {
                 /* ───────── Colors ───────── */
                 ctx.color = ctx.color(overlay.colorType);
 
-                if (overlay.applyColor != null)
-                    ctx.color = overlay.applyColor(ctx);
+                Color colorFunction = overlay.applyColor(ctx);
+                if (colorFunction != null)
+                    ctx.color = colorFunction;
 
                 /* ───────── Glow ───────── */
                 boolean glow = overlay.isGlow();
