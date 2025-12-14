@@ -5,6 +5,8 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.relauncher.Side;
+import io.github.somehussar.janinoloader.api.IDynamicCompiler;
+import io.github.somehussar.janinoloader.api.IDynamicCompilerBuilder;
 import kamkeel.npcdbc.config.LoadConfiguration;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.DBCProfileData;
@@ -35,6 +37,7 @@ public class CustomNpcPlusDBC {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent ev) {
+        IDynamicCompiler compiler = IDynamicCompilerBuilder.createBuilder().getCompiler();
         proxy.preInit(ev);
         addonConfig = ev.getModConfigurationDirectory() + File.separator + "CustomNpcPlus" + File.separator + "dbc" + File.separator;
         LoadConfiguration.init(addonConfig);
