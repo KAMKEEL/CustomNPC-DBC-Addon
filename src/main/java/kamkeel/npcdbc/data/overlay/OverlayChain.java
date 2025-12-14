@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.data.form.FacePartData;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
+import noppes.npcs.controllers.data.EffectScript;
 
 import java.util.*;
 import java.util.function.Function;
@@ -19,6 +20,8 @@ public class OverlayChain {
     public Set<FacePartData.Part> disabledParts = new HashSet<>();
 
     public Function<OverlayContext, Boolean> condition;
+
+    public OverlayScript scriptHandler = new OverlayScript();
 
     public OverlayChain() {
     }
@@ -186,6 +189,10 @@ public class OverlayChain {
                     disabledParts.add(values[ordinal]);
             }
         }
+
+        if (compound.hasKey("ScriptData", Constants.NBT.TAG_COMPOUND)) {
+            scriptHandler.readFromNBT(compound.getCompoundTag("ScriptData"));
+        }
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -204,6 +211,11 @@ public class OverlayChain {
                 arr[i++] = (byte) t.ordinal();
             compound.setByteArray("disabledParts", arr);
         }
+
+        NBTTagCompound scriptData = new NBTTagCompound();
+        if (scriptHandler != null)
+            scriptHandler.writeToNBT(scriptData);
+        compound.setTag("ScriptData", scriptData);
 
         compound.setTag("overlayData", rendering);
         return compound;

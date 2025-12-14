@@ -5,6 +5,9 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.relauncher.Side;
+import io.github.somehussar.janinoloader.api.IDynamicCompiler;
+import io.github.somehussar.janinoloader.api.IDynamicCompilerBuilder;
+import io.github.somehussar.janinoloader.api.delegates.LoadClassCondition;
 import kamkeel.npcdbc.config.LoadConfiguration;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.DBCProfileData;
@@ -14,6 +17,7 @@ import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcs.controllers.ProfileController;
 
 import java.io.File;
+import java.net.URL;
 
 @Mod(
     modid = CustomNpcPlusDBC.ID,
@@ -76,6 +80,18 @@ public class CustomNpcPlusDBC {
 
     public static Side side() {
         return FMLCommonHandler.instance().getEffectiveSide();
+    }
+
+
+    private static IDynamicCompiler jls;
+
+    public static IDynamicCompiler getClientCompiler() {
+        LoadClassCondition filter = (name)->!name.startsWith("java.lang"); //anything that's NOT java.lang is blacklisted
+        if (jls == null) {
+            jls = IDynamicCompilerBuilder.createBuilder().setClassFilter(filter).getCompiler();
+        }
+
+        return jls;
     }
 
 

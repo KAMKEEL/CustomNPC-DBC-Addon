@@ -33,6 +33,7 @@ import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.ClientProxy;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.constants.EnumAnimation;
+import noppes.npcs.controllers.ScriptContainer;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.data.ModelScalePart;
 import org.lwjgl.opengl.GL11;
@@ -46,6 +47,7 @@ import static java.lang.String.format;
 
 import static kamkeel.npcdbc.client.render.DBCOverlays.*;
 import static kamkeel.npcdbc.data.form.FacePartData.Part;
+import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.*;
 import static kamkeel.npcdbc.data.overlay.Overlay.Type;
 import static kamkeel.npcdbc.data.overlay.Overlay.Type.*;
 
@@ -514,6 +516,11 @@ public class ModelDBC extends ModelBase {
             ctx.chain = chain;
             if (!chain.isEnabled() || chain.condition != null && !chain.checkCondition(ctx))
                 continue;
+
+            if (chain.scriptHandler != null && chain.scriptHandler.container != null) {
+                ScriptContainer cont = chain.scriptHandler.container;
+                int x = 10;
+            }
 
             for (Overlay overlay : chain.overlays) {
                 ctx.overlay = overlay;

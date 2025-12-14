@@ -39,7 +39,7 @@ public class Overlay {
 
     @SideOnly(Side.CLIENT)
     public String applyTexture(OverlayContext ctx) {
-        return applyTexture.invoke(ctx);
+        return applyTexture.applyTexture(ctx);
     }
 
     public Overlay color(ColorFunction function) {
@@ -49,7 +49,7 @@ public class Overlay {
 
     @SideOnly(Side.CLIENT)
     public Color applyColor(OverlayContext ctx) {
-        return applyColor.invoke(ctx);
+        return applyColor.applyColor(ctx);
     }
 
     public Overlay renderer(RenderFunction function) {
@@ -446,11 +446,11 @@ public class Overlay {
     }
 
     public interface TextureFunction {
-        String invoke(OverlayContext ctx);
+        String applyTexture(OverlayContext ctx);
     }
 
     public interface ColorFunction {
-        Color invoke(OverlayContext ctx);
+        Color applyColor(OverlayContext ctx);
     }
 
     public interface RenderFunction {

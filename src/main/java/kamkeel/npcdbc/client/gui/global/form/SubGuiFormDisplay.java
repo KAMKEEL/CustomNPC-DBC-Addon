@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
 import kamkeel.npcdbc.api.aura.IAura;
+import kamkeel.npcdbc.client.gui.component.GuiOverlayScript;
 import kamkeel.npcdbc.client.gui.component.SubGuiFormFaceParts;
 import kamkeel.npcdbc.client.gui.component.SubGuiOverlays;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectAura;
@@ -28,12 +29,14 @@ import java.awt.*;
 import java.awt.datatransfer.*;
 
 import static JinRyuu.JRMCore.JRMCoreH.dnsHairG1toG2;
+import static JinRyuu.JRMCore.JRMCoreH.p;
 
 public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener, ITextfieldListener, ClipboardOwner {
     private final String[] arrRace = new String[]{"display.human", "display.saiyan", "display.halfsaiyan", "display.namekian", "display.arcosian", "display.majin"};
     private final String[] arcoForms = new String[]{"display.arcofirst", "display.arcosecond", "display.arcothird", "display.arcofinal", "display.arcoultimatecooler", "display.arcogoldenform"};
     private final String[] hairTypes = new String[]{"display.base", "display.ssj", "display.ssj2", "display.ssj3", "display.ssj4", "display.oozaru", "display.raditz"};
     private final GuiNpcFormMenu menu;
+    public final GuiNPCManageForms parent;
     public Form form;
     public FormDisplay display;
     public OverlayChain overlays;
@@ -57,6 +60,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     public SubGuiFormDisplay(GuiNPCManageForms parent, Form form) {
         menu = new GuiNpcFormMenu(parent, this, -2, form);
 
+        this.parent = parent;
         this.npc = (EntityCustomNpc) parent.npc;
         this.form = parent.form;
         this.display = parent.display;
@@ -269,6 +273,11 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         window.addButton(new GuiNpcButton(118, width - x - 75, y - 5, 50, 20, "Edit"));
         window.getButton(118).enabled = overlays.enabled;
 
+        y += 30;
+        window.addButton(new GuiNpcButton(-2, x + 64, y - 5, 40, 20, "script.scripts"));
+
+        System.out.println();
+
 
         window.maxScrollY = (y - height) + 20 + 5;
     }
@@ -363,6 +372,15 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     @Override
     protected void actionPerformed(GuiButton btn) {
         GuiNpcButton button = (GuiNpcButton) btn;
+
+        if (button.id == -2) {
+            //    PacketClient.sendClient(new EffectSavePacket(effect.writeToNBT(false), originalName));
+            GuiOverlayScript scriptGUI = new GuiOverlayScript(this.parent, overlays);
+            scriptGUI.setWorldAndResolution(mc, width, height);
+            mc.currentScreen = scriptGUI;
+            scriptGUI.initGui();
+        }
+
         if (button.id == 1) {
             if (form.getRace() == DBCRace.ALL_SAIYANS) {
                 if (racePage == DBCRace.SAIYAN) {
@@ -538,6 +556,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             setSubGui(new SubGuiOverlays(this));
             updateButtons();
         }
+
 
         // Hair Clear
         if (button.id == 103) {
