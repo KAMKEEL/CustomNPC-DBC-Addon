@@ -28,17 +28,19 @@ public class DBCOverlays {
         OOZARU_FUR.add(ALL, Fur, path("oozaru/oozaru2.png", "jinryuudragonbc:cc/oozaru2.png"));
 
 
-        TexturePath SSJ4_PATH = (ctx, path) -> format("%s/%s/face_%s/%s.png", ctx.furDir(), ctx.genderDir(), ctx.eyeType(), path);
-        SSJ4_FACE.add(Face, BodyCM, ctx -> SSJ4_PATH.get(ctx, "ssj4shade.png"));
+        TexturePath SSJ4_PATH = (ctx, path) -> HDDir + format("%s/%s/face_%s/%s.png", ctx.furDir(), ctx.genderDir(), ctx.eyeType(), path);
+        SSJ4_FACE.add(Face, BodyCM, ctx -> SSJ4_PATH.get(ctx, "ssj4shade"));
         SSJ4_FACE.add(EyeWhite, 0xFFFFFF, ctx -> SSJ4_PATH.get(ctx, "ssj4eyewhite"));
         SSJ4_FACE.add(Eyebrows, Fur, ctx -> SSJ4_PATH.get(ctx, "ssj4brows"));
         SSJ4_FACE.add(Eyebrows, Hair, ctx -> SSJ4_PATH.get(ctx, "ssj4brows2"));
         SSJ4_FACE.add(LeftEye, Eye, ctx -> SSJ4_PATH.get(ctx, "ssj4eyeleft"));
         SSJ4_FACE.add(RightEye, Eye, ctx -> SSJ4_PATH.get(ctx, "ssj4eyeright"));
+        SSJ4_FACE.add(LeftEye, 0xFFFFFF, ctx -> SSJ4_PATH.get(ctx, "ssj4glowleft")).condition(OverlayContext::furDaima);
+        SSJ4_FACE.add(RightEye, 0xFFFFFF, ctx -> SSJ4_PATH.get(ctx, "ssj4glowright")).condition(OverlayContext::furDaima);
         SSJ4_FACE.disable(Part.Eyebrows, Part.EyeWhite, Part.LeftEye, Part.RightEye);
 
 
-        TexturePath SSJ3_PATH = (ctx, path) -> format("ssj3/%s/face_%s/%s.png", ctx.genderDir(), ctx.eyeType(), path);
+        TexturePath SSJ3_PATH = (ctx, path) -> HDDir + format("ssj3/%s/face_%s/%s.png", ctx.genderDir(), ctx.eyeType(), path);
         SSJ3_FACE.add(Face, BodyCM, ctx -> SSJ3_PATH.get(ctx, "ssj3shade"));
         SSJ3_FACE.add(EyeWhite, 0xFFFFFF, ctx -> SSJ3_PATH.get(ctx, "ssj3eyewhite"));
         SSJ3_FACE.add(Eyebrows, Fur, ctx -> SSJ3_PATH.get(ctx, "ssj3brows"));
@@ -47,7 +49,7 @@ public class DBCOverlays {
         SSJ3_FACE.disable(Part.Eyebrows, Part.EyeWhite, Part.LeftEye, Part.RightEye);
 
 
-        TexturePath PUPILS_PATH = (ctx, path) -> OVERLAY_DIR + format("eyespupils/%s_%s.png", path, ctx.eyeType());
+        TexturePath PUPILS_PATH = (ctx, path) -> OVERLAY_DIR + format("eyespupils/%s_%s_%s.png", path, ctx.eyeType(), ctx.female() ? "f" : "m");
         PUPILS.add(LeftEye, Eye, ctx -> PUPILS_PATH.get(ctx, "left/left_eye"));
         PUPILS.add(RightEye, Eye, ctx -> PUPILS_PATH.get(ctx, "right/right_eye"));
         PUPILS.disable(Part.LeftEye, Part.RightEye);
