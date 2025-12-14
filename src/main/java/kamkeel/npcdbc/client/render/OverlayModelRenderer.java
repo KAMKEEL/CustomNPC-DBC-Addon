@@ -2,6 +2,7 @@ package kamkeel.npcdbc.client.render;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.ModelBipedBody;
+import kamkeel.npcdbc.data.overlay.Overlay.RenderFunction;
 import kamkeel.npcdbc.data.overlay.Overlay.Type;
 import kamkeel.npcdbc.data.overlay.OverlayContext;
 import net.minecraft.util.MathHelper;
@@ -280,14 +281,13 @@ public final class OverlayModelRenderer {
         if (ctx.typeDisabled(type))
             return;
 
+        if (ctx.overlay.renderer != null) {
+            ctx.overlay.render(ctx); //Custom Renderer
+            return;
+        }
+
         RenderFunction fn = MODEL_MAP.get(type);
         if (fn != null)
             fn.render(ctx);
     }
-
-    @FunctionalInterface
-    public interface RenderFunction {
-        void render(OverlayContext ctx);
-    }
-
 }

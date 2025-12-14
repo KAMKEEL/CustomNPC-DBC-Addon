@@ -21,6 +21,7 @@ public class Overlay {
 
     public TextureFunction applyTexture;
     public ColorFunction applyColor;
+    public RenderFunction renderer;
     public Function<OverlayContext, Boolean> condition;
 
     public Overlay() {
@@ -49,6 +50,16 @@ public class Overlay {
     @SideOnly(Side.CLIENT)
     public Color applyColor(OverlayContext ctx) {
         return applyColor.invoke(ctx);
+    }
+
+    public Overlay renderer(RenderFunction function) {
+        renderer = function;
+        return this;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void render(OverlayContext ctx) {
+        renderer.render(ctx);
     }
 
     public Overlay condition(Function<OverlayContext, Boolean> condition) {
@@ -440,5 +451,9 @@ public class Overlay {
 
     public interface ColorFunction {
         Color invoke(OverlayContext ctx);
+    }
+
+    public interface RenderFunction {
+        void render(OverlayContext ctx);
     }
 }
