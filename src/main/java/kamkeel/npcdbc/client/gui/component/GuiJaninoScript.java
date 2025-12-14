@@ -1,41 +1,15 @@
 package kamkeel.npcdbc.client.gui.component;
 
-import kamkeel.npcdbc.client.gui.global.form.GuiNPCManageForms;
-import kamkeel.npcdbc.client.gui.global.form.SubGuiFormDisplay;
-import kamkeel.npcdbc.data.overlay.OverlayChain;
+import kamkeel.npcdbc.data.overlay.JaninoScript;
 import kamkeel.npcdbc.data.overlay.OverlayScript;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiConfirmOpenLink;
-import net.minecraft.client.gui.GuiYesNo;
-import net.minecraft.client.gui.GuiYesNoCallback;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.client.gui.*;
 import net.minecraft.util.StatCollector;
-import noppes.npcs.NBTTags;
 import noppes.npcs.NoppesStringUtils;
-import noppes.npcs.client.gui.util.GuiCustomScroll;
-import noppes.npcs.client.gui.util.GuiMenuTopButton;
-import noppes.npcs.client.gui.util.GuiNPCInterface;
-import noppes.npcs.client.gui.util.GuiNpcButton;
-import noppes.npcs.client.gui.util.GuiNpcLabel;
-import noppes.npcs.client.gui.util.GuiNpcTextArea;
-import noppes.npcs.client.gui.util.GuiNpcTextField;
-import noppes.npcs.client.gui.util.GuiScriptTextArea;
-import noppes.npcs.client.gui.util.ICustomScrollListener;
-import noppes.npcs.client.gui.util.IGuiData;
-import noppes.npcs.client.gui.util.IJTextAreaListener;
-import noppes.npcs.client.gui.util.ITextChangeListener;
-import noppes.npcs.client.gui.util.ITextfieldListener;
-import noppes.npcs.controllers.ScriptContainer;
+import noppes.npcs.client.gui.util.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class GuiOverlayScript extends GuiNPCInterface implements GuiYesNoCallback, IGuiData, ITextChangeListener, ICustomScrollListener, IJTextAreaListener, ITextfieldListener {
+public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback, ITextChangeListener, ICustomScrollListener, IJTextAreaListener, ITextfieldListener {
 
     private int activeTab = 0;
     public Map<String, List<String>> languages = new HashMap();
@@ -43,26 +17,24 @@ public class GuiOverlayScript extends GuiNPCInterface implements GuiYesNoCallbac
     public List<String> hookList = new ArrayList();
     public String previousHookClicked = "";
 
-    public final GuiNPCManageForms parent;
-    public final OverlayChain overlay;
-    private final OverlayScript scriptHandler;
+    public final GuiScreen parent;
+    private final JaninoScript container;
     boolean loaded = false;
 
-    public GuiOverlayScript(GuiNPCManageForms parent, OverlayChain overlay) {
+    public GuiJaninoScript(GuiScreen parent, JaninoScript handler) {
         this.drawDefaultBackground = true;
         this.closeOnEsc = true;
         this.xSize = 420;
         this.setBackground("menubg.png");
 
         this.parent = parent;
-        this.overlay = overlay;
-        this.scriptHandler = overlay.scriptHandler;
+        this.container = handler;
 
         for (OverlayScript.ScriptType type : OverlayScript.ScriptType.values()) {
             this.hookList.add(type.function);
         }
 
-        // overlayScriptPacket.Get(overlay.id);
+        // EffectScriptPacket.Get(overlay.id);
     }
 
     public void initGui() {
@@ -82,7 +54,7 @@ public class GuiOverlayScript extends GuiNPCInterface implements GuiYesNoCallbac
         int topYoffset = 0;
 
 
-        if (this.scriptHandler.container != null) {
+        if (this.container != null) {
             this.addTopButton(top = new GuiMenuTopButton(1, top.xPosition + top.width + topXoffset, top.yPosition + topYoffset, "Script"));
         } else {
             this.addTopButton(new GuiMenuTopButton(this.scriptLimit, top.xPosition + top.width, top.yPosition, "+"));
@@ -107,7 +79,7 @@ public class GuiOverlayScript extends GuiNPCInterface implements GuiYesNoCallbac
             GuiNpcLabel hookLabel = new GuiNpcLabel(0, "script.hooks", hooks.guiLeft, this.guiTop + 5);
             hookLabel.color = 11184810;
             this.addLabel(hookLabel);
-            ScriptContainer container = this.scriptHandler.container;
+            JaninoScript container = this.container;
             GuiScriptTextArea ta = new GuiScriptTextArea(this, 2, this.guiLeft + 1 + yoffset, this.guiTop + yoffset, this.xSize - 108 - yoffset, (int) ((double) this.ySize * 0.96) - yoffset * 2, container == null ? "" : container.script);
             ta.enableCodeHighlighting();
             ta.setListener(this);
@@ -126,7 +98,7 @@ public class GuiOverlayScript extends GuiNPCInterface implements GuiYesNoCallbac
             scroll.guiLeft = left1;
             scroll.guiTop = this.guiTop + 88 + yoffset;
             if (container != null) {
-                scroll.setList(container.scripts);
+                // scroll.setList(container.scripts);
             }
 
             this.addScroll(scroll);
@@ -138,10 +110,11 @@ public class GuiOverlayScript extends GuiNPCInterface implements GuiYesNoCallbac
             this.addButton(new GuiNpcButton(100, var9, this.guiTop + 125, 60, 20, "gui.copy"));
             this.addButton(new GuiNpcButton(102, var9, this.guiTop + 146, 60, 20, "gui.clear"));
             this.addLabel(new GuiNpcLabel(1, "script.language", var9, this.guiTop + 15));
-            this.addButton(new GuiNpcButton(103, var9 + 60, this.guiTop + 10, 80, 20, this.languages.keySet().toArray(new String[this.languages.keySet().size()]), this.getScriptIndex()));
-            this.getButton(103).enabled = !this.languages.isEmpty();
+            this.addButton(new GuiNpcButton(103, var9 + 60, this.guiTop + 10, 80, 20, new String[]{container.getLanguage()},
+                this.getScriptIndex()));
+            // this.getButton(103).enabled = !this.languages.isEmpty();
             this.addLabel(new GuiNpcLabel(2, "gui.enabled", var9, this.guiTop + 36));
-            this.addButton(new GuiNpcButton(104, var9 + 60, this.guiTop + 31, 50, 20, new String[]{"gui.no", "gui.yes"}, this.scriptHandler.getEnabled() ? 1 : 0));
+            this.addButton(new GuiNpcButton(104, var9 + 60, this.guiTop + 31, 50, 20, new String[]{"gui.no", "gui.yes"}, this.container.getEnabled() ? 1 : 0));
 
             this.addButton(new GuiNpcButton(109, var9, this.guiTop + 78, 80, 20, "gui.website"));
             this.addButton(new GuiNpcButton(112, var9 + 81, this.guiTop + 78, 80, 20, "gui.forum"));
@@ -157,12 +130,16 @@ public class GuiOverlayScript extends GuiNPCInterface implements GuiYesNoCallbac
         String hook = scroll.getSelected();
         if (this.previousHookClicked.equals(hook)) {
             String addString = "";
-            if (!this.getTextField(2).getText().isEmpty()) {
+            if (!this.getTextField(2)
+                .getText()
+                .isEmpty()) {
                 addString = addString + "\n";
             }
 
             addString = addString + "function " + hook + "(event) {\n    \n}\n";
-            this.getTextField(2).setText(this.getTextField(2).getText() + addString);
+            this.getTextField(2)
+                .setText(this.getTextField(2)
+                    .getText() + addString);
             this.previousHookClicked = "";
         } else {
             this.previousHookClicked = hook;
@@ -173,9 +150,10 @@ public class GuiOverlayScript extends GuiNPCInterface implements GuiYesNoCallbac
     }
 
     private String getConsoleText() {
-        Map<Long, String> map = this.scriptHandler.getConsoleText();
+        Map<Long, String> map = this.container.getConsoleText();
         StringBuilder builder = new StringBuilder();
-        Iterator var3 = map.entrySet().iterator();
+        Iterator var3 = map.entrySet()
+            .iterator();
 
         while (var3.hasNext()) {
             Map.Entry<Long, String> entry = (Map.Entry) var3.next();
@@ -188,11 +166,12 @@ public class GuiOverlayScript extends GuiNPCInterface implements GuiYesNoCallbac
     private int getScriptIndex() {
         int i = 0;
 
-        for (Iterator var2 = this.languages.keySet().iterator(); var2.hasNext(); ++i) {
+        for (Iterator var2 = this.languages.keySet()
+            .iterator(); var2.hasNext(); ++i) {
             String language = (String) var2.next();
-            if (language.equalsIgnoreCase(this.scriptHandler.getLanguage())) {
-                return i;
-            }
+            //  if (language.equalsIgnoreCase(this.scriptHandler.getLanguage())) {
+            //  return i;
+            //}
         }
 
         return 0;
@@ -217,21 +196,22 @@ public class GuiOverlayScript extends GuiNPCInterface implements GuiYesNoCallbac
             }
 
             if (i == 10) {
-                this.scriptHandler.container = null;
+                // this.container.container = null;
                 this.activeTab = 0;
             }
 
             if (i == 101) {
-                this.getTextField(2).setText(NoppesStringUtils.getClipboardContents());
+                this.getTextField(2)
+                    .setText(NoppesStringUtils.getClipboardContents());
                 this.setScript();
             }
 
             if (i == 102) {
                 if (this.activeTab == 1) {
-                    ScriptContainer container = this.scriptHandler.container;
+                    //  ScriptContainer container = this.container.container;
                     container.script = "";
                 } else {
-                    this.scriptHandler.clearConsole();
+                    this.container.clearConsole();
                 }
 
                 this.initGui();
@@ -249,10 +229,10 @@ public class GuiOverlayScript extends GuiNPCInterface implements GuiYesNoCallbac
         }
 
         if (guibutton.id == this.scriptLimit) {
-            if (scriptHandler.container == null)
-                this.scriptHandler.container = new ScriptContainer(this.scriptHandler);
-            else
-                this.setScript();
+            // if (container.container == null)
+            //this.container.container = new ScriptContainer(this.container);
+            //  else
+            // this.setScript();
             this.activeTab = 1;
             this.initGui();
         }
@@ -274,7 +254,8 @@ public class GuiOverlayScript extends GuiNPCInterface implements GuiYesNoCallbac
         }
 
         if (guibutton.id == 100) {
-            NoppesStringUtils.setClipboardContents(this.getTextField(2).getText());
+            NoppesStringUtils.setClipboardContents(this.getTextField(2)
+                .getText());
         }
 
         if (guibutton.id == 101) {
@@ -288,12 +269,8 @@ public class GuiOverlayScript extends GuiNPCInterface implements GuiYesNoCallbac
             this.displayGuiScreen(container1);
         }
 
-        if (guibutton.id == 103) {
-            this.scriptHandler.setLanguage(guibutton.displayString);
-        }
-
         if (guibutton.id == 104) {
-            this.scriptHandler.setEnabled(((GuiNpcButton) guibutton).getValue() == 1);
+            this.container.setEnabled(((GuiNpcButton) guibutton).getValue() == 1);
         }
 
         if (guibutton.id == 105) {
@@ -302,103 +279,53 @@ public class GuiOverlayScript extends GuiNPCInterface implements GuiYesNoCallbac
         }
 
         if (guibutton.id == 107) {
-            ScriptContainer container = this.scriptHandler.container;
+            //ScriptContainer container = this.container.container;
             if (container == null) {
-                container = new ScriptContainer(this.scriptHandler);
-                this.scriptHandler.container = container;
+                //  container = new ScriptContainer(this.container);
+                // this.container.container = container;
             }
 
-            //            this.setSubGui(new EventGuiScriptList((List)this.languages.get(this.script.getLanguage()), container));
+                       // this.setSubGui(new EventGuiScriptList((List)this.languages.get(container.getLanguage()), container));
         }
     }
 
     private void setScript() {
         if (this.activeTab == 1) {
-            ScriptContainer container = this.scriptHandler.container;
-            if (container == null) {
-                container = new ScriptContainer(this.scriptHandler);
-                this.scriptHandler.container = container;
-            }
-
-            String text = this.getTextField(2).getText();
+            String text = this.getTextField(2)
+                .getText();
             text = text.replace("\r\n", "\n");
             text = text.replace("\r", "\n");
             container.script = text;
         }
     }
 
-    public void setGuiData(NBTTagCompound compound) {
-        if (compound.hasKey("LoadComplete")) {
-            loaded = true;
-            return;
-        }
-
-        if (!compound.hasKey("Tab")) {
-            this.scriptHandler.setLanguage(compound.getString("ScriptLanguage"));
-            this.scriptHandler.setEnabled(compound.getBoolean("ScriptEnabled"));
-            this.copiedSetGuiData(compound);
-        } else {
-            int tab = compound.getInteger("Tab");
-            ScriptContainer container = new ScriptContainer(this.scriptHandler);
-            container.readFromNBT(compound.getCompoundTag("Script"));
-            this.scriptHandler.container = container;
-            this.initGui();
-        }
-    }
-
-    private void copiedSetGuiData(NBTTagCompound compound) {
-        NBTTagList data = compound.getTagList("Languages", 10);
-        HashMap languages = new HashMap();
-
-        for (int i = 0; i < data.tagCount(); ++i) {
-            NBTTagCompound comp = data.getCompoundTagAt(i);
-            ArrayList scripts = new ArrayList();
-            NBTTagList list = comp.getTagList("Scripts", 8);
-
-            for (int j = 0; j < list.tagCount(); ++j) {
-                scripts.add(list.getStringTagAt(j));
-            }
-
-            languages.put(comp.getString("Language"), scripts);
-        }
-
-        this.languages = languages;
-        this.initGui();
-    }
 
     public void save() {
         if (loaded) {
             this.setScript();
 
-            List<ScriptContainer> containers = this.scriptHandler.getScripts();
-            for (int i = 0; i < containers.size(); i++) {
-                ScriptContainer container = containers.get(i);
-                //  overlayScriptPacket.Save(overlay.id, i, containers.size(), container.writeToNBT(new NBTTagCompound()));
-            }
-            NBTTagCompound scriptData = new NBTTagCompound();
-            scriptData.setString("ScriptLanguage", this.scriptHandler.getLanguage());
-            scriptData.setBoolean("ScriptEnabled", this.scriptHandler.getEnabled());
-            scriptData.setTag("ScriptConsole", NBTTags.NBTLongStringMap(this.scriptHandler.getConsoleText()));
+            //   List<ScriptContainer> containers = this.handler.getScripts();
+            // for (int i = 0; i < containers.size(); i++) {
+            //     ScriptContainer container = containers.get(i);
+            //  overlayScriptPacket.Save(overlay.id, i, containers.size(), container.writeToNBT(new NBTTagCompound()));
+            // }
+            //  NBTTagCompound scriptData = new NBTTagCompound();
+            //  scriptData.setString("ScriptLanguage", this.scriptHandler.getLanguage());
+            // scriptData.setBoolean("ScriptEnabled", this.scriptHandler.getEnabled());
+            // scriptData.setTag("ScriptConsole", NBTTags.NBTLongStringMap(this.scriptHandler.getConsoleText()));
 
-            scriptHandler.writeToNBT(scriptData);
+            //  scriptHandler.writeToNBT(scriptData);
 
             //  overlayScriptPacket.Save(overlay.id, -1, containers.size(), scriptData);
         }
     }
 
     public void textUpdate(String text) {
-        ScriptContainer container = this.scriptHandler.container;
-        if (container != null) {
-            container.script = text;
-        }
+        container.script = text;
     }
 
     public void saveText(String text) {
-        ScriptContainer container = this.scriptHandler.container;
-        if (container != null) {
-            container.script = text;
-        }
-
+        container.script = text;
         this.initGui();
     }
 
@@ -408,6 +335,5 @@ public class GuiOverlayScript extends GuiNPCInterface implements GuiYesNoCallbac
         parent.setWorldAndResolution(mc, width, height);
         parent.initGui();
         mc.currentScreen = parent;
-
     }
 }

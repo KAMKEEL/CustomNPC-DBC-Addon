@@ -1,10 +1,7 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
 import kamkeel.npcdbc.api.aura.IAura;
-import kamkeel.npcdbc.client.gui.component.GuiOverlayScript;
-import kamkeel.npcdbc.client.gui.component.SubGuiFormFaceParts;
-import kamkeel.npcdbc.client.gui.component.SubGuiOverlays;
-import kamkeel.npcdbc.client.gui.component.SubGuiSelectAura;
+import kamkeel.npcdbc.client.gui.component.*;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
@@ -29,7 +26,6 @@ import java.awt.*;
 import java.awt.datatransfer.*;
 
 import static JinRyuu.JRMCore.JRMCoreH.dnsHairG1toG2;
-import static JinRyuu.JRMCore.JRMCoreH.p;
 
 public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener, ITextfieldListener, ClipboardOwner {
     private final String[] arrRace = new String[]{"display.human", "display.saiyan", "display.halfsaiyan", "display.namekian", "display.arcosian", "display.majin"};
@@ -375,7 +371,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
         if (button.id == -2) {
             //    PacketClient.sendClient(new EffectSavePacket(effect.writeToNBT(false), originalName));
-            GuiOverlayScript scriptGUI = new GuiOverlayScript(this.parent, overlays);
+            GuiJaninoScript scriptGUI = new GuiJaninoScript(this.parent, overlays.scriptContainer);
             scriptGUI.setWorldAndResolution(mc, width, height);
             mc.currentScreen = scriptGUI;
             scriptGUI.initGui();
