@@ -12,9 +12,7 @@ import org.codehaus.commons.compiler.Sandbox;
 
 import java.security.Permissions;
 import java.security.PrivilegedAction;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -24,11 +22,13 @@ public abstract class JaninoScript<T> {
     private String language = "Java";
     public TreeMap<Long, String> console = new TreeMap();
 
+    public final Class<T> type;
     protected Sandbox sandbox = new Sandbox(new Permissions());
     public final IScriptBodyBuilder<T> builder;
     protected IScriptClassBody<T> scriptBody;
 
     protected JaninoScript(Class<T> type) {
+        this.type = type;
         this.builder = IScriptBodyBuilder
             .getBuilder(type, CustomNpcPlusDBC.getClientCompiler());
         configure(builder);

@@ -26,16 +26,4 @@ public class OverlayScript extends JaninoScript<OverlayScript.OverlayFunctions> 
             return null;
         }
     }
-
-    public enum ScriptType {
-        OnEffectAdd("onEffectAdd"),
-        OnEffectTick("onEffectTick"),
-        OnEffectRemove("onEffectRemove");
-
-        public final String function;
-
-        ScriptType(String functionName) {
-            this.function = functionName;
-        }
-    }
 }
