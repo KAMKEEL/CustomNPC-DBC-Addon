@@ -1,25 +1,33 @@
 package kamkeel.npcdbc.client.gui.component;
 
 import kamkeel.npcdbc.data.overlay.JaninoScript;
-import kamkeel.npcdbc.data.overlay.OverlayScript;
 import net.minecraft.client.gui.*;
 import net.minecraft.util.StatCollector;
 import noppes.npcs.NoppesStringUtils;
 import noppes.npcs.client.gui.util.*;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback, ITextChangeListener, ICustomScrollListener, IJTextAreaListener, ITextfieldListener {
 
     private int activeTab = 0;
     public Map<String, List<String>> languages = new HashMap();
     private final int scriptLimit = 1;
-    public List<String> hookList = new ArrayList();
     public String previousHookClicked = "";
+    boolean loaded = false;
+
+    // GUI display list
+    List<String> hooklist = new ArrayList<>();
+
+    // Map from display name (with parameters if overloaded) to Method
+    Map<String, Method> hookMap = new HashMap<>();
 
     public final GuiScreen parent;
     private final JaninoScript container;
-    boolean loaded = false;
+
 
     public GuiJaninoScript(GuiScreen parent, JaninoScript handler) {
         this.drawDefaultBackground = true;
@@ -30,13 +38,41 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
         this.parent = parent;
         this.container = handler;
 
-        for (OverlayScript.ScriptType type : OverlayScript.ScriptType.values()) {
-            this.hookList.add(type.function);
-        }
+        createHookList();
 
         // EffectScriptPacket.Get(overlay.id);
     }
 
+    public void createHookList() {
+        // Group all declared methods of the handler's type by their method name
+        Map<String, List<Method>> grouped = Arrays.stream(container.type.getDeclaredMethods())
+            .collect(Collectors.groupingBy(Method::getName));
+
+        for (Map.Entry<String, List<Method>> entry : grouped.entrySet()) {
+            List<Method> methods = entry.getValue();
+
+            // Sort overloads by number of parameters (ascending)
+            // This ensures the simplest overload comes first
+            methods.sort(Comparator.comparingInt(Method::getParameterCount));
+            boolean first = true;
+
+
+            for (Method m : methods) {
+                if (Modifier.isFinal(m.getModifiers()))
+                    continue; //skip finals
+
+                String displayName = first ? m.getName() :
+                    m.getName() + "(" + Arrays.stream(m.getParameterTypes())
+                        .map(Class::getSimpleName)
+                        .collect(Collectors.joining(", ")) + ")";
+
+
+                hooklist.add(displayName);
+                hookMap.put(displayName, m);
+                first = false;
+            }
+        }
+    }
     public void initGui() {
         this.ySize = (int) ((double) this.xSize * 0.56);
         if ((double) this.ySize > (double) this.height * 0.95) {
@@ -74,7 +110,7 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
             hooks.guiLeft = this.guiLeft - 110;
             hooks.guiTop = this.guiTop + 14;
 
-            hooks.setUnsortedList(this.hookList);
+            hooks.setUnsortedList(this.hooklist);
             this.addScroll(hooks);
             GuiNpcLabel hookLabel = new GuiNpcLabel(0, "script.hooks", hooks.guiLeft, this.guiTop + 5);
             hookLabel.color = 11184810;
@@ -136,7 +172,7 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
                 addString = addString + "\n";
             }
 
-            addString = addString + "function " + hook + "(event) {\n    \n}\n";
+            addString = addString + generateMethodStub(hookMap.get(hook));
             this.getTextField(2)
                 .setText(this.getTextField(2)
                     .getText() + addString);
@@ -145,6 +181,66 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
             this.previousHookClicked = hook;
         }
     }
+
+    public String generateMethodStub(String methodName, Class<?>... paramTypes) {
+        Method[] methods = container.type.getDeclaredMethods();
+
+        for (Method m : methods) {
+            if (m.getName()
+                .equals(methodName))
+                return generateMethodStub(m);
+        }
+
+        return "";
+    }
+
+    /**
+     * Generates a stub string for a given Method.
+     */
+    public static String generateMethodStub(Method method) {
+        String mods = java.lang.reflect.Modifier.toString(method.getModifiers());
+        if (!mods.isEmpty())
+            mods += " ";
+
+        String returnTypeStr = method.getReturnType()
+            .getSimpleName();
+        String name = method.getName();
+
+        Map<String, Integer> typeCount = new HashMap<>();
+        String params = Arrays.stream(method.getParameters())
+            .map(p -> {
+                String typeName = p.getType()
+                    .getSimpleName();
+                String baseName = Character.toLowerCase(typeName.charAt(0)) + typeName.substring(1);
+
+                int count = typeCount.getOrDefault(baseName, 0) + 1;
+                typeCount.put(baseName, count);
+
+                // append number if same type of arg exists
+                String paramName = count == 1 ? baseName : baseName + (count - 1);
+
+                return typeName + " " + paramName;
+            })
+            .collect(Collectors.joining(", "));
+
+        String body;
+        Class<?> returnType = method.getReturnType();
+        if (returnType == void.class)
+            body = "";
+        else if (returnType.isPrimitive()) {
+            if (returnType == boolean.class)
+                body = "    return false;";
+            else if (returnType == char.class)
+                body = "    return '\\0';";
+            else
+                body = "    return 0;";
+        } else {
+            body = "    return null;";
+        }
+
+        return String.format("%s%s %s(%s) {\n%s\n}\n", mods, returnTypeStr, name, params, body);
+    }
+
 
     public void unFocused(GuiNpcTextField textfield) {
     }
