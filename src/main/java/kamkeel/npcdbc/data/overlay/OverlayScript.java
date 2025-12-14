@@ -29,7 +29,7 @@ public class OverlayScript implements INpcScriptHandler {
     public boolean enabled = false;
 
     IScriptClassBody<OverlayFunctions> javaCompiler = IScriptBodyBuilder.getBuilder(OverlayFunctions.class, CustomNpcPlusDBC.getClientCompiler())
-            .setDefaultImports("kamkeel.npcdbc.client.utils.Color")
+            .setDefaultImports("kamkeel.npcdbc.client.utils.Color", "kamkeel.npcdbc.data.overlay.OverlayContext")
             .build();
 
     public static class OverlayFunctions implements Overlay.TextureFunction, Overlay.ColorFunction {
@@ -98,6 +98,7 @@ public class OverlayScript implements INpcScriptHandler {
             try {
                 javaCompiler.setScript(container.script);
             } catch (Exception e) {
+                String text = e.getMessage();
             }
 
         }

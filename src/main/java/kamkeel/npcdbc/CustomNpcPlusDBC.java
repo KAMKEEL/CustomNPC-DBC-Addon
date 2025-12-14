@@ -18,8 +18,9 @@ import kamkeel.npcs.controllers.ProfileController;
 
 import java.io.File;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Mod(
     modid = CustomNpcPlusDBC.ID,
@@ -88,12 +89,30 @@ public class CustomNpcPlusDBC {
     private static IDynamicCompiler jls;
 
     public static IDynamicCompiler getClientCompiler() {
-        Set<String> allowedClasses = new HashSet<>();
-        allowedClasses.add("kamkeel.npcdbc.client.utils.Color");
-        allowedClasses.add("kamkeel.npcdbc.data.overlay.OverlayScript.OverlayFunctions");
 
-        LoadClassCondition filter = (name)-> name.startsWith("java.lang") || allowedClasses.contains(name); //anything that's NOT java.lang is blacklisted
         if (jls == null) {
+            Set<String> allowedClasses = new HashSet<>();
+            allowedClasses.add("kamkeel.npcdbc.client.utils.Color");
+            allowedClasses.add("kamkeel.npcdbc.data.overlay.OverlayScript.OverlayFunctions");
+            allowedClasses.add("java.io.Serializable");
+            allowedClasses.add("java.util.Iterator");
+
+            List<String> regexList = Arrays.asList(
+                "kamkeel\\.npcdbc\\..*",
+                "noppes\\.npcs\\..*"
+            );
+
+
+            List<Pattern> allowedWildCards = regexList.stream().map(Pattern::compile).collect(Collectors.toList());
+            LoadClassCondition filter = (name)-> {
+
+                if (name.startsWith("java.lang")) return true;
+
+                if (allowedClasses.contains(name)) return true;
+
+                return allowedWildCards.stream().anyMatch(pattern -> pattern.matcher(name).matches());
+
+            }; //anything that's NOT java.lang is blacklisted
             jls = IDynamicCompilerBuilder.createBuilder().setClassFilter(filter).getCompiler();
         }
 
