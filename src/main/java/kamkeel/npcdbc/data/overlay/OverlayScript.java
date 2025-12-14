@@ -18,11 +18,11 @@ public class OverlayScript extends JaninoScript<OverlayScript.OverlayFunctions> 
     }
 
     public static class OverlayFunctions implements Overlay.TextureFunction, Overlay.ColorFunction {
-        public Color applyColor(OverlayContext ctx) {
+        public Color getColor(OverlayContext ctx) {
             return null;
         }
 
-        public String applyTexture(OverlayContext ctx) {
+        public String getTexture(OverlayContext ctx) {
             return null;
         }
     }
