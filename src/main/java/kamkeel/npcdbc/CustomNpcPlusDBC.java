@@ -18,6 +18,8 @@ import kamkeel.npcs.controllers.ProfileController;
 
 import java.io.File;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
 @Mod(
     modid = CustomNpcPlusDBC.ID,
@@ -86,7 +88,11 @@ public class CustomNpcPlusDBC {
     private static IDynamicCompiler jls;
 
     public static IDynamicCompiler getClientCompiler() {
-        LoadClassCondition filter = (name)->!name.startsWith("java.lang"); //anything that's NOT java.lang is blacklisted
+        Set<String> allowedClasses = new HashSet<>();
+        allowedClasses.add("kamkeel.npcdbc.client.utils.Color");
+        allowedClasses.add("kamkeel.npcdbc.data.overlay.OverlayScript.OverlayFunctions");
+
+        LoadClassCondition filter = (name)-> name.startsWith("java.lang") || allowedClasses.contains(name); //anything that's NOT java.lang is blacklisted
         if (jls == null) {
             jls = IDynamicCompilerBuilder.createBuilder().setClassFilter(filter).getCompiler();
         }

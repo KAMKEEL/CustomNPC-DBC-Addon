@@ -25,9 +25,9 @@ public class OverlayScript implements INpcScriptHandler {
     public String scriptLanguage = "ECMAScript";
     public boolean enabled = false;
 
-    IScriptClassBody<OverlyFunctions> javaCompiler = IScriptBodyBuilder.getBuilder(OverlyFunctions.class, CustomNpcPlusDBC.getClientCompiler()).setDefaultImports("noppes.npcs.api.event.INpcEvent").build();
+    IScriptClassBody<OverlayFunctions> javaCompiler = IScriptBodyBuilder.getBuilder(OverlayFunctions.class, CustomNpcPlusDBC.getClientCompiler()).setDefaultImports("kamkeel.npcdbc.client.utils.Color").build();
 
-    public class OverlyFunctions implements Overlay.TextureFunction, Overlay.ColorFunction {
+    public static class OverlayFunctions implements Overlay.TextureFunction, Overlay.ColorFunction {
         public Color applyColor(OverlayContext ctx) {
             return null;
         }
