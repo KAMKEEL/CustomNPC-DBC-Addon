@@ -460,6 +460,7 @@ public class ModelDBC extends ModelBase {
 
         boolean ssj3 = ctx.hairType("ssj3");
         boolean ssj4 = ctx.hairType("ssj4");
+        boolean savior = ctx.furSavior();
         boolean oozaru = ctx.hairType("oozaru");
         boolean pupils = ctx.pupils();
         boolean eyebrows = ctx.eyebrows();
@@ -468,18 +469,26 @@ public class ModelDBC extends ModelBase {
         if (oozaru)
             chains.add(OOZARU_FUR);
 
-        if (ssj4 || ctx.hasFur())
+        if (ssj4 || ctx.hasFur()) {
             chains.add(SSJ4_FUR);
 
+            if (savior) {
+                chains.add(SAVIOR);
+            }
+        }
+
         /* ───────── Face Overlays ───────── */
-        if (HD() && !oozaru) {
+        if (HD() && !oozaru && pupils) {
             if (ssj3 || !eyebrows) //removed (!eyebrows && pupils) as old no eyebrows code no more
                 chains.add(SSJ3_FACE);
-            else if (ssj4)
+            else if (ssj4 && !savior)
                 chains.add(SSJ4_FACE);
-            else if (pupils)  //SSJ3 and SSJ4 have their own pupils
+            else  //SSJ3 and SSJ4 have their own pupils
                 chains.add(PUPILS);
         }
+
+        if (!eyebrows && !pupils)
+            chains.add(NO_EYEBROWS);
 
         /* ───────── Main Entity Overlays ───────── */
         if (uniqueChains != null)

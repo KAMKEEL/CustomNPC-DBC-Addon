@@ -161,8 +161,16 @@ public class OverlayContext {
             color.glColor();
     }
 
+    public boolean furGT() {
+        return furType() == 1;
+    }
+
     public boolean furDaima() {
         return furType() == 1;
+    }
+
+    public boolean furSavior() {
+        return furType() == 2;
     }
 
     public String furDir() {

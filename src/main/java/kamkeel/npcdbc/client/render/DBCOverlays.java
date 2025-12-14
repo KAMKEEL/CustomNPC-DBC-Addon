@@ -12,8 +12,11 @@ import static kamkeel.npcdbc.data.overlay.Overlay.Type.*;
 
 public class DBCOverlays {
 
+    public static final OverlayChain NO_EYEBROWS = OverlayChain.create("No Eyebrows");
+
     public static final OverlayChain SSJ4_FUR = OverlayChain.create("SSJ4 Fur");
     public static final OverlayChain OOZARU_FUR = OverlayChain.create("Oozaru Fur");
+    public static final OverlayChain SAVIOR = OverlayChain.create("Savior From Heaven");
 
     public static final OverlayChain SSJ3_FACE = OverlayChain.create("SSJ3 Face");
     public static final OverlayChain SSJ4_FACE = OverlayChain.create("SSJ4 Face");
@@ -21,11 +24,21 @@ public class DBCOverlays {
     public static final OverlayChain PUPILS = OverlayChain.create("Pupils");
 
     static {
-        SSJ4_FUR.add(ALL, Fur, ctx -> path("ssj4/ss4b" + ctx.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
+        NO_EYEBROWS.add(Eyebrows, Hair, ctx -> format("jinryuumodscore:cc/ssj3eyebrow/%shumw%s.png", ctx.female() ? "f" : "", ctx.eyeType()));
+        NO_EYEBROWS.disable(Part.Eyebrows);
+
+        SSJ4_FUR.add(ALL, Fur, ctx -> path("ssj4/ss4b" + ctx.furType() + ".png"));
 
 
         OOZARU_FUR.add(ALL, BodyCM, path("oozaru/oozaru1.png", "jinryuudragonbc:cc/oozaru1.png"));
         OOZARU_FUR.add(ALL, Fur, path("oozaru/oozaru2.png", "jinryuudragonbc:cc/oozaru2.png"));
+
+
+        TexturePath SAVIOR_PATH = (ctx, path) -> format(path("savior/%s.png"));
+        SAVIOR.add(Face, Eye, true, ctx -> SAVIOR_PATH.get(ctx, "savioreyes"));
+        SAVIOR.add(Mouth, 0xFFFFFF, true, ctx -> SAVIOR_PATH.get(ctx, "saviormouth"));
+        SAVIOR.add(Chest, Eye, true, ctx -> SAVIOR_PATH.get(ctx, "saviorchest"));
+        SSJ4_FACE.disable(Part.Eyebrows, Part.EyeWhite, Part.LeftEye, Part.RightEye, Part.Nose, Part.Mouth);
 
 
         TexturePath SSJ4_PATH = (ctx, path) -> HDDir + format("%s/%s/face_%s/%s.png", ctx.furDir(), ctx.genderDir(), ctx.eyeType(), path);
