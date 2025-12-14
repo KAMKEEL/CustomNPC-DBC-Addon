@@ -259,11 +259,9 @@ public class ModelDBC extends ModelBase {
             }
 
             if (!disabledParts.contains(Part.Eyebrows)) {
-                boolean namekian = display.race == DBCRace.NAMEKIAN;
-                String texture = hasEyebrows || namekian ? getFaceTexture(display, "w" + display.eyeType) : "jinryuumodscore:cc/ssj3eyebrow/humw" + display.eyeType + ".png";
-                ClientProxy.bindTexture(new ResourceLocation(texture));
+                ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "w" + display.eyeType)));
 
-                ColorMode.applyModelColor(namekian ? bodyCM : eyeBrowColor, this.parent.alpha, isHurt);
+                ColorMode.applyModelColor(display.race == DBCRace.NAMEKIAN ? bodyCM : eyeBrowColor, this.parent.alpha, isHurt);
                 renderOnHead(eyebrow, y);
             }
 
@@ -475,15 +473,14 @@ public class ModelDBC extends ModelBase {
             chains.add(SSJ4_FUR);
 
         /* ───────── Face Overlays ───────── */
-        if (HD()) {
-            if (ssj4)
-                chains.add(SSJ4_FACE);
-            else if (ssj3 || (!eyebrows && pupils))
+        if (HD() && !oozaru) {
+            if (ssj3 || !eyebrows) //removed (!eyebrows && pupils) as old no eyebrows code no more
                 chains.add(SSJ3_FACE);
-            else if (pupils && !oozaru)
+            else if (ssj4)
+                chains.add(SSJ4_FACE);
+            else if (pupils)  //SSJ3 and SSJ4 have their own pupils
                 chains.add(PUPILS);
         }
-
 
         /* ───────── Main Entity Overlays ───────── */
         if (uniqueChains != null)
