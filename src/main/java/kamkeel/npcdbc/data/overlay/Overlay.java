@@ -43,7 +43,10 @@ public class Overlay {
         if (script != null)
             return script;
 
-        return applyTexture.applyTexture(ctx);
+        if (applyTexture != null)
+            return applyTexture.applyTexture(ctx);
+
+        return null;
     }
 
     public Overlay color(ColorFunction function) {
