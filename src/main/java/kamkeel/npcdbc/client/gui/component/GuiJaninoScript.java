@@ -321,11 +321,11 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
     }
 
     public void textUpdate(String text) {
-        container.script = text;
+        container.setScript(text);
     }
 
     public void saveText(String text) {
-        container.script = text;
+        container.setScript(text);
         this.initGui();
     }
 

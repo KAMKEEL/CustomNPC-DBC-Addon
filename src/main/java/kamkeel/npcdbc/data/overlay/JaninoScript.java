@@ -36,6 +36,13 @@ public abstract class JaninoScript<T> {
         this.scriptBody = builder.build();
     }
 
+    /**
+     * Safe hook — called AFTER builder creation, BEFORE build()
+     */
+    protected void configure(IScriptBodyBuilder<T> builder) {
+    }
+
+
     protected T getUnsafe() {
         return scriptBody.get();
     }
@@ -56,10 +63,12 @@ public abstract class JaninoScript<T> {
         });
     }
 
-    /**
-     * Safe hook — called AFTER builder creation, BEFORE build()
-     */
-    protected void configure(IScriptBodyBuilder<T> builder) {
+    public void setScript(String script) {
+        this.script = script;
+        try {
+            scriptBody.setScript(script);
+        } catch (Exception e) {
+        }
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -76,13 +85,6 @@ public abstract class JaninoScript<T> {
         setScript(script);
 
         return this;
-    }
-
-    public void setScript(String script) {
-        try {
-            scriptBody.setScript(script);
-        } catch (Exception e) {
-        }
     }
 
     public boolean isEnabled() {
