@@ -75,8 +75,8 @@ public class ModelDBC extends ModelBase {
     public ModelRenderer eyebase;
     public ModelRenderer eyebrow;
 
-    private static String SDDir = CustomNpcPlusDBC.ID + ":textures/sd/";
-    private static String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
+    public static final String SDDir = CustomNpcPlusDBC.ID + ":textures/sd/";
+    public static final String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
     public static final String OVERLAY_DIR = CustomNpcPlusDBC.ID + ":textures/overlays/";
 
     public DBCDisplay display;
