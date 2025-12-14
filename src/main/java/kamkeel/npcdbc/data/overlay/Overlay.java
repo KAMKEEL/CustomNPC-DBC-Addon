@@ -39,6 +39,10 @@ public class Overlay {
 
     @SideOnly(Side.CLIENT)
     public String applyTexture(OverlayContext ctx) {
+        String scriptTexture = chain.scriptHandler.wrapper.applyTexture(ctx);
+        if (scriptTexture != null)
+            return scriptTexture;
+
         return applyTexture.applyTexture(ctx);
     }
 
@@ -49,6 +53,10 @@ public class Overlay {
 
     @SideOnly(Side.CLIENT)
     public Color applyColor(OverlayContext ctx) {
+        Color scriptColor = chain.scriptHandler.wrapper.applyColor(ctx);
+        if (scriptColor != null)
+            return scriptColor;
+
         return applyColor.applyColor(ctx);
     }
 

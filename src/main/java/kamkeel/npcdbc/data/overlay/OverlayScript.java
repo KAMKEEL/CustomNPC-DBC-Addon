@@ -16,7 +16,6 @@ import noppes.npcs.controllers.ScriptContainer;
 import noppes.npcs.controllers.ScriptController;
 import noppes.npcs.controllers.data.INpcScriptHandler;
 import noppes.npcs.scripted.event.player.PlayerEvent;
-import org.codehaus.commons.compiler.CompileException;
 import org.codehaus.commons.compiler.Sandbox;
 
 import java.io.IOException;
@@ -24,13 +23,14 @@ import java.security.Permissions;
 import java.util.*;
 
 public class OverlayScript implements INpcScriptHandler {
+    public static final IScriptBodyBuilder<OverlayFunctions> BUILDER = IScriptBodyBuilder.getBuilder(OverlayFunctions.class, CustomNpcPlusDBC.getClientCompiler())
+            .setDefaultImports("kamkeel.npcdbc.client.utils.Color", "kamkeel.npcdbc.data.overlay.OverlayContext");
+
     public ScriptContainer container;
     public String scriptLanguage = "ECMAScript";
     public boolean enabled = false;
 
-    IScriptClassBody<OverlayFunctions> javaCompiler = IScriptBodyBuilder.getBuilder(OverlayFunctions.class, CustomNpcPlusDBC.getClientCompiler())
-            .setDefaultImports("kamkeel.npcdbc.client.utils.Color", "kamkeel.npcdbc.data.overlay.OverlayContext")
-            .build();
+    public IScriptClassBody<OverlayFunctions> javaCompiler = BUILDER.build();
 
     public static class OverlayFunctions implements Overlay.TextureFunction, Overlay.ColorFunction {
         public Color applyColor(OverlayContext ctx) {
@@ -42,9 +42,27 @@ public class OverlayScript implements INpcScriptHandler {
         }
     }
 
+    public OverlayScript readFromNBT(NBTTagCompound compound) {
+        scriptLanguage = compound.getString("ScriptLanguage");
+        enabled = compound.getBoolean("ScriptEnabled");
+
+        if (compound.hasKey("ScriptContent", Constants.NBT.TAG_COMPOUND)) {
+            container = new ScriptContainer(this);
+            container.readFromNBT(compound.getCompoundTag("ScriptContent"));
+
+            String script = container.script;
+            try {
+                javaCompiler.setScript(script);
+            } catch (Exception e) {
+            }
+        }
+        return this;
+    }
+
     public static class JavaWrapper {
         private final Sandbox sandbox;
         public final IScriptClassBody<OverlayFunctions> scriptBody;
+
 
         public JavaWrapper(Sandbox sandbox, IScriptClassBody<OverlayFunctions> scriptBody) {
             this.sandbox = sandbox;
@@ -52,11 +70,8 @@ public class OverlayScript implements INpcScriptHandler {
         }
 
         public Color applyColor(OverlayContext ctx) {
-            Color col = sandbox.confine((java.security.PrivilegedAction<Color>) () -> scriptBody.get() != null ? scriptBody.get()
+            return sandbox.confine((java.security.PrivilegedAction<Color>) () -> scriptBody.get() != null ? scriptBody.get()
                     .applyColor(ctx) : null);
-            if (col == null)
-                col = new Color(0xffffff, 1);
-            return col;
         }
 
         public String applyTexture(OverlayContext ctx) {
@@ -85,24 +100,6 @@ public class OverlayScript implements INpcScriptHandler {
         if (container != null)
             compound.setTag("ScriptContent", container.writeToNBT(new NBTTagCompound()));
         return compound;
-    }
-
-    public OverlayScript readFromNBT(NBTTagCompound compound) {
-        scriptLanguage = compound.getString("ScriptLanguage");
-        enabled = compound.getBoolean("ScriptEnabled");
-
-        if (compound.hasKey("ScriptContent", Constants.NBT.TAG_COMPOUND)) {
-            container = new ScriptContainer(this);
-            container.readFromNBT(compound.getCompoundTag("ScriptContent"));
-
-            try {
-                javaCompiler.setScript(container.script);
-            } catch (Exception e) {
-                String text = e.getMessage();
-            }
-
-        }
-        return this;
     }
 
     public void callScript(ScriptType type, PlayerEvent.EffectEvent event) {
