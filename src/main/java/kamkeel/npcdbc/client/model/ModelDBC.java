@@ -239,7 +239,6 @@ public class ModelDBC extends ModelBase {
             if (!disabledParts.contains(Part.Nose)) {
                 ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
 
-                applyHeadRotations(nose);
                 renderOnHead(nose, y);
             }
 
@@ -251,15 +250,13 @@ public class ModelDBC extends ModelBase {
                     mouthDir = getFaceTexture(display, "m" + display.mouthType);
                 ClientProxy.bindTexture(new ResourceLocation(mouthDir));
 
-                applyHeadRotations(mouth);
                 renderOnHead(mouth, y);
             }
 
             if (!disabledParts.contains(Part.EyeWhite)) {
                 ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "b" + display.eyeType)));
-                GL11.glColor4f(1.0f, 1.0f, 1.0f, this.parent.alpha);
 
-                applyHeadRotations(eyebase);
+                GL11.glColor4f(1.0f, 1.0f, 1.0f, this.parent.alpha);
                 renderOnHead(eyebase, y);
             }
 
@@ -268,7 +265,7 @@ public class ModelDBC extends ModelBase {
                 String texture = hasEyebrows || namekian ? getFaceTexture(display, "w" + display.eyeType) : "jinryuumodscore:cc/ssj3eyebrow/humw" + display.eyeType + ".png";
                 ClientProxy.bindTexture(new ResourceLocation(texture));
 
-                applyHeadRotations(eyebrow);
+                ColorMode.applyModelColor(namekian ? bodyCM : eyeBrowColor, this.parent.alpha, isHurt);
                 renderOnHead(eyebrow, y);
             }
 
@@ -276,18 +273,16 @@ public class ModelDBC extends ModelBase {
             if (!disabledParts.contains(Part.LeftEye)) {
                 String texture = getFaceTexture(display, "l" + display.eyeType);
                 ClientProxy.bindTexture(new ResourceLocation(texture));
-                ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
 
-                applyHeadRotations(eyeleft);
+                ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
                 renderOnHead(eyeleft, y);
             }
 
             if (!disabledParts.contains(Part.RightEye)) {
                 String texture = getFaceTexture(display, "r" + display.eyeType);
                 ClientProxy.bindTexture(new ResourceLocation(texture));
-                ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
 
-                applyHeadRotations(eyeright);
+                ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
                 renderOnHead(eyeright, y);
             }
         }
@@ -299,6 +294,8 @@ public class ModelDBC extends ModelBase {
 
     public void renderOnHead(ModelRenderer model, float bodyY) {
         ModelScalePart head = parent.npc.modelData.modelScale.head;
+        applyHeadRotations(model);
+
         GL11.glPushMatrix();
         GL11.glTranslatef(0, bodyY, 0);
         GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
