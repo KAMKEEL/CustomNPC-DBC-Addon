@@ -11,13 +11,12 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback, ITextChangeListener, ICustomScrollListener, IJTextAreaListener, ITextfieldListener {
+public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback, ITextChangeListener, ICustomScrollListener {
 
     private int activeTab = 0;
     public Map<String, List<String>> languages = new HashMap();
     private final int scriptLimit = 1;
     public String previousHookClicked = "";
-    boolean loaded = false;
 
     // GUI display list
     List<String> hooklist = new ArrayList<>();
@@ -39,8 +38,6 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
         this.container = handler;
 
         createHookList();
-
-        // EffectScriptPacket.Get(overlay.id);
     }
 
     public void createHookList() {
@@ -182,16 +179,99 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
         }
     }
 
-    public String generateMethodStub(String methodName, Class<?>... paramTypes) {
-        Method[] methods = container.type.getDeclaredMethods();
+    public void confirmClicked(boolean flag, int i) {
+        if (flag) {
+            if (i == 0)
+                this.openLink("https://www.curseforge.com/minecraft/mc-mods/customnpc-plus");
+            else if (i == 1)
+                this.openLink("https://kamkeel.github.io/CustomNPC-Plus/");
+            else if (i == 2)
+                this.openLink("https://kamkeel.github.io/CustomNPC-Plus/");
+            else if (i == 3)
+                this.openLink("http://www.minecraftforge.net/forum/index.php/board,122.0.html");
 
-        for (Method m : methods) {
-            if (m.getName()
-                .equals(methodName))
-                return generateMethodStub(m);
+            if (i == 10) { //Remove
+                this.container.setScript("");
+                this.activeTab = 0;
+            } else if (i == 101) { //Paste
+                this.getTextField(2)
+                    .setText(NoppesStringUtils.getClipboardContents());
+                this.setScript();
+            } else if (i == 102) { //Clear
+                if (this.activeTab == 1)
+                    container.script = "";
+                else
+                    this.container.clearConsole();
+
+                this.initGui();
+            }
         }
 
-        return "";
+        this.displayGuiScreen(this);
+    }
+
+    protected void actionPerformed(GuiButton guibutton) {
+        if (guibutton.id == 0) {
+            this.setScript();
+            this.activeTab = 0;
+            this.initGui();
+        }
+
+        if (guibutton.id == this.scriptLimit) {
+            // if (container.container == null)
+            //this.container.container = new ScriptContainer(this.container);
+            //  else
+            // this.setScript();
+            this.activeTab = 1;
+            this.initGui();
+        }
+
+        if (guibutton.id == 109) {
+            this.displayGuiScreen(new GuiConfirmOpenLink(this, "https://kamkeel.github.io/CustomNPC-Plus/", 0, true));
+        } else if (guibutton.id == 110) {
+            this.displayGuiScreen(new GuiConfirmOpenLink(this, "https://github.com/KAMKEEL/CustomNPC-Plus-API", 1, true));
+        } else if (guibutton.id == 111) {
+            this.displayGuiScreen(new GuiConfirmOpenLink(this, "https://github.com/Noppes/CustomNPCsAPI", 2, true));
+        } else if (guibutton.id == 112) {
+            this.displayGuiScreen(new GuiConfirmOpenLink(this, "http://www.minecraftforge.net/forum/index.php/board,122.0.html", 3, true));
+        }
+
+        GuiYesNo confirmScreen;
+
+        //Copy
+        if (guibutton.id == 100) {
+            NoppesStringUtils.setClipboardContents(this.getTextField(2)
+                .getText());
+        }
+        //Paste
+        else if (guibutton.id == 101) {
+            GuiYesNo guiyesno = new GuiYesNo(this, StatCollector.translateToLocal("gui.paste"), StatCollector.translateToLocal("gui.sure"), 101);
+            this.displayGuiScreen(guiyesno);
+        }
+        //Clear
+        else if (guibutton.id == 102) {
+            confirmScreen = new GuiYesNo(this, StatCollector.translateToLocal("gui.clear"), StatCollector.translateToLocal("gui.sure"), 102);
+            this.displayGuiScreen(confirmScreen);
+        }
+        //Enable
+        else if (guibutton.id == 104) {
+            this.container.setEnabled(((GuiNpcButton) guibutton).getValue() == 1);
+        }
+        //Remove
+        else if (guibutton.id == 105) {
+            confirmScreen = new GuiYesNo(this, "", guibutton.displayString, 10);
+            this.displayGuiScreen(confirmScreen);
+        }
+        //Load Script
+        else if (guibutton.id == 107) {
+            //ScriptContainer container = this.container.container;
+            if (container == null) {
+                //  container = new ScriptContainer(this.container);
+                // this.container.container = container;
+            }
+
+            //this.setSubGui(new EventGuiScriptList((List)this.languages.get(container.getLanguage()), container));
+        }
     }
 
     /**
@@ -241,10 +321,6 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
         return String.format("%s%s %s(%s) {\n%s\n}\n", mods, returnTypeStr, name, params, body);
     }
 
-
-    public void unFocused(GuiNpcTextField textfield) {
-    }
-
     private String getConsoleText() {
         Map<Long, String> map = this.container.getConsoleText();
         StringBuilder builder = new StringBuilder();
@@ -253,7 +329,7 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
 
         while (var3.hasNext()) {
             Map.Entry<Long, String> entry = (Map.Entry) var3.next();
-            builder.insert(0, new Date((Long) entry.getKey()) + (String) entry.getValue() + "\n");
+            builder.insert(0, new Date(entry.getKey()) + entry.getValue() + "\n");
         }
 
         return builder.toString();
@@ -273,157 +349,23 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
         return 0;
     }
 
-    public void confirmClicked(boolean flag, int i) {
-        if (flag) {
-            if (i == 0) {
-                this.openLink("https://www.curseforge.com/minecraft/mc-mods/customnpc-plus");
-            }
-
-            if (i == 1) {
-                this.openLink("https://kamkeel.github.io/CustomNPC-Plus/");
-            }
-
-            if (i == 2) {
-                this.openLink("https://kamkeel.github.io/CustomNPC-Plus/");
-            }
-
-            if (i == 3) {
-                this.openLink("http://www.minecraftforge.net/forum/index.php/board,122.0.html");
-            }
-
-            if (i == 10) {
-                // this.container.container = null;
-                this.activeTab = 0;
-            }
-
-            if (i == 101) {
-                this.getTextField(2)
-                    .setText(NoppesStringUtils.getClipboardContents());
-                this.setScript();
-            }
-
-            if (i == 102) {
-                if (this.activeTab == 1) {
-                    //  ScriptContainer container = this.container.container;
-                    container.script = "";
-                } else {
-                    this.container.clearConsole();
-                }
-
-                this.initGui();
-            }
-        }
-
-        this.displayGuiScreen(this);
-    }
-
-    protected void actionPerformed(GuiButton guibutton) {
-        if (guibutton.id == 0) {
-            this.setScript();
-            this.activeTab = 0;
-            this.initGui();
-        }
-
-        if (guibutton.id == this.scriptLimit) {
-            // if (container.container == null)
-            //this.container.container = new ScriptContainer(this.container);
-            //  else
-            // this.setScript();
-            this.activeTab = 1;
-            this.initGui();
-        }
-
-        if (guibutton.id == 109) {
-            this.displayGuiScreen(new GuiConfirmOpenLink(this, "https://kamkeel.github.io/CustomNPC-Plus/", 0, true));
-        }
-
-        if (guibutton.id == 110) {
-            this.displayGuiScreen(new GuiConfirmOpenLink(this, "https://github.com/KAMKEEL/CustomNPC-Plus-API", 1, true));
-        }
-
-        if (guibutton.id == 111) {
-            this.displayGuiScreen(new GuiConfirmOpenLink(this, "https://github.com/Noppes/CustomNPCsAPI", 2, true));
-        }
-
-        if (guibutton.id == 112) {
-            this.displayGuiScreen(new GuiConfirmOpenLink(this, "http://www.minecraftforge.net/forum/index.php/board,122.0.html", 3, true));
-        }
-
-        if (guibutton.id == 100) {
-            NoppesStringUtils.setClipboardContents(this.getTextField(2)
-                .getText());
-        }
-
-        if (guibutton.id == 101) {
-            GuiYesNo guiyesno = new GuiYesNo(this, StatCollector.translateToLocal("gui.paste"), StatCollector.translateToLocal("gui.sure"), 101);
-            this.displayGuiScreen(guiyesno);
-        }
-
-        GuiYesNo container1;
-        if (guibutton.id == 102) {
-            container1 = new GuiYesNo(this, StatCollector.translateToLocal("gui.clear"), StatCollector.translateToLocal("gui.sure"), 102);
-            this.displayGuiScreen(container1);
-        }
-
-        if (guibutton.id == 104) {
-            this.container.setEnabled(((GuiNpcButton) guibutton).getValue() == 1);
-        }
-
-        if (guibutton.id == 105) {
-            container1 = new GuiYesNo(this, "", ((GuiNpcButton) guibutton).displayString, 10);
-            this.displayGuiScreen(container1);
-        }
-
-        if (guibutton.id == 107) {
-            //ScriptContainer container = this.container.container;
-            if (container == null) {
-                //  container = new ScriptContainer(this.container);
-                // this.container.container = container;
-            }
-
-                       // this.setSubGui(new EventGuiScriptList((List)this.languages.get(container.getLanguage()), container));
-        }
-    }
-
     private void setScript() {
         if (this.activeTab == 1) {
             String text = this.getTextField(2)
                 .getText();
             text = text.replace("\r\n", "\n");
             text = text.replace("\r", "\n");
-            container.script = text;
+            container.setScript(text);
         }
     }
 
-
     public void save() {
-        if (loaded) {
-            this.setScript();
-
-            //   List<ScriptContainer> containers = this.handler.getScripts();
-            // for (int i = 0; i < containers.size(); i++) {
-            //     ScriptContainer container = containers.get(i);
-            //  overlayScriptPacket.Save(overlay.id, i, containers.size(), container.writeToNBT(new NBTTagCompound()));
-            // }
-            //  NBTTagCompound scriptData = new NBTTagCompound();
-            //  scriptData.setString("ScriptLanguage", this.scriptHandler.getLanguage());
-            // scriptData.setBoolean("ScriptEnabled", this.scriptHandler.getEnabled());
-            // scriptData.setTag("ScriptConsole", NBTTags.NBTLongStringMap(this.scriptHandler.getConsoleText()));
-
-            //  scriptHandler.writeToNBT(scriptData);
-
-            //  overlayScriptPacket.Save(overlay.id, -1, containers.size(), scriptData);
-        }
     }
 
     public void textUpdate(String text) {
         container.setScript(text);
     }
 
-    public void saveText(String text) {
-        container.setScript(text);
-        this.initGui();
-    }
 
     @Override
     public void close() {
