@@ -347,14 +347,6 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
     }
 
     @Override
-    public void keyTyped(char c, int i) {
-        super.keyTyped(c, i);
-        if (i == 1)
-            menu.close();
-
-    }
-
-    @Override
     public void subGuiClosed(SubGuiInterface subgui) {
         if (subgui instanceof SubGuiSelectForm) {
             if (form != null) {
@@ -391,5 +383,6 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
     }
 
     public void save() {
+        menu.save();
     }
 }

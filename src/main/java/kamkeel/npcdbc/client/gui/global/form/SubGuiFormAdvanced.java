@@ -144,13 +144,6 @@ public class SubGuiFormAdvanced extends SubGuiInterface implements ISubGuiListen
         menu.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
-    @Override
-    public void keyTyped(char c, int keyCode) {
-        super.keyTyped(c, keyCode);
-        if (keyCode == 1) { // ESC
-            menu.close();
-        }
-    }
 
     @Override
     public void subGuiClosed(SubGuiInterface subgui) {
@@ -164,5 +157,7 @@ public class SubGuiFormAdvanced extends SubGuiInterface implements ISubGuiListen
     }
 
     /** no‑op save; changes are written immediately */
-    public void save() {}
+    public void save() {
+        menu.save();
+    }
 }

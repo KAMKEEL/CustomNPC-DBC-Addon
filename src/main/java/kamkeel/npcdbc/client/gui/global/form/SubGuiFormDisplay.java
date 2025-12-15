@@ -880,4 +880,8 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     @Override
     public void lostOwnership(Clipboard clipboard, Transferable contents) {
     }
+
+    public void save() {
+        menu.save();
+    }
 }
