@@ -34,7 +34,7 @@ public class OverlayChain implements JaninoScriptable {
     }
 
     public OverlayScript createScript() {
-        if (script != null)
+        if (script == null)
             script = new OverlayScript();
         return script;
     }
@@ -208,7 +208,7 @@ public class OverlayChain implements JaninoScriptable {
             }
         }
 
-        script = (OverlayScript) JaninoScriptable.readFromNBT(compound, script);
+        script = JaninoScriptable.readFromNBT(compound, script, OverlayScript::new);
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
