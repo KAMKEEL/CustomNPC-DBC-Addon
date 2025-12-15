@@ -43,7 +43,7 @@ dependencies {
     devOnlyNonPublishable(rfg.deobf(project.files("lib/JFamilyC-v1.2.18.jar")))
 
 //    implementation(files("janino/build/libs/standalone-JaninoLoader-1.0.1-ALPHA.jar"))
-    implementation(files("lib/standalone-JaninoLoader-1.0.2-ALPHA.jar"))
+    implementation(files("lib/standalone-JaninoLoader-1.0.2-ALPHA-sources.jar"))
 
 
 
