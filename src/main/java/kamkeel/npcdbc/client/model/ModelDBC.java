@@ -534,9 +534,6 @@ public class ModelDBC extends ModelBase {
                 Type type = overlay.getType();
 
                 /* ───────── Texture ───────── */
-                if (type == Face)
-                    ctx.texture = ((Overlay.Face) overlay).getTexture(ctx.eyeType());
-                else
                     ctx.texture = overlay.getTexture();
 
                 String textureFunction = overlay.applyTexture(ctx);

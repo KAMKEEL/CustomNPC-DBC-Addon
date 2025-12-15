@@ -3,10 +3,8 @@ package kamkeel.npcdbc.client.gui.component;
 import kamkeel.npcdbc.client.gui.global.form.SubGuiFormDisplay;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.overlay.Overlay;
-import kamkeel.npcdbc.data.overlay.Overlay.Face;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraft.util.StatCollector;
@@ -15,13 +13,12 @@ import noppes.npcs.client.gui.select.GuiTextureSelection;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.entity.EntityNPCInterface;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static kamkeel.npcdbc.data.overlay.Overlay.Type.ALL;
-import static kamkeel.npcdbc.data.overlay.Overlay.Type.Face;
+
 
 public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, ITextfieldListener, GuiYesNoCallback {
     public SubGuiFormDisplay parent;
@@ -85,14 +82,9 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         int buttonOneRowOneX = 32;
         for (int i = 0; i < overlays.overlays.size(); i++) {
             Overlay currentOverlay = get(i);
-            Face faceOverlay = null;
             GuiNpcButton button;
             GuiNpcTextField textField;
-            boolean isFace = currentOverlay.getType() == Face;
 
-            if (isFace) {
-                faceOverlay = (Face) currentOverlay;
-            }
 
             window.addLabel(new GuiNpcLabel(id(1, i), "Overlay " + (i + 1) + ":", 5, y + 5, 0xffffff));
             button = new GuiNpcButton(id(5, i), 240, y, 50, 20, new String[]{"Disabled", "Enabled"},
@@ -261,14 +253,6 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
             get(overlayID).enabled(button.getValue() == 1);
             initGui();
         }
-
-        if (buttonType == 6) {
-            if (get(overlayID).getType() == Face) {
-                ((Face) get(overlayID)).setMatchPlayerFace(button.getValue() == 1);
-                initGui();
-            }
-        }
-
 
         if (buttonType == 8) {
             /*

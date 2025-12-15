@@ -308,108 +308,7 @@ public class Overlay {
 
         return compound;
     }
-
-    public static class Face extends Overlay {
-        public String[] faceTextures = new String[]{"", "", "", "", "", ""};
-        public boolean matchPlayerFace = false;
-
-        public boolean enabled = true;
-
-        public Face() {
-            this.type = Type.Face;
-        }
-
-        @Override
-        public void readFromNBT(NBTTagCompound compound) {
-            enabled = compound.getBoolean("enabled");
-
-            matchPlayerFace = compound.getBoolean("matchPlayerFace");
-
-            colorType = ColorType.values()[compound.getInteger("colorType")];
-
-            if (colorType != ColorType.Custom) {
-                color = 0xffffff;
-            } else {
-                color = compound.hasKey("color") ? compound.getInteger("color") : 0xffffff;
-            }
-
-            alpha = compound.hasKey("alpha") ? compound.getFloat("alpha") : 1;
-            glow = compound.hasKey("glow") && compound.getBoolean("glow");
-
-            if (matchPlayerFace) {
-                texture = "";
-
-                NBTTagCompound faceTypes = compound.getCompoundTag("faceTextures");
-
-                if (!compound.hasKey("faceTextures")) {
-                    Arrays.fill(faceTextures, "");
-                } else {
-                    for (int i = 0; i < faceTextures.length; i++) {
-                        faceTextures[i] = faceTypes.getString("face" + i);
-                    }
-                }
-            } else {
-                texture = compound.getString("texture");
-                Arrays.fill(faceTextures, "");
-            }
-        }
-
-        @Override
-        public NBTTagCompound writeToNBT() {
-            NBTTagCompound compound = new NBTTagCompound();
-
-            compound.setBoolean("enabled", enabled);
-            compound.setBoolean("matchPlayerFace", matchPlayerFace);
-
-            compound.setInteger("colorType", colorType.ordinal());
-            compound.setInteger("color", color);
-            compound.setFloat("alpha", alpha);
-            compound.setBoolean("glow", glow);
-
-            if (matchPlayerFace) {
-                NBTTagCompound faceTypes = new NBTTagCompound();
-
-                for (int i = 0; i < faceTextures.length; i++) {
-                    faceTypes.setString("face" + i, faceTextures[i]);
-                }
-
-                compound.setTag("faceTextures", faceTypes);
-            } else {
-                compound.setString("texture", texture);
-            }
-
-            return compound;
-        }
-
-        public String getTexture(int faceType) {
-            faceType = Math.max(0, Math.min(5, faceType));
-
-            if (matchPlayerFace) {
-                return faceTextures[faceType];
-            }
-
-            if (texture == null || texture.isEmpty()) {
-                return faceTextures[faceType];
-            }
-
-            return texture;
-        }
-
-        public void setTexture(String texture, int faceType) {
-            faceType = Math.max(0, Math.min(5, faceType));
-
-            faceTextures[faceType] = texture;
-        }
-
-        public boolean isMatchingPlayerFace() {
-            return matchPlayerFace;
-        }
-
-        public void setMatchPlayerFace(boolean matchPlayerFace) {
-            this.matchPlayerFace = matchPlayerFace;
-        }
-    }
-
+    
     public enum ColorType {
         Custom(),
         Eye(),
@@ -424,7 +323,7 @@ public class Overlay {
     public enum Type {
         ALL(),
 
-        Face(Face::new),
+        Face(),
         Eyebrows(),
         EyeWhite(),
         LeftEye(),

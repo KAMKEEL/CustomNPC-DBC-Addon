@@ -449,11 +449,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 Type type = overlay.getType();
 
                 /* ───────── Texture ───────── */
-                String texture;
-                if (type == Type.Face)
-                    texture = ((Overlay.Face) overlay).getTexture(ctx.eyeType());
-                else
-                    texture = overlay.getTexture();
+                String texture = overlay.getTexture();
 
                 ctx.texture = texture;
                 if (overlay.applyTexture != null)
