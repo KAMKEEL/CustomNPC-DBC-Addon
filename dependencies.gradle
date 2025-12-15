@@ -33,6 +33,10 @@
  *
  * For more details, see https://docs.gradle.org/8.0.1/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
+
+var customNpcJar = file("../CustomNPC-Plus/build/libs/CustomNPC-Plus-1.10.2-dev-preshadow.jar")
+
+
 dependencies {
     runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.5.4-GTNH:dev")
     runtimeOnlyNonPublishable("curse.maven:Nashorn-374413:2924946")
@@ -43,10 +47,9 @@ dependencies {
     devOnlyNonPublishable(rfg.deobf(project.files("lib/JFamilyC-v1.2.18.jar")))
 
 //    implementation(files("janino/build/libs/standalone-JaninoLoader-1.0.1-ALPHA.jar"))
-    implementation(files("lib/standalone-JaninoLoader-1.0.2-ALPHA-sources.jar"))
+    implementation(files("lib/standalone-JaninoLoader-1.0.2-ALPHA.jar"))
 
-
-
+//    implementation(files(customNpcJar))
 
     // Make sure to comment this out if you're using an actual copy of EDE.
     //
@@ -55,5 +58,6 @@ dependencies {
     devOnlyNonPublishable((rfg.deobf(project.files("lib/EDE-Signature-Copy.jar"))))
 //    devOnlyNonPublishable(rfg.deobf(project.files("lib/CustomNPC-Plus-1.9.3.jar")))
 
-    implementation rfg.deobf(name: "CustomNPC-Plus-1.10.2")
+//    implementation(name: "CustomNPC-Plus")
 }
+

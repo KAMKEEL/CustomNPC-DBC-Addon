@@ -4,6 +4,8 @@ plugins {
     id 'com.gtnewhorizons.gtnhconvention'
 }
 
+apply from: 'gradle.handleCNPCSubmoduleInjection.groovy'
+
 group= "kamkeel.npcdbc"
 
 tasks.runServer { setWorkingDir(file("run/server")) }
@@ -27,4 +29,5 @@ tasks.named("runClient").configure {
     extraJvmArgs.addAll("-javaagent:${agent.absolutePath}")
 
 }
+
 

@@ -15,6 +15,7 @@ import kamkeel.npcdbc.data.attribute.DBCItemAttributes;
 import kamkeel.npcdbc.items.ModItems;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcs.controllers.ProfileController;
+import noppes.npcs.CustomNpcs;
 
 import java.io.File;
 import java.net.URL;
@@ -36,7 +37,11 @@ public class CustomNpcPlusDBC {
 
     @SidedProxy(clientSide = "kamkeel.npcdbc.client.ClientProxy", serverSide = "kamkeel.npcdbc.CommonProxy")
     public static CommonProxy proxy;
-    @Mod.Instance
+
+    public CustomNpcPlusDBC() {
+        instance = this;
+    }
+
     public static CustomNpcPlusDBC instance;
     public static String addonConfig;
 
