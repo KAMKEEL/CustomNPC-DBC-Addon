@@ -27,7 +27,6 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
     public SubGuiFormDisplay parent;
     public Form form;
     public static OverlayChain overlays;
-    public static ArrayList<Integer> selectedFaces = new ArrayList<>();
     public int lastColorClicked = 0;
     public static int lastTextureClicked = 0;
     public static int overlayID;
@@ -41,13 +40,6 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         overlays = form.display.overlays;
         this.npc = parent.npc;
 
-        if (overlays.enabled) {
-            for (int i = 0; i < overlays.overlays.size(); i++) {
-                selectedFaces.add(0);
-            }
-        } else {
-            selectedFaces.add(0);
-        }
 
         xSize = 420;
         ySize = 216;
@@ -110,12 +102,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
             y += 23;
             textField = new GuiNpcTextField(id(1, i), this, 5, y, 228, 20, ""); // id 1
             window.addTextField(textField);
-
-            if (isFace && faceOverlay.isMatchingPlayerFace()) {
-                window.getTextField(id(1, i)).setText(faceOverlay.getTexture(selectedFaces.get(i)));
-            } else {
                 window.getTextField(id(1, i)).setText(currentOverlay.getTexture());
-            }
 
 
             button = new GuiNpcButton(id(1, i), 240, y, 50, 20, "form.select");
@@ -209,21 +196,6 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         return id % SHIFT;
     }
 
-    private void rebuildSelectedFaces() {
-        selectedFaces.clear();
-
-        if (overlays.enabled) {
-            for (int i = 0; i < overlays.overlays.size(); i++) {
-                if (overlays.overlays.get(i).getType() != Face)
-                    continue;
-
-                selectedFaces.add(0);
-            }
-        } else {
-            selectedFaces.add(0);
-        }
-    }
-
     @Override
     protected void actionPerformed(GuiButton guibutton) {
         super.actionPerformed(guibutton);
@@ -234,7 +206,6 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
 
         if (id == 1) {
             overlays.add(ALL);
-            rebuildSelectedFaces();
             initGui();
         }
 
@@ -298,15 +269,6 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
             }
         }
 
-        if (buttonType == 7) {
-            if (get(overlayID).getType() == Face) {
-                selectedFaces.set(overlayID, (selectedFaces.get(overlayID) + 1) % 6);
-                GuiTextField field = window.getTextField(id(1, overlayID));
-                String texture = ((Face) get(overlayID)).getTexture(selectedFaces.get(overlayID));
-                field.setText(texture);
-                initGui();
-            }
-        }
 
         if (buttonType == 8) {
             /*
@@ -341,10 +303,6 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         Overlay o = get(overlayID);
         overlays.deleteOverlay(overlayID);
 
-        if (o.getType() == Face)
-            selectedFaces.remove(overlayID);
-
-        rebuildSelectedFaces();
     }
 
     private boolean updateButtons;
@@ -379,16 +337,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
 
     private void setTexture(String texture, boolean enable) {
         Overlay ov = get(overlayID);
-        int clickedTex = lastTextureClicked;
-
-        if (ov.getType() == Face) {
-            //TODO why -1 if not matching? the math max/min in the method still sets it to 0. also if -1, face.setTexture only sets faceTextures, not the main texture, is that fine?
-            ((Face) ov).setTexture(texture, ((Face) ov).isMatchingPlayerFace() ? selectedFaces.get(clickedTex) : -1);
-            ov.texture(texture);
-        } else {
-            ov.texture(texture);
-        }
-
+        ov.texture(texture);
         if (enable)
             ov.enabled(true);
     }
@@ -401,13 +350,8 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         Overlay ov = get(overlayID);
         String text = textField.getText();
 
-        if (fieldType == 1) {
-            if (ov.getType() == Face) {
-                ((Face) ov).setTexture(text, ((Face) ov).isMatchingPlayerFace() ? selectedFaces.get(overlayID) : -1);
-            } else {
+        if (fieldType == 1) 
                 ov.texture(text);
-            }
-        }
 
         if (fieldType == 9) {
             try {
