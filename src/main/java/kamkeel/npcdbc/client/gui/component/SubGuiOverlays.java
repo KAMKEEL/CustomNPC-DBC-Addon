@@ -75,7 +75,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         }
 
         addScrollableGui(3, window);
-        //addButton(new GuiNpcButton(2, guiLeft + 230, guiTop - 10, 20, 20, "X"));
+        addTopButton(new GuiMenuTopButton(0, guiLeft  + width + 98, guiTop - 17, "X"));
 
         y = 5;
 
@@ -196,6 +196,11 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         int buttonType = extractButtonId(id);
         overlayID = extractId(id);
 
+        if (id == 0) {
+            close();
+            return;
+        }
+
         if (id == 1) {
             overlays.add(ALL);
             initGui();
@@ -221,12 +226,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
 
 
         }
-
-        if (id == 2) {
-            close();
-            return;
-        }
-
+        
         if (buttonType == 1) {//buttons 1,2,3 are identical to clicked indices
             lastTextureClicked = overlayID;
         }

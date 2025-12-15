@@ -93,6 +93,7 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
         this.guiTop += 10;
         int yoffset = (int) ((double) this.ySize * 0.02);
         GuiMenuTopButton top;
+        addTopButton(new GuiMenuTopButton(-1, guiLeft + xSize-2 , guiTop - 17, "X"));
         this.addTopButton(top = new GuiMenuTopButton(0, this.guiLeft + 4, this.guiTop - 17, "gui.settings"));
         int topXoffset = 0;
         int topYoffset = 0;
@@ -221,6 +222,11 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
     }
 
     protected void actionPerformed(GuiButton guibutton) {
+        if (guibutton.id == -1) {
+            close();
+            return;
+        }
+        
         if (guibutton.id == 0) {
             this.setScript();
             this.activeTab = 0;

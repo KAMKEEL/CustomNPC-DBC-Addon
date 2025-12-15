@@ -1,10 +1,7 @@
 package kamkeel.npcdbc.client.gui.component;
 
 import net.minecraft.client.gui.GuiButton;
-import noppes.npcs.client.gui.util.GuiCustomScroll;
-import noppes.npcs.client.gui.util.GuiNpcButton;
-import noppes.npcs.client.gui.util.GuiNpcLabel;
-import noppes.npcs.client.gui.util.SubGuiInterface;
+import noppes.npcs.client.gui.util.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +37,9 @@ public class SubGuiSelectList extends SubGuiInterface {
             scroll1 = new GuiCustomScroll(this, 0);
             scroll1.setSize(140, 180);
         }
+
+        addTopButton(new GuiMenuTopButton(-1, guiLeft + xSize-22 , guiTop - 17, "X"));
+
         scroll1.guiLeft = guiLeft + 4;
         scroll1.guiTop = guiTop + 14;
         this.addScroll(scroll1);
@@ -70,6 +70,12 @@ public class SubGuiSelectList extends SubGuiInterface {
 
     protected void actionPerformed(GuiButton guibutton) {
         GuiNpcButton button = (GuiNpcButton) guibutton;
+
+        if (button.id == -1) {
+            close();
+            return;
+        }
+        
         if (button.id == 1) {
             if (scroll1.hasSelected()) {
                 selected.add(scroll1.getSelected());
