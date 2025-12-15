@@ -5,11 +5,10 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.utils.Color;
 import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.Arrays;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class Overlay {
+public class Overlay implements JaninoScriptable {
     public OverlayChain chain;
     public String texture = "";
     public ColorType colorType = ColorType.Custom;
@@ -23,6 +22,8 @@ public class Overlay {
     public ColorFunction applyColor;
     public RenderFunction renderer;
     public Function<OverlayContext, Boolean> condition;
+
+    public OverlayScript script;
 
     public Overlay() {
     }
@@ -39,8 +40,8 @@ public class Overlay {
 
     @SideOnly(Side.CLIENT)
     public String applyTexture(OverlayContext ctx) {
-        if (chain.hasScript()) {
-            String script = chain.getScript().call(f -> f.getTexture(ctx));
+        if (hasScript()) {
+            String script = getScript().call(f -> f.getTexture(ctx));
             if (script != null)
                 return script;
         }
@@ -58,8 +59,8 @@ public class Overlay {
 
     @SideOnly(Side.CLIENT)
     public Color applyColor(OverlayContext ctx) {
-        if (chain.hasScript()) {
-            Color script = chain.getScript().call(f -> f.getColor(ctx));
+        if (hasScript()) {
+            Color script = getScript().call(f -> f.getColor(ctx));
             if (script != null)
                 return script;
         }
@@ -291,6 +292,8 @@ public class Overlay {
 
         alpha = compound.hasKey("alpha") ? compound.getFloat("alpha") : 1;
         glow = compound.hasKey("glow") && compound.getBoolean("glow");
+
+        script = JaninoScriptable.readFromNBT(compound, script, OverlayScript::new);
     }
 
     public NBTTagCompound writeToNBT() {
@@ -306,9 +309,30 @@ public class Overlay {
         compound.setFloat("alpha", alpha);
         compound.setBoolean("glow", glow);
 
+        JaninoScriptable.writeToNBT(compound, script);
+
         return compound;
     }
-    
+
+    public OverlayScript getScript() {
+        return script;
+    }
+
+    public OverlayScript createScript() {
+        if (script == null)
+            script = new OverlayScript();
+        return script;
+    }
+
+    public void deleteScript() {
+        script = null;
+    }
+
+    public boolean hasScript() {
+        return script != null;
+    }
+
+
     public enum ColorType {
         Custom(),
         Eye(),

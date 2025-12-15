@@ -269,9 +269,6 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         window.addButton(new GuiNpcButton(118, width - x - 75, y - 5, 50, 20, "Edit"));
         window.getButton(118).enabled = overlays.enabled;
 
-        y += 30;
-        window.addButton(new GuiNpcButton(-2, x + 64, y - 5, 40, 20, "script.scripts"));
-
         window.maxScrollY = (y - height) + 20 + 5;
     }
 
@@ -365,13 +362,6 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     @Override
     protected void actionPerformed(GuiButton btn) {
         GuiNpcButton button = (GuiNpcButton) btn;
-
-        if (button.id == -2) {
-            GuiJaninoScript scriptGUI = new GuiJaninoScript(this.parent, overlays.createScript());
-            scriptGUI.setWorldAndResolution(mc, width, height);
-            mc.currentScreen = scriptGUI;
-            scriptGUI.initGui();
-        }
 
         if (button.id == 1) {
             if (form.getRace() == DBCRace.ALL_SAIYANS) {

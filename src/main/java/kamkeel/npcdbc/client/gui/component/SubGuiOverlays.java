@@ -210,7 +210,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
 
         if (buttonType == 10) {
             Overlay foundOverlay = get(overlayID);
-            if (foundOverlay.texture.isEmpty()) {
+            if (foundOverlay.texture.isEmpty() || !foundOverlay.hasScript()) {
                 deleteOverlay();
                 initGui();
             } else {
@@ -273,6 +273,11 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
             update();
 
         }
+
+        //Script
+        if (buttonType == 11) 
+            GuiJaninoScript.create(this.parent.parent, get(overlayID).createScript(), width, height);
+        
     }
 
     public void confirmClicked(boolean flag, int i) {

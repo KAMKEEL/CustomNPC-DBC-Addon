@@ -9,7 +9,7 @@ import net.minecraftforge.common.util.Constants;
 import java.util.*;
 import java.util.function.Function;
 
-public class OverlayChain implements JaninoScriptable {
+public class OverlayChain  {
 
     public final ArrayList<Overlay> overlays = new ArrayList<>();
 
@@ -19,9 +19,8 @@ public class OverlayChain implements JaninoScriptable {
     public Set<FacePartData.Part> disabledParts = new HashSet<>();
 
     public Function<OverlayContext, Boolean> condition;
-
-    public OverlayScript script;
-
+    
+    
     public OverlayChain() {
     }
 
@@ -29,23 +28,6 @@ public class OverlayChain implements JaninoScriptable {
         this.name = name;
     }
 
-    public OverlayScript getScript() {
-        return script;
-    }
-
-    public OverlayScript createScript() {
-        if (script == null)
-            script = new OverlayScript();
-        return script;
-    }
-
-    public void deleteScript() {
-        script = null;
-    }
-
-    public boolean hasScript() {
-        return script != null;
-    }
 
 
     public OverlayChain disable(FacePartData.Part... parts) {
@@ -207,8 +189,6 @@ public class OverlayChain implements JaninoScriptable {
                     disabledParts.add(values[ordinal]);
             }
         }
-
-        script = JaninoScriptable.readFromNBT(compound, script, OverlayScript::new);
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -227,9 +207,7 @@ public class OverlayChain implements JaninoScriptable {
                 arr[i++] = (byte) t.ordinal();
             compound.setByteArray("disabledParts", arr);
         }
-
-        JaninoScriptable.writeToNBT(compound, script);
-
+        
         compound.setTag("overlayData", rendering);
         return compound;
     }

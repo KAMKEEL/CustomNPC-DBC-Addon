@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.gui.component;
 
 import kamkeel.npcdbc.data.overlay.JaninoScript;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.util.StatCollector;
 import noppes.npcs.NoppesStringUtils;
@@ -368,6 +369,14 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
 
     public void textUpdate(String text) {
         container.setScript(text);
+    }
+
+    public static GuiJaninoScript create(GuiScreen parent, JaninoScript script, int width, int height) {
+        GuiJaninoScript gui = new GuiJaninoScript(parent, script);
+        gui.setWorldAndResolution(Minecraft.getMinecraft(), width, height);
+        Minecraft.getMinecraft().currentScreen = gui;
+        gui.initGui();
+        return gui;
     }
 
 
