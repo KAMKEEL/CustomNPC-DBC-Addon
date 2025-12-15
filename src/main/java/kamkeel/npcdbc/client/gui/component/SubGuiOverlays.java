@@ -7,6 +7,9 @@ import kamkeel.npcdbc.data.overlay.Overlay.Face;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.gui.GuiYesNo;
+import net.minecraft.client.gui.GuiYesNoCallback;
+import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.SubGuiColorSelector;
 import noppes.npcs.client.gui.select.GuiTextureSelection;
 import noppes.npcs.client.gui.util.*;
@@ -20,7 +23,7 @@ import java.util.stream.Collectors;
 import static kamkeel.npcdbc.data.overlay.Overlay.Type.ALL;
 import static kamkeel.npcdbc.data.overlay.Overlay.Type.Face;
 
-public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, ITextfieldListener {
+public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, ITextfieldListener, GuiYesNoCallback {
     public SubGuiFormDisplay parent;
     public Form form;
     public static OverlayChain overlays;
@@ -46,17 +49,21 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
             selectedFaces.add(0);
         }
 
-        xSize = 300;
+        xSize = 420;
+        ySize = 216;
+        guiTop += 7;
 
         drawNpc = true;
-        xOffsetNpc = 300;
-        yOffsetNpc = 200;
+        xOffsetNpc = 360;
+        yOffsetNpc = 189;
         xOffsetButton = -43;
         yOffsetButton = 10;
         yMouseRange = 200;
-        defaultZoom = zoom = 2.9f;
+        defaultZoom = zoom = 2.6f;
         maxZoom = 4;
         drawRenderButtons = true;
+
+        setBackground("menubg.png");
     }
 
     @Override
@@ -70,19 +77,20 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
             window = new GuiScrollWindow(this, guiLeft, guiTop, width, height, 0);
         } else {
             window.initGui();
-            window.xPos = parent.guiLeft;
-            window.yPos = parent.guiTop;
-            window.clipWidth = width - 20;
-            window.clipHeight = parent.ySize;
+            window.xPos = guiLeft + 4;//parent.guiLeft;
+            window.yPos = guiTop + 4;//= parent.guiTop;
+            window.clipWidth = width + 5;
+            window.clipHeight = ySize - 8;//parent.ySize;
             window.maxScrollY = 0;
 
         }
 
         addScrollableGui(3, window);
-        addButton(new GuiNpcButton(2, guiLeft + 230, guiTop - 10, 20, 20, "X"));
+        //addButton(new GuiNpcButton(2, guiLeft + 230, guiTop - 10, 20, 20, "X"));
 
-        y = 10;
+        y = 5;
 
+        int buttonOneRowOneX = 32;
         for (int i = 0; i < overlays.overlays.size(); i++) {
             Overlay currentOverlay = get(i);
             Face faceOverlay = null;
@@ -95,7 +103,12 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
             }
 
             window.addLabel(new GuiNpcLabel(id(1, i), "Overlay " + (i + 1) + ":", 5, y + 5, 0xffffff));
-            textField = new GuiNpcTextField(id(1, i), this, 65, y, 150, 20, ""); // id 1
+            button = new GuiNpcButton(id(5, i), 240, y, 50, 20, new String[]{"Disabled", "Enabled"},
+                    currentOverlay.isEnabled() ? 1 : 0);
+            window.addButton(button); // id 5
+
+            y += 23;
+            textField = new GuiNpcTextField(id(1, i), this, 5, y, 228, 20, ""); // id 1
             window.addTextField(textField);
 
             if (isFace && faceOverlay.isMatchingPlayerFace()) {
@@ -105,74 +118,65 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
             }
 
 
-            button = new GuiNpcButton(id(1, i), 217, y, 50, 20, "form.select");
+            button = new GuiNpcButton(id(1, i), 240, y, 50, 20, "form.select");
             window.addButton(button);  // id 1
 
-            y += 23;
-
-            button = new GuiNpcButton(id(5, i), 5, y, 50, 20, new String[]
-                {"Disabled", "Enabled"}, currentOverlay.isEnabled() ? 1 : 0);
-            window.addButton(button); // id 5
-
             if (currentOverlay.isEnabled()) {
-                window.addLabel(new GuiNpcLabel(id(2, i), "Color:", 58, y + 5, 0xffffff));
-
-                String[] names = Arrays.stream(Overlay.ColorType.values()).map(Enum::name).toArray(String[]::new);
-                button = new GuiNpcButton(id(2, i), 90, y, 50, 20, names, currentOverlay.getColorType());
-                window.addButton(button); // id 2
-
-                window.addLabel(new GuiNpcLabel(id(4, i), "Glow:", 143, y + 5, 0xffffff));
-                button = new GuiNpcButtonYesNo(id(4, i), 170, y, 50, 20, currentOverlay.isGlow());
-                window.addButton(button); // id 4
+                button = new GuiNpcButton(id(11, i), 240, y += 23, 50, 20, "Scripts");
+                window.addButton(button);  // id 1
             }
 
-            y += 23;
+            button = new GuiNpcButton(id(10, i), 240, y += 23, 50, 20, "Delete");
+            window.addButton(button); // id 9
+            y -= 23;
 
             if (currentOverlay.isEnabled()) {
+                int x = 5;
+                window.addLabel(new GuiNpcLabel(id(8, i), "Type:", x, y + 5, 0xffffff));
+                String[] names = Arrays.stream(Overlay.Type.values()).map(Enum::name).toArray(String[]::new);
+                button = new GuiNpcButton(id(8, i), x += buttonOneRowOneX, y, 50, 20, names,
+                        currentOverlay.getType().ordinal());
+                window.addButton(button); // id 8
+
+                window.addLabel(new GuiNpcLabel(id(4, i), "Glow:", x += 53, y + 5, 0xffffff));
+                button = new GuiNpcButtonYesNo(id(4, i), x += buttonOneRowOneX, y, 50, 20, currentOverlay.isGlow());
+                window.addButton(button); // id 4
+
+
+                y += 23;
+                x = 5;
+                window.addLabel(new GuiNpcLabel(id(2, i), "Color:", x, y + 5, 0xffffff));
+
+                names = Arrays.stream(Overlay.ColorType.values()).map(Enum::name).toArray(String[]::new);
+                button = new GuiNpcButton(id(2, i), x += 32, y, 50, 20, names, currentOverlay.getColorType());
+                window.addButton(button); // id 2
+
                 if (currentOverlay.getColorType() == Overlay.ColorType.Custom.ordinal()) {
-                    button = new GuiNpcButton(id(3, i), 90, y, 50, 20, getColor(currentOverlay.getColor()));
+                    button = new GuiNpcButton(id(3, i), x += 53, y, 50, 20, getColor(currentOverlay.getColor()));
                     button.packedFGColour = currentOverlay.getColor();
                     window.addButton(button); // id 3
                 }
 
-                if (isFace) {
-                    window.addLabel(new GuiNpcLabel(id(6, i), "Match Face:", 143, y + 5, 0xffffff));
-                    button = new GuiNpcButtonYesNo(id(6, i), 205, y, 50, 20, faceOverlay.isMatchingPlayerFace());
-                    window.addButton(button); // id 6
+                int tempY = currentOverlay.getColorType() == Overlay.ColorType.Custom.ordinal() ? y : y;
 
-                    if (faceOverlay.isMatchingPlayerFace()) {
-                        button = new GuiNpcButton(id(7, i), 263, y, 20, 20, new String[]{
-                            "1", "2", "3", "4", "5", "6"}, selectedFaces.get(i)); // id 7
-                        window.addButton(button);
-                    }
-                }
-
-
-                String[] names = Arrays.stream(Overlay.Type.values()).map(Enum::name).toArray(String[]::new);
-                button = new GuiNpcButton(id(8, i), 5, y, 50, 20, names, currentOverlay.getType().ordinal());
-                window.addButton(button); // id 8
-
-                int tempY = currentOverlay.getColorType() == Overlay.ColorType.Custom.ordinal() ? y + 23 : y;
-
-                window.addLabel(new GuiNpcLabel(id(9, i), "Alpha:", 58, tempY + 5, 0xffffff));
-                textField = new GuiNpcTextField(id(9, i), this, 90, tempY, 30, 20, currentOverlay.getAlpha() + "");
+                window.addLabel(new GuiNpcLabel(id(9, i), "Alpha:", x += 53, tempY + 5, 0xffffff));
+                textField = new GuiNpcTextField(id(9, i), this, x += 34, tempY, 47, 20, currentOverlay.getAlpha() + "");
                 textField.setFloatsOnly();
                 textField.setMinMaxDefaultFloat(0.0f, 1.0f, 1.0f);
                 window.addTextField(textField); // id 1
+            } else {
+                y += 23;
             }
 
-            y += 23;
 
-            button = new GuiNpcButton(id(10, i), 5, y, 50, 20, "Delete");
-            window.addButton(button); // id 9
-            y += 45;
+            y += 37;
         }
 
         if (overlays.overlays.size() >= 10) {
             addLabel(new GuiNpcLabel(1, "WARNING: Too many overlays may cause lag or file deletion!",parent.guiLeft+5, guiTop - 26, 0xFF0000));
         }
 
-        window.addButton(new GuiNpcButton(1, 8, y, 20, 20, "+"));
+        window.addButton(new GuiNpcButton(1, 240, y, 50, 20, "Add"));
         y += 45; //Don't forget the extra 3 pixels after the +
 
         window.addLabel(new GuiNpcLabel(1171, "Disable Other Overlays", 5, y, 0xFFFFFF));
@@ -243,13 +247,16 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
 
         if (buttonType == 10) {
             Overlay foundOverlay = get(overlayID);
-            overlays.deleteOverlay(overlayID);
+            if (foundOverlay.texture.isEmpty()) {
+                deleteOverlay();
+                initGui();
+            } else {
+                GuiYesNo guiyesno = new GuiYesNo(this, StatCollector.translateToLocal("gui.paste"),
+                        StatCollector.translateToLocal("gui.sure"), 1);
+                this.displayGuiScreen(guiyesno);
+            }
 
-            if (foundOverlay.getType() == Face)
-                selectedFaces.remove(overlayID);
 
-            rebuildSelectedFaces();
-            initGui();
         }
 
         if (id == 2) {
@@ -320,6 +327,24 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
             update();
 
         }
+    }
+
+    public void confirmClicked(boolean flag, int i) {
+        if (flag) {
+            if (i == 1)
+                deleteOverlay();
+        }
+        this.displayGuiScreen(this);
+    }
+
+    public void deleteOverlay() {
+        Overlay o = get(overlayID);
+        overlays.deleteOverlay(overlayID);
+
+        if (o.getType() == Face)
+            selectedFaces.remove(overlayID);
+
+        rebuildSelectedFaces();
     }
 
     private boolean updateButtons;
