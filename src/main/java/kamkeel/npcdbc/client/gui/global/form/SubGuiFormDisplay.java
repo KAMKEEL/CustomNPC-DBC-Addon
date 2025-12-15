@@ -272,9 +272,6 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         y += 30;
         window.addButton(new GuiNpcButton(-2, x + 64, y - 5, 40, 20, "script.scripts"));
 
-        System.out.println();
-
-
         window.maxScrollY = (y - height) + 20 + 5;
     }
 
