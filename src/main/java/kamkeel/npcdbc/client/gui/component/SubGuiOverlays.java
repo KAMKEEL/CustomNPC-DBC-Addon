@@ -51,7 +51,6 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
 
         xSize = 420;
         ySize = 216;
-        guiTop += 7;
 
         drawNpc = true;
         xOffsetNpc = 360;
@@ -70,6 +69,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
     public void initGui() {
         super.initGui();
         int y = 5;
+        guiTop += 7;
 
         int width = 300;
         int height = ySize - (y - guiTop) - 2;
@@ -179,9 +179,9 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         window.addButton(new GuiNpcButton(1, 240, y, 50, 20, "Add"));
         y += 45; //Don't forget the extra 3 pixels after the +
 
-        window.addLabel(new GuiNpcLabel(1171, "Disable Other Overlays", 5, y, 0xFFFFFF));
-        window.addButton(new GuiNpcButton(4, 155, y - 5, 100, 20, "Select Types"));
-        y += 23;
+        int thisY = y > window.clipHeight ? y += 23 : window.clipHeight;
+        window.addLabel(new GuiNpcLabel(1171, "Disable Other Overlays", 5, thisY - 25, 0xFFFFFF));
+        window.addButton(new GuiNpcButton(4, 155, thisY - 30, 100, 20, "Select Types"));
 
         /**
          * y is the TOTAL height of all elements, even outside the scroll window height
