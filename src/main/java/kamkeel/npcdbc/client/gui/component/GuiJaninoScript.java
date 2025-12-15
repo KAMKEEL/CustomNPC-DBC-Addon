@@ -28,6 +28,7 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
     public final GuiScreen parent;
     private final JaninoScript container;
 
+    public Runnable saveFunction;
 
     public GuiJaninoScript(GuiScreen parent, JaninoScript handler) {
         this.drawDefaultBackground = true;
@@ -42,6 +43,11 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
 
         String lang = handler.getLanguage();
         allExternalScripts.addAll(ScriptController.Instance.getScripts(lang));
+    }
+
+    public GuiJaninoScript setSave(Runnable run) {
+        saveFunction = run;
+        return this;
     }
 
     public void createHookList() {
@@ -355,6 +361,10 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
     }
 
     public void save() {
+        if (saveFunction != null)
+            saveFunction.run();
+        else if (parent instanceof GuiNPCInterface)
+            ((GuiNPCInterface) parent).save();
     }
 
     public void textUpdate(String text) {
