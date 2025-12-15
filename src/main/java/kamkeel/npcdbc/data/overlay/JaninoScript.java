@@ -41,19 +41,13 @@ public abstract class JaninoScript<T> {
     public final IScriptBodyBuilder<T> builder;
     protected IScriptClassBody<T> scriptBody;
 
-    protected JaninoScript(Class<T> type) {
+    protected JaninoScript(Class<T> type, Consumer<IScriptBodyBuilder<T>> buildSettings) {
         this.type = type;
         this.builder = IScriptBodyBuilder
             .getBuilder(type, CustomNpcPlusDBC.getClientCompiler());
-        configure(builder);
+        buildSettings.accept(builder);
 
         this.scriptBody = builder.build();
-    }
-
-    /**
-     * Safe hook — called AFTER builder creation, BEFORE build()
-     */
-    protected void configure(IScriptBodyBuilder<T> builder) {
     }
 
     protected T getUnsafe() {
