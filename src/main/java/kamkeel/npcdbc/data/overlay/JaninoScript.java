@@ -31,10 +31,6 @@ public abstract class JaninoScript<T> {
      */
     public List<String> externalScripts = new ArrayList<>();
     /**
-     *  Combined code of this.script + externalScripts
-     */
-    public String fullScript = "";
-    /**
      *  To evaluate if script/externalScripts were changed or not,
      *  and compile the fullScript freshly if so.
      */
@@ -74,7 +70,7 @@ public abstract class JaninoScript<T> {
         try {
             return sandbox.confine((PrivilegedAction<R>) () -> fn.apply(t));
         } catch (Exception e) {
-            appendConsole("Runtime error: " + e.getMessage());
+            appendConsole("Runtime Error: " + e.getMessage());
             return null;
         }
     }
@@ -92,7 +88,7 @@ public abstract class JaninoScript<T> {
                 return null;
             });
         } catch (Exception e) {
-            appendConsole("Runtime error: " + e.getMessage());
+            appendConsole("Runtime Error: " + e.getMessage());
         }
     }
 
@@ -103,7 +99,7 @@ public abstract class JaninoScript<T> {
         try {
             scriptBody.setScript(code);
         } catch (Exception e) {
-            appendConsole("Compilation Error: " + e.getMessage());
+            appendConsole("Compilation error: " + e.getMessage());
         }
     }
 
