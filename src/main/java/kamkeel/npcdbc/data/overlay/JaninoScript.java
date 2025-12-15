@@ -127,19 +127,20 @@ public abstract class JaninoScript<T> {
     private int lastSeenGlobalRevision;
 
     private String getFullCode() {
-        if (!isEnabled()) {
+        if (!isEnabled())
             return "";
-        }
 
         StringBuilder sb = new StringBuilder();
 
-        // append external scripts first
-        appendExternalScripts(sb);
+        if (ConfigScript.RunLoadedScriptsFirst)
+            this.appendExternalScripts(sb);
 
-        // append main script last
-        if (this.script != null && !this.script.isEmpty()) {
+        // Main script
+        if (this.script != null && !this.script.isEmpty())
             sb.append(this.script).append("\n");
-        }
+
+        if (!ConfigScript.RunLoadedScriptsFirst)
+            this.appendExternalScripts(sb);
 
         return sb.toString();
     }
