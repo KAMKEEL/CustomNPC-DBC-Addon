@@ -71,7 +71,12 @@ public abstract class JaninoScript<T> {
         if (t == null)
             return null;
 
-        return sandbox.confine((PrivilegedAction<R>) () -> fn.apply(t));
+        try {
+            return sandbox.confine((PrivilegedAction<R>) () -> fn.apply(t));
+        } catch (Exception e) {
+            appendConsole("Runtime error: " + e.getMessage());
+            return null;
+        }
     }
 
     public void run(Consumer<T> fn) {
@@ -81,10 +86,14 @@ public abstract class JaninoScript<T> {
         if (t == null)
             return;
 
-        sandbox.confine((PrivilegedAction<Void>) () -> {
-            fn.accept(t);
-            return null;
-        });
+        try {
+            sandbox.confine((PrivilegedAction<Void>) () -> {
+                fn.accept(t);
+                return null;
+            });
+        } catch (Exception e) {
+            appendConsole("Runtime error: " + e.getMessage());
+        }
     }
 
     /**
@@ -94,6 +103,7 @@ public abstract class JaninoScript<T> {
         try {
             scriptBody.setScript(code);
         } catch (Exception e) {
+            appendConsole("Compilation Error: " + e.getMessage());
         }
     }
 
@@ -101,7 +111,7 @@ public abstract class JaninoScript<T> {
         compileScript(getFullCode());
     }
 
-    private void ensureCompiled() {
+    public void ensureCompiled() {
         if (!isEnabled()) {
             if (!evaluated) {
                 compileScript("");
