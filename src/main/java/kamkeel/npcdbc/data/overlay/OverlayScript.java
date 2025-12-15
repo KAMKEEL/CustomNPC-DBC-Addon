@@ -10,7 +10,7 @@ public class OverlayScript extends JaninoScript<OverlayScript.Functions> {
                 "kamkeel.npcdbc.data.overlay.OverlayContext"));
     }
 
-    public static class Functions implements Overlay.TextureFunction, Overlay.ColorFunction {
+    public static class Functions {
         public Color getColor(OverlayContext ctx) {
             return null;
         }
