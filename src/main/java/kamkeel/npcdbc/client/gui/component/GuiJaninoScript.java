@@ -5,16 +5,17 @@ import net.minecraft.client.gui.*;
 import net.minecraft.util.StatCollector;
 import noppes.npcs.NoppesStringUtils;
 import noppes.npcs.client.gui.util.*;
+import noppes.npcs.controllers.ScriptController;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback, ITextChangeListener, ICustomScrollListener {
+public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback, ITextChangeListener, ICustomScrollListener, ISubGuiListener {
 
     private int activeTab = 0;
-    public Map<String, List<String>> languages = new HashMap();
+    public List<String> allExternalScripts = new ArrayList<>();
     private final int scriptLimit = 1;
     public String previousHookClicked = "";
 
@@ -38,6 +39,9 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
         this.container = handler;
 
         createHookList();
+
+        String lang = handler.getLanguage();
+        allExternalScripts.addAll(ScriptController.Instance.getScripts(lang));
     }
 
     public void createHookList() {
@@ -124,15 +128,14 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
             this.addButton(new GuiNpcButton(105, left1 + 61, this.guiTop + 21 + yoffset, 60, 20, "gui.remove"));
 
             this.addButton(new GuiNpcButton(107, left1, this.guiTop + 66 + yoffset, 80, 20, "script.loadscript"));
-            this.getButton(107).enabled = false;
+            //  this.getButton(107).enabled = false;
 
             GuiCustomScroll scroll = (new GuiCustomScroll(this, 0)).setUnselectable();
             scroll.setSize(100, (int) ((double) this.ySize * 0.54) - yoffset * 2);
             scroll.guiLeft = left1;
             scroll.guiTop = this.guiTop + 88 + yoffset;
-            if (container != null) {
-                // scroll.setList(container.scripts);
-            }
+            if (container != null)
+                scroll.setList(container.externalScripts);
 
             this.addScroll(scroll);
         } else {
@@ -264,13 +267,15 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
         }
         //Load Script
         else if (guibutton.id == 107) {
-            //ScriptContainer container = this.container.container;
-            if (container == null) {
-                //  container = new ScriptContainer(this.container);
-                // this.container.container = container;
-            }
+            setSubGui(new SubGuiSelectList(allExternalScripts, container.externalScripts, "All Scripts", "Selected Scripts"));
+        }
+    }
 
-            //this.setSubGui(new EventGuiScriptList((List)this.languages.get(container.getLanguage()), container));
+    public void subGuiClosed(SubGuiInterface sub) {
+        if (sub instanceof SubGuiSelectList) {
+            container.externalScripts = ((SubGuiSelectList) sub).selected;
+            container.evaluated = false;
+            container.reloadScript();
         }
     }
 
@@ -336,16 +341,6 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
     }
 
     private int getScriptIndex() {
-        int i = 0;
-
-        for (Iterator var2 = this.languages.keySet()
-            .iterator(); var2.hasNext(); ++i) {
-            String language = (String) var2.next();
-            //  if (language.equalsIgnoreCase(this.scriptHandler.getLanguage())) {
-            //  return i;
-            //}
-        }
-
         return 0;
     }
 

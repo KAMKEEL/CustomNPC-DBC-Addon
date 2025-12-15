@@ -18,7 +18,12 @@ import java.util.function.Function;
 
 public abstract class JaninoScript<T> {
     public boolean enabled = false;
+
     public String script = "";
+    public List<String> externalScripts = new ArrayList<>();
+    public String fullScript = "";
+    public boolean evaluated;
+
     private String language = "Java";
     public TreeMap<Long, String> console = new TreeMap();
 
@@ -64,25 +69,60 @@ public abstract class JaninoScript<T> {
     }
 
     public void setScript(String script) {
+        if (!this.script.equals(script))
+            this.evaluated = false;
+
         this.script = script;
+        reloadScript();
+    }
+
+    public void reloadScript() {
         try {
-            scriptBody.setScript(script);
+            scriptBody.setScript(getFullCode());
         } catch (Exception e) {
         }
     }
 
+    private String getFullCode() {
+        if (!isEnabled())
+            return fullScript = "";
+
+        if (!this.evaluated) {
+            // build includes first depending on config setting
+            StringBuilder sb = new StringBuilder();
+            this.appendExternalScripts(sb);
+
+            // then your per‐hook main script
+            if (this.script != null && !this.script.isEmpty())
+                sb.append(this.script).append("\n");
+
+            this.fullScript = sb.toString();
+        }
+        return this.fullScript;
+    }
+
+    private void appendExternalScripts(StringBuilder sb) {
+        for (String scriptName : externalScripts) {
+            String code = ScriptController.Instance.scripts.get(scriptName);
+            if (code != null && !code.isEmpty())
+                sb.append(code).append("\n");
+        }
+    }
+
+
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setBoolean("enabled", enabled);
         compound.setString("script", script);
+        compound.setTag("externalScripts", NBTTags.nbtStringList(this.externalScripts));
         compound.setTag("console", NBTTags.NBTLongStringMap(this.console));
         return compound;
     }
 
     public JaninoScript readFromNBT(NBTTagCompound compound) {
         this.enabled = compound.getBoolean("enabled");
-        this.script = compound.getString("script");
+        setScript(compound.getString("script"));
+        this.externalScripts = NBTTags.getStringList(compound.getTagList("externalScripts", 10));
         this.console = NBTTags.GetLongStringMap(compound.getTagList("console", 10));
-        setScript(script);
 
         return this;
     }
@@ -103,6 +143,7 @@ public abstract class JaninoScript<T> {
 
     public void setEnabled(boolean b) {
         this.enabled = b;
+        reloadScript();
     }
 
     public String getLanguage() {
