@@ -16,6 +16,8 @@ public interface JaninoScriptable<T extends JaninoScript<T>> {
     JaninoScript<T> createScript();
 
     void deleteScript();
+    
+    void unloadScript();
 
     static <T, S extends JaninoScript<T>> S readFromNBT(NBTTagCompound compound, S script, Supplier<S> factory) {
         if (compound.hasKey("Script")) {

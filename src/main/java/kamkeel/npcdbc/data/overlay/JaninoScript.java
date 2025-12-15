@@ -85,6 +85,9 @@ public abstract class JaninoScript<T> {
             appendConsole("Runtime Error: " + e.getMessage());
         }
     }
+    
+    public void unload() {
+    }
 
     /**
      * Feed the code into the engine and compile it

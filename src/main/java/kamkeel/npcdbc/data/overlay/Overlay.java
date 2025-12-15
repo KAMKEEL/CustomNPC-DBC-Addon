@@ -325,7 +325,13 @@ public class Overlay implements JaninoScriptable {
     }
 
     public void deleteScript() {
+        unloadScript();
         script = null;
+    }
+
+    public void unloadScript() {
+        if (script != null)
+            script.unload();
     }
 
     public boolean hasScript() {
