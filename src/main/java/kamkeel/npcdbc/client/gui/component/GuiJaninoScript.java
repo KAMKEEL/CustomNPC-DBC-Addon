@@ -224,6 +224,7 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
             this.setScript();
             this.activeTab = 0;
             this.initGui();
+            container.ensureCompiled();
         }
 
         if (guibutton.id == this.scriptLimit) {
@@ -373,6 +374,7 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
     @Override
     public void close() {
         this.save();
+        container.ensureCompiled();
         parent.setWorldAndResolution(mc, width, height);
         parent.initGui();
         mc.currentScreen = parent;
