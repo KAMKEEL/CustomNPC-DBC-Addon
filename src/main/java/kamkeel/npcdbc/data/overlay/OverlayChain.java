@@ -9,7 +9,7 @@ import net.minecraftforge.common.util.Constants;
 import java.util.*;
 import java.util.function.Function;
 
-public class OverlayChain {
+public class OverlayChain implements JaninoScriptable {
 
     public final ArrayList<Overlay> overlays = new ArrayList<>();
 
@@ -20,7 +20,7 @@ public class OverlayChain {
 
     public Function<OverlayContext, Boolean> condition;
 
-    public OverlayScript scriptContainer = new OverlayScript();
+    public OverlayScript script;
 
     public OverlayChain() {
     }
@@ -28,6 +28,25 @@ public class OverlayChain {
     public OverlayChain(String name) {
         this.name = name;
     }
+
+    public OverlayScript getScript() {
+        return script;
+    }
+
+    public OverlayScript createScript() {
+        if (script != null)
+            script = new OverlayScript();
+        return script;
+    }
+
+    public void deleteScript() {
+        script = null;
+    }
+
+    public boolean hasScript() {
+        return script != null;
+    }
+
 
     public OverlayChain disable(FacePartData.Part... parts) {
         for (FacePartData.Part part : parts)
@@ -189,9 +208,7 @@ public class OverlayChain {
             }
         }
 
-        if (compound.hasKey("scriptContainer")) {
-            scriptContainer.readFromNBT(compound.getCompoundTag("scriptContainer"));
-        }
+        script = (OverlayScript) JaninoScriptable.readFromNBT(compound, script);
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -211,9 +228,7 @@ public class OverlayChain {
             compound.setByteArray("disabledParts", arr);
         }
 
-        NBTTagCompound scriptData = new NBTTagCompound();
-        scriptContainer.writeToNBT(scriptData);
-        compound.setTag("scriptContainer", scriptData);
+        JaninoScriptable.writeToNBT(compound, script);
 
         compound.setTag("overlayData", rendering);
         return compound;

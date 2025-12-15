@@ -370,8 +370,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         GuiNpcButton button = (GuiNpcButton) btn;
 
         if (button.id == -2) {
-            //    PacketClient.sendClient(new EffectSavePacket(effect.writeToNBT(false), originalName));
-            GuiJaninoScript scriptGUI = new GuiJaninoScript(this.parent, overlays.scriptContainer);
+            GuiJaninoScript scriptGUI = new GuiJaninoScript(this.parent, overlays.createScript());
             scriptGUI.setWorldAndResolution(mc, width, height);
             mc.currentScreen = scriptGUI;
             scriptGUI.initGui();
