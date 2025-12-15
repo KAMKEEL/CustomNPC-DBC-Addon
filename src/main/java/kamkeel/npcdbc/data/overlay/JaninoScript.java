@@ -60,23 +60,29 @@ public abstract class JaninoScript<T> {
     protected void configure(IScriptBodyBuilder<T> builder) {
     }
 
-
     protected T getUnsafe() {
         return scriptBody.get();
     }
 
     public <R> R call(Function<T, R> fn) {
-        return sandbox.confine((PrivilegedAction<R>) () -> {
-            T t = getUnsafe();
-            return t != null ? fn.apply(t) : null;
-        });
+        ensureCompiled();
+
+        T t = getUnsafe();
+        if (t == null)
+            return null;
+
+        return sandbox.confine((PrivilegedAction<R>) () -> fn.apply(t));
     }
 
     public void run(Consumer<T> fn) {
+        ensureCompiled();
+
+        T t = getUnsafe();
+        if (t == null)
+            return;
+
         sandbox.confine((PrivilegedAction<Void>) () -> {
-            T t = getUnsafe();
-            if (t != null)
-                fn.accept(t);
+            fn.accept(t);
             return null;
         });
     }
@@ -84,31 +90,58 @@ public abstract class JaninoScript<T> {
     /**
      * Feed the code into the engine and compile it
      */
-    public void reloadScript() {
+    public void compileScript(String code) {
         try {
-            scriptBody.setScript(getFullCode());
+            scriptBody.setScript(code);
         } catch (Exception e) {
         }
     }
 
+    public void compileScript() {
+        compileScript(getFullCode());
+    }
+
+    private void ensureCompiled() {
+        if (!isEnabled()) {
+            if (!evaluated) {
+                compileScript("");
+                evaluated = true;
+            }
+            return;
+        }
+
+        int global = ScriptController.Instance.globalRevision;
+
+        if (!evaluated || global != lastSeenGlobalRevision) {
+            compileScript();
+            lastSeenGlobalRevision = global;
+            evaluated = true;
+        }
+    }
+
+    /**
+     * globalRevision is incremented on server
+     * each time externalScripts are updated
+     * then sent to client.
+     */
+    private int lastSeenGlobalRevision;
+
     private String getFullCode() {
         if (!isEnabled()) {
-            evaluated = false; //to evaluate when next enabled
-            return fullScript = "";
+            return "";
         }
 
-        if (!this.evaluated) {
-            // build includes first depending on config setting
-            StringBuilder sb = new StringBuilder();
-            this.appendExternalScripts(sb);
+        StringBuilder sb = new StringBuilder();
 
-            // then your per‐hook main script
-            if (this.script != null && !this.script.isEmpty())
-                sb.append(this.script).append("\n");
+        // append external scripts first
+        appendExternalScripts(sb);
 
-            this.fullScript = sb.toString();
+        // append main script last
+        if (this.script != null && !this.script.isEmpty()) {
+            sb.append(this.script).append("\n");
         }
-        return this.fullScript;
+
+        return sb.toString();
     }
 
     private void appendExternalScripts(StringBuilder sb) {
@@ -120,19 +153,13 @@ public abstract class JaninoScript<T> {
     }
 
     public void setScript(String script) {
-        if (!this.script.equals(script))
-            this.evaluated = false;
-
         this.script = script;
-        reloadScript();
+        this.evaluated = false;
     }
 
     public void setExternalScripts(List<String> externalScripts) {
-        if (!this.externalScripts.equals(script))
-            this.evaluated = false;
-
         this.externalScripts = externalScripts;
-        reloadScript();
+        this.evaluated = false;
     }
 
 
@@ -167,8 +194,10 @@ public abstract class JaninoScript<T> {
     }
 
     public void setEnabled(boolean b) {
-        this.enabled = b;
-        reloadScript();
+        if (this.enabled != b) {
+            this.enabled = b;
+            this.evaluated = false;
+        }
     }
 
     public String getLanguage() {

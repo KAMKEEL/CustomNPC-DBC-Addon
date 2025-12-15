@@ -278,11 +278,9 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
     }
 
     public void subGuiClosed(SubGuiInterface sub) {
-        if (sub instanceof SubGuiSelectList) {
-            container.externalScripts = ((SubGuiSelectList) sub).selected;
-            container.evaluated = false;
-            container.reloadScript();
-        }
+        if (sub instanceof SubGuiSelectList)
+            container.setExternalScripts(((SubGuiSelectList) sub).selected);
+
     }
 
     /**
