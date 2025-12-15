@@ -43,10 +43,7 @@ dependencies {
     devOnlyNonPublishable(rfg.deobf(project.files("lib/JFamilyC-v1.2.18.jar")))
 
 //    implementation(files("janino/build/libs/standalone-JaninoLoader-1.0.1-ALPHA.jar"))
-    annotationProcessor(files("janino/build/libs/standalone-JaninoLoader-1.0.1-ALPHA.jar"))
-    implementation("org.codehaus.janino:janino:3.1.12")
-    implementation("org.codehaus.janino:commons-compiler:3.1.12")
-    implementation("org.codehaus.janino:commons-compiler-jdk:3.1.12")
+    implementation(files("lib/standalone-JaninoLoader-1.0.2-ALPHA.jar"))
 
 
 
