@@ -27,6 +27,7 @@ public class DBCOverlays {
         NO_EYEBROWS.add(Eyebrows, Hair, ctx -> format("jinryuumodscore:cc/ssj3eyebrow/%shumw%s.png", ctx.female() ? "f" : "", ctx.eyeType()));
         NO_EYEBROWS.disable(Part.Eyebrows);
 
+
         SSJ4_FUR.add(ALL, Fur, ctx -> path("ssj4/ss4b" + ctx.furType() + ".png"));
 
 
@@ -35,10 +36,11 @@ public class DBCOverlays {
 
 
         TexturePath SAVIOR_PATH = (ctx, path) -> format(path("savior/%s.png"));
+        SAVIOR.add(Face, 0xFFFFFF, ctx -> path("ssj4/ss4b2.png"));
         SAVIOR.add(Face, Eye, true, ctx -> SAVIOR_PATH.get(ctx, "savioreyes"));
         SAVIOR.add(Mouth, 0xFFFFFF, true, ctx -> SAVIOR_PATH.get(ctx, "saviormouth"));
         SAVIOR.add(Chest, Eye, true, ctx -> SAVIOR_PATH.get(ctx, "saviorchest"));
-        SSJ4_FACE.disable(Part.Eyebrows, Part.EyeWhite, Part.LeftEye, Part.RightEye, Part.Nose, Part.Mouth);
+        SAVIOR.disable(Part.Eyebrows, Part.EyeWhite, Part.LeftEye, Part.RightEye, Part.Nose, Part.Mouth);
 
 
         TexturePath SSJ4_PATH = (ctx, path) -> HDDir + format("%s/%s/face_%s/%s.png", ctx.furDir(), ctx.genderDir(), ctx.eyeType(), path);
