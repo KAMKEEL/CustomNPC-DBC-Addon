@@ -146,20 +146,6 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 if (dbcData.Race == 5 && !form.display.effectMajinHair)
                     return;
 
-                if (isSaiyan) {
-                    //completely disable face rendering when ssj4, so I could render my own on top of a blank slate
-                    if (form.display.hairType.equals("ssj4")) {
-                        if (HD && form.display.hasEyebrows && !ClientConstants.renderingMajinSE)
-                            disableFacePart(hair, "FULLEYES", ci);
-                        if (isHairPreset(hair))
-                            ci.cancel();
-                    } else if (form.display.hairType.equals("oozaru")) {
-                        disableFace(hair, ci);
-                        if (isHairPreset(hair))
-                            ci.cancel();
-                    }
-                }
-
                 boolean isSSJ3 = false;
                 if (form.display.hairType.equals("ssj3") || form.display.hairType.equals("raditz")) {
                     isSSJ3 = form.display.hairType.equals("ssj3") ? true : false;
@@ -168,22 +154,6 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                         String hair1 = !isSSJ3 ? "D" : "D01";
                         Hair.set(hair1);
                     }
-                }
-
-                // disable face for hd ssj3 brows
-                if (HD && usesHumanBody && form.display.hasPupils && !isMonke) {
-                    if (isSSJ3 || !form.display.hasEyebrows) {
-                        disableFacePart(hair, "FULLEYES", ci);
-                    } else {
-                        disableFacePart(hair, "EYES", ci);
-                    }
-                }
-
-                //render brows
-                if (hair.contains("EYEBROW") && dbcData.Race != 3 && (isSSJ3 || !form.display.hasEyebrows) && !HD) { //bind ssj3 eyebrow texture to ssj3 hair type
-                    int gen = JRMCoreH.dnsGender(dbcData.DNS);
-                    int eyes = JRMCoreH.dnsEyes(dbcData.DNS);
-                    Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + (gen == 1 ? "f" : "") + "humw" + eyes + ".png"));
                 }
 
                 //hair color for all forms
