@@ -2,3 +2,6 @@
 	path = janino
 	url = https://github.com/somehussar/JaninoLoader.git
 	branch = dev
+[submodule "CustomNPC-Plus"]
+	path = CustomNPC-Plus
+	url = https://github.com/KAMKEEL/CustomNPC-Plus.git
