@@ -17,15 +17,28 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public abstract class JaninoScript<T> {
-    public boolean enabled = false;
-
-    public String script = "";
-    public List<String> externalScripts = new ArrayList<>();
-    public String fullScript = "";
-    public boolean evaluated;
-
+    public boolean enabled;
     private String language = "Java";
     public TreeMap<Long, String> console = new TreeMap();
+
+    /**
+     * Text written in the script GUI
+     */
+    public String script = "";
+    /**
+     * This script's selected external files
+     *  stored in "world/customnpcs/scripts/java"
+     */
+    public List<String> externalScripts = new ArrayList<>();
+    /**
+     *  Combined code of this.script + externalScripts
+     */
+    public String fullScript = "";
+    /**
+     *  To evaluate if script/externalScripts were changed or not,
+     *  and compile the fullScript freshly if so.
+     */
+    public boolean evaluated;
 
     public final Class<T> type;
     protected Sandbox sandbox = new Sandbox(new Permissions());
@@ -54,28 +67,23 @@ public abstract class JaninoScript<T> {
 
     public <R> R call(Function<T, R> fn) {
         return sandbox.confine((PrivilegedAction<R>) () -> {
-            T t = scriptBody.get();
+            T t = getUnsafe();
             return t != null ? fn.apply(t) : null;
         });
     }
 
     public void run(Consumer<T> fn) {
         sandbox.confine((PrivilegedAction<Void>) () -> {
-            T t = scriptBody.get();
+            T t = getUnsafe();
             if (t != null)
                 fn.accept(t);
             return null;
         });
     }
 
-    public void setScript(String script) {
-        if (!this.script.equals(script))
-            this.evaluated = false;
-
-        this.script = script;
-        reloadScript();
-    }
-
+    /**
+     * Feed the code into the engine and compile it
+     */
     public void reloadScript() {
         try {
             scriptBody.setScript(getFullCode());
@@ -84,8 +92,10 @@ public abstract class JaninoScript<T> {
     }
 
     private String getFullCode() {
-        if (!isEnabled())
+        if (!isEnabled()) {
+            evaluated = false; //to evaluate when next enabled
             return fullScript = "";
+        }
 
         if (!this.evaluated) {
             // build includes first depending on config setting
@@ -109,21 +119,36 @@ public abstract class JaninoScript<T> {
         }
     }
 
+    public void setScript(String script) {
+        if (!this.script.equals(script))
+            this.evaluated = false;
+
+        this.script = script;
+        reloadScript();
+    }
+
+    public void setExternalScripts(List<String> externalScripts) {
+        if (!this.externalScripts.equals(script))
+            this.evaluated = false;
+
+        this.externalScripts = externalScripts;
+        reloadScript();
+    }
+
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setBoolean("enabled", enabled);
-        compound.setString("script", script);
-        compound.setTag("externalScripts", NBTTags.nbtStringList(this.externalScripts));
         compound.setTag("console", NBTTags.NBTLongStringMap(this.console));
+        compound.setTag("externalScripts", NBTTags.nbtStringList(this.externalScripts));
+        compound.setString("script", script);
         return compound;
     }
 
     public JaninoScript readFromNBT(NBTTagCompound compound) {
         this.enabled = compound.getBoolean("enabled");
-        setScript(compound.getString("script"));
-        this.externalScripts = NBTTags.getStringList(compound.getTagList("externalScripts", 10));
         this.console = NBTTags.GetLongStringMap(compound.getTagList("console", 10));
-
+        setExternalScripts(NBTTags.getStringList(compound.getTagList("externalScripts", 10)));
+        setScript(compound.getString("script")); //after everything else is read
         return this;
     }
 
