@@ -112,13 +112,18 @@ public abstract class JaninoScript<T> {
         } catch (InternalCompilerException e ) {
             Throwable parentCause = null;
             Throwable cause = e;
+
             appendConsole("Compilation error: " + e.getMessage());
+
             while (cause.getCause() != null) { parentCause = cause; cause = cause.getCause(); }
+            Throwable rootCause = cause;
+
             if (e != cause) {
                 appendConsole("\n");
-                if (parentCause != cause)
+
+                if (parentCause != null)
                     appendConsole(parentCause.getMessage());
-                appendConsole(cause.getMessage());
+                appendConsole(rootCause.getMessage());
             }
         } catch (Exception e) {
             appendConsole("Unknown error: " + e.getMessage());
