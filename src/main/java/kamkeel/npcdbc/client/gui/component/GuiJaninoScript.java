@@ -154,7 +154,7 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
             this.addButton(new GuiNpcButton(100, var9, this.guiTop + 125, 60, 20, "gui.copy"));
             this.addButton(new GuiNpcButton(102, var9, this.guiTop + 146, 60, 20, "gui.clear"));
             this.addLabel(new GuiNpcLabel(1, "script.language", var9, this.guiTop + 15));
-            this.addButton(new GuiNpcButton(103, var9 + 60, this.guiTop + 10, 80, 20, new String[]{container.getLanguage()},
+            this.addButton(new GuiNpcButton(103, var9 + 60, this.guiTop + 10, 80, 20, new String[]{"Janino (JVM 8)"},
                 this.getScriptIndex()));
             // this.getButton(103).enabled = !this.languages.isEmpty();
             this.addLabel(new GuiNpcLabel(2, "gui.enabled", var9, this.guiTop + 36));
@@ -226,7 +226,7 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
             close();
             return;
         }
-        
+
         if (guibutton.id == 0) {
             this.setScript();
             this.activeTab = 0;

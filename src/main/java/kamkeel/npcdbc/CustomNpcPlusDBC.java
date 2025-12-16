@@ -104,11 +104,13 @@ public class CustomNpcPlusDBC {
 
             List<String> allowedRegexList = Arrays.asList(
                 "kamkeel\\.npcdbc\\..*",
-                "noppes\\.npcs\\..*"
+                "noppes\\.npcs\\..*",
+                "java\\.util\\..*"
             );
 
             List<String> bannedRegexList = Arrays.asList(
-                ".*ClassLoader.*"
+                ".*ClassLoader.*",
+                ".*File*."
             );
 
 
