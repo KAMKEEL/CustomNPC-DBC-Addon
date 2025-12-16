@@ -102,14 +102,21 @@ public class CustomNpcPlusDBC {
             allowedClasses.add("java.io.Serializable");
             allowedClasses.add("java.util.Iterator");
 
-            List<String> regexList = Arrays.asList(
+            List<String> allowedRegexList = Arrays.asList(
                 "kamkeel\\.npcdbc\\..*",
                 "noppes\\.npcs\\..*"
             );
 
+            List<String> bannedRegexList = Arrays.asList(
+                ".*ClassLoader.*"
+            );
 
-            List<Pattern> allowedWildCards = regexList.stream().map(Pattern::compile).collect(Collectors.toList());
+
+            List<Pattern> allowedWildCards = allowedRegexList.stream().map(Pattern::compile).collect(Collectors.toList());
+            List<Pattern> bannedWildCards = bannedRegexList.stream().map(Pattern::compile).collect(Collectors.toList());
             LoadClassCondition filter = (name)-> {
+                if (bannedWildCards.stream().anyMatch(pattern -> pattern.matcher(name).matches()))
+                    return false;
 
                 if (name.startsWith("java.lang")) return true;
 

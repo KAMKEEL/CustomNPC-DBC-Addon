@@ -10,8 +10,7 @@ import noppes.npcs.config.ConfigScript;
 import noppes.npcs.controllers.ScriptController;
 import org.codehaus.commons.compiler.Sandbox;
 
-import java.security.Permissions;
-import java.security.PrivilegedAction;
+import java.security.*;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -37,7 +36,7 @@ public abstract class JaninoScript<T> {
     public boolean evaluated;
 
     public final Class<T> type;
-    protected Sandbox sandbox = new Sandbox(new Permissions());
+    protected final Sandbox sandbox;
     public final IScriptBodyBuilder<T> builder;
     protected IScriptClassBody<T> scriptBody;
 
@@ -46,6 +45,10 @@ public abstract class JaninoScript<T> {
         this.builder = IScriptBodyBuilder
             .getBuilder(type, CustomNpcPlusDBC.getClientCompiler());
         buildSettings.accept(builder);
+
+        Permissions permissions = new Permissions();
+        permissions.setReadOnly();
+        sandbox = new Sandbox(permissions);
 
         this.scriptBody = builder.build();
     }
@@ -61,8 +64,16 @@ public abstract class JaninoScript<T> {
         if (t == null)
             return null;
 
+        CodeSource cs = t.getClass().getProtectionDomain().getCodeSource();
+        ProtectionDomain pd = new ProtectionDomain(cs, new Permissions());
+
         try {
             return sandbox.confine((PrivilegedAction<R>) () -> fn.apply(t));
+//            return AccessController.doPrivileged((PrivilegedAction<? extends R>) () -> fn.apply(t), new AccessControlContext(
+//                new ProtectionDomain[] {
+//                    pd
+//                }
+//            ));
         } catch (Exception e) {
             appendConsole("Runtime Error: " + e.getMessage());
             return null;
@@ -85,7 +96,7 @@ public abstract class JaninoScript<T> {
             appendConsole("Runtime Error: " + e.getMessage());
         }
     }
-    
+
     public void unload() {
     }
 
