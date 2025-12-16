@@ -74,6 +74,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
 
         }
 
+        window.backgroundColor = 0xbb000000;
         addScrollableGui(3, window);
         addTopButton(new GuiMenuTopButton(0, guiLeft  + width + 98, guiTop - 17, "X"));
 
