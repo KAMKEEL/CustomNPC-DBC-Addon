@@ -8,6 +8,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
 import noppes.npcs.config.ConfigScript;
 import noppes.npcs.controllers.ScriptController;
+import org.codehaus.commons.compiler.CompileException;
+import org.codehaus.commons.compiler.InternalCompilerException;
 import org.codehaus.commons.compiler.Sandbox;
 
 import java.security.*;
@@ -104,10 +106,22 @@ public abstract class JaninoScript<T> {
      * Feed the code into the engine and compile it
      */
     public void compileScript(String code) {
+
         try {
             scriptBody.setScript(code);
-        } catch (Exception e) {
+        } catch (InternalCompilerException e ) {
+            Throwable parentCause = null;
+            Throwable cause = e;
             appendConsole("Compilation error: " + e.getMessage());
+            while (cause.getCause() != null) { parentCause = cause; cause = cause.getCause(); }
+            if (e != cause) {
+                appendConsole("\n");
+                if (parentCause != cause)
+                    appendConsole(parentCause.getMessage());
+                appendConsole(cause.getMessage());
+            }
+        } catch (Exception e) {
+            appendConsole("Unknown error: " + e.getMessage());
         }
     }
 
