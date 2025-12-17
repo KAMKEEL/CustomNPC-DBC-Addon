@@ -122,7 +122,7 @@ public class CustomNpcPlusDBC {
 
                 if (name.startsWith("java.lang")) return true;
 
-                System.out.println(name);
+//                System.out.println(name);
                 if (allowedClasses.contains(name)) return true;
 
                 return allowedWildCards.stream().anyMatch(pattern -> pattern.matcher(name).matches());
