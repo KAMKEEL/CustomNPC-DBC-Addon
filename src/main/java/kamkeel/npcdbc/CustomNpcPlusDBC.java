@@ -97,22 +97,32 @@ public class CustomNpcPlusDBC {
 
         if (jls == null) {
             Set<String> allowedClasses = new HashSet<>();
-            allowedClasses.add("kamkeel.npcdbc.client.utils.Color");
-            allowedClasses.add("kamkeel.npcdbc.data.overlay.OverlayScript.OverlayFunctions");
+//            allowedClasses.add("kamkeel.npcdbc.api.Color");
+//            allowedClasses.add("kamkeel.npcdbc.data.overlay.OverlayScript.OverlayFunctions");
             allowedClasses.add("java.io.Serializable");
             allowedClasses.add("java.util.Iterator");
 
-            List<String> regexList = Arrays.asList(
-                "kamkeel\\.npcdbc\\..*",
-                "noppes\\.npcs\\..*"
+            List<String> allowedRegexList = Arrays.asList(
+                "kamkeel\\.npcdbc\\.api\\..*",
+                "noppes\\.npcs\\.api\\..*",
+                "java\\.util\\..*"
+            );
+
+            List<String> bannedRegexList = Arrays.asList(
+                ".*ClassLoader.*",
+                ".*File*."
             );
 
 
-            List<Pattern> allowedWildCards = regexList.stream().map(Pattern::compile).collect(Collectors.toList());
+            List<Pattern> allowedWildCards = allowedRegexList.stream().map(Pattern::compile).collect(Collectors.toList());
+            List<Pattern> bannedWildCards = bannedRegexList.stream().map(Pattern::compile).collect(Collectors.toList());
             LoadClassCondition filter = (name)-> {
+                if (bannedWildCards.stream().anyMatch(pattern -> pattern.matcher(name).matches()))
+                    return false;
 
                 if (name.startsWith("java.lang")) return true;
 
+//                System.out.println(name);
                 if (allowedClasses.contains(name)) return true;
 
                 return allowedWildCards.stream().anyMatch(pattern -> pattern.matcher(name).matches());
