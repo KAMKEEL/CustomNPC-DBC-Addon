@@ -375,7 +375,7 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
     }
 
     public void textUpdate(String text) {
-        container.setScript(text);
+//        container.setScript(text);
     }
 
     public static GuiJaninoScript create(GuiScreen parent, JaninoScript script, int width, int height) {
@@ -390,6 +390,7 @@ public class GuiJaninoScript extends GuiNPCInterface implements GuiYesNoCallback
     @Override
     public void close() {
         this.save();
+        this.setScript();
         container.ensureCompiled();
         parent.setWorldAndResolution(mc, width, height);
         parent.initGui();
