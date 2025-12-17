@@ -5,12 +5,12 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.ModelBipedBody;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import kamkeel.npcdbc.api.IDBCAddon;
 import kamkeel.npcdbc.api.client.overlay.IOverlay;
 import kamkeel.npcdbc.api.client.overlay.IOverlayContext;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.api.Color;
+import kamkeel.npcdbc.client.utils.SimplifiedDBCData;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -18,7 +18,7 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.api.entity.IEntity;
-import noppes.npcs.api.entity.IPlayer;
+import noppes.npcs.api.entity.IEntityLivingBase;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.scripted.NpcAPI;
@@ -222,7 +222,7 @@ public class OverlayContext implements IOverlayContext {
         return isNPC;
     }
 
-    public IEntity getEntity() {
+    public IEntityLivingBase getEntity() {
         return isNPC ? getNPC() : getPlayer();
     }
 
@@ -230,8 +230,16 @@ public class OverlayContext implements IOverlayContext {
         return (ICustomNpc) NpcAPI.Instance().getIEntity(npc);
     }
 
-    public IDBCAddon getPlayer() {
-        return (IDBCAddon) ((IPlayer) NpcAPI.Instance().getIEntity(player)).getDBCPlayer();
+    /**
+     * Custom NPC+ does not support IPlayer instances on the client.
+     * @return EntityLivingBase representing a player.
+     */
+    public IEntityLivingBase getPlayer() {
+        return (IEntityLivingBase) NpcAPI.Instance().getIEntity(player);
+    }
+
+    public SimplifiedDBCData getDBCData() {
+        return dbcData.simplifiedDBCData;
     }
 
     public IOverlay getOverlay() {

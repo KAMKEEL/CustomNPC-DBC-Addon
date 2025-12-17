@@ -11,6 +11,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.outline.IOutline;
+import kamkeel.npcdbc.client.utils.SimplifiedDBCData;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.DBCSettings;
@@ -108,6 +109,8 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
     public List<EntityCusPar> particleRenderQueue = new LinkedList<>();
     // Some servers tend to repeat one tick multiple times (up to 3-4 times in under a second)
     public int lastTicked = -1;
+
+    public final SimplifiedDBCData simplifiedDBCData = new SimplifiedDBCData(this);
 
     public DBCData() {
         this.side = Side.SERVER;

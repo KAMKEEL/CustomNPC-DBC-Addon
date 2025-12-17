@@ -3,10 +3,11 @@ package kamkeel.npcdbc.api.client.overlay;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.Color;
+import kamkeel.npcdbc.api.ISimpleDBCData;
 import kamkeel.npcdbc.api.form.IForm;
 import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.api.entity.IEntity;
-import noppes.npcs.api.entity.IPlayer;
+import noppes.npcs.api.entity.IEntityLivingBase;
 
 @SideOnly(Side.CLIENT)
 public interface IOverlayContext {
@@ -35,9 +36,11 @@ public interface IOverlayContext {
     boolean berserk();
 
     boolean isNPC();
-    IPlayer getPlayer();
+    IEntityLivingBase getPlayer();
     ICustomNpc getNPC();
     IEntity getEntity();
+
+    ISimpleDBCData getDBCData();
 
     IOverlay getOverlay();
 
