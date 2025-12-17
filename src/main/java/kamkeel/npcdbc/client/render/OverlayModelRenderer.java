@@ -2,8 +2,9 @@ package kamkeel.npcdbc.client.render;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.ModelBipedBody;
-import kamkeel.npcdbc.data.overlay.Overlay.RenderFunction;
-import kamkeel.npcdbc.data.overlay.Overlay.Type;
+import kamkeel.npcdbc.api.client.overlay.IOverlay;
+import kamkeel.npcdbc.api.client.overlay.IOverlay.RenderFunction;
+import kamkeel.npcdbc.api.client.overlay.IOverlay.Type;
 import kamkeel.npcdbc.data.overlay.OverlayContext;
 import net.minecraft.util.MathHelper;
 import noppes.npcs.constants.EnumAnimation;
@@ -21,7 +22,7 @@ public final class OverlayModelRenderer {
      * HEAD
      * ───────────────────────────── */
     private static void renderHead(OverlayContext ctx) {
-        if (ctx.typeDisabled(Type.Face)) //If Face disabled, disable all other face elements too
+        if (ctx.typeDisabled(IOverlay.Type.Face)) //If Face disabled, disable all other face elements too
             return;
 
         GL11.glPushMatrix();
@@ -78,10 +79,10 @@ public final class OverlayModelRenderer {
                 ctx.mpm().bipedLeftArm.render(SCALE);
             GL11.glPopMatrix();
         } else {
-            float scaleXZ = ctx.invAge() * (ctx.female() ? 0.7F : 1.0F);
+            float scaleXZ = ctx.inverseAge() * (ctx.female() ? 0.7F : 1.0F);
 
             GL11.glPushMatrix();
-            GL11.glScalef(scaleXZ, ctx.invAge(), scaleXZ);
+            GL11.glScalef(scaleXZ, ctx.inverseAge(), scaleXZ);
             GL11.glTranslatef(0.0F, (ctx.age() - 1.0F) * 1.5F, 0.0F);
 
             if (ctx.female()) {
@@ -110,13 +111,13 @@ public final class OverlayModelRenderer {
             else
                 ctx.mpm().bipedLeftLeg.render(SCALE);
         } else {
-            float scaleX = ctx.invAge() * (ctx.female() ? 0.85F : 1.0F);
-            float scaleZ = ctx.invAge() * (ctx.female() ? 0.775F : 1.0F);
+            float scaleX = ctx.inverseAge() * (ctx.female() ? 0.85F : 1.0F);
+            float scaleZ = ctx.inverseAge() * (ctx.female() ? 0.775F : 1.0F);
             float translateX = ctx.female() ? right ? -0.015F : 0.015F : 0;
             float translateY = ctx.female() ? ctx.model.isSneak ? 0 : -0.015F : 0;
 
             GL11.glPushMatrix();
-            GL11.glScalef(scaleX, ctx.invAge(), scaleZ);
+            GL11.glScalef(scaleX, ctx.inverseAge(), scaleZ);
             GL11.glTranslatef(translateX, (ctx.age() - 1.0F) * 1.5F, translateY);
 
             if (ctx.female()) {
@@ -151,7 +152,7 @@ public final class OverlayModelRenderer {
 
     private static void renderMaleBody(OverlayContext ctx) {
         GL11.glPushMatrix();
-        GL11.glScalef(ctx.invAge(), ctx.invAge(), ctx.invAge());
+        GL11.glScalef(ctx.inverseAge(), ctx.inverseAge(), ctx.inverseAge());
         GL11.glTranslatef(0.0F, (ctx.age() - 1.0F) * 1.5F, 0.0F);
         ctx.model.bipedBody.render(SCALE);
         GL11.glPopMatrix();
@@ -251,36 +252,36 @@ public final class OverlayModelRenderer {
      * ───────────────────────────── */
     static {
         /* ───────── Overlay Type -> Render Functions ───────── */
-        MODEL_MAP.put(Type.Eyebrows, ctx -> renderHead(ctx));
-        MODEL_MAP.put(Type.EyeWhite, ctx -> renderHead(ctx));
-        MODEL_MAP.put(Type.RightEye, ctx -> renderEyes(ctx, true));
-        MODEL_MAP.put(Type.LeftEye, ctx -> renderEyes(ctx, false));
-        MODEL_MAP.put(Type.Nose, ctx -> renderHead(ctx));
-        MODEL_MAP.put(Type.Mouth, ctx -> renderHead(ctx));
-        MODEL_MAP.put(Type.Face, ctx -> renderHead(ctx));
+        MODEL_MAP.put(IOverlay.Type.Eyebrows, ctx -> renderHead(ctx));
+        MODEL_MAP.put(IOverlay.Type.EyeWhite, ctx -> renderHead(ctx));
+        MODEL_MAP.put(IOverlay.Type.RightEye, ctx -> renderEyes(ctx, true));
+        MODEL_MAP.put(IOverlay.Type.LeftEye, ctx -> renderEyes(ctx, false));
+        MODEL_MAP.put(IOverlay.Type.Nose, ctx -> renderHead(ctx));
+        MODEL_MAP.put(IOverlay.Type.Mouth, ctx -> renderHead(ctx));
+        MODEL_MAP.put(IOverlay.Type.Face, ctx -> renderHead(ctx));
 
-        MODEL_MAP.put(Type.RightArm, ctx -> renderArm(ctx, true));
-        MODEL_MAP.put(Type.LeftArm, ctx -> renderArm(ctx, false));
-        MODEL_MAP.put(Type.Arms, ctx -> {
-            render(Type.RightArm, ctx);
-            render(Type.LeftArm, ctx);
+        MODEL_MAP.put(IOverlay.Type.RightArm, ctx -> renderArm(ctx, true));
+        MODEL_MAP.put(IOverlay.Type.LeftArm, ctx -> renderArm(ctx, false));
+        MODEL_MAP.put(IOverlay.Type.Arms, ctx -> {
+            render(IOverlay.Type.RightArm, ctx);
+            render(IOverlay.Type.LeftArm, ctx);
 
         });
 
-        MODEL_MAP.put(Type.RightLeg, ctx -> renderLeg(ctx, true));
-        MODEL_MAP.put(Type.LeftLeg, ctx -> renderLeg(ctx, false));
-        MODEL_MAP.put(Type.Legs, ctx -> {
-            render(Type.RightLeg, ctx);
-            render(Type.LeftLeg, ctx);
+        MODEL_MAP.put(IOverlay.Type.RightLeg, ctx -> renderLeg(ctx, true));
+        MODEL_MAP.put(IOverlay.Type.LeftLeg, ctx -> renderLeg(ctx, false));
+        MODEL_MAP.put(IOverlay.Type.Legs, ctx -> {
+            render(IOverlay.Type.RightLeg, ctx);
+            render(IOverlay.Type.LeftLeg, ctx);
         });
 
-        MODEL_MAP.put(Type.Chest, ctx1 -> renderBody(ctx1));
+        MODEL_MAP.put(IOverlay.Type.Chest, ctx1 -> renderBody(ctx1));
 
-        MODEL_MAP.put(Type.ALL, ctx -> {
-            render(Type.Face, ctx);
-            render(Type.Arms, ctx);
-            render(Type.Legs, ctx);
-            render(Type.Chest, ctx);
+        MODEL_MAP.put(IOverlay.Type.ALL, ctx -> {
+            render(IOverlay.Type.Face, ctx);
+            render(IOverlay.Type.Arms, ctx);
+            render(IOverlay.Type.Legs, ctx);
+            render(IOverlay.Type.Chest, ctx);
         });
     }
 

@@ -4,6 +4,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.aura.IAura;
+import kamkeel.npcdbc.api.client.overlay.IOverlay;
 import kamkeel.npcdbc.api.form.IFormDisplay;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -97,7 +98,7 @@ public class FormDisplay implements IFormDisplay {
         if (compound.hasKey("overlayTypes")) {
             disabledOverlayTypes.clear();
             byte[] arr = compound.getByteArray("overlayTypes");
-            Overlay.Type[] values = Overlay.Type.values();
+            Overlay.Type[] values = IOverlay.Type.values();
             for (byte ordinal : arr) {
                 if (ordinal >= 0 && ordinal < values.length)
                     disabledOverlayTypes.add(values[ordinal]);

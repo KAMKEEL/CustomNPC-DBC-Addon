@@ -6,9 +6,9 @@ import kamkeel.npcdbc.data.overlay.OverlayContext;
 
 import static java.lang.String.format;
 import static kamkeel.npcdbc.client.model.ModelDBC.*;
-import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.*;
+import static kamkeel.npcdbc.api.client.overlay.IOverlay.ColorType.*;
 
-import static kamkeel.npcdbc.data.overlay.Overlay.Type.*;
+import static kamkeel.npcdbc.api.client.overlay.IOverlay.Type.*;
 
 public class DBCOverlays {
 

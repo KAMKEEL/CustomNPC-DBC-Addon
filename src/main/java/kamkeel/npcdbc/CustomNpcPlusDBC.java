@@ -97,14 +97,14 @@ public class CustomNpcPlusDBC {
 
         if (jls == null) {
             Set<String> allowedClasses = new HashSet<>();
-            allowedClasses.add("kamkeel.npcdbc.client.utils.Color");
-            allowedClasses.add("kamkeel.npcdbc.data.overlay.OverlayScript.OverlayFunctions");
+//            allowedClasses.add("kamkeel.npcdbc.api.Color");
+//            allowedClasses.add("kamkeel.npcdbc.data.overlay.OverlayScript.OverlayFunctions");
             allowedClasses.add("java.io.Serializable");
             allowedClasses.add("java.util.Iterator");
 
             List<String> allowedRegexList = Arrays.asList(
-                "kamkeel\\.npcdbc\\..*",
-                "noppes\\.npcs\\..*",
+                "kamkeel\\.npcdbc\\.api\\..*",
+                "noppes\\.npcs\\.api\\..*",
                 "java\\.util\\..*"
             );
 
@@ -122,6 +122,7 @@ public class CustomNpcPlusDBC {
 
                 if (name.startsWith("java.lang")) return true;
 
+                System.out.println(name);
                 if (allowedClasses.contains(name)) return true;
 
                 return allowedWildCards.stream().anyMatch(pattern -> pattern.matcher(name).matches());
