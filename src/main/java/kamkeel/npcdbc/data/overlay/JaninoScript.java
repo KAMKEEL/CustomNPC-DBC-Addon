@@ -65,8 +65,8 @@ public abstract class JaninoScript<T> {
         if (t == null)
             return null;
 
-        CodeSource cs = t.getClass().getProtectionDomain().getCodeSource();
-        ProtectionDomain pd = new ProtectionDomain(cs, new Permissions());
+//        CodeSource cs = t.getClass().getProtectionDomain().getCodeSource();
+//        ProtectionDomain pd = new ProtectionDomain(cs, new Permissions());
 
         try {
             return sandbox.confine((PrivilegedAction<R>) () -> fn.apply(t));

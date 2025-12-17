@@ -5,24 +5,31 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.ModelBipedBody;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.api.client.overlay.IOverlay;
+import kamkeel.npcdbc.api.client.overlay.IOverlayContext;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.ModelDBC;
-import kamkeel.npcdbc.client.utils.Color;
+import kamkeel.npcdbc.api.Color;
+import kamkeel.npcdbc.client.utils.SimplifiedDBCData;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
+import noppes.npcs.api.entity.ICustomNpc;
+import noppes.npcs.api.entity.IEntity;
+import noppes.npcs.api.entity.IEntityLivingBase;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.entity.EntityCustomNpc;
+import noppes.npcs.scripted.NpcAPI;
 
 import java.util.List;
 import java.util.Set;
 
-import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.Custom;
+import static kamkeel.npcdbc.api.client.overlay.IOverlay.ColorType.Custom;
 
 @SideOnly(Side.CLIENT)
-public class OverlayContext {
+public class OverlayContext implements IOverlayContext {
     public Overlay overlay;
     public OverlayChain chain;
 
@@ -36,7 +43,8 @@ public class OverlayContext {
     public Set<Overlay.Type> disabledTypes;
     public OverlayChain exceptFor;
 
-    public boolean typeDisabled(Overlay.Type type) {
+    @Override
+    public boolean typeDisabled(IOverlay.Type type) {
         return chain != exceptFor && disabledTypes != null && disabledTypes.contains(type);
     }
 
@@ -104,7 +112,7 @@ public class OverlayContext {
         return ModelBipedDBC.f;
     }
 
-    public float invAge() {
+    public float inverseAge() {
         return 1.0F / age();
     }
 
@@ -145,11 +153,12 @@ public class OverlayContext {
         return isNPC ? display.getColor(type) : dbcData.getColor(type);
     }
 
-    public Color color(Overlay.ColorType type) {
+    public Color color(IOverlay.ColorType type) {
         return color(type, overlay);
     }
 
-    public Color color(Overlay.ColorType type, Overlay overlay) {
+    public Color color(IOverlay.ColorType type, IOverlay iOverlay) {
+        Overlay overlay = (Overlay) iOverlay;
         int col = type == Custom ? overlay.color : color(type.name());
         return new Color(col, overlay.alpha);
     }
@@ -207,5 +216,33 @@ public class OverlayContext {
             form = PlayerDataUtil.getForm(isNPC ? npc : player);
 
         return form;
+    }
+
+    public boolean isNPC() {
+        return isNPC;
+    }
+
+    public IEntityLivingBase getEntity() {
+        return isNPC ? getNPC() : getPlayer();
+    }
+
+    public ICustomNpc getNPC() {
+        return (ICustomNpc) NpcAPI.Instance().getIEntity(npc);
+    }
+
+    /**
+     * Custom NPC+ does not support IPlayer instances on the client.
+     * @return EntityLivingBase representing a player.
+     */
+    public IEntityLivingBase getPlayer() {
+        return (IEntityLivingBase) NpcAPI.Instance().getIEntity(player);
+    }
+
+    public SimplifiedDBCData getDBCData() {
+        return dbcData.simplifiedDBCData;
+    }
+
+    public IOverlay getOverlay() {
+        return overlay;
     }
 }

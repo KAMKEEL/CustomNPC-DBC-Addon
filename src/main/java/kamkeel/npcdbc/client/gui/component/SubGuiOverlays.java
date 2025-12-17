@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.gui.component;
 
+import kamkeel.npcdbc.api.client.overlay.IOverlay;
 import kamkeel.npcdbc.client.gui.global.form.SubGuiFormDisplay;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.overlay.Overlay;
@@ -17,7 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static kamkeel.npcdbc.data.overlay.Overlay.Type.ALL;
+import static kamkeel.npcdbc.api.client.overlay.IOverlay.Type.ALL;
 
 
 public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, ITextfieldListener, GuiYesNoCallback {
@@ -113,7 +114,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
             if (currentOverlay.isEnabled()) {
                 int x = 5;
                 window.addLabel(new GuiNpcLabel(id(8, i), "Type:", x, y + 5, 0xffffff));
-                String[] names = Arrays.stream(Overlay.Type.values()).map(Enum::name).toArray(String[]::new);
+                String[] names = Arrays.stream(IOverlay.Type.values()).map(Enum::name).toArray(String[]::new);
                 button = new GuiNpcButton(id(8, i), x += buttonOneRowOneX, y, 50, 20, names,
                         currentOverlay.getType().ordinal());
                 window.addButton(button); // id 8
@@ -127,17 +128,17 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
                 x = 5;
                 window.addLabel(new GuiNpcLabel(id(2, i), "Color:", x, y + 5, 0xffffff));
 
-                names = Arrays.stream(Overlay.ColorType.values()).map(Enum::name).toArray(String[]::new);
+                names = Arrays.stream(IOverlay.ColorType.values()).map(Enum::name).toArray(String[]::new);
                 button = new GuiNpcButton(id(2, i), x += 32, y, 50, 20, names, currentOverlay.getColorType());
                 window.addButton(button); // id 2
 
-                if (currentOverlay.getColorType() == Overlay.ColorType.Custom.ordinal()) {
+                if (currentOverlay.getColorType() == IOverlay.ColorType.Custom.ordinal()) {
                     button = new GuiNpcButton(id(3, i), x += 53, y, 50, 20, getColor(currentOverlay.getColor()));
                     button.packedFGColour = currentOverlay.getColor();
                     window.addButton(button); // id 3
                 }
 
-                int tempY = currentOverlay.getColorType() == Overlay.ColorType.Custom.ordinal() ? y : y;
+                int tempY = currentOverlay.getColorType() == IOverlay.ColorType.Custom.ordinal() ? y : y;
 
                 window.addLabel(new GuiNpcLabel(id(9, i), "Alpha:", x += 53, tempY + 5, 0xffffff));
                 textField = new GuiNpcTextField(id(9, i), this, x += 34, tempY, 47, 20, currentOverlay.getAlpha() + "");
@@ -208,7 +209,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         }
 
         if (id == 4) {
-            List<String> all = Arrays.stream(Overlay.Type.values()).map(Enum::name).collect(Collectors.toList());
+            List<String> all = Arrays.stream(IOverlay.Type.values()).map(Enum::name).collect(Collectors.toList());
             List<String> selected = form.display.disabledOverlayTypes.stream().map(Enum::name).collect(Collectors.toList());
             setSubGui(new SubGuiSelectList(all, selected, "All Types", "Selected Types"));
             initGui();
@@ -227,7 +228,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
 
 
         }
-        
+
         if (buttonType == 1) {//buttons 1,2,3 are identical to clicked indices
             lastTextureClicked = overlayID;
         }
@@ -237,7 +238,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         }
 
         if (buttonType == 2) {
-            get(overlayID).colorType((get(overlayID).getColorType() + 1) % Overlay.ColorType.values().length);
+            get(overlayID).colorType((get(overlayID).getColorType() + 1) % IOverlay.ColorType.values().length);
             initGui();
         }
 
@@ -276,9 +277,9 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         }
 
         //Script
-        if (buttonType == 11) 
+        if (buttonType == 11)
             GuiJaninoScript.create(this.parent.parent, get(overlayID).createScript(), width, height);
-        
+
     }
 
     public void confirmClicked(boolean flag, int i) {
@@ -317,7 +318,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
             initGui();
         } else if (sub instanceof SubGuiSelectList) {
             List<String> selected = ((SubGuiSelectList) sub).selected;
-            form.display.disabledOverlayTypes = selected.stream().map(Overlay.Type::valueOf).collect(Collectors.toSet());
+            form.display.disabledOverlayTypes = selected.stream().map(IOverlay.Type::valueOf).collect(Collectors.toSet());
         }
     }
 
@@ -340,7 +341,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         Overlay ov = get(overlayID);
         String text = textField.getText();
 
-        if (fieldType == 1) 
+        if (fieldType == 1)
                 ov.texture(text);
 
         if (fieldType == 9) {
