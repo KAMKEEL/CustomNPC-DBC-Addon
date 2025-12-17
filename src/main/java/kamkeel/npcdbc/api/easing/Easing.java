@@ -82,4 +82,8 @@ public interface Easing {
     default double ease(long startTime, long totalDuration, long currentTime) {
         return ease(currentTime - startTime, totalDuration);
     }
+    
+    default Easing bake(int segments) {
+        return TimeFunctions.bakeEasing(this, segments);
+    }
 }
