@@ -221,7 +221,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
                 deleteOverlay();
                 initGui();
             } else {
-                GuiYesNo guiyesno = new GuiYesNo(this, StatCollector.translateToLocal("gui.paste"),
+                GuiYesNo guiyesno = new GuiYesNo(this.parent.parent, StatCollector.translateToLocal("gui.paste"),
                         StatCollector.translateToLocal("gui.sure"), 1);
                 this.displayGuiScreen(guiyesno);
             }
