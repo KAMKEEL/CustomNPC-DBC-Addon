@@ -99,5 +99,7 @@ final class LinearPiecewise implements Easing {
         return y1 + fraction * (y2 - y1);
     }
 
+    public double[] getXStops() { return xStops.clone(); }
+    public double[] getYValues() { return yValues.clone(); }
     public int getSegmentCount() { return segments - 1; }
 }

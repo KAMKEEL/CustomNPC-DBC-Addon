@@ -84,8 +84,12 @@ public interface Easing {
     }
 
     default Easing bake(int segments) {
-        if (this instanceof Linear || this instanceof LinearPiecewise)
+        if (this instanceof Linear)
             return this;
+        if (this instanceof LinearPiecewise) {
+            if (segments >= ((LinearPiecewise) this).getSegmentCount())
+                return this;
+        }
         return TimeFunctions.bakeEasing(this, segments);
     }
 }
