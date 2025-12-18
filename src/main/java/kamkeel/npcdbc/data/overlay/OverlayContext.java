@@ -128,12 +128,21 @@ public class OverlayContext implements IOverlayContext {
         return isNPC ? display.eyeType : JRMCoreH.dnsEyes(dbcData.DNS);
     }
 
+    public int nose() {
+        return isNPC ? display.noseType : JRMCoreH.dnsFaceN(dbcData.DNS);
+    }
+
+    public int mouth() {
+        return isNPC ? display.noseType : JRMCoreH.dnsFaceM(dbcData.DNS);
+    }
+
     public boolean eyebrows() {
         if (form() != null)
             return form.display.hasEyebrows;
 
         return isNPC ? display.hasEyebrows : true;
     }
+
 
     public int furType() {
         if (form() != null)
