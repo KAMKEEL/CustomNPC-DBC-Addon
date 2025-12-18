@@ -64,7 +64,7 @@ public class DBCOverlays {
         SSJ3_FACE.disable(Part.Eyebrows, Part.EyeWhite, Part.LeftEye, Part.RightEye);
 
 
-        TexturePath PUPILS_PATH = (ctx, path) -> OVERLAY_DIR + format("eyespupils/%s_%s_%s.png", path, ctx.eyeType(), ctx.female() ? "f" : "m");
+        TexturePath PUPILS_PATH = (ctx, path) -> OVERLAY_DIR + format("eyespupils/humanoid/%s_%s_%s.png", path, ctx.eyeType(), ctx.female() ? "f" : "m");
         PUPILS.add(LeftEye, Eye, ctx -> PUPILS_PATH.get(ctx, "left/left_eye"));
         PUPILS.add(RightEye, Eye, ctx -> PUPILS_PATH.get(ctx, "right/right_eye"));
         PUPILS.disable(Part.LeftEye, Part.RightEye);
