@@ -38,12 +38,12 @@ public interface Easing {
     /**
      * Convenience method to ease using absolute time and duration.
      *
-     * @param time           current elapsed time
-     * @param totalDuration  total duration of the animation
-     * @return eased value, automatically normalized
+     * @param currentValue eg. current elapsed time
+     * @param maxValue eg. total duration of the animation
+     * @return eased value
      */
-    default double ease(double time, double totalDuration) {
-        double t = time / totalDuration;
+    default double ease(double currentValue, double maxValue) {
+        double t = currentValue / maxValue;
         return ease(Easing.clamp(t));
     }
 
@@ -62,12 +62,12 @@ public interface Easing {
     /**
      * Long-variant for high-precision timing (e.g., milliseconds or nanoseconds).
      *
-     * @param time           current elapsed time
-     * @param totalDuration  total duration
+     * @param currentValue eg. current elapsed time
+     * @param maxValue  eg. total duration
      * @return eased value
      */
-    default double ease(long time, long totalDuration) {
-        double t = (double) time / totalDuration;
+    default double ease(long currentValue, long maxValue) {
+        double t = (double) currentValue / maxValue;
         return ease(Easing.clamp(t));
     }
 
@@ -90,6 +90,6 @@ public interface Easing {
             if (segments >= ((LinearPiecewise) this).getSegmentCount())
                 return this;
         }
-        return TimeFunctions.bakeEasing(this, segments);
+        return ProgressFunctions.bakeEasing(this, segments);
     }
 }
