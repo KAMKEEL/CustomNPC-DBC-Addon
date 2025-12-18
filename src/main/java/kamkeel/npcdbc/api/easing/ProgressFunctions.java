@@ -5,7 +5,16 @@ import java.util.Arrays;
 /**
  * Collection of easings / timing functions.
  */
-public final class TimeFunctions {
+public final class ProgressFunctions {
+
+    public static final class Premade {
+        public static final Easing LINEAR = t -> t;
+        public static final Easing IN_SINE = t -> (1 - Math.cos(t*Math.PI * 0.5));
+        public static final Easing OUT_SINE = t -> Math.sin(t*Math.PI * 0.5);
+        public static final Easing IN_OUT_SINE = t -> (-(Math.cos(Math.PI * t) - 1) * 0.5);
+        public static final Easing IN_CUBIC = t -> t*t*t;
+        public static final Easing OUT_CUBIC = t -> (1 - Math.pow(1-t, 3));
+    }
 
     /**
      * Creates a standard cubic Bézier easing function with start point (0,0) and end point (1,1).
