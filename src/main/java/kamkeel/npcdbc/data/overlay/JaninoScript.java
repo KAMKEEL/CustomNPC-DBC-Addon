@@ -5,6 +5,7 @@ import io.github.somehussar.janinoloader.api.script.IScriptBodyBuilder;
 import io.github.somehussar.janinoloader.api.script.IScriptClassBody;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.CustomNpcs;
 import noppes.npcs.NBTTags;
 import noppes.npcs.config.ConfigScript;
 import noppes.npcs.controllers.ScriptController;
@@ -44,7 +45,7 @@ public abstract class JaninoScript<T> {
     protected JaninoScript(Class<T> type, Consumer<IScriptBodyBuilder<T>> buildSettings) {
         this.type = type;
         this.builder = IScriptBodyBuilder
-            .getBuilder(type, CustomNpcPlusDBC.getClientCompiler());
+            .getBuilder(type, CustomNpcs.getClientCompiler());
         buildSettings.accept(builder);
 
         Permissions permissions = new Permissions();
