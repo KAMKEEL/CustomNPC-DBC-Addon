@@ -4,7 +4,10 @@ plugins {
     id 'com.gtnewhorizons.gtnhconvention'
 }
 
-apply from: 'gradle.handleCNPCSubmoduleInjection.groovy'
+var BUILD_USING_CNPC_SOURCE = !(project.hasProperty("useCNPCJar") && project.useCNPCJar == 'true')
+
+if (BUILD_USING_CNPC_SOURCE)
+    apply from: 'gradle.handleCNPCSubmoduleInjection.groovy'
 
 group= "kamkeel.npcdbc"
 
