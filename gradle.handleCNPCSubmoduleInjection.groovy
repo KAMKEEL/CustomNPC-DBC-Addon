@@ -9,6 +9,8 @@ sourceSets {
     }
 }
 
+println "BUILDS WILL HAPPEN WITH CNPC SOURCE, NOT JARS"
+
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
 import java.util.regex.Pattern

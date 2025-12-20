@@ -34,8 +34,9 @@
  * For more details, see https://docs.gradle.org/8.0.1/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
 
-var customNpcJar = file("../CustomNPC-Plus/build/libs/CustomNPC-Plus-1.10.2-dev-preshadow.jar")
+var BUILD_USING_CNPC_SOURCE = !(project.hasProperty("useCNPCJar") && project.useCNPCJar == 'true')
 
+var customNpcJar = file("../CustomNPC-Plus/build/libs/CustomNPC-Plus-1.10.2-dev-preshadow.jar")
 
 dependencies {
     runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.5.4-GTNH:dev")
@@ -56,8 +57,10 @@ dependencies {
     // If not, keep this in because this is just a *mostly* empty jar only used for grabbing the right
     // class-method signature for one mixin while building.
     devOnlyNonPublishable((rfg.deobf(project.files("lib/EDE-Signature-Copy.jar"))))
+
 //    devOnlyNonPublishable(rfg.deobf(project.files("lib/CustomNPC-Plus-1.9.3.jar")))
 
-//    implementation(name: "CustomNPC-Plus")
+    if (!BUILD_USING_CNPC_SOURCE)
+        implementation(name: "CustomNPC-Plus")
 }
 
