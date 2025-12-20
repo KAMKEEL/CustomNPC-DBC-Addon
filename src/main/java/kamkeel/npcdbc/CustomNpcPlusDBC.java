@@ -91,48 +91,4 @@ public class CustomNpcPlusDBC {
     }
 
 
-    private static IDynamicCompiler jls;
-
-    public static IDynamicCompiler getClientCompiler() {
-
-        if (jls == null) {
-            Set<String> allowedClasses = new HashSet<>();
-//            allowedClasses.add("kamkeel.npcdbc.api.Color");
-//            allowedClasses.add("kamkeel.npcdbc.data.overlay.OverlayScript.OverlayFunctions");
-            allowedClasses.add("java.io.Serializable");
-            allowedClasses.add("java.util.Iterator");
-
-            List<String> allowedRegexList = Arrays.asList(
-                "kamkeel\\.npcdbc\\.api\\..*",
-                "noppes\\.npcs\\.api\\..*",
-                "java\\.util\\..*"
-            );
-
-            List<String> bannedRegexList = Arrays.asList(
-                ".*ClassLoader.*",
-                ".*File*."
-            );
-
-
-            List<Pattern> allowedWildCards = allowedRegexList.stream().map(Pattern::compile).collect(Collectors.toList());
-            List<Pattern> bannedWildCards = bannedRegexList.stream().map(Pattern::compile).collect(Collectors.toList());
-            LoadClassCondition filter = (name)-> {
-                if (bannedWildCards.stream().anyMatch(pattern -> pattern.matcher(name).matches()))
-                    return false;
-
-                if (name.startsWith("java.lang")) return true;
-
-//                System.out.println(name);
-                if (allowedClasses.contains(name)) return true;
-
-                return allowedWildCards.stream().anyMatch(pattern -> pattern.matcher(name).matches());
-
-            }; //anything that's NOT java.lang is blacklisted
-            jls = IDynamicCompilerBuilder.createBuilder().setClassFilter(filter).getCompiler();
-        }
-
-        return jls;
-    }
-
-
 }
