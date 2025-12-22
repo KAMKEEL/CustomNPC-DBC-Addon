@@ -45,7 +45,7 @@ public abstract class JaninoScript<T> {
     protected JaninoScript(Class<T> type, Consumer<IScriptBodyBuilder<T>> buildSettings) {
         this.type = type;
         this.builder = IScriptBodyBuilder
-            .getBuilder(type, CustomNpcs.getClientCompiler());
+            .getBuilder(type, CustomNpcs.getDynamicCompiler());
         buildSettings.accept(builder);
 
         Permissions permissions = new Permissions();
