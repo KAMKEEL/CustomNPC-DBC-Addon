@@ -52,6 +52,21 @@ public class Overlay implements JaninoScriptable, IOverlay {
         return null;
     }
 
+    public static String matchTexture(OverlayContext ctx, String text) {
+        int eyeType = ctx.eyeType();
+        int bodyType = ctx.bodyType();
+        int furType = ctx.furType();
+        int noseType = ctx.nose();
+        int mouthType = ctx.mouth();
+
+        return text
+            .replaceAll("%b", bodyType + "")
+            .replaceAll("%f", furType + "")
+            .replaceAll("%e", eyeType + "")
+            .replaceAll("%n", noseType + "")
+            .replaceAll("%m", mouthType + "");
+    }
+
     public Overlay color(ColorFunction function) {
         applyColor = function;
         return this;

@@ -124,6 +124,10 @@ public class OverlayContext implements IOverlayContext {
         return female() ? "female" : "male";
     }
 
+    public int bodyType() {
+        return isNPC ? display.bodyType : JRMCoreH.dnsBodyT(dbcData.DNS);
+    }
+
     public int eyeType() {
         return isNPC ? display.eyeType : JRMCoreH.dnsEyes(dbcData.DNS);
     }
@@ -133,7 +137,7 @@ public class OverlayContext implements IOverlayContext {
     }
 
     public int mouth() {
-        return isNPC ? display.noseType : JRMCoreH.dnsFaceM(dbcData.DNS);
+        return isNPC ? display.mouthType : JRMCoreH.dnsFaceM(dbcData.DNS);
     }
 
     public boolean eyebrows() {

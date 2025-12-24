@@ -533,11 +533,13 @@ public class ModelDBC extends ModelBase {
                 Type type = overlay.getType();
 
                 /* ───────── Texture ───────── */
-                    ctx.texture = overlay.getTexture();
+                ctx.texture = overlay.getTexture();
 
                 String textureFunction = overlay.applyTexture(ctx);
                 if (textureFunction != null)
                     ctx.texture = textureFunction;
+
+                ctx.texture = Overlay.matchTexture(ctx, ctx.texture);
 
                 if (!bindTexture(ctx.texture))
                     continue;

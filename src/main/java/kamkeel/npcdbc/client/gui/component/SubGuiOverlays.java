@@ -104,7 +104,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
 
             if (currentOverlay.isEnabled()) {
                 button = new GuiNpcButton(id(11, i), 240, y += 23, 50, 20, "Scripts");
-                window.addButton(button);  // id 1
+                window.addButton(button);  // id 11
             }
 
             button = new GuiNpcButton(id(10, i), 240, y += 23, 50, 20, "Delete");
@@ -122,7 +122,6 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
                 window.addLabel(new GuiNpcLabel(id(4, i), "Glow:", x += 53, y + 5, 0xffffff));
                 button = new GuiNpcButtonYesNo(id(4, i), x += buttonOneRowOneX, y, 50, 20, currentOverlay.isGlow());
                 window.addButton(button); // id 4
-
 
                 y += 23;
                 x = 5;
@@ -225,8 +224,6 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
                         StatCollector.translateToLocal("gui.sure"), 1);
                 this.displayGuiScreen(guiyesno);
             }
-
-
         }
 
         if (buttonType == 1) {//buttons 1,2,3 are identical to clicked indices
@@ -279,7 +276,6 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         //Script
         if (buttonType == 11)
             GuiJaninoScript.create(this.parent.parent, get(overlayID).createScript(), width, height);
-
     }
 
     public void confirmClicked(boolean flag, int i) {
