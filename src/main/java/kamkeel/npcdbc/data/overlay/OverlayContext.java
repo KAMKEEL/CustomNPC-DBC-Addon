@@ -13,6 +13,7 @@ import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.client.utils.SimplifiedDBCData;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
@@ -124,6 +125,21 @@ public class OverlayContext implements IOverlayContext {
         return female() ? "female" : "male";
     }
 
+    public int race() {
+        return isNPC ? display.race : dbcData.Race;
+    }
+
+    public String raceName() {
+        if (race() >= 0 && race() <= 5) {
+            return JRMCoreH.Races[race()];
+        }
+        return "";
+    }
+
+    public String raceDir() {
+        return raceName().toLowerCase().replaceAll("-", "");
+    }
+
     public int bodyType() {
         return isNPC ? display.bodyType : JRMCoreH.dnsBodyT(dbcData.DNS);
     }
@@ -147,6 +163,33 @@ public class OverlayContext implements IOverlayContext {
         return isNPC ? display.hasEyebrows : true;
     }
 
+    public int arcoState() {
+        int index = 0;
+
+        if (form() != null) {
+            Form form = form();
+            FormDisplay display = form.display;
+
+            if (!display.bodyType.isEmpty()) {
+                if (display.bodyType.toLowerCase().contains("first"))
+                    index = 0;
+                else if (display.bodyType.toLowerCase().contains("second"))
+                    index = 1;
+                else if (display.bodyType.toLowerCase().contains("third"))
+                    index = 2;
+                else if (display.bodyType.toLowerCase().contains("final"))
+                    index = 3;
+                else if (display.bodyType.toLowerCase().contains("ultimate"))
+                    index = 4;
+                else if (display.bodyType.toLowerCase().contains("golden"))
+                    index = 5;
+            }
+
+            return index;
+        }
+
+        return isNPC ? display.arcoState : dbcForm();
+    }
 
     public int furType() {
         if (form() != null)
@@ -229,6 +272,10 @@ public class OverlayContext implements IOverlayContext {
             form = PlayerDataUtil.getForm(isNPC ? npc : player);
 
         return form;
+    }
+
+    public int dbcForm() {
+        return isNPC ? -1 : dbcData.State;
     }
 
     public boolean isNPC() {

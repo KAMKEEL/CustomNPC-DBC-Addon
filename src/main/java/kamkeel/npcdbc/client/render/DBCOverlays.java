@@ -35,8 +35,8 @@ public class DBCOverlays {
         OOZARU_FUR.add(ALL, Fur, path("oozaru/oozaru2.png", "jinryuudragonbc:cc/oozaru2.png"));
 
 
-        TexturePath SAVIOR_PATH = (ctx, path) -> format(path("savior/%s.png"));
-        SAVIOR.add(Face, 0xFFFFFF, ctx -> path("ssj4/ss4b2.png"));
+        TexturePath SAVIOR_PATH = (ctx, path) -> format(path("savior/%s.png"), path);
+        SAVIOR.add(ALL, Fur, ctx -> path("ssj4/ss4b2.png"));
         SAVIOR.add(Face, Eye, true, ctx -> SAVIOR_PATH.get(ctx, "savioreyes"));
         SAVIOR.add(Mouth, 0xFFFFFF, true, ctx -> SAVIOR_PATH.get(ctx, "saviormouth"));
         SAVIOR.add(Chest, Eye, true, ctx -> SAVIOR_PATH.get(ctx, "saviorchest"));
@@ -59,14 +59,25 @@ public class DBCOverlays {
         SSJ3_FACE.add(Face, BodyCM, ctx -> SSJ3_PATH.get(ctx, "ssj3shade"));
         SSJ3_FACE.add(EyeWhite, 0xFFFFFF, ctx -> SSJ3_PATH.get(ctx, "ssj3eyewhite"));
         SSJ3_FACE.add(Eyebrows, Fur, ctx -> SSJ3_PATH.get(ctx, "ssj3brows"));
-        SSJ3_FACE.add(LeftEye, Eye, ctx -> SSJ3_PATH.get(ctx, "ssj3eyeleft"));
-        SSJ3_FACE.add(RightEye, Eye, ctx -> SSJ3_PATH.get(ctx, "ssj3eyeright"));
+        SSJ3_FACE.add(LeftEye, Eye, ctx -> SSJ3_PATH.get(ctx, "ssj3eyeleft")).condition(ctx -> !ctx.berserk());
+        SSJ3_FACE.add(RightEye, Eye, ctx -> SSJ3_PATH.get(ctx, "ssj3eyeright")).condition(ctx -> !ctx.berserk());
         SSJ3_FACE.disable(Part.Eyebrows, Part.EyeWhite, Part.LeftEye, Part.RightEye);
 
 
-        TexturePath PUPILS_PATH = (ctx, path) -> OVERLAY_DIR + format("eyespupils/humanoid/%s_%s_%s.png", path, ctx.eyeType(), ctx.female() ? "f" : "m");
-        PUPILS.add(LeftEye, Eye, ctx -> PUPILS_PATH.get(ctx, "left/left_eye"));
-        PUPILS.add(RightEye, Eye, ctx -> PUPILS_PATH.get(ctx, "right/right_eye"));
+        TexturePath PUPILS_PATH = (ctx, path) -> format(path("pupils/%s/%s_%s_%s%s.png"), ctx.raceDir(), path, ctx.eyeType(), ctx.female() ? "f" : "m", ctx.race() == 4 ? "_body" + ctx.bodyType() : "");
+        // Base Forms & Arco Minimal Forms
+        PUPILS.add(LeftEye, Eye, ctx -> PUPILS_PATH.get(ctx, "left/left_eye")).condition(ctx -> ctx.race() != 4 || (ctx.race() == 4 && ctx.arcoState() < 3));
+        PUPILS.add(RightEye, Eye, ctx -> PUPILS_PATH.get(ctx, "right/right_eye")).condition(ctx -> ctx.race() != 4 || (ctx.race() == 4 && ctx.arcoState() < 3));
+        // Arco Final Form
+        PUPILS.add(LeftEye, Eye, ctx -> PUPILS_PATH.get(ctx, "left/left_eye_final")).condition(ctx -> ctx.race() == 4 && ctx.arcoState() == 3);
+        PUPILS.add(RightEye, Eye, ctx -> PUPILS_PATH.get(ctx, "right/right_eye_final")).condition(ctx -> ctx.race() == 4 && ctx.arcoState() == 3);
+        // Arco Super Form
+        PUPILS.add(LeftEye, Eye, ctx -> PUPILS_PATH.get(ctx, "left/left_eye_super")).condition(ctx -> ctx.race() == 4 && ctx.arcoState() == 4);
+        PUPILS.add(RightEye, Eye, ctx -> PUPILS_PATH.get(ctx, "right/right_eye_super")).condition(ctx -> ctx.race() == 4 && ctx.arcoState() == 4);
+        // Arco Golden Form
+        PUPILS.add(LeftEye, Eye, ctx -> PUPILS_PATH.get(ctx, "left/left_eye_ultimate")).condition(ctx -> ctx.race() == 4 && ctx.arcoState() == 5);
+        PUPILS.add(RightEye, Eye, ctx -> PUPILS_PATH.get(ctx, "right/right_eye_ultimate")).condition(ctx -> ctx.race() == 4 && ctx.arcoState() == 5);
+
         PUPILS.disable(Part.LeftEye, Part.RightEye);
     }
 

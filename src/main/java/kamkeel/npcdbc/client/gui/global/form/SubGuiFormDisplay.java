@@ -185,11 +185,8 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         button.enabled = display.bodyColors.eyeColor != -1;
         window.addButton(button);
 
-        boolean addPupilOption = ConfigDBCClient.EnableHDTextures && (DBCRace.isSaiyan(visualDisplay.race) || visualDisplay.race == DBCRace.HUMAN);
         int currentIndex = ConfigDBCClient.EnableHDTextures && form.display.hasPupils ? 2 : form.display.isBerserk ? 1 : 0;
-        String[] eyeSettingString = addPupilOption ?
-            new String[]{"display.normalEye", "display.isBerserk", "display.hasPupils"} :
-            new String[]{"display.normalEye", "display.isBerserk"};
+        String[] eyeSettingString = new String[]{"display.normalEye", "display.isBerserk", "display.hasPupils"};
 
         window.addButton(new GuiNpcButton(1072, x + 50, y - 5, 54, 20, eyeSettingString, currentIndex));
         if (DBCRace.isSaiyan(visualDisplay.race) || visualDisplay.race == DBCRace.HUMAN) {

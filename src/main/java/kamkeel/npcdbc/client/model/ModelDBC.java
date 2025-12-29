@@ -76,7 +76,6 @@ public class ModelDBC extends ModelBase {
 
     public static final String SDDir = CustomNpcPlusDBC.ID + ":textures/sd/";
     public static final String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
-    public static final String OVERLAY_DIR = CustomNpcPlusDBC.ID + ":textures/overlays/";
 
     public DBCDisplay display;
 
@@ -477,17 +476,22 @@ public class ModelDBC extends ModelBase {
         }
 
         /* ───────── Face Overlays ───────── */
-        if (HD() && !oozaru && pupils) {
-            if (ssj3 || !eyebrows) //removed (!eyebrows && pupils) as old no eyebrows code no more
-                chains.add(SSJ3_FACE);
-            else if (ssj4 && !savior)
-                chains.add(SSJ4_FACE);
-            else  //SSJ3 and SSJ4 have their own pupils
-                chains.add(PUPILS);
+        if (HD()) {
+            if (!oozaru && pupils) {
+                if (ssj4 && !savior)
+                    chains.add(SSJ4_FACE);
+                else  //SSJ4 has its own pupils
+                    chains.add(PUPILS);
+            }
+
+            if (ssj3) {
+                chains.add(SSJ3_FACE); // SSJ3 unique face
+            }
         }
 
-        if (!eyebrows && !pupils)
+        if (!eyebrows || (ssj3 && !HD())) {
             chains.add(NO_EYEBROWS);
+        }
 
         /* ───────── Main Entity Overlays ───────── */
         if (uniqueChains != null)
