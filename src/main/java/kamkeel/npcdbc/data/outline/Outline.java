@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.data.outline;
 
 import kamkeel.npcdbc.api.outline.IOutline;
-import kamkeel.npcdbc.client.utils.Color;
+import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.controllers.OutlineController;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.util.ValueUtil;

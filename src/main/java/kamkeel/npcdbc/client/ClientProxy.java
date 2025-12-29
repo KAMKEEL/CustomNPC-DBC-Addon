@@ -7,6 +7,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import kamkeel.npcdbc.CommonProxy;
+import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.client.render.PotaraItemRenderer;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
@@ -24,6 +25,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
+import noppes.npcs.CustomNpcs;
 
 import java.lang.reflect.Field;
 import java.time.Duration;
@@ -46,6 +48,9 @@ public class ClientProxy extends CommonProxy {
     public void preInit(FMLPreInitializationEvent ev) {
         super.preInit(ev);
         forceStencilEnable();
+        CustomNpcs.addClassesToClientClassFilter( filter -> {
+            filter.addRegexes("kamkeel\\.npcdbc\\.api\\..*");
+        });
     }
 
     public void init(FMLInitializationEvent ev) {

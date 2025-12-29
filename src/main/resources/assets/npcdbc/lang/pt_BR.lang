@@ -416,6 +416,9 @@ item.npcdbc:revive_misccapsule.name=Capsula de Reviver
 item.npcdbc:heat_misccapsule.name=Capsula de Aquecimento
 item.npcdbc:powerpoint_misccapsule.name=Capsula de Poder de Luta
 item.npcdbc:absorption_misccapsule.name=Capsula de Absorcao
+item.npcdbc:strain_misccapsule.name=Cápsula de Tensão
+item.npcdbc:nofuse_misccapsule.name=Cápsula de Sem Fusão
+item.npcdbc:exhausted_misccapsule.name=Cápsula de Exaustão
 
 item.npcdbc:fruitofmight.name=Fruto do Poder
 item.npcdbc:one_potara.name=Brincos Potaras

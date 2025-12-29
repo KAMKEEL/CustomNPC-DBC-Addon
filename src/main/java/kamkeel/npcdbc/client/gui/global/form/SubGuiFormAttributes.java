@@ -175,13 +175,6 @@ public class SubGuiFormAttributes extends SubGuiInterface implements ICustomScro
         menu.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
-    @Override
-    public void keyTyped(char c, int keyCode) {
-        super.keyTyped(c, keyCode);
-        if (keyCode == 1) { // ESC
-            menu.close();
-        }
-    }
 
     @Override
     public void subGuiClosed(SubGuiInterface subgui) {
@@ -196,4 +189,8 @@ public class SubGuiFormAttributes extends SubGuiInterface implements ICustomScro
 
     // utility to compute remaining height for scroll
     private int fifty() { return 18 + 20 + 4; }
+
+    public void save() {
+        menu.save();
+    }
 }

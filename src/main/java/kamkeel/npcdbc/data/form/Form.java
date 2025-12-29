@@ -29,6 +29,7 @@ public class Form implements IForm {
     public FormMastery mastery = new FormMastery(this);
     public FormDisplay display = new FormDisplay(this);
     public FormStackable stackable = new FormStackable(this);
+    public FormCustomStackable customStackable = new FormCustomStackable(this);
     public FormAdvanced advanced = new FormAdvanced(this);
     public FormAttributes customAttributes = new FormAttributes(this);
     public FormMagicData magicData = new FormMagicData(this);
@@ -88,6 +89,7 @@ public class Form implements IForm {
         mastery.readFromNBT(compound);
         display.readFromNBT(compound);
         stackable.readFromNBT(compound);
+        customStackable.readFromNBT(compound);
         advanced.readFromNBT(compound);
         customAttributes.readFromNBT(compound);
         magicData.readFromNBT(compound);
@@ -120,6 +122,7 @@ public class Form implements IForm {
         mastery.writeToNBT(compound);
         display.writeToNBT(compound);
         stackable.writeToNBT(compound);
+        customStackable.writeToNBT(compound);
         advanced.writeToNBT(compound);
         customAttributes.writeToNBT(compound);
         magicData.writeToNBT(compound);
@@ -444,6 +447,8 @@ public class Form implements IForm {
     public IFormDisplay getDisplay() {
         return display;
     }
+
+    // TODO api class for FormOverlay
 
     @Override
     public IFormStackable getStackable() {

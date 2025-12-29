@@ -416,6 +416,9 @@ item.npcdbc:revive_misccapsule.name=Cápsula de Resurrección
 item.npcdbc:heat_misccapsule.name=Cápsula de Calor
 item.npcdbc:powerpoint_misccapsule.name=Cápsula de Power Points
 item.npcdbc:absorption_misccapsule.name=Cápsula de Absorción
+item.npcdbc:strain_misccapsule.name= Cápsula de Cepa
+item.npcdbc:nofuse_misccapsule.name=Cápsula de Sin Fusible
+item.npcdbc:exhausted_misccapsule.name=Cápsula de Agotada
 
 item.npcdbc:fruitofmight.name=Fruto Sagrado
 item.npcdbc:one_potara.name=Pendiente Pothara

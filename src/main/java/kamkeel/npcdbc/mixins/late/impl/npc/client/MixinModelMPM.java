@@ -7,6 +7,7 @@ import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
+import kamkeel.npcdbc.data.overlay.OverlayContext;
 import kamkeel.npcdbc.mixins.late.IModelMPM;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.Minecraft;
@@ -105,18 +106,30 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
 
     }
 
+    @Unique
+    private DBCDisplay display;
+
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/ModelMPM;renderCloak(Lnoppes/npcs/entity/EntityCustomNpc;F)V", shift = At.Shift.AFTER), remap = true)
+    private void renderDBCOverlays(Entity entity, float par2, float par3, float par4, float par5, float par6, float par7, CallbackInfo ci) {
+        if (!isArmor && display.enabled) {
+            OverlayContext ctx = OverlayContext.from(display);
+            ctx.modelNpc = NPCDBCModel;
+            NPCDBCModel.renderOverlays(ctx);
+        }
+    }
+
     @Inject(method = "renderHead", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 2, shift = At.Shift.BEFORE, remap = true), cancellable = true)
     private void renderDBCHead(EntityCustomNpc entity, float f, CallbackInfo ci) {
-        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+        display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled) {
-            NPCDBCModel.renderFace(entity, display);
+            NPCDBCModel.renderFace(entity, display, bipedHead);
             NPCDBCModel.renderBodySkin(display, bipedHead);
         }
     }
 
     @Inject(method = "renderBody", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", shift = At.Shift.BEFORE, remap = true), cancellable = true)
     private void renderDBCBody(EntityCustomNpc entity, float f, CallbackInfo ci) {
-        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+        display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled) {
             NPCDBCModel.renderBodySkin(display, bipedBody);
         }
@@ -124,21 +137,21 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
 
     @Inject(method = "renderLegs", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/part/ModelLegs;render(F)V", shift = At.Shift.BEFORE, remap = true), cancellable = true)
     private void renderDBCLegs(EntityCustomNpc entity, float f, CallbackInfo ci) {
-        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+        display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled)
             NPCDBCModel.renderBodySkin(display, legs);
     }
 
     @Inject(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 0, shift = At.Shift.BEFORE, remap = true), cancellable = true)
     private void renderDBCLeftArm(EntityCustomNpc entity, float f, boolean bo, CallbackInfo ci) {
-        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+        display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled)
             NPCDBCModel.renderBodySkin(display, bipedLeftArm);
     }
 
     @Inject(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 1, shift = At.Shift.BEFORE, remap = true), cancellable = true)
     private void renderDBCRightArm(EntityCustomNpc entity, float f, boolean bo, CallbackInfo ci) {
-        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+        display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled)
             NPCDBCModel.renderBodySkin(display, bipedRightArm);
     }

@@ -249,6 +249,10 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
                             addLabel(new GuiNpcLabel(208, "display.tail", guiLeft, y + 5, 0xFFFFFF));
 
                             addButton(new GuiNpcButton(207, guiLeft + 2, y += 22, 90, 20, new String[]{"display.furOff", "display.furOn"}, display.hasFur ? 1 : 0));
+
+                            if (display.hasFur) {
+                                addButton(new GuiNpcButton(2071, guiLeft + 2, y += 22, 90, 20, new String[]{"GT", "Daima", "Absalon"}, display.furType));
+                            }
                         }
                     }
                 }
@@ -437,6 +441,9 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
         }
         if (button.id == 207) {
             display.hasFur = button.getValue() == 1;
+        }
+        if (button.id == 2071) {
+            display.furType = (display.furType + 1) % 3;
         }
         if (btn.id == 1100) {
             setSubGui(new SubGuiKiWeapon(this, display));

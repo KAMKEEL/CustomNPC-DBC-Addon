@@ -956,14 +956,6 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
     }
 
     @Override
-    public void keyTyped(char c, int i) {
-        super.keyTyped(c, i);
-        if (i == 1)
-            menu.close();
-
-    }
-
-    @Override
     public void subGuiClosed(SubGuiInterface subgui) {
     }
 
@@ -978,5 +970,6 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
     }
 
     public void save() {
+        menu.save();
     }
 }

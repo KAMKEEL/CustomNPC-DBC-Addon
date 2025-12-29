@@ -2,33 +2,33 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 
 import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JBRA.RenderPlayerJBRA;
-import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
-import JinRyuu.JRMCore.JRMCoreHDBC;
+import JinRyuu.JRMCore.JRMCoreHJYC;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.ClientConstants;
-import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.ColorMode;
+import kamkeel.npcdbc.client.model.ModelDBC;
+import kamkeel.npcdbc.client.render.OverlayModelRenderer;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
-import kamkeel.npcdbc.client.utils.Color;
+import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.TransformController;
-import kamkeel.npcdbc.data.aura.Aura;
-import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
-import kamkeel.npcdbc.data.npc.KiWeaponData;
+import kamkeel.npcdbc.data.form.FacePartData;
+import kamkeel.npcdbc.data.overlay.Overlay;
+import kamkeel.npcdbc.data.overlay.OverlayChain;
+import kamkeel.npcdbc.api.client.overlay.IOverlay.Type;
+import kamkeel.npcdbc.data.overlay.OverlayContext;
 import kamkeel.npcdbc.entity.EntityAura;
-import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -37,24 +37,26 @@ import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import noppes.npcs.client.ClientEventHandler;
 import org.lwjgl.opengl.GL11;
-import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static kamkeel.npcdbc.data.form.FacePartData.Part.*;
 
 @Mixin(value = RenderPlayerJBRA.class, remap = false)
 public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
-    @Shadow
-    private static float age;
+//    @Shadow
+//    private static float age;
     @Shadow
     public ModelBipedDBC modelMain;
     @Unique
@@ -66,27 +68,27 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Unique
     private String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
 
-    @Shadow
-    public static float r;
-
-    @Shadow
-    public static float b;
-
-    @Shadow
-    public static float g;
+//    @Shadow
+//    private static float r;
+//
+//    @Shadow
+//    private static float b;
+//
+//    @Shadow
+//    private static float g;
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.BEFORE))
     public void customKaiokenTint(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
         DBCData data = DBCData.get(par1AbstractClientPlayer);
-        if (JRMCoreH.DBC() && kk2) {
-            Aura aura = data.getAura();
-            if (aura != null && aura.display.kaiokenColor != -1) {
-                Color tint = new Color(aura.display.kaiokenColor);
-                r = tint.getRedF() * kk / 15.0F;
-                g = tint.getGreenF() * kk / 15.0F;
-                b = tint.getBlueF() * kk / 15.0F;
-            }
-        }
+//        if (JRMCoreH.DBC() && kk2) {
+//            Aura aura = data.getAura();
+//            if (aura != null && aura.display.kaiokenColor != -1) {
+//                Color tint = new Color(aura.display.kaiokenColor);
+//                r = tint.getRedF() * kk / 15.0F;
+//                g = tint.getGreenF() * kk / 15.0F;
+//                b = tint.getBlueF() * kk / 15.0F;
+//            }
+//        }
     }
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
@@ -111,19 +113,19 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         MinecraftForge.EVENT_BUS.post(new DBCPlayerEvent.RenderArmEvent.Post(par1EntityPlayer, (RenderPlayerJBRA) (Object) this, Minecraft.getMinecraft().timer.renderPartialTicks));
     }
 
-    @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glScalef(FFF)V", ordinal = 1), remap = true)
-    protected void setDamage(float x, float y, float z, @Local(ordinal = 0) LocalRef<AbstractClientPlayer> player) {
-        if (mc.theWorld == null)
-            return;
-        DBCData.get(player.get()).XZSize = x;
-        DBCData.get(player.get()).YSize = y;
-        if (RenderEventHandler.renderingPlayerInGUI && y > 0.8f) {
-            float f = ConfigDBCClient.AlteranteSelectionWheelTexture ? 6f : 4f;
-            GL11.glTranslatef(0, y / f, 0);
-        }
-
-        GL11.glScalef(x, y, z);
-    }
+//    @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glScalef(FFF)V", ordinal = 1), remap = true)
+//    protected void setDamage(float x, float y, float z, @Local(ordinal = 0) LocalRef<AbstractClientPlayer> player) {
+//        if (mc.theWorld == null)
+//            return;
+//        DBCData.get(player.get()).XZSize = x;
+//        DBCData.get(player.get()).YSize = y;
+//        if (RenderEventHandler.renderingPlayerInGUI && y > 0.8f) {
+//            float f = ConfigDBCClient.AlteranteSelectionWheelTexture ? 6f : 4f;
+//            GL11.glTranslatef(0, y / f, 0);
+//        }
+//
+//        GL11.glScalef(x, y, z);
+//    }
 
     @Inject(method = "glColor3f(I)V", at = @At("HEAD"), cancellable = true)
     private static void mixAuraColor(int c, CallbackInfo ci) {
@@ -136,14 +138,14 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         if (data == null)
             return;
 
-        if (JRMCoreH.DBC() && kk2) {
-            Aura aura = data.getAura();
-            if (aura != null && aura.display.kaiokenColor != -1) {
-                Color.lerpRGB(c, aura.display.kaiokenColor, kk / 15f).glColor();
-                ci.cancel();
-                return;
-            }
-        }
+//        if (JRMCoreH.DBC() && kk2) {
+//            Aura aura = data.getAura();
+//            if (aura != null && aura.display.kaiokenColor != -1) {
+//                Color.lerpRGB(c, aura.display.kaiokenColor, kk / 15f).glColor();
+//                ci.cancel();
+//                return;
+//            }
+//        }
 
         EntityAura aura = data.auraEntity;
         if (!RenderEventHandler.renderingPlayerInGUI && aura != null && aura.color1 != -1 && aura.shouldRender()) {
@@ -176,47 +178,48 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         if (data == null)
             return;
 
+//        System.out.println();
 
-        if (JRMCoreH.DBC() && kk2) {
-            Aura aura = data.getAura();
-            if (aura != null && aura.display.kaiokenColor != -1) {
-                Color col = new Color(r.get(), g.get(), b.get(), -1);
-                col.lerpRGB(aura.display.kaiokenColor, kk / 40f).glColor();
-                ci.cancel();
-                return;
-            }
-        }
+//        if (JRMCoreH.DBC() && kk2) {
+//            Aura aura = data.getAura();
+//            if (aura != null && aura.display.kaiokenColor != -1) {
+//                Color col = new Color(r.get(), g.get(), b.get(), -1);
+//                col.lerpRGB(aura.display.kaiokenColor, kk / 40f).glColor();
+//                ci.cancel();
+//                return;
+//            }
+//        }
     }
+//
+//    @Redirect(method = "func_130009_a", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/AbstractClientPlayer;isSneaking()Z"))
+//    private boolean isSneaking(AbstractClientPlayer instance) {
+//        if (RenderEventHandler.renderingPlayerInGUI)
+//            return false;
+//        return instance.isSneaking();
+//    }
 
-    @Redirect(method = "func_130009_a", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/AbstractClientPlayer;isSneaking()Z"))
-    private boolean isSneaking(AbstractClientPlayer instance) {
-        if (RenderEventHandler.renderingPlayerInGUI)
-            return false;
-        return instance.isSneaking();
-    }
-
-    @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;data2:[Ljava/lang/String;"), remap = true)
-    private String[] changeFormDAata(@Local(name = "pl") int pl, @Local(ordinal = 0) AbstractClientPlayer player) {
-        DBCData data = DBCData.get(player);
-        if (data.State > 0) {
-            Form form = data.getForm();
-            if (form != null && !form.stackable.vanillaStackable)
-                data.State = 0;
-        }
-        if (!ClientProxy.isRenderingWorld() || CustomNpcPlusDBC.proxy.isRenderingGUI())
-            ClientProxy.lastRendererGUIPlayerID = pl;
-        else
-            ClientProxy.lastRendererGUIPlayerID = -1;
-        if (JRMCoreH.data2 != null)
-            JRMCoreH.data2[pl] = data.State + ";" + data.State2;
-        return JRMCoreH.data2;
-    }
+//    @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;data2:[Ljava/lang/String;"), remap = true)
+//    private String[] changeFormDAata(@Local(name = "pl") int pl, @Local(ordinal = 0) AbstractClientPlayer player) {
+//        DBCData data = DBCData.get(player);
+//        if (data.State > 0) {
+//            Form form = data.getForm();
+//            if (form != null && !form.stackable.vanillaStackable)
+//                data.State = 0;
+//        }
+//        if (!ClientProxy.isRenderingWorld() || CustomNpcPlusDBC.proxy.isRenderingGUI())
+//            ClientProxy.lastRendererGUIPlayerID = pl;
+//        else
+//            ClientProxy.lastRendererGUIPlayerID = -1;
+//        if (JRMCoreH.data2 != null)
+//            JRMCoreH.data2[pl] = data.State + ";" + data.State2;
+//        return JRMCoreH.data2;
+//    }
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JBRA/RenderPlayerJBRA;kk2:Z", ordinal = 1))
     private void changeFormDAata4(AbstractClientPlayer p, float p_77041_2_, CallbackInfo ci) {
         DBCData data = DBCData.get(p);
         if (RenderEventHandler.renderingPlayerInGUI) {
-            kk2 = data.renderKK;
+//            kk2 = data.renderKK;
         }
     }
 
@@ -306,11 +309,20 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         }
     }
 
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA19:Z", shift = At.Shift.BEFORE))
+    private void renderOverlays(AbstractClientPlayer pl, float par2, CallbackInfo ci, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "eyes") LocalIntRef eyes, @Local(name = "gen") LocalIntRef gender) {
+        //renderOverlays(DBCData.get(pl));
+        OverlayContext ctx = OverlayContext.from(DBCData.get(pl));
+        ctx.model = modelMain;
+        ModelDBC.renderOverlays(ctx);
+
+    }
+
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.BEFORE))
-    private void renderSaiyanStates(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "hc") LocalIntRef hairCol, @Local(name = "pl") LocalIntRef pl, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "hairback") LocalIntRef hairback, @Local(name = "race") LocalIntRef race, @Local(name = "gen") LocalIntRef gender, @Local(name = "facen") LocalIntRef nose) {
+    private void renderSaiyanStates(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "hc") LocalIntRef hairCol, @Local(name = "pl") LocalIntRef pl, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "hairback") LocalIntRef hairback, @Local(name = "race") LocalIntRef race, @Local(name = "gen") LocalIntRef gender, @Local(name = "facen") LocalIntRef nose, @Local(name = "eyes") LocalIntRef eyes) {
         Form form = DBCData.getForm(par1AbstractClientPlayer);
         DBCData data = DBCData.get(par1AbstractClientPlayer);
-
+        boolean usesHumanBody = race.get() == 0 || JRMCoreH.isRaceSaiyan(race.get());
 
         /**
          * @INFO: This fixes base hair color.
@@ -322,16 +334,20 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             FormDisplay display = form.display;
 
             HD = ConfigDBCClient.EnableHDTextures;
+            int age = 10;
+            boolean isSSJ4 = form.display.hairType.equals("ssj4") && JRMCoreH.isRaceSaiyan(race.get());
+
             //only saiyans
             if (race.get() == 1 || race.get() == 2) {
-                boolean isSSJ4 = form.display.hairType.equals("ssj4");
-                if (form.display.hasBodyFur() || isSSJ4)
-                    renderBodyFur(form, gender.get(), bodyCM.get(), data, data.skinType);
+//                if (form.display.hasBodyFur() || isSSJ4)
+//                    renderBodyFur(form, gender.get(), bodyCM.get(), data, data.skinType);
 
                 //renders all ssj4
                 if (isSSJ4) {
-                    if (form.display.hasEyebrows && data.skinType != 0)
-                        renderSSJ4Face(form, gender.get(), nose.get(), bodyCM.get(), data.renderingHairColor, age, data.DNS, data);
+                    if (form.display.hasEyebrows && data.skinType != 0) {
+//                        if (form.display.furType != 2)
+//                            renderSSJ4Face(par1AbstractClientPlayer, form, gender.get(), nose.get(), eyes.get(), bodyCM.get(), data.renderingHairColor, age, data.DNS, data);
+                    }
                     if (hairback.get() != 12)
                         this.modelMain.renderHairsV2(0.0625F, "", 0.0F, 0, 0, pl.get(), race.get(), (RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);
                     //all oozaru rendering
@@ -350,22 +366,22 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         }
     }
 
-    @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/entity/AbstractClientPlayer;onGround:Z", remap = true), remap = true)
-    public boolean fixP2otaraHair(AbstractClientPlayer instance) {
-        if (RenderEventHandler.renderingPlayerInGUI)
-            return true;
-        return instance.onGround;
-    }
+//    @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/entity/AbstractClientPlayer;onGround:Z", remap = true), remap = true)
+//    public boolean fixP2otaraHair(AbstractClientPlayer instance) {
+//        if (RenderEventHandler.renderingPlayerInGUI)
+//            return true;
+//        return instance.onGround;
+//    }
 
-    @Redirect(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", opcode = Opcodes.GETSTATIC))
-    public boolean fixPotaraHair(@Local(name = "abstractClientPlayer") AbstractClientPlayer abstractClientPlayer) {
-        ItemStack item = abstractClientPlayer.getCurrentArmor(3);
-
-        if (item != null && item.getItem() instanceof ItemPotara)
-            return false;
-
-        return JRMCoreConfig.HHWHO;
-    }
+//    @Redirect(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", opcode = Opcodes.GETSTATIC))
+//    public boolean fixPotaraHair(@Local(name = "abstractClientPlayer") AbstractClientPlayer abstractClientPlayer) {
+//        ItemStack item = abstractClientPlayer.getCurrentArmor(3);
+//
+//        if (item != null && item.getItem() instanceof ItemPotara)
+//            return false;
+//
+//        return JRMCoreConfig.HHWHO;
+//    }
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "LJinRyuu/JBRA/ModelBipedDBC;renderHairs(FLjava/lang/String;)V", ordinal = 34, shift = At.Shift.BEFORE))
     public void beforeMajinSE(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
@@ -388,53 +404,198 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
         FormDisplay.BodyColor playerColors = data.currentCustomizedColors;
 
-        String fur = "ss4" + (skintype == 0 ? "a" : "b") + ".png";
-        this.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/" + fur : "jinryuudragonbc:cc/" + fur));
+        int furType = form.display.furType;
+        String fur = "ss4" + (skintype == 0 ? "a" : "b") + furType + ".png";
+        String texture = (HD ? HDDir : SDDir) + "ssj4/" + fur;
+        this.bindTexture(new ResourceLocation(texture));
         RenderPlayerJBRA.glColor3f(playerColors.getFurColor(form.display, data));
         this.modelMain.renderBody(0.0625F);
+
+        if (form.display.furType == 2) {
+            int eyeColor = playerColors.getProperColor(form.display, "eye");
+            RenderPlayerJBRA.glColor3f(eyeColor == -1 ? 0xFFFF55 : eyeColor);
+            this.bindTexture(new ResourceLocation((HD ? HDDir : SDDir) + "savior/saviorchest.png"));
+            this.modelMain.renderBody(0.0625F);
+        }
+    }
+
+    @Shadow
+    private static int gen; //gender (actual gen+1)
+
+    @Shadow
+    private static float childScl; //age from 0 to 1 (adult)
+
+    @Shadow
+    private static int preg; //pregnant
+
+    @Unique
+    private void renderOverlays(DBCData data) {
+        OverlayContext ctx = OverlayContext.from(data);
+        ctx.form = data.getForm();
+        ctx.model = modelMain;
+
+        List<OverlayChain> chains = new ArrayList<>();//ModelDBC.applyOverlayChains(data.getOverlayChains(), ctx);
+
+        for (OverlayChain chain : chains) {
+            ctx.chain = chain;
+            if (!chain.isEnabled() || chain.condition != null && !chain.checkCondition(ctx))
+                continue;
+
+            for (Overlay overlay : chain.overlays) {
+                ctx.overlay = overlay;
+                if (!overlay.isEnabled() || overlay.condition != null && !overlay.checkCondition(ctx))
+                    continue;
+
+                Type type = overlay.getType();
+
+                /* ───────── Texture ───────── */
+                String texture = overlay.getTexture();
+
+                ctx.texture = texture;
+                if (overlay.applyTexture != null)
+                    texture = overlay.applyTexture(ctx);
+
+                if (!ModelDBC.bindTexture(texture))
+                    continue;
+
+                /* ───────── Colors ───────── */
+                //TODO this stuff needs a method
+                //int furColor = data.currentCustomizedColors.getProperColor(displayData.getFurColor(data), "fur");
+                //int hairColor = data.currentCustomizedColors.getProperColor(displayData.getHairColor(data), "hair");
+                //int eyeColor = data.currentCustomizedColors.getProperColor(displayData.getColor("eye"), "eye");
+
+                //int color = overlay.getColorType() == Overlay.ColorType.Body.ordinal() ? bodyCM : overlay.getColorType() == Overlay.ColorType.Eye.ordinal() ? (eyeColor < 0 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor) : overlay.getColorType() == Overlay.ColorType.Hair.ordinal() ? (hairColor < 0 ? defaultHairColor : hairColor) : overlay.getColorType() == Overlay.ColorType.Fur.ordinal() ? furColor : overlay.getColor();
+
+                int color = 0xffffff;
+                Color finalColor = ctx.color = new Color(color, overlay.alpha);
+
+                if (overlay.applyColor != null)
+                    finalColor = overlay.applyColor(ctx);
+
+                /* ───────── Glow ───────── */
+                boolean glow = overlay.isGlow();
+                if (glow) {
+                    GL11.glDisable(GL11.GL_LIGHTING);
+                    if (!RenderEventHandler.renderingPlayerInGUI) //in-game not in GUI, as lightmap is disabled in GUIs so cant enable it again
+                        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+                }
+
+                /* ───────── Rendering ───────── */
+                GL11.glEnable(GL11.GL_BLEND);
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GL11.glAlphaFunc(GL11.GL_GREATER, 0.001f);
+                GL11.glEnable(GL11.GL_ALPHA_TEST);
+
+                new Color(finalColor.color, finalColor.alpha).glColor();
+                OverlayModelRenderer.render(type, ctx);
+
+                GL11.glDisable(GL11.GL_BLEND);
+
+                /* ───────── Disable Glow ───────── */
+                if (glow) {
+                    GL11.glEnable(GL11.GL_LIGHTING);
+                    if (!RenderEventHandler.renderingPlayerInGUI) //in-game not in GUI
+                        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
+                }
+
+            }
+        }
+    }
+
+
+    /*
+     * OVERLAYS NOW HAVE THIS CALCULATION BAKED IN SO NO LONGER NEEDED!
+     *
+     * Used mostly for rendering bipeadHead correctly on female/younger than adult ages.
+     * No need in modelMain.renderBody() as it already applies these in its calculations.
+     */
+    @Unique
+    private void applyAgeGenderTransformations(AbstractClientPlayer player, int gender) {
+        int g = gender + 1;
+        float ageFactor = 3.0F - JRMCoreHJYC.JYCsizeBasedOnAge(player) * 2.0F; //from 0-1 where 0 is child and 1 is full adult
+        GL11.glScalef((0.5F + 0.5F / ageFactor) * (g <= 1 ? 1.0F : 0.85F), 0.5F + 0.5F / ageFactor, (0.5F + 0.5F / ageFactor) * (g <= 1 ? 1.0F : 0.85F));
+        GL11.glTranslatef(0.0F, (ageFactor - 1.0F) / ageFactor * (2.0F - (ageFactor >= 1.5F && ageFactor <= 2.0F ? (2.0F - ageFactor) / 2.5F : (ageFactor < 1.5F && ageFactor >= 1.0F ? (ageFactor * 2.0F - 2.0F) * 0.2F : 0.0F))), 0.0F);
     }
 
     @Unique
-    private void renderSSJ4Face(Form form, int gender, int nose, int bodyCM, int defaultHairColor, float age, String dns, DBCData data) {
+    private void renderSSJ4Face(AbstractClientPlayer player, Form form, int gender, int nose, int eyes, int bodyCM, int defaultHairColor, float age, String dns, DBCData data) {
+        FormDisplay display = form.display;
+        FacePartData faceData = display.faceData;
+
+        GL11.glPushMatrix();
+        applyAgeGenderTransformations(player, gender);
+
         if (ConfigDBCClient.EnableHDTextures) {
-            GL11.glColor3f(1.0f, 1.0f, 1.0f);
-            this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4eyewhite.png"));
-            this.modelMain.bipedHead.render(1F / 16F);
-
             FormDisplay.BodyColor playerColors = data.currentCustomizedColors;
-            FormDisplay display = form.display;
+            String eyeDir = (form.display.furType == 1 ? "ssj4d" : "ssj4") + (gender == 1 ? "/female" : "/male") + "/face_" + eyes + "/";
 
+            if (!faceData.disabled(EyeWhite, eyes)) {
+                GL11.glColor3f(1.0f, 1.0f, 1.0f);
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4eyewhite.png"));
+                this.modelMain.bipedHead.render(1F / 16F);
+            }
 
-            if (!form.display.isBerserk) {
+            if (!form.display.isBerserk && !faceData.disabled(RightEye, eyes)) {
                 int eyeColor = playerColors.getProperColor(display, "eye");
                 RenderPlayerJBRA.glColor3f(eyeColor == -1 ? 0xF3C807 : eyeColor);
-                this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4pupils.png"));
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4eyeright.png"));
+                this.modelMain.bipedHead.render(0.0625F);
+
+                if (form.display.furType == 1) {
+                    GL11.glColor3f(1.0f, 1.0f, 1.0f);
+                    this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4glowright.png"));
+                    this.modelMain.bipedHead.render(0.0625F);
+                }
+            }
+
+            if (!form.display.isBerserk && !faceData.disabled(LeftEye, eyes)) {
+                int eyeColor = playerColors.getProperColor(display, "eye");
+                RenderPlayerJBRA.glColor3f(eyeColor == -1 ? 0xF3C807 : eyeColor);
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4eyeleft.png"));
+                this.modelMain.bipedHead.render(0.0625F);
+
+                if (form.display.furType == 1) {
+                    GL11.glColor3f(1.0f, 1.0f, 1.0f);
+                    this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4glowleft.png"));
+                    this.modelMain.bipedHead.render(0.0625F);
+                }
+            }
+
+            if (!faceData.disabled(Eyebrows, eyes)) {
+                RenderPlayerJBRA.glColor3f(playerColors.getFurColor(form.display, data));
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4brows.png"));
+                this.modelMain.bipedHead.render(1F / 16F);
+
+                int hairColor = playerColors.getProperColor(form.display.getHairColor(data), "hair");
+                RenderPlayerJBRA.glColor3f(hairColor < 0 ? defaultHairColor : hairColor, age);
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4brows2.png"));
+                this.modelMain.bipedHead.render(1F / 16F);
+
+                RenderPlayerJBRA.glColor3f(bodyCM);
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4shade.png"));
                 this.modelMain.bipedHead.render(0.0625F);
             }
-            RenderPlayerJBRA.glColor3f(playerColors.getFurColor(form.display, data));
-            this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4brows.png"));
-            this.modelMain.bipedHead.render(1F / 16F);
+        }
+        GL11.glPopMatrix(); //Pop the age/gender transformations here as finished rendering bipeadHead
 
-            int hairColor = playerColors.getProperColor(form.display.getHairColor(data), "hair");
-            RenderPlayerJBRA.glColor3f(hairColor < 0 ? defaultHairColor : hairColor, age);
-            this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4brows2.png"));
-            this.modelMain.bipedHead.render(1F / 16F);
+
+        if (!faceData.disabled(Nose, eyes)) {
             RenderPlayerJBRA.glColor3f(bodyCM);
-            this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4mouth0.png"));
-            this.modelMain.bipedHead.render(1F / 16F);
-            this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4shade.png"));
-            this.modelMain.bipedHead.render(0.0625F);
+            String noseTexture = (gender == 1 ? "f" : "") + "humn" + nose + ".png";
+            this.bindTexture(new ResourceLocation((HD ? HDDir + "base/nose/" : "jinryuumodscore:cc/") + noseTexture));
+            this.modelMain.renderHairs(0.0625F, "FACENOSE");
         }
 
-        RenderPlayerJBRA.glColor3f(bodyCM);
-        String noseTexture = (gender == 1 ? "f" : "") + "humn" + nose + ".png";
-        this.bindTexture(new ResourceLocation((HD ? HDDir + "base/nose/" : "jinryuumodscore:cc/") + noseTexture));
-        this.modelMain.renderHairs(0.0625F, "FACENOSE");
+        if (!faceData.disabled(Mouth, eyes)) {
+            RenderPlayerJBRA.glColor3f(bodyCM);
+            String mouthTexture = (gender == 1 ? "f" : "") + "humm" + JRMCoreH.dnsFaceM(dns) + ".png";
+            this.bindTexture(new ResourceLocation((HD ? HDDir + "base/mouth/" : "jinryuumodscore:cc/") + mouthTexture));
+            this.modelMain.renderHairs(0.0625F, "FACEMOUTH");
+        }
     }
 
     @Unique
     private void renderOozaru(int bodyCM, int eyeColor, int furColor) {
-
         ResourceLocation bdyskn = new ResourceLocation(HD ? HDDir + "oozaru/oozaru1.png" : "jinryuudragonbc:cc/oozaru1.png"); //human hairless face
         this.bindTexture(bdyskn);
         RenderPlayerJBRA.glColor3f(bodyCM);
@@ -450,81 +611,140 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         this.modelMain.renderHairs(0.0625F, "OOZARU");
     }
 
-    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;DBC()Z", ordinal = 0, shift = At.Shift.AFTER), remap = true)
-    private void changeFormArmData(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "State") LocalIntRef st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3) {
-        Form form = DBCData.getForm(par1EntityPlayer);
-        ClientEventHandler.renderingPlayer = par1EntityPlayer;
-        if (form != null) {
+    @Unique
+    private void renderSSJ3Face(AbstractClientPlayer player, Form form, int gender, int nose, int eyes, int bodyCM, int defaultHairColor, float age, String dns, DBCData data) {
+        FormDisplay display = form.display;
+        FacePartData faceData = display.faceData;
 
-            FormDisplay.BodyColor playerColors = DBCData.get(par1EntityPlayer).currentCustomizedColors;
-            FormDisplay display = form.display;
-            if (playerColors.hasAnyColor(display, "bodycm"))
-                bodyCM.set(playerColors.getProperColor(display, "bodycm"));
-            if (playerColors.hasAnyColor(form.display, "bodyC1"))
-                bodyC1.set(playerColors.getProperColor(form.display, "bodyC1"));
-            if (playerColors.hasAnyColor(form.display, "bodyC2"))
-                bodyC2.set(playerColors.getProperColor(form.display, "bodyC2"));
-            if (playerColors.hasAnyColor(form.display, "bodyC3"))
-                bodyC3.set(playerColors.getProperColor(form.display, "bodyC3"));
+        GL11.glPushMatrix();
+        applyAgeGenderTransformations(player, gender);
 
-            //arm bodytype for arcosian
-            if (race.get() == 4) {
-                if (form.display.bodyType.equals("firstform"))
-                    st.set(0);
-                else if (form.display.bodyType.equals("secondform"))
-                    st.set(2);
-                else if (form.display.bodyType.equals("thirdform"))
-                    st.set(3);
-                else if (form.display.bodyType.equals("finalform") || form.display.bodyType.equals("golden"))
-                    st.set(4);
-                else if (form.display.bodyType.equals("ultimatecooler"))
-                    st.set(5);
+        if (ConfigDBCClient.EnableHDTextures) {
+            FormDisplay.BodyColor playerColors = data.currentCustomizedColors;
+            String eyeDir = "ssj3/" + (gender == 1 ? "female" : "male") + "/face_" + eyes + "/";
+
+            if (!faceData.disabled(EyeWhite, eyes)) {
+                GL11.glColor3f(1.0f, 1.0f, 1.0f);
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3eyewhite.png"));
+                this.modelMain.bipedHead.render(0.0625F);
+            }
+
+            if (!form.display.isBerserk && !faceData.disabled(RightEye, eyes)) {
+                int eyeColor = playerColors.getProperColor(display, "eye");
+                RenderPlayerJBRA.glColor3f(eyeColor == -1 ? 0xF3C807 : eyeColor);
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3eyeright.png"));
+                this.modelMain.bipedHead.render(0.0625F);
+            }
+
+            if (!form.display.isBerserk && !faceData.disabled(LeftEye, eyes)) {
+                int eyeColor = playerColors.getProperColor(display, "eye");
+                RenderPlayerJBRA.glColor3f(eyeColor == -1 ? 0xF3C807 : eyeColor);
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3eyeleft.png"));
+                this.modelMain.bipedHead.render(0.0625F);
+            }
+
+            if (!faceData.disabled(Eyebrows, eyes)) {
+                int hairColor = playerColors.getProperColor(form.display.getHairColor(data), "hair");
+                RenderPlayerJBRA.glColor3f(hairColor < 0 ? defaultHairColor : hairColor, age);
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3brows.png"));
+                this.modelMain.bipedHead.render(1F / 16F);
+
+                RenderPlayerJBRA.glColor3f(bodyCM);
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3shade.png"));
+                this.modelMain.bipedHead.render(0.0625F);
             }
         }
-    }
+        GL11.glPopMatrix(); //Pop the age/gender transformations here as finished rendering bipeadHead
 
-    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;dnsGender(Ljava/lang/String;)I", ordinal = 0, shift = At.Shift.BEFORE, remap = false), remap = true)
-    private void stopMonkeeArmInWrongForm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "saiOozar") LocalBooleanRef isOozaru, @Local(name = "race") int race) {
-        Form form = DBCData.getForm(par1EntityPlayer);
+        if (!faceData.disabled(Nose, eyes)) {
+            RenderPlayerJBRA.glColor3f(bodyCM);
+            String noseTexture = (gender == 1 ? "f" : "") + "humn" + nose + ".png";
+            this.bindTexture(new ResourceLocation((HD ? HDDir + "base/nose/" : "jinryuumodscore:cc/") + noseTexture));
+            this.modelMain.renderHairs(0.0625F, "FACENOSE");
+        }
 
-        if (form != null && (race == 1 || race == 2)) {
-            if (!form.stackable.vanillaStackable)
-                isOozaru.set(false);
+        if (!faceData.disabled(Mouth, eyes)) {
+            RenderPlayerJBRA.glColor3f(bodyCM);
+            String mouthTexture = (gender == 1 ? "f" : "") + "humm" + JRMCoreH.dnsFaceM(dns) + ".png";
+            this.bindTexture(new ResourceLocation((HD ? HDDir + "base/mouth/" : "jinryuumodscore:cc/") + mouthTexture));
+            this.modelMain.renderHairs(0.0625F, "FACEMOUTH");
         }
     }
 
-    @Inject(method = "renderFirstPersonArm", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA19:Z", ordinal = 0, shift = At.Shift.BEFORE), remap = true)
-    private void renderSaiyanArm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "id") LocalIntRef id, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "gen") LocalIntRef gender) {
+//    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;DBC()Z", ordinal = 0, shift = At.Shift.AFTER), remap = true)
+//    private void changeFormArmData(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "State") LocalIntRef st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3, @Local(name = "id") LocalIntRef id) {
+//        Form form = DBCData.getForm(par1EntityPlayer);
+//        ClientEventHandler.renderingPlayer = par1EntityPlayer;
+//        if (form != null) {
+//
+//            FormDisplay.BodyColor playerColors = DBCData.get(par1EntityPlayer).currentCustomizedColors;
+//            FormDisplay display = form.display;
+//            if (playerColors.hasAnyColor(display, "bodycm"))
+//                bodyCM.set(playerColors.getProperColor(display, "bodycm"));
+//            if (playerColors.hasAnyColor(form.display, "bodyC1"))
+//                bodyC1.set(playerColors.getProperColor(form.display, "bodyC1"));
+//            if (playerColors.hasAnyColor(form.display, "bodyC2"))
+//                bodyC2.set(playerColors.getProperColor(form.display, "bodyC2"));
+//            if (playerColors.hasAnyColor(form.display, "bodyC3"))
+//                bodyC3.set(playerColors.getProperColor(form.display, "bodyC3"));
+//
+//            //arm bodytype for arcosian
+//            if (race.get() == 4) {
+//                if (form.display.bodyType.equals("firstform"))
+//                    st.set(0);
+//                else if (form.display.bodyType.equals("secondform"))
+//                    st.set(2);
+//                else if (form.display.bodyType.equals("thirdform"))
+//                    st.set(3);
+//                else if (form.display.bodyType.equals("finalform") || form.display.bodyType.equals("golden"))
+//                    st.set(4);
+//                else if (form.display.bodyType.equals("ultimatecooler"))
+//                    st.set(5);
+//            }
+//        }
+//    }
 
-        Form form = DBCData.getForm(par1EntityPlayer);
-        if (form != null && (race.get() == 1 || race.get() == 2)) {
-            if (this.renderManager != null && this.renderManager.renderEngine != null) {
-                if (form.display.hasBodyFur || form.display.hairType.equals("ssj4")) {
-                    renderSSJ4Arm(form, par1EntityPlayer, id.get(), gender.get(), bodyCM.get(), DBCData.get(par1EntityPlayer));
-                } else if (form.display.hairType.equals("oozaru")) {
-                    renderOozaruArm(form, par1EntityPlayer, id.get(), bodyCM.get(), DBCData.get(par1EntityPlayer));
-                }
-            }
-        }
-    }
+//    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;dnsGender(Ljava/lang/String;)I", ordinal = 0, shift = At.Shift.BEFORE, remap = false), remap = true)
+//    private void stopMonkeeArmInWrongForm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "saiOozar") LocalBooleanRef isOozaru, @Local(name = "race") int race) {
+//        Form form = DBCData.getForm(par1EntityPlayer);
+//
+//        if (form != null && (race == 1 || race == 2)) {
+//            if (!form.stackable.vanillaStackable)
+//                isOozaru.set(false);
+//        }
+//    }
+//
+//    @Inject(method = "renderFirstPersonArm", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA19:Z", ordinal = 0, shift = At.Shift.BEFORE), remap = true)
+//    private void renderSaiyanArm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "id") LocalIntRef id, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "gen") LocalIntRef gender) {
+//        Form form = DBCData.getForm(par1EntityPlayer);
+//        if (form != null && (race.get() == 1 || race.get() == 2)) {
+//            if (this.renderManager != null && this.renderManager.renderEngine != null) {
+//                if (form.display.hasBodyFur || form.display.hairType.equals("ssj4")) {
+//                    renderSSJ4Arm(form, par1EntityPlayer, id.get(), gender.get(), bodyCM.get(), DBCData.get(par1EntityPlayer));
+//                } else if (form.display.hairType.equals("oozaru")) {
+//                    renderOozaruArm(form, par1EntityPlayer, id.get(), bodyCM.get(), DBCData.get(par1EntityPlayer));
+//                }
+//            }
+//        }
+//    }
 
-    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JBRA/RenderPlayerJBRA;func_aam2(Lnet/minecraft/client/model/ModelRenderer;Lnet/minecraft/client/model/ModelRenderer;IZ)V", ordinal = 11, shift = At.Shift.AFTER), remap = true)
-    private void fixLeftSaiyanFurArm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "id") LocalIntRef id, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "gen") LocalIntRef gender) {
-        int idValue = id.get();
-        if(idValue == -1)
-            return;
-
-        if (this.renderManager != null && this.renderManager.renderEngine != null) {
-            Form form = DBCData.getForm(par1EntityPlayer);
-            if (form != null && (race.get() == 1 || race.get() == 2)) {
-                if (form.display.hasBodyFur || form.display.hairType.equals("ssj4")) {
-                    renderSSJ4Arm(form, par1EntityPlayer, id.get(), gender.get(), bodyCM.get(), DBCData.get(par1EntityPlayer));
-                } else if (form.display.hairType.equals("oozaru")) {
-                    renderOozaruArm(form, par1EntityPlayer, id.get(), bodyCM.get(), DBCData.get(par1EntityPlayer));
-                }
-            }
-        }
-    }
+//    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JBRA/RenderPlayerJBRA;func_aam2(Lnet/minecraft/client/model/ModelRenderer;Lnet/minecraft/client/model/ModelRenderer;IZ)V", ordinal = 11, shift = At.Shift.AFTER), remap = true)
+//    private void fixLeftSaiyanFurArm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "id") LocalIntRef id, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "gen") LocalIntRef gender) {
+//        int idValue = id.get();
+//        if(idValue == -1)
+//            return;
+//
+//        if (this.renderManager != null && this.renderManager.renderEngine != null) {
+//            Form form = DBCData.getForm(par1EntityPlayer);
+//            if (form != null && (race.get() == 1 || race.get() == 2)) {
+//                if (form.display.hasBodyFur || form.display.hairType.equals("ssj4")) {
+//                    renderSSJ4Arm(form, par1EntityPlayer, id.get(), gender.get(), bodyCM.get(), DBCData.get(par1EntityPlayer));
+//                } else if (form.display.hairType.equals("oozaru")) {
+//                    renderOozaruArm(form, par1EntityPlayer, id.get(), bodyCM.get(), DBCData.get(par1EntityPlayer));
+//                }
+//            }
+//        }
+//    }
 
     @Unique
     private void renderSSJ4Arm(Form form, EntityPlayer player, int id, int gender, int bodyCM, DBCData data) {
@@ -536,8 +756,9 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         }
         FormDisplay.BodyColor playerColors = DBCData.get(player).currentCustomizedColors;
 
-        String fur = "ss4" + (data.skinType == 0 ? "a" : "b") + ".png";
-        this.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/" + fur : "jinryuudragonbc:cc/" + fur));
+        int furType = form.display.furType;
+        String fur = "ss4" + (data.skinType == 0 ? "a" : "b") + furType + ".png";
+        this.bindTexture(new ResourceLocation((HD ? HDDir : SDDir) + "ssj4/" + fur));
         RenderPlayerJBRA.glColor3f(playerColors.getFurColor(form.display, data));
         renderArm(id, player);
     }
@@ -595,11 +816,11 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Shadow
     abstract int i(String n);
 
-    @Shadow
-    private static boolean kk2;
-
-    @Shadow
-    public static int kk;
+//    @Shadow
+//    private static boolean kk2;
+//
+//    @Shadow
+//    private static int kk;
 
     /**
      * Methods Below so we don't need
@@ -625,10 +846,10 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         ClientCache.fromRenderPlayerJBRA = false;
     }
 
-    @Inject(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;DBCsizeBasedOnRace(IIZ)F", shift = At.Shift.BEFORE), remap = true)
-    public void setCurrentlyRenderedJRMCTickPlayer(AbstractClientPlayer p, float p_77041_2_, CallbackInfo ci) {
-        CommonProxy.setCurrentJRMCTickPlayer(p);
-    }
+//    @Inject(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;DBCsizeBasedOnRace(IIZ)F", shift = At.Shift.BEFORE), remap = true)
+//    public void setCurrentlyRenderedJRMCTickPlayer(AbstractClientPlayer p, float p_77041_2_, CallbackInfo ci) {
+//        CommonProxy.setCurrentJRMCTickPlayer(p);
+//    }
 
     @Inject(method = "kss", at = @At("HEAD"), remap = false)
     private static void disableLightMapForKiBlade(Entity e, boolean b, int id, int kf, int ki, CallbackInfo ci) {
@@ -640,31 +861,31 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
     }
 
-    @Redirect(method = "kss", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;getPlayerColor2(IIIIIZZZZ)I"))
-    private static int fixKiBladeColor(int t, int d, int p, int r, int s, boolean v, boolean y, boolean ui, boolean gd, @Local(name = "e") Entity entity) {
-        if (!(entity instanceof EntityPlayer))
-            return JRMCoreHDBC.getPlayerColor2(t, d, p, r, s, v, y, ui, gd);
-
-        DBCData dbcData = DBCData.get((EntityPlayer) entity);
-        if (dbcData.getForm() != null) {
-            FormDisplay formDisplay = dbcData.getForm().display;
-            if (formDisplay.auraColor != -1) {
-                return formDisplay.auraColor;
-            }
-            if (formDisplay.getAura() != null) {
-                AuraDisplay formAuraDisplay = ((AuraDisplay) formDisplay.getAura().getDisplay());
-                if (formAuraDisplay.color1 != -1)
-                    return formAuraDisplay.color1;
-            }
-        }
-        if (dbcData.getAura() != null) {
-            AuraDisplay auraDisplay = dbcData.getAura().display;
-            boolean overrideDBC = (auraDisplay.overrideDBCAura && !auraDisplay.copyDBCSuperformColors) || (dbcData.getRace() == 4 ? dbcData.State <= 4 : dbcData.State == 0);
-            if (overrideDBC) {
-                return KiWeaponData.getColorByAuraType(auraDisplay);
-            }
-        }
-
-        return JRMCoreHDBC.getPlayerColor2(t, d, p, r, s, v, y, ui, gd);
-    }
+//    @Redirect(method = "kss", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;getPlayerColor2(IIIIIZZZZ)I"))
+//    private static int fixKiBladeColor(int t, int d, int p, int r, int s, boolean v, boolean y, boolean ui, boolean gd, @Local(name = "e") Entity entity) {
+//        if (!(entity instanceof EntityPlayer))
+//            return JRMCoreHDBC.getPlayerColor2(t, d, p, r, s, v, y, ui, gd);
+//
+//        DBCData dbcData = DBCData.get((EntityPlayer) entity);
+//        if (dbcData.getForm() != null) {
+//            FormDisplay formDisplay = dbcData.getForm().display;
+//            if (formDisplay.auraColor != -1) {
+//                return formDisplay.auraColor;
+//            }
+//            if (formDisplay.getAura() != null) {
+//                AuraDisplay formAuraDisplay = ((AuraDisplay) formDisplay.getAura().getDisplay());
+//                if (formAuraDisplay.color1 != -1)
+//                    return formAuraDisplay.color1;
+//            }
+//        }
+//        if (dbcData.getAura() != null) {
+//            AuraDisplay auraDisplay = dbcData.getAura().display;
+//            boolean overrideDBC = (auraDisplay.overrideDBCAura && !auraDisplay.copyDBCSuperformColors) || (dbcData.getRace() == 4 ? dbcData.State <= 4 : dbcData.State == 0);
+//            if (overrideDBC) {
+//                return KiWeaponData.getColorByAuraType(auraDisplay);
+//            }
+//        }
+//
+//        return JRMCoreHDBC.getPlayerColor2(t, d, p, r, s, v, y, ui, gd);
+//    }
 }

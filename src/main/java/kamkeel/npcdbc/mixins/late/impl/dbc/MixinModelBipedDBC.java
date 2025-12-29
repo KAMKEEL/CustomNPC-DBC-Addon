@@ -19,6 +19,7 @@ import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
+import kamkeel.npcdbc.data.form.FacePartData;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -35,6 +36,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import kamkeel.npcdbc.data.form.FacePartData.Part;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 @Mixin(value = ModelBipedDBC.class, remap = false)
 public class MixinModelBipedDBC extends ModelBipedBody {
@@ -114,9 +119,15 @@ public class MixinModelBipedDBC extends ModelBipedBody {
             if (form != null) {
                 hair = Hair.get();
                 DBCData dbcData = DBCData.get(ClientEventHandler.renderingPlayer);
+
+                Set<Part> disabledParts = dbcData.getDisabledFaceParts();
+                if (disabledParts.contains(Part.fromPartId(hair)))
+                    ci.setReturnValue("");
+
                 boolean isMonke = form.display.hasBodyFur || form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru");
                 HD = ConfigDBCClient.EnableHDTextures;
                 boolean isSaiyan = dbcData.Race == 1 || dbcData.Race == 2;
+                boolean usesHumanBody = isSaiyan || dbcData.Race == 0;
 
                 FormDisplay.BodyColor playerColors = dbcData.currentCustomizedColors;
 
@@ -135,33 +146,16 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 if (dbcData.Race == 5 && !form.display.effectMajinHair)
                     return;
 
-                if (isSaiyan) {
-                    //completely disable face rendering when ssj4, so I could render my own on top of a blank slate
-                    if (form.display.hairType.equals("ssj4")) {
-                        if (HD && form.display.hasEyebrows && !ClientConstants.renderingMajinSE)
-                            disableFace(hair, ci);
-                        if (isHairPreset(hair))
-                            ci.cancel();
-                    } else if (form.display.hairType.equals("oozaru")) {
-                        disableFace(hair, ci);
-                        if (isHairPreset(hair))
-                            ci.cancel();
-                    }
-                }
                 boolean isSSJ3 = false;
                 if (form.display.hairType.equals("ssj3") || form.display.hairType.equals("raditz")) {
+                    isSSJ3 = form.display.hairType.equals("ssj3") ? true : false;
+
                     if (isHairPreset(hair) && !hair.startsWith("D")) {
-                        String hair1 = form.display.hairType.equals("raditz") ? "D" : "D01";
+                        String hair1 = !isSSJ3 ? "D" : "D01";
                         Hair.set(hair1);
                     }
-                    isSSJ3 = form.display.hairType.equals("ssj3") ? true : false;
                 }
-                //render brows
-                if (hair.contains("EYEBROW") && dbcData.Race != 3 && (isSSJ3 || !form.display.hasEyebrows)) { //bind ssj3 eyebrow texture to ssj3 hair type
-                    int gen = JRMCoreH.dnsGender(dbcData.DNS);
-                    int eyes = JRMCoreH.dnsEyes(dbcData.DNS);
-                    Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + (gen == 1 ? "f" : "") + "humw" + eyes + ".png"));
-                }
+
                 //hair color for all forms
                 if ((isHairPreset(hair) || hair.contains("EYEBROW"))) {
                     if (!playerColors.hasHairColor(dbcData, form.display)) {
@@ -305,8 +299,35 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
     @Unique
     public void disableFace(String faceType, CallbackInfoReturnable<String> ci) {
-        if ((faceType.contains("FACENOSE") && !Utility.stackTraceContains("renderSSJ4Face")) || faceType.contains("FACEMOUTH") || faceType.contains("EYEBROW") || (faceType.contains("EYEBASE") && !Utility.stackTraceContains("renderOozaru")) || faceType.contains("EYELEFT") || faceType.contains("EYERIGHT"))
+        if (
+            faceType.contains("FACENOSE")  ||
+            faceType.contains("FACEMOUTH") ||
+            faceType.contains("EYEBROW") ||
+            (faceType.contains("EYEBASE") && !Utility.stackTraceContains("renderOozaru")) ||
+            faceType.contains("EYELEFT") ||
+            faceType.contains("EYERIGHT")
+        ) ci.setReturnValue("");
+    }
+
+    @Unique
+    public void disableFacePart(String faceType, String facePart, CallbackInfoReturnable<String> ci) {
+        if (
+            facePart.equals("EYES") &&
+            (faceType.contains(Part.RightEye.getPartId()) ||
+            faceType.contains(Part.LeftEye.getPartId()))
+        ) {
             ci.setReturnValue("");
+        } else if (
+            facePart.equals("FULLEYES") &&
+            (faceType.contains(Part.RightEye.getPartId()) ||
+            faceType.contains(Part.LeftEye.getPartId()) ||
+            faceType.contains(Part.Eyebrows.getPartId()) ||
+            faceType.contains(Part.EyeWhite.getPartId()))
+        ) {
+            ci.setReturnValue("");
+        } else if (faceType.contains(facePart)){
+            ci.setReturnValue("");
+        }
     }
 
     @Unique

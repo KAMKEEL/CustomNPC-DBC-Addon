@@ -4,6 +4,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.aura.IAura;
+import kamkeel.npcdbc.api.client.overlay.IOverlay;
 import kamkeel.npcdbc.api.form.IFormDisplay;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -11,10 +12,15 @@ import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.overlay.Overlay;
+import kamkeel.npcdbc.data.overlay.OverlayChain;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
+
+import java.util.EnumSet;
+import java.util.Set;
 
 public class FormDisplay implements IFormDisplay {
 
@@ -27,18 +33,26 @@ public class FormDisplay implements IFormDisplay {
     public String hairCode = "";
     public String hairType = "";
 
-    public int auraColor = -1;
-    public int kiBarColor = -1;
     public String bodyType = "";
 
+    public BodyColor bodyColors = new BodyColor();
+    public int auraColor = -1;
+    public int kiBarColor = -1;
+
     public boolean hasBodyFur = false;
+    public int furType = 0;
+
     public boolean hasArcoMask = false;
     public boolean effectMajinHair = false;
+    public boolean hasPupils = false;
     public boolean isBerserk, hasEyebrows = true;
 
     public boolean isCustomizable = false;
 
-    public BodyColor bodyColors = new BodyColor();
+    public OverlayChain overlays = new OverlayChain().enable(false);
+    public Set<Overlay.Type> disabledOverlayTypes = EnumSet.noneOf(Overlay.Type.class);
+
+    public FacePartData faceData = new FacePartData();
 
     public int auraID = -1, outlineID = -1;
 
@@ -57,13 +71,17 @@ public class FormDisplay implements IFormDisplay {
 
         bodyType = rendering.getString("bodyType");
 
-
         bodyColors.readFromNBT(rendering);
+        overlays.readFromNBT(rendering);
+        faceData.readFromNBT(rendering, false);
+
 
         hasArcoMask = rendering.getBoolean("hasArcoMask");
         effectMajinHair = rendering.getBoolean("effectMajinHair");
         hasBodyFur = rendering.getBoolean("hasBodyFur");
+        furType = rendering.getInteger("furType");
         isBerserk = rendering.getBoolean("isBerserk");
+        hasPupils = rendering.getBoolean("hasPupils");
         hasEyebrows = !rendering.hasKey("hasEyebrows") ? true : rendering.getBoolean("hasEyebrows");
 
         formSize = rendering.getFloat("formSize");
@@ -75,34 +93,57 @@ public class FormDisplay implements IFormDisplay {
         outlineID = rendering.hasKey("outlineID") ? rendering.getInteger("outlineID") : -1;
 
         isCustomizable = rendering.getBoolean("isCustomizable");
+
+
+        if (compound.hasKey("overlayTypes")) {
+            disabledOverlayTypes.clear();
+            byte[] arr = compound.getByteArray("overlayTypes");
+            Overlay.Type[] values = IOverlay.Type.values();
+            for (byte ordinal : arr) {
+                if (ordinal >= 0 && ordinal < values.length)
+                    disabledOverlayTypes.add(values[ordinal]);
+            }
+        }
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         NBTTagCompound rendering = new NBTTagCompound();
         rendering.setInteger("auraColor", auraColor);
         rendering.setInteger("kiBarColor", kiBarColor);
+        rendering.setInteger("furType", furType);
 
         rendering.setString("hairCode", hairCode);
         rendering.setString("hairType", hairType);
         rendering.setString("bodyType", bodyType);
 
         bodyColors.writeToNBT(rendering);
+        overlays.writeToNBT(rendering);
+        faceData.writeToNBT(rendering, false);
 
         rendering.setBoolean("hasArcoMask", hasArcoMask);
         rendering.setBoolean("effectMajinHair", effectMajinHair);
         rendering.setBoolean("hasBodyFur", hasBodyFur);
         rendering.setBoolean("isBerserk", isBerserk);
+        rendering.setBoolean("hasPupils", hasPupils);
         rendering.setBoolean("hasEyebrows", hasEyebrows);
 
         rendering.setFloat("formSize", formSize);
         rendering.setFloat("formWidth", formWidth);
         rendering.setBoolean("keepOriginalSize", keepOriginalSize);
 
-
         rendering.setInteger("auraID", auraID);
         rendering.setInteger("outlineID", outlineID);
 
         rendering.setBoolean("isCustomizable", isCustomizable);
+
+
+        if (!disabledOverlayTypes.isEmpty()) {
+            byte[] arr = new byte[disabledOverlayTypes.size()];
+            int i = 0;
+            for (Overlay.Type t : disabledOverlayTypes)
+                arr[i++] = (byte) t.ordinal();
+            compound.setByteArray("overlayTypes", arr);
+        }
 
         compound.setTag("rendering", rendering);
         return compound;
@@ -340,6 +381,10 @@ public class FormDisplay implements IFormDisplay {
         this.hasBodyFur = hasFur;
     }
 
+    public void setFurType(int type) {
+        this.furType = Math.max(0, Math.min(2, type));
+    }
+
     @Override
     public boolean effectMajinHair() {
         return effectMajinHair;
@@ -390,6 +435,10 @@ public class FormDisplay implements IFormDisplay {
     public void setOutline(IOutline outline) {
         int id = outline != null ? outline.getID() : -1;
         setOutline(id);
+    }
+
+    public FacePartData getFaceData() {
+        return faceData;
     }
 
     public IFormDisplay save() {

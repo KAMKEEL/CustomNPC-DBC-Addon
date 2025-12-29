@@ -54,6 +54,11 @@ public class ConfigDBCGameplay {
     public final static String FruitOfMight = "FruitOfMight";
     public static int FruitOfMightStackSize = 5;
 
+    public final static String Combat = "Combat";
+    public static boolean DodgeTeleport = true;
+    public static boolean DodgeCameraLock = true;
+
+
     public static void init(File configFile) {
         config = new Configuration(configFile);
 
@@ -120,6 +125,9 @@ public class ConfigDBCGameplay {
                     "\nwhen the Player reaches a specific threshold of damage").getBoolean(true);
             PercentDamageRequired = config.get(HumanSpirit, "Percent Damage Required", 400).getInt(400);
             DamageRequiredSeconds = config.get(HumanSpirit, "Time Allotted", 20, "Amount of time to consider the Percent of Damage Required").getInt(50);
+
+            DodgeTeleport = config.get(Combat,"Teleport on UI Dodge",true,"True or false whether UI Dodge teleports to the target").getBoolean(true);
+            DodgeCameraLock = config.get(Combat,"camera Turn on UI dodge",true,"True or false whether UI Dodge Turns camera").getBoolean(true);
 
 
         } catch (Exception e) {

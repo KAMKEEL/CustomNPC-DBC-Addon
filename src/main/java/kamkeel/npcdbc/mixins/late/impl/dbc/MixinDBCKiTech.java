@@ -310,7 +310,7 @@ public abstract class MixinDBCKiTech {
 
 
             if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
-                DBCPacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -10, false));
+                DBCPacketHandler.Instance.sendToServer(new TransformPacket(-10, false));
             else {
                 if (form.requiredForm.containsKey((int) JRMCoreH.Race)) {
                     int id = dbcData.stats.getJRMCPlayerID();
@@ -318,7 +318,7 @@ public abstract class MixinDBCKiTech {
                     JRMCoreH.data2[id] = JRMCoreH.State + ";" + JRMCoreH.data2[id].split(";")[1];
                 }
 
-                DBCPacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -1, false));
+                DBCPacketHandler.Instance.sendToServer(new TransformPacket(-1, false));
             }
             ci.cancel();
 

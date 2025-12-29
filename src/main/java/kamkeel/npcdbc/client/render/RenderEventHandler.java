@@ -63,7 +63,7 @@ public class RenderEventHandler {
             return;
         }
 
-        
+
         DBCData data = DBCData.getData(event.entityPlayer);
         byte potaraFusionLevel = data.potaraFusionLevel;
         if (potaraFusionLevel == -1) {
