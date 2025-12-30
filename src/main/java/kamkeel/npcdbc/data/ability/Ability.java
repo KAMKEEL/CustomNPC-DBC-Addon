@@ -1,6 +1,8 @@
 package kamkeel.npcdbc.data.ability;
 
+import kamkeel.npcdbc.controllers.AbilityController;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.controllers.data.CustomEffect;
 
 public class Ability {
     public int id = -1;
@@ -75,7 +77,18 @@ public class Ability {
         this.cooldown = cooldown;
     }
 
-    public NBTTagCompound writeToNBT() {
+    public Ability save() {
+        return AbilityController.Instance.saveAbility(this);
+    }
+
+    public Ability cloneAbility() {
+        Ability newAbility = new Ability();
+        newAbility.readFromNBT(this.writeToNBT(true));
+        newAbility.id = -1;
+        return newAbility;
+    }
+
+    public NBTTagCompound writeToNBT(boolean saveScripts) {
         NBTTagCompound compound = new NBTTagCompound();
 
         compound.setInteger("ID", id);
@@ -87,7 +100,7 @@ public class Ability {
         compound.setInteger("cooldown", cooldown);
         compound.setInteger("kiCost", kiCost);
 
-        compound.setTag("abilityData", abilityData.writeToNBT());
+        compound.setTag("abilityData", abilityData.writeToNBT(saveScripts));
 
         return compound;
     }

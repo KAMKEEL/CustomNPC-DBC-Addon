@@ -6,6 +6,7 @@ import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.*;
+import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -49,6 +50,10 @@ public class PlayerDBCInfo {
     public HashMap<Integer, Integer> formTimers = new HashMap<>();
     public HashMap<Integer, FormDisplay.BodyColor> configuredFormColors = new HashMap<>();
     public FormWheelData[] formWheel = new FormWheelData[6];
+
+    public int selectedAbility = -1;
+    public HashSet<Integer> unlockedAbilities = new HashSet<Integer>();
+    public HashMap<Integer, Integer> abilityTimers = new HashMap<>();
 
     public PlayerDBCInfo(PlayerData parent) {
         this.parent = parent;
@@ -309,6 +314,132 @@ public class PlayerDBCInfo {
             return formTimers.get(formid) > -1;
         return false;
 
+    }
+
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    // Ability stuff
+    public void addAbility(Ability ability) {
+        if (ability == null)
+            return;
+
+        unlockedAbilities.add(ability.id);
+    }
+
+    // TODO add ability wheel
+//    public void addFormWheel(int wheelSlot, FormWheelData data) {
+//        if (wheelSlot > 5)
+//            return;
+//        formWheel[wheelSlot].readFromNBT(data.writeToNBT(new NBTTagCompound()));
+//    }
+
+    public boolean hasAbilityUnlocked(int id) {
+        return unlockedAbilities.contains(id);
+    }
+
+    public boolean removeAbility(Ability ability) {
+        if (ability == null)
+            return false;
+
+        return unlockedAbilities.remove(ability.id);
+    }
+
+    public boolean removeAbility(int id) {
+        return unlockedAbilities.remove(id);
+    }
+
+    // TODO clear ability wheel
+//    public void removeFormWheel(int wheelSlot) {
+//        if (wheelSlot <= 5 && wheelSlot >= 0)
+//            formWheel[wheelSlot].reset();
+//    }
+
+    public Ability getAbility(int id) {
+        if (unlockedAbilities.contains(id))
+            return AbilityController.getInstance().get(id);
+
+        return null;
+    }
+
+    public boolean hasSelectedAbility() {
+        return selectedAbility > -1 && getSelectedAbility() != null;
+    }
+
+    public boolean hasAbility(Ability ability) {
+        if (ability == null)
+            return false;
+        return unlockedAbilities.contains(ability.id);
+    }
+
+    public String getAbilityColorCode(Ability a) {
+        if (a != null && a.getMenuName().contains("§")) {
+            String s = a.getMenuName();
+            int i = s.indexOf("§");
+            return s.substring(i, 2);
+        }
+        return "";
+    }
+
+    public String getColoredName(Ability a) {
+        if (a == null)
+            return "";
+        return getAbilityColorCode(a) + a.getName();
+    }
+
+    public Ability getUnlockedAbility(int id) {
+        if (unlockedAbilities.contains(id))
+            return AbilityController.Instance.get(id);
+        return null;
+    }
+
+    public Ability getSelectedAbility() {
+        return AbilityController.Instance.get(selectedAbility);
+    }
+
+    public void clearAllAbilities() {
+        resetAbilityData(true);
+    }
+
+    public void resetAbilityData(boolean removeAbilities) {
+        selectedAbility = -1;
+        if (removeAbilities)
+            unlockedAbilities.clear();
+
+        // TODO reset ability wheel
+        //for (FormWheelData formWheelData : formWheel) formWheelData.reset();
+    }
+
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    // Ability cooldown stuff
+    public void addCooldown(int abilityId, int timeInTicks) {
+        if (!abilityTimers.containsKey(abilityId))
+            abilityTimers.put(abilityId, timeInTicks);
+        abilityTimers.replace(abilityId, timeInTicks);
+    }
+
+    public void decrementCooldown(int abilityId) {
+        if (abilityTimers.containsKey(abilityId)) {
+            int currentTime = abilityTimers.get(abilityId);
+            if (currentTime > 0)
+                abilityTimers.replace(abilityId, currentTime - 1);
+            else if (currentTime == 0) {
+                abilityTimers.remove(abilityId);
+            }
+        }
+    }
+
+    public int getCooldown(int abiltyId) {
+        if (abilityTimers.containsKey(abiltyId))
+            return abilityTimers.get(abiltyId);
+        return -1;
+
+    }
+
+    public boolean hasCooldown(int abilityId) {
+        if (abilityTimers.containsKey(abilityId))
+            return abilityTimers.get(abilityId) > -1;
+        return false;
     }
 
     ///////////////////////////////////////////

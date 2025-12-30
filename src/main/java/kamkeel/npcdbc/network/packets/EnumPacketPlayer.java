@@ -21,5 +21,6 @@ public enum EnumPacketPlayer {
     SendChat,
     StopSound,
     Transform,
+    AbilityUse,
     NPCPingForm, Turbo
 }

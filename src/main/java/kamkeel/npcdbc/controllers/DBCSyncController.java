@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.controllers;
 
 import kamkeel.npcdbc.constants.DBCSyncType;
+import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.outline.Outline;
@@ -42,6 +43,15 @@ public class DBCSyncController {
         }
         compound.setTag("Data", list);
         DBCPacketHandler.Instance.sendToPlayer(new DBCInfoSyncPacket(DBCSyncType.OUTLINE, EnumSyncAction.RELOAD, -1, compound), player);
+
+        // Sync All Abilities
+        list = new NBTTagList();
+        compound = new NBTTagCompound();
+        for (Ability ability : AbilityController.getInstance().abilities.values()) {
+            list.appendTag(ability.writeToNBT(false));
+        }
+        compound.setTag("Data", list);
+        DBCPacketHandler.Instance.sendToPlayer(new DBCInfoSyncPacket(DBCSyncType.ABILITY, EnumSyncAction.RELOAD, -1, compound), player);
     }
 
     public static void clientSync(int synctype, NBTTagCompound compound) {
@@ -75,6 +85,16 @@ public class DBCSyncController {
 
             OutlineController.getInstance().customOutlines = OutlineController.getInstance().customOutlinesSync;
             OutlineController.getInstance().customOutlinesSync = new HashMap<>();
+        } else if (synctype == DBCSyncType.ABILITY) {
+            NBTTagList list = compound.getTagList("Data", 10);
+            for (int i = 0; i < list.tagCount(); i++) {
+                Ability ability = new Ability();
+                ability.readFromNBT(list.getCompoundTagAt(i));
+                AbilityController.getInstance().abilitiesSync.put(ability.id, ability);
+            }
+
+            AbilityController.getInstance().abilities = AbilityController.getInstance().abilitiesSync;
+            AbilityController.getInstance().abilitiesSync = new HashMap<>();
         }
     }
 
@@ -91,6 +111,10 @@ public class DBCSyncController {
             Outline outline = new Outline();
             outline.readFromNBT(compound);
             OutlineController.getInstance().customOutlines.put(outline.id, outline);
+        } else if (synctype == DBCSyncType.ABILITY) {
+            Ability ability = new Ability();
+            ability.readFromNBT(compound);
+            AbilityController.getInstance().abilities.put(ability.id, ability);
         }
     }
 
@@ -101,6 +125,8 @@ public class DBCSyncController {
             Aura aura = AuraController.Instance.customAuras.remove(id);
         } else if (synctype == DBCSyncType.OUTLINE) {
             Outline outline = OutlineController.Instance.customOutlines.remove(id);
+        } else if (synctype == DBCSyncType.ABILITY) {
+            Ability ability = AbilityController.Instance.abilities.remove(id);
         }
     }
 }

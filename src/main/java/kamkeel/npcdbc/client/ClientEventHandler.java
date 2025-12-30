@@ -22,6 +22,7 @@ import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.SoundSource;
+import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -29,6 +30,9 @@ import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixins.late.IEntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.player.AbilityUsePacket;
+import kamkeel.npcdbc.network.packets.player.TransformPacket;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -126,6 +130,23 @@ public class ClientEventHandler {
             }
         }
         return true;
+    }
+
+    @SubscribeEvent
+    public void useAbility(InputEvent.KeyInputEvent e) {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc.currentScreen != null)
+            return;
+
+        if (KeyHandler.UseAbilityKey.isPressed()) {
+            if (PlayerDataUtil.getClientDBCInfo() != null) {
+                PlayerDBCInfo info = PlayerDataUtil.getClientDBCInfo();
+
+                if (info.hasSelectedAbility() && info.hasAbilityUnlocked(info.selectedAbility)) {
+                    DBCPacketHandler.Instance.sendToServer(new AbilityUsePacket(Minecraft.getMinecraft().thePlayer, info.selectedAbility));
+                }
+            }
+        }
     }
 
     @SubscribeEvent
