@@ -686,6 +686,10 @@ public interface IDBCAddon extends IDBCPlayer {
 
     void setSelectedAbility(Ability ability);
 
+    void giveAbility(Ability ability);
+
+    void giveAbility(int id);
+
     boolean hasAbility(int id);
 
     boolean hasAbility(Ability ability);

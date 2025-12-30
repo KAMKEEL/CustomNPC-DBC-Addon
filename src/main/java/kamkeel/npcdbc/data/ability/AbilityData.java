@@ -11,6 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.api.entity.IPlayer;
+import noppes.npcs.controllers.data.EffectScript;
 
 import java.util.function.Consumer;
 
@@ -122,6 +123,13 @@ public class AbilityData {
 
     public void setScriptHandler(AbilityScript handler) {
         AbilityController.getInstance().abilityScriptHandlers.put(parent.id, handler);
+    }
+
+    public AbilityScript getOrCreateScriptHandler() {
+        AbilityScript data = getScriptHandler();
+        if (data == null)
+            setScriptHandler(data = new AbilityScript());
+        return data;
     }
 
     public NBTTagCompound writeToNBT(boolean saveScripts) {

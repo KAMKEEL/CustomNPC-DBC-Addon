@@ -11,5 +11,8 @@ public enum EnumPacketRequest {
     FormRemove,
     FormSave,
     OutlineRemove,
-    OutlineSave
+    OutlineSave,
+    AbilitySave,
+    AbilityRemove,
+    AbilityScript
 }

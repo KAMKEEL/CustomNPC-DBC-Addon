@@ -21,6 +21,9 @@ import kamkeel.npcdbc.network.packets.player.form.DBCRequestFormWheel;
 import kamkeel.npcdbc.network.packets.player.form.DBCSaveFormWheel;
 import kamkeel.npcdbc.network.packets.player.form.DBCSelectForm;
 import kamkeel.npcdbc.network.packets.player.outline.DBCRequestOutline;
+import kamkeel.npcdbc.network.packets.request.ability.DBCAbilityScript;
+import kamkeel.npcdbc.network.packets.request.ability.DBCRemoveAbility;
+import kamkeel.npcdbc.network.packets.request.ability.DBCSaveAbility;
 import kamkeel.npcdbc.network.packets.request.aura.DBCRemoveAura;
 import kamkeel.npcdbc.network.packets.request.aura.DBCSaveAura;
 import kamkeel.npcdbc.network.packets.request.form.DBCRemoveForm;
@@ -105,7 +108,9 @@ public class DBCPacketHandler {
         REQUEST_PACKETS.registerPacket(new DBCSaveForm());
         REQUEST_PACKETS.registerPacket(new DBCRemoveOutline());
         REQUEST_PACKETS.registerPacket(new DBCSaveOutline());
-
+        REQUEST_PACKETS.registerPacket(new DBCRemoveAbility());
+        REQUEST_PACKETS.registerPacket(new DBCSaveAbility());
+        REQUEST_PACKETS.registerPacket(new DBCAbilityScript());
     }
 
     public void registerChannels() {

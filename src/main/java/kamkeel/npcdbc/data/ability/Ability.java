@@ -1,14 +1,17 @@
 package kamkeel.npcdbc.data.ability;
 
 import kamkeel.npcdbc.controllers.AbilityController;
+import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.controllers.data.CustomEffect;
+
+import java.util.function.Consumer;
 
 public class Ability {
     public int id = -1;
     public String name = "";
     public String menuName = "NEW ABILITY";
-    public String description;
+    public String description = "";
     public int cooldown = -1;
     public int kiCost = -1;
 
@@ -79,6 +82,14 @@ public class Ability {
 
     public Ability save() {
         return AbilityController.Instance.saveAbility(this);
+    }
+
+    public void onActivate(Consumer<DBCPlayerEvent.AbilityEvent.Activate> function) {
+        abilityData.onActivate(function);
+    }
+
+    public void onToggle(Consumer< DBCPlayerEvent.AbilityEvent.Toggle> function) {
+        abilityData.onToggle(function);
     }
 
     public Ability cloneAbility() {

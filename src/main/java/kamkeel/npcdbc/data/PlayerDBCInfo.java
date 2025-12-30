@@ -326,6 +326,13 @@ public class PlayerDBCInfo {
         unlockedAbilities.add(ability.id);
     }
 
+    public void addAbility(int id) {
+        if (!AbilityController.getInstance().has(id))
+            return;
+
+        unlockedAbilities.add(id);
+    }
+
     // TODO add ability wheel
 //    public void addFormWheel(int wheelSlot, FormWheelData data) {
 //        if (wheelSlot > 5)

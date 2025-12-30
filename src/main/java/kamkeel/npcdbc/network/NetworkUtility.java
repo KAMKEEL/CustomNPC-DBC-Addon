@@ -1,10 +1,12 @@
 package kamkeel.npcdbc.network;
 
+import kamkeel.npcdbc.controllers.AbilityController;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.outline.Outline;
@@ -45,6 +47,14 @@ public class NetworkUtility {
         Map<String, Integer> map = new HashMap<String, Integer>();
         for (Outline outline : OutlineController.getInstance().customOutlines.values()) {
             map.put(outline.name, outline.id);
+        }
+        ScrollDataPacket.sendScrollData(player, map, EnumScrollData.OPTIONAL);
+    }
+
+    public static void sendAbilityDataAll(EntityPlayerMP player) {
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        for (Ability ability : AbilityController.getInstance().abilities.values()) {
+            map.put(ability.name, ability.id);
         }
         ScrollDataPacket.sendScrollData(player, map, EnumScrollData.OPTIONAL);
     }

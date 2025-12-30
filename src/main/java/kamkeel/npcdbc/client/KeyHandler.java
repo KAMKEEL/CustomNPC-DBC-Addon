@@ -10,5 +10,6 @@ public class KeyHandler {
 
     public static void registerKeys() {
         ClientRegistry.registerKeyBinding(FormWheelKey);
+        ClientRegistry.registerKeyBinding(UseAbilityKey);
     }
 }

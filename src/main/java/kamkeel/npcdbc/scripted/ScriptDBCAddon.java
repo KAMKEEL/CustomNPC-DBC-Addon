@@ -1257,6 +1257,16 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
+    public void giveAbility(Ability ability) {
+        info.addAbility(ability);
+    }
+
+    @Override
+    public void giveAbility(int id) {
+        info.addAbility(id);
+    }
+
+    @Override
     public boolean hasAbility(int id) {
         return info.hasAbility(id);
     }
