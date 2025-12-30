@@ -7,6 +7,7 @@ import kamkeel.npcdbc.constants.DBCDamageSource;
 import kamkeel.npcdbc.constants.DBCScriptType;
 import kamkeel.npcdbc.constants.enums.*;
 import kamkeel.npcdbc.data.DBCDamageCalc;
+import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -277,6 +278,60 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
 
         public String getHookName() {
             return DBCScriptType.KNOCKOUT.function;
+        }
+    }
+
+    @Cancelable
+    public static class AbilityEvent extends DBCPlayerEvent {
+        private final Ability ability;
+        public final int id;
+        public final int type;
+        public int kiCost;
+        public int cooldown;
+
+        public AbilityEvent(IPlayer player, Ability ability) {
+            super(player);
+            this.ability = ability;
+            this.id = ability.id;
+            this.type = ability.abilityData.getType().ordinal();
+            this.kiCost = ability.kiCost;
+            this.cooldown = ability.cooldown;
+        }
+
+        public int getID() {
+            return id;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+        public int getKiCost() {
+            return kiCost;
+        }
+
+        public void setKiCost(int kiCost) {
+            this.kiCost = kiCost;
+        }
+
+        public int getCooldown() {
+            return cooldown;
+        }
+
+        public void setCooldown(int cooldown) {
+            this.cooldown = cooldown;
+        }
+
+        public static class Activate extends AbilityEvent {
+            public Activate(IPlayer player, Ability ability) {
+                super(player, ability);
+            }
+        }
+
+        public static class Toggle extends AbilityEvent {
+            public Toggle(IPlayer player, Ability ability) {
+                super(player, ability);
+            }
         }
     }
 

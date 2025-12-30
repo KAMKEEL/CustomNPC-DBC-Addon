@@ -46,4 +46,16 @@ public class DBCEventHooks {
         handler.callScript(DBCScriptType.KNOCKOUT.function, koEvent);
         return NpcAPI.EVENT_BUS.post(koEvent);
     }
+
+    public static boolean onAbilityActivateEvent(DBCPlayerEvent.AbilityEvent.Activate abilityEvent) {
+        PlayerDataScript handler = ScriptController.Instance.getPlayerScripts(abilityEvent.getPlayer());
+        handler.callScript(DBCScriptType.ABILITYACTIVATE.function, abilityEvent);
+        return NpcAPI.EVENT_BUS.post(abilityEvent);
+    }
+
+    public static boolean onAbilityToggleEvent(DBCPlayerEvent.AbilityEvent.Toggle abilityEvent) {
+        PlayerDataScript handler = ScriptController.Instance.getPlayerScripts(abilityEvent.getPlayer());
+        handler.callScript(DBCScriptType.ABILITYTOGGLE.function, abilityEvent);
+        return NpcAPI.EVENT_BUS.post(abilityEvent);
+    }
 }
