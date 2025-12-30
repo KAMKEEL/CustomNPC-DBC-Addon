@@ -2,6 +2,7 @@ package kamkeel.npcdbc.data.ability;
 
 import kamkeel.npcdbc.controllers.AbilityController;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.controllers.data.CustomEffect;
 
@@ -14,6 +15,13 @@ public class Ability {
     public String description = "";
     public int cooldown = -1;
     public int kiCost = -1;
+
+    public String icon;
+    public int iconX;
+    public int iconY;
+    public int width;
+    public int height;
+    public int scale;
 
     public AbilityData abilityData;
 
@@ -80,6 +88,54 @@ public class Ability {
         this.cooldown = cooldown;
     }
 
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public int getIconX() {
+        return iconX;
+    }
+
+    public void setIconX(int iconX) {
+        this.iconX = iconX;
+    }
+
+    public int getIconY() {
+        return iconY;
+    }
+
+    public void setIconY(int iconY) {
+        this.iconY = iconY;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public int getScale() {
+        return scale;
+    }
+
+    public void setScale(int scale) {
+        this.scale = scale;
+    }
+
     public Ability save() {
         return AbilityController.Instance.saveAbility(this);
     }
@@ -90,6 +146,14 @@ public class Ability {
 
     public void onToggle(Consumer< DBCPlayerEvent.AbilityEvent.Toggle> function) {
         abilityData.onToggle(function);
+    }
+
+    public void onActivate(EntityPlayer player) {
+        abilityData.onActivate(player);
+    }
+
+    public void onToggle(EntityPlayer player) {
+        abilityData.onToggle(player);
     }
 
     public Ability cloneAbility() {

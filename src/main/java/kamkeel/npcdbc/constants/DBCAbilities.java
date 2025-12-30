@@ -1,0 +1,16 @@
+package kamkeel.npcdbc.constants;
+
+public enum DBCAbilities {
+    KAIOKEN,
+    SWOOP,
+    FUSION,
+    POTENTIALUNLEASHED,
+    KIFIST,
+    KIPROTECTION,
+    ULTRAINSTINCT,
+    FRIENDLYFIST,
+    KIWEAPON,
+    INSTANTTRANSMISSION,
+    GODOFDESTRUCTION,
+    NAMEKREGEN
+}

@@ -3,6 +3,8 @@ package kamkeel.npcdbc.controllers;
 import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.data.ability.AbilityScript;
+import kamkeel.npcdbc.data.ability.AddonAbility;
+import kamkeel.npcdbc.data.ability.types.*;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
 import kamkeel.npcs.network.enums.EnumSyncAction;
@@ -23,6 +25,7 @@ public class AbilityController {
     public static AbilityController Instance = new AbilityController();
     public HashMap<Integer, Ability> abilitiesSync = new HashMap();
     public HashMap<Integer, Ability> abilities;
+    public HashMap<Integer, AddonAbility> addonAbilities;
     public HashMap<Integer, AbilityScript> abilityScriptHandlers = new HashMap<>();
     private HashMap<Integer, String> bootOrder;
     private int lastUsedID = 0;
@@ -30,13 +33,16 @@ public class AbilityController {
     public AbilityController() {
         Instance = this;
         abilities = new HashMap<>();
+        addonAbilities = new HashMap<>();
         bootOrder = new HashMap<>();
     }
 
     public void load() {
         abilities = new HashMap<>();
+        addonAbilities = new HashMap<>();
         bootOrder = new HashMap<>();
         lastUsedID = 0;
+        loadAddonAbilities();
         LogWriter.info("Loading abilities...");
         readAbilityMap();
         loadAbilities();
@@ -64,6 +70,24 @@ public class AbilityController {
             ability.save();
             return ability;
         }
+    }
+
+    private void loadAddonAbilities() {
+        setAddon(new Kaioken());
+        setAddon(new Swoop());
+        setAddon(new Fusion());
+        setAddon(new PotentialUnleashed());
+        setAddon(new KiFist());
+        setAddon(new KiProtection());
+        setAddon(new UltraInstinct());
+        setAddon(new FriendlyFist());
+        setAddon(new KiWeapon());
+        setAddon(new GodOfDestruction());
+        setAddon(new NamekRegen());
+    }
+
+    private void setAddon(AddonAbility ability) {
+        addonAbilities.put(ability.id, ability);
     }
 
     private void loadAbilities() {
