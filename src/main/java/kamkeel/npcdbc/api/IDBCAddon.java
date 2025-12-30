@@ -3,6 +3,7 @@ package kamkeel.npcdbc.api;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.outline.IOutline;
+import kamkeel.npcdbc.data.ability.Ability;
 import noppes.npcs.api.entity.IDBCPlayer;
 import noppes.npcs.api.entity.IEntityLivingBase;
 import noppes.npcs.api.entity.IPlayer;
@@ -676,6 +677,26 @@ public interface IDBCAddon extends IDBCPlayer {
     void setOutline(int outlineID);
 
     IOutline getOutline();
+
+    Ability getUnlockedAbility(int id);
+
+    Ability getSelectedAbility();
+
+    void setSelectedAbility(int id);
+
+    void setSelectedAbility(Ability ability);
+
+    boolean hasAbility(int id);
+
+    boolean hasAbility(Ability ability);
+
+    boolean hasSelectedAbility();
+
+    boolean removeAbility(int id);
+
+    boolean removeAbility(Ability ability);
+
+    void clearAbilities();
 
     /**
      * @return IPlayer object of the player you are fused with

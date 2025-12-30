@@ -19,6 +19,7 @@ import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.KiAttack;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -45,12 +46,14 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public T player;
     public NBTTagCompound nbt;
     public DBCData dbcData;
+    private final PlayerDBCInfo info;
 
     public ScriptDBCAddon(T player) {
         super(player);
         this.player = player;
         this.nbt = player.getEntityData().getCompoundTag("PlayerPersisted");
         dbcData = DBCData.get(player);
+        info = PlayerDataUtil.getDBCInfo(player);
     }
 
     /**
@@ -1231,6 +1234,56 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public IOutline getOutline() {
         return dbcData.getOutline();
+    }
+
+    @Override
+    public Ability getUnlockedAbility(int id) {
+        return info.getUnlockedAbility(id);
+    }
+
+    @Override
+    public Ability getSelectedAbility() {
+        return info.getSelectedAbility();
+    }
+
+    @Override
+    public void setSelectedAbility(int id) {
+        info.setSelectedAbility(id);
+    }
+
+    @Override
+    public void setSelectedAbility(Ability ability) {
+        info.setSelectedAbility(ability);
+    }
+
+    @Override
+    public boolean hasAbility(int id) {
+        return info.hasAbility(id);
+    }
+
+    @Override
+    public boolean hasAbility(Ability ability) {
+        return info.hasAbility(ability);
+    }
+
+    @Override
+    public boolean hasSelectedAbility() {
+        return info.hasSelectedAbility();
+    }
+
+    @Override
+    public boolean removeAbility(int id) {
+        return info.removeAbility(id);
+    }
+
+    @Override
+    public boolean removeAbility(Ability ability) {
+        return info.removeAbility(ability);
+    }
+
+    @Override
+    public void clearAbilities() {
+        info.clearAllAbilities();
     }
 
     @Override

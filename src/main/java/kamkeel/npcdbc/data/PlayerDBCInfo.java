@@ -354,7 +354,7 @@ public class PlayerDBCInfo {
 //            formWheel[wheelSlot].reset();
 //    }
 
-    public Ability getAbility(int id) {
+    public Ability getUnlockedAbility(int id) {
         if (unlockedAbilities.contains(id))
             return AbilityController.getInstance().get(id);
 
@@ -363,6 +363,20 @@ public class PlayerDBCInfo {
 
     public boolean hasSelectedAbility() {
         return selectedAbility > -1 && getSelectedAbility() != null;
+    }
+
+    public boolean hasSelectedAbility(int id) {
+        return selectedAbility == id;
+    }
+
+    public boolean hasSelectedAbility(Ability ability) {
+        if (ability == null)
+            return false;
+        return selectedAbility == ability.id;
+    }
+
+    public boolean hasAbility(int id) {
+        return unlockedAbilities.contains(id);
     }
 
     public boolean hasAbility(Ability ability) {
@@ -386,14 +400,18 @@ public class PlayerDBCInfo {
         return getAbilityColorCode(a) + a.getName();
     }
 
-    public Ability getUnlockedAbility(int id) {
-        if (unlockedAbilities.contains(id))
-            return AbilityController.Instance.get(id);
-        return null;
-    }
-
     public Ability getSelectedAbility() {
         return AbilityController.Instance.get(selectedAbility);
+    }
+
+    public void setSelectedAbility(int id) {
+        if (unlockedAbilities.contains(id) && AbilityController.getInstance().has(id))
+            selectedAbility = id;
+    }
+
+    public void setSelectedAbility(Ability ability) {
+        if (ability != null && unlockedAbilities.contains(ability.id) && AbilityController.getInstance().has(ability.id))
+            selectedAbility = ability.id;
     }
 
     public void clearAllAbilities() {
