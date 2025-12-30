@@ -20,8 +20,8 @@ public class DBCSettingsUtil {
     }
 
     private static boolean isInvertedID(String id) {
-        for (int i = 0; i < invertedIDs.length; i++) {
-            if (id.contains(invertedIDs[i]))
+        for (String invertedID : invertedIDs) {
+            if (id.contains(invertedID))
                 return true;
         }
 
