@@ -13,6 +13,7 @@ public class KiProtection extends AddonAbility {
         langName = "ability.kiprot";
         langDescription = "ability.kiprotDesc";
         id = DBCAbilities.KIPROTECTION.ordinal();
+        skillId = 11;
         iconX = 0;
         iconY = 0;
         abilityData.type = Ability.Type.Toggle;

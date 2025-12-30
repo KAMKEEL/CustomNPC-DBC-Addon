@@ -13,6 +13,7 @@ public class UltraInstinct extends AddonAbility {
         langName = "ability.ui";
         langDescription = "ability.uiDesc";
         id = DBCAbilities.ULTRAINSTINCT.ordinal();
+        skillId = 16;
         iconX = 0;
         iconY = 0;
         abilityData.type = Ability.Type.Toggle;

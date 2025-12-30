@@ -12,6 +12,7 @@ public class Kaioken extends AddonAbility {
         langName = "ability.kaioken";
         langDescription = "ability.kaiokenDesc";
         id = DBCAbilities.KAIOKEN.ordinal();
+        skillId = 8;
         iconX = 0;
         iconY = 0;
         abilityData.type = Type.Toggle;

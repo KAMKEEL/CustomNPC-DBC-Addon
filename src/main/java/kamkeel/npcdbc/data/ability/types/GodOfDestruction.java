@@ -13,6 +13,7 @@ public class GodOfDestruction extends AddonAbility {
         langName = "ability.god";
         langDescription = "ability.godDesc";
         id = DBCAbilities.GODOFDESTRUCTION.ordinal();
+        skillId = 18;
         iconX = 0;
         iconY = 0;
         abilityData.type = Ability.Type.Toggle;

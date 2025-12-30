@@ -13,6 +13,7 @@ public class KiFist extends AddonAbility {
         langName = "ability.kifist";
         langDescription = "ability.kifistDesc";
         id = DBCAbilities.KIFIST.ordinal();
+        skillId = 12;
         iconX = 0;
         iconY = 0;
         abilityData.type = Ability.Type.Toggle;

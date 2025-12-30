@@ -13,6 +13,7 @@ public class PotentialUnleashed extends AddonAbility {
         langName = "ability.potential";
         langDescription = "ability.potentialDesc";
         id = DBCAbilities.POTENTIALUNLEASHED.ordinal();
+        skillId = 10;
         iconX = 0;
         iconY = 0;
         abilityData.type = Ability.Type.Toggle;

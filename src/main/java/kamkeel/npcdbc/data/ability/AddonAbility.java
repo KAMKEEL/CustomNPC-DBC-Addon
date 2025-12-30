@@ -3,6 +3,7 @@ package kamkeel.npcdbc.data.ability;
 public class AddonAbility extends Ability {
     public String langName;
     public String langDescription;
+    public int skillId = -1;
 
     public AddonAbility() {
         super();
@@ -29,6 +30,10 @@ public class AddonAbility extends Ability {
 
     public String getLangDescription() {
         return langDescription;
+    }
+
+    public int getSkillId() {
+        return skillId;
     }
 
     public Ability save() {
