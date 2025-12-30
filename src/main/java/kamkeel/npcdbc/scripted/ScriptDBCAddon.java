@@ -46,14 +46,12 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public T player;
     public NBTTagCompound nbt;
     public DBCData dbcData;
-    private final PlayerDBCInfo info;
 
     public ScriptDBCAddon(T player) {
         super(player);
         this.player = player;
         this.nbt = player.getEntityData().getCompoundTag("PlayerPersisted");
         dbcData = DBCData.get(player);
-        info = PlayerDataUtil.getDBCInfo(player);
     }
 
     /**
@@ -1238,65 +1236,77 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public Ability getUnlockedAbility(int id) {
+        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(this.getMCEntity());
         return info.getUnlockedAbility(id);
     }
 
     @Override
     public Ability getSelectedAbility() {
+        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(this.getMCEntity());
         return info.getSelectedAbility();
     }
 
     @Override
     public void setSelectedAbility(int id) {
+        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(this.getMCEntity());
         info.setSelectedAbility(id);
         info.updateClient();
     }
 
     @Override
     public void setSelectedAbility(Ability ability) {
+        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(this.getMCEntity());
         info.setSelectedAbility(ability);
         info.updateClient();
     }
 
     @Override
     public void giveAbility(Ability ability) {
+        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(this.getMCEntity());
         info.addAbility(ability);
         info.updateClient();
     }
 
     @Override
     public void giveAbility(int id) {
+        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(this.getMCEntity());
         info.addAbility(id);
         info.updateClient();
     }
 
     @Override
     public boolean hasAbility(int id) {
+        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(this.getMCEntity());
         return info.hasAbility(id);
     }
 
     @Override
     public boolean hasAbility(Ability ability) {
+        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(this.getMCEntity());
         return info.hasAbility(ability);
     }
 
     @Override
     public boolean hasSelectedAbility() {
+        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(this.getMCEntity());
         return info.hasSelectedAbility();
     }
 
     @Override
     public boolean removeAbility(int id) {
+        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(this.getMCEntity());
         return info.removeAbility(id);
     }
 
     @Override
     public boolean removeAbility(Ability ability) {
+        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(this.getMCEntity());
         return info.removeAbility(ability);
     }
 
     @Override
     public void clearAbilities() {
+        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(this.getMCEntity());
         info.clearAllAbilities();
         info.updateClient();
     }
