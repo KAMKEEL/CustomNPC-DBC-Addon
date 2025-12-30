@@ -592,6 +592,10 @@ public class PlayerDBCInfo {
         dbcCompound.setInteger("CurrentAura", currentAura);
         dbcCompound.setInteger("SelectedAura", selectedAura);
         dbcCompound.setTag("UnlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
+
+        dbcCompound.setInteger("SelectedAbility", selectedAbility);
+        dbcCompound.setTag("UnlockedAbilities", NBTTags.nbtIntegerSet(unlockedAbilities));
+        dbcCompound.setTag("AbilityCooldowns", NBTTags.nbtIntegerIntegerMap(abilityTimers));
         saveBonuses(dbcCompound);
         compound.setTag("DBCInfo", dbcCompound);
     }
@@ -613,6 +617,10 @@ public class PlayerDBCInfo {
         currentAura = dbcCompound.getInteger("CurrentAura");
         selectedAura = dbcCompound.getInteger("SelectedAura");
         unlockedAuras = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedAuras", 10));
+
+        selectedAbility = dbcCompound.getInteger("SelectedAbility");
+        unlockedAbilities = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedAbilities", 10));
+        abilityTimers = NBTTags.getIntegerIntegerMap(dbcCompound.getTagList("AbilityCooldowns", 10));
 
         if (dbcCompound.hasKey("ConfigurableFormColors"))
             configuredFormColors = NBTHelper.javaIntegerObjectMap(

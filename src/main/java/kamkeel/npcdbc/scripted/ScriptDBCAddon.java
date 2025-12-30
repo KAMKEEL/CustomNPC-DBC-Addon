@@ -1249,21 +1249,25 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void setSelectedAbility(int id) {
         info.setSelectedAbility(id);
+        info.updateClient();
     }
 
     @Override
     public void setSelectedAbility(Ability ability) {
         info.setSelectedAbility(ability);
+        info.updateClient();
     }
 
     @Override
     public void giveAbility(Ability ability) {
         info.addAbility(ability);
+        info.updateClient();
     }
 
     @Override
     public void giveAbility(int id) {
         info.addAbility(id);
+        info.updateClient();
     }
 
     @Override
@@ -1294,6 +1298,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void clearAbilities() {
         info.clearAllAbilities();
+        info.updateClient();
     }
 
     @Override
