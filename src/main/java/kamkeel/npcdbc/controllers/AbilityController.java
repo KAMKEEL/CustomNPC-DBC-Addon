@@ -73,16 +73,12 @@ public class AbilityController {
     }
 
     private void loadAddonAbilities() {
-        setAddon(new Kaioken());
         setAddon(new Swoop());
         setAddon(new Fusion());
-        setAddon(new PotentialUnleashed());
         setAddon(new KiFist());
         setAddon(new KiProtection());
-        setAddon(new UltraInstinct());
         setAddon(new FriendlyFist());
         setAddon(new KiWeapon());
-        setAddon(new GodOfDestruction());
         setAddon(new NamekRegen());
     }
 
