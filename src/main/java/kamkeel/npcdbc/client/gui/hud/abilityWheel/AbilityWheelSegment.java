@@ -5,12 +5,14 @@ import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.controllers.AbilityController;
 import kamkeel.npcdbc.data.AbilityWheelData;
 import kamkeel.npcdbc.data.ability.Ability;
+import kamkeel.npcdbc.data.ability.AddonAbility;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.ability.DBCSaveAbilityWheel;
 import kamkeel.npcdbc.network.packets.player.ability.DBCSelectAbility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import noppes.npcs.NoppesStringUtils;
 
 import static org.lwjgl.opengl.GL11.glScaled;
 import static org.lwjgl.opengl.GL11.glTranslatef;
@@ -114,6 +116,9 @@ public class AbilityWheelSegment extends WheelSegment {
     }
 
     public String getAbilityName() {
+        if (ability instanceof AddonAbility)
+            return NoppesStringUtils.translate(((AddonAbility) ability).langName);
+
         return ability != null ? ability.menuName : "";
     }
 }

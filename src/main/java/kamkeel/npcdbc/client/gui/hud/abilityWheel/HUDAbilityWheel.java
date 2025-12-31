@@ -2,7 +2,6 @@ package kamkeel.npcdbc.client.gui.hud.abilityWheel;
 
 import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectAbility;
-import kamkeel.npcdbc.client.gui.hud.formWheel.FormWheelSegment;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.AbilityWheelData;
@@ -11,7 +10,7 @@ import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.ability.DBCRequestAbilityWheel;
-import kamkeel.npcdbc.network.packets.player.form.DBCSelectForm;
+import kamkeel.npcdbc.network.packets.player.ability.DBCSelectAbility;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -261,7 +260,7 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
                     mc.mouseHelper.grabMouseCursor();
                 }
             } else {
-                DBCPacketHandler.Instance.sendToServer(new DBCSelectForm(-1, false));
+                DBCPacketHandler.Instance.sendToServer(new DBCSelectAbility(-1, false));
                 close();
             }
         } else {
@@ -274,7 +273,7 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
             }
         }
 
-        int code = KeyHandler.FormWheelKey.getKeyCode();
+        int code = KeyHandler.UseAbilityKey.getKeyCode();
         keyDown = isMouseButton() ? Mouse.isButtonDown(code + 100) : Keyboard.isKeyDown(code);
         if (!keyDown && !hasSubGui() && !configureEnabled && !isClosing) {
             if (hoveredSlot != -1)
@@ -288,7 +287,7 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
     }
 
     public static boolean isMouseButton() {
-        return KeyHandler.FormWheelKey.getKeyCode() < 0;
+        return KeyHandler.UseAbilityKey.getKeyCode() < 0;
     }
 
     protected void drawGradientRectWithFade(int left, int top, int right, int bottom, int startColor, int endColor, float fade) {
@@ -308,6 +307,7 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
 
         drawGradientRect(left, top, right, bottom, newStart, newEnd);
     }
+
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         if (isClosing && guiAnimationScale >= 0) {
@@ -381,7 +381,7 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
         glPushMatrix();
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
         GL11.glScalef(undoMCScaling, undoMCScaling, undoMCScaling);
-        float guiVariantScale = (FormWheelSegment.variant == 0 ? 0.75f : 0.9f);
+        float guiVariantScale = (AbilityWheelSegment.variant == 0 ? 0.75f : 0.9f);
         float playerScale = guiAnimationScale * guiVariantScale * (ConfigDBCClient.AlteranteSelectionWheelTexture ? 1.5f : 1);
         GL11.glScalef(playerScale, playerScale, playerScale);
         GL11.glTranslatef(-HALF_WIDTH, -HALF_HEIGHT + (ConfigDBCClient.AlteranteSelectionWheelTexture ? 8 : 0), 0);

@@ -3,6 +3,7 @@ package kamkeel.npcdbc;
 import JinRyuu.JRMCore.entity.EntityCusPar;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.combat.Dodge;
@@ -18,6 +19,7 @@ import kamkeel.npcdbc.controllers.FusionHandler;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.ability.AbilityData;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -48,13 +50,15 @@ import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.util.ValueUtil;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 
 public class ServerEventHandler {
 
     @SubscribeEvent
-    public void loginEvent(cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent event) {
+    public void loginEvent(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.player == null || event.player.worldObj == null || event.player.worldObj.isRemote || event.player instanceof FakePlayer)
             return;
         DBCData dbcData = DBCData.get(event.player);
@@ -69,6 +73,7 @@ public class ServerEventHandler {
     public void joinWorld(EntityJoinWorldEvent event) {
         Entity e = event.entity;
 
+
         if (e instanceof EntityPlayer || e instanceof EntityCustomNpc) {
             IAuraData auraData = PlayerDataUtil.getAuraData(e);
             EntityAura aura = auraData.getAuraEntity();
@@ -81,6 +86,8 @@ public class ServerEventHandler {
                 iter.next().setDead();
                 iter.remove();
             }
+
+            loadDefaultAbilities(e);
         }
     }
 
@@ -161,6 +168,24 @@ public class ServerEventHandler {
             dbcData.addonFormID = -1;
             dbcInfo.currentForm = -1;
             dbcInfo.updateClient();
+        }
+    }
+
+    private void loadDefaultAbilities(Entity e) {
+        if (!(e instanceof EntityPlayer))
+            return;
+
+        EntityPlayer player = (EntityPlayer) e;
+
+        if (PlayerDataUtil.getDBCInfo(player) != null) {
+            AbilityData data = PlayerDataUtil.getDBCInfo(player).dbcAbilityData;
+
+            for (Map.Entry<Integer, String> entry : DBCData.get(player).getUnlockedDBCAbilitiesMap().entrySet()) {
+                if (!data.hasAbilityUnlocked(entry.getKey()))
+                    data.addAbility(entry.getKey());
+            }
+
+            PlayerDataUtil.getDBCInfo(player).updateClient();
         }
     }
 

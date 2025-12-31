@@ -135,31 +135,6 @@ public class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public void useAbility(InputEvent.KeyInputEvent e) {
-        Minecraft mc = Minecraft.getMinecraft();
-        if (mc.currentScreen != null)
-            return;
-
-        if (KeyHandler.UseAbilityKey.isPressed()) {
-            if (PlayerDataUtil.getClientDBCInfo() != null && DBCData.getClient() != null) {
-                DBCData data = DBCData.getClient();
-
-                if (!data.isFnPressed) return;
-
-                PlayerDBCInfo info = PlayerDataUtil.getClientDBCInfo();
-                AbilityData dbc = info.dbcAbilityData;
-                AbilityData custom = info.customAbilityData;
-
-                if (custom.hasSelectedAbility() && custom.hasAbilityUnlocked(custom.selectedAbility)) {
-                    DBCPacketHandler.Instance.sendToServer(new AbilityUsePacket(Minecraft.getMinecraft().thePlayer, custom.selectedAbility, false));
-                } else {
-                    DBCPacketHandler.Instance.sendToServer(new AbilityUsePacket(Minecraft.getMinecraft().thePlayer, dbc.selectedAbility, true));
-                }
-            }
-        }
-    }
-
-    @SubscribeEvent
     public void onMousePress(InputEvent.MouseInputEvent e) {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.currentScreen != null)
@@ -170,10 +145,9 @@ public class ClientEventHandler {
                 mc.displayGuiScreen(new HUDFormWheel());
         }
 
-        if (KeyHandler.UseAbilityKey.isPressed()) {
-            if (PlayerDataUtil.getClientDBCInfo() != null && DBCData.getClient() != null && !DBCData.getClient().isFnPressed) {
+        if (KeyHandler.UseAbilityKey.isPressed() && !JRMCoreKeyHandler.Fn.isPressed()) {
+            if (PlayerDataUtil.getClientDBCInfo() != null)
                 mc.displayGuiScreen(new HUDAbilityWheel());
-            }
         }
     }
 
@@ -185,6 +159,28 @@ public class ClientEventHandler {
             if (formData != null) {
                 if (KeyHandler.FormWheelKey.isPressed()) {
                     mc.displayGuiScreen(new HUDFormWheel());
+                    return;
+                }
+
+                if (KeyHandler.UseAbilityKey.isPressed()) {
+                    if (!JRMCoreKeyHandler.Fn.getIsKeyPressed()) {
+                        mc.displayGuiScreen(new HUDAbilityWheel());
+                    } else {
+                        DBCData data = DBCData.getClient();
+
+                        if (!data.isFnPressed) return;
+
+                        PlayerDBCInfo info = PlayerDataUtil.getClientDBCInfo();
+                        AbilityData dbc = info.dbcAbilityData;
+                        AbilityData custom = info.customAbilityData;
+
+                        if (custom.hasSelectedAbility() && custom.hasAbilityUnlocked(custom.selectedAbility)) {
+                            DBCPacketHandler.Instance.sendToServer(new AbilityUsePacket(Minecraft.getMinecraft().thePlayer, custom.selectedAbility, false));
+                        } else {
+                            DBCPacketHandler.Instance.sendToServer(new AbilityUsePacket(Minecraft.getMinecraft().thePlayer, dbc.selectedAbility, true));
+                        }
+                    }
+
                     return;
                 }
 

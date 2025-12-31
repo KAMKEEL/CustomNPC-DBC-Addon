@@ -33,7 +33,7 @@ public class SubGuiSelectAbility extends SubGuiInterface implements IScrollData,
     public HashMap<Integer, String> dbcAbilities = new HashMap<>();
     private ArrayList<Integer> stateIDs = new ArrayList<>();
 
-    public SubGuiSelectAbility(int buttonID, boolean playerFormsOnly, boolean useMenuName) {
+    public SubGuiSelectAbility(int buttonID, boolean playerAbilitiesOnly, boolean useMenuName) {
         this.buttonID = buttonID;
         this.closeOnEsc = true;
         this.drawDefaultBackground = true;
@@ -42,8 +42,7 @@ public class SubGuiSelectAbility extends SubGuiInterface implements IScrollData,
         this.setBackground("menubg.png");
 
         this.useMenuName = useMenuName;
-        // TODO REQUEST ABILITY PACKET
-        DBCPacketHandler.Instance.sendToServer(new DBCRequestAbility(-1, playerFormsOnly, this.useMenuName));
+        DBCPacketHandler.Instance.sendToServer(new DBCRequestAbility(-1, playerAbilitiesOnly, this.useMenuName));
     }
 
     @Override
@@ -162,14 +161,11 @@ public class SubGuiSelectAbility extends SubGuiInterface implements IScrollData,
 
     private List<String> getSearchList() {
         if (search.isEmpty()) {
-            // TODO replace 2nd value with dbc abilities
-            //return new ArrayList<String>(page == 0 ? this.data.keySet() : this.data.keySet());
-            return new ArrayList<String>(this.data.keySet());
+            return new ArrayList<String>(page == 0 ? this.data.keySet() : dbcAbilities.values());
         }
+
         List<String> list = new ArrayList<String>();
-        // TODO replace 2nd value with dbc abilities
-        //for (String name : page == 0 ? this.data.keySet() : this.data.keySet()) {
-        for (String name : this.data.keySet()) {
+        for (String name : page == 0 ? this.data.keySet() : dbcAbilities.values()) {
             if (name.toLowerCase().contains(search))
                 list.add(name);
         }

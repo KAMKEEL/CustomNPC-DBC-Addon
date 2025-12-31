@@ -5,6 +5,7 @@ import kamkeel.npcdbc.controllers.AbilityController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.data.ability.AbilityData;
+import kamkeel.npcdbc.data.ability.AddonAbility;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
@@ -16,6 +17,7 @@ import kamkeel.npcs.network.packets.data.large.GuiDataPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.NoppesStringUtils;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 
@@ -53,8 +55,8 @@ public final class DBCSelectAbility extends AbstractPacket {
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        int abilityID = in.readInt();
-        boolean isDBC = in.readBoolean();
+        this.abilityID = in.readInt();
+        this.isDBC = in.readBoolean();
 
         PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
         PlayerDBCInfo dbcInfo = PlayerDataUtil.getDBCInfo(playerData);
@@ -64,14 +66,17 @@ public final class DBCSelectAbility extends AbstractPacket {
         if (abilityID == -1 && data.selectedAbility == -1)
             return;
 
-        if (isDBC && abilityID != -1) {
+        if (isDBC && abilityID != -1 && AbilityController.getInstance().has(abilityID, true)) {
             if (abilityID == data.selectedAbility)
                 return;
 
-            // TODO figure out a nice way to implement a controller for DBC abilities
-            data.selectedAbility = abilityID;
-            dbcInfo.customAbilityData.selectedAbility = -1;
-        } else if(abilityID != -1 && AbilityController.getInstance().has(abilityID)) {
+            AddonAbility ability = (AddonAbility) AbilityController.getInstance().get(abilityID, true);
+            if (ability != null && data.hasAbilityUnlocked(abilityID)) {
+                data.selectedAbility = abilityID;
+                dbcInfo.customAbilityData.selectedAbility = -1;
+                NetworkUtility.sendServerMessage(player, "§a", "npcdbc.abilitySelect", " ", NoppesStringUtils.translate(ability.getLangName()));
+            }
+        } else if (abilityID != -1 && AbilityController.getInstance().has(abilityID)) {
             if (abilityID == data.selectedAbility)
                 return;
 
