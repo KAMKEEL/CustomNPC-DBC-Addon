@@ -44,7 +44,7 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
     public int hoveredSlot = -1;
     boolean keyDown, unpressedAllKeys = false;
     boolean configureEnabled;
-    public HashMap<Integer, String> dbcAbilities; // TODO REPLACE WITH DBC ABILITIES
+    public HashMap<Integer, String> dbcAbilities;
     public DBCData dbcData;
     public PlayerDBCInfo dbcInfo;
 
