@@ -9,6 +9,7 @@ public enum EnumPacketPlayer {
     FormWheel,
     FormWheelSave,
     FormSelect,
+    AbilitySelect,
     OutlineList,
     Flight,
     SetVal,
