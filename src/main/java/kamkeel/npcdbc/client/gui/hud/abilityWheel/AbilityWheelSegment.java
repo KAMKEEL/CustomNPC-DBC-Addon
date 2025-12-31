@@ -1,18 +1,19 @@
 package kamkeel.npcdbc.client.gui.hud.abilityWheel;
 
 import kamkeel.npcdbc.client.gui.hud.WheelSegment;
+import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.controllers.AbilityController;
 import kamkeel.npcdbc.data.AbilityWheelData;
 import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.data.ability.AddonAbility;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.ability.DBCSaveAbilityWheel;
 import kamkeel.npcdbc.network.packets.player.ability.DBCSelectAbility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import noppes.npcs.NoppesStringUtils;
+import org.lwjgl.opengl.GL11;
 
 import static org.lwjgl.opengl.GL11.glScaled;
 import static org.lwjgl.opengl.GL11.glTranslatef;
@@ -68,37 +69,49 @@ public class AbilityWheelSegment extends WheelSegment {
         //icon = null;
     }
 
+    @Override
+    public void draw(FontRenderer fontRenderer) {
+        float hover = getSegmentScale();
+        float open = getOpenScale();
+
+        float finalScale = open * (0.85f + hover * 0.15f);
+
+        currentColor = Color.lerpRGBA(NOT_HOVERED, HOVERED, hover);
+        currentColor.glColor();
+
+        GL11.glPushMatrix();
+        GL11.glTranslatef(posX, posY, 0);
+        GL11.glScalef(finalScale, finalScale, 1);
+        GL11.glTranslatef(-posX, -posY, 0);
+
+        drawIndexedTexture();
+        drawWheelItem(fontRenderer);
+
+        GL11.glPopMatrix();
+    }
 
     @Override
     protected void drawWheelItem(FontRenderer fontRenderer) {
         if (data.abilityID != -1) {
-            if (index == 1 || index == 5) {
-                glTranslatef(0, 10, 0);
-            } else if (index == 2 || index == 4) {
-                glTranslatef(0, -10, 0);
+            glTranslatef(0, 10, 0);
+
+            switch (index) {
+                case 0:
+                case 1:
+                    glTranslatef(3, 0, 0);
+                    break;
+                case 2:
+                case 3:
+                    glTranslatef(6, 0, 0);
+                    break;
+                case 4:
+                case 5:
+                    glTranslatef(11, 0, 0);
+                    break;
+                default:
+                    break;
             }
-            if (ConfigDBCClient.AlteranteSelectionWheelTexture) {
-                glScaled(0.7, 0.7, 1);
-                switch (index) {
-                    case 0:
-                        glTranslatef(0, -15f, 0);
-                        break;
-                    case 1:
-                        glTranslatef(-12, -5, 0);
-                        break;
-                    case 2:
-                        glTranslatef(-11, 3, 0);
-                        break;
-                    case 3:
-                        glTranslatef(0, 12f, 0);
-                        break;
-                    case 4:
-                        glTranslatef(10, 3, 0);
-                        break;
-                    default:
-                        glTranslatef(13, -5, 0);
-                }
-            }
+
             if (data.isDBC) {
                 if (!parent.dbcAbilities.containsKey(data.abilityID))
                     removeAbility();

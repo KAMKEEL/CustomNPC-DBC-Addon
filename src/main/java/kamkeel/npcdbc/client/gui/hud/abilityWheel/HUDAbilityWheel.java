@@ -2,6 +2,7 @@ package kamkeel.npcdbc.client.gui.hud.abilityWheel;
 
 import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectAbility;
+import kamkeel.npcdbc.client.gui.hud.WheelSegment;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.AbilityWheelData;
@@ -33,6 +34,7 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
     public static float BLUR_INTENSITY = 0;
     public static float MAX_BLUR = 4;
     public static boolean BLUR_ENABLED = true;
+    public static final int SLOT_DELAY = 60; // ms
 
     ScaledResolution scaledResolution;
     public AbilityWheelSegment[] wheelSlot = new AbilityWheelSegment[6];
@@ -139,6 +141,13 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
                 y -= 25;
             }
         }
+
+        long now = Minecraft.getSystemTime();
+        for (AbilityWheelSegment seg : wheelSlot) {
+            seg.startOpenAnimation(now);
+        }
+
+
     }
 
     public void buttonEvent(GuiButton guibutton) {
@@ -364,10 +373,10 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
 
 
             GL11.glRotatef(i * 60, 0, 0, 1);
-            if (i == 1 || i == 2) {
-                GL11.glTranslatef(10, 0, 0);
-            } else if (i == 4 || i == 5) {
-                GL11.glTranslatef(-10, 0, 0);
+            if (i == 0) {
+                GL11.glTranslatef(3, -15, 0);
+            } else if (i == 3) {
+                GL11.glTranslatef(0, 15, 0);
             }
             wheelSlot[i].draw(fontRendererObj);
 
