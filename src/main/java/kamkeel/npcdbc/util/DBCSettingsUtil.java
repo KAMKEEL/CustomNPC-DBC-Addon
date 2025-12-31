@@ -1,212 +1,129 @@
 package kamkeel.npcdbc.util;
 
+import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.constants.DBCSettings;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
-//TODO REWORK THIS THING USING DBCDATA SETTING METHODS
 public class DBCSettingsUtil {
-    private static final String KEY = "jrmcSettings";
-    private static final String[] invertedIDs = new String[]{"D", "P", "F"};
 
-    private static NBTTagCompound nbt(EntityPlayer player) {
-        return player.getEntityData().getCompoundTag("PlayerPersisted");
+    public static String settings(EntityPlayer player) {
+        return player.getEntityData().getCompoundTag("PlayerPersisted").getString("jrmcSettings");
     }
 
-    private static String settings(EntityPlayer player) {
-        return nbt(player).getString(KEY);
+    private static DBCData data(EntityPlayer player) {
+        return DBCData.get(player);
     }
 
-    private static void set(EntityPlayer player, String s) {
-        nbt(player).setString(KEY, s);
+    private static int get(EntityPlayer player, int setting) {
+        return JRMCoreH.PlyrSettings(data(player).getRawCompound(), setting);
     }
 
-    private static boolean isInvertedID(String id) {
-        for (String invertedID : invertedIDs) {
-            if (id.contains(invertedID))
-                return true;
-        }
-
-        return false;
+    private static void set(EntityPlayer player, int setting, int value) {
+        data(player).setSetting(setting, value);
     }
 
-    private static void addSetting(EntityPlayer player, String setting) {
-        String s = settings(player) + setting;
-
-        set(player, s.trim());
+    private static void addSetting(EntityPlayer player, int setting) {
+        JRMCoreH.PlyrSettingsOn(data(player).getRawCompound(), setting);
     }
 
-    private static void removeSetting(EntityPlayer player, String setting) {
-        replaceSetting(player, setting, "");
+    private static void removeSetting(EntityPlayer player, int setting) {
+        JRMCoreH.PlyrSettingsRem(data(player).getRawCompound(), setting);
     }
 
-    private static void replaceSetting(EntityPlayer player, String setting, String newSetting) {
-        String s = settings(player).replace(setting, newSetting);
-
-        if (s.isEmpty())
-            s = " ";
-
-        set(player, s);
+    private static boolean isEnabled(EntityPlayer player, int setting) {
+        return JRMCoreH.PlyrSettingsB(data(player).getRawCompound(), setting);
     }
 
-    private static boolean isEnabled(EntityPlayer player, String setting) {
-        String s = settings(player);
-        boolean enabled = s.contains(setting);
-        boolean inverted = isInvertedID(setting);
-
-        return inverted ? !enabled : enabled;
-    }
-
-    private static void setEnabled(EntityPlayer player, String setting, boolean enabled) {
-        boolean inverted = isInvertedID(setting);
-
+    private static void setEnabled(EntityPlayer player, int setting, boolean enabled) {
         if (!isEnabled(player, setting) && enabled) {
-            if (inverted) {
-                removeSetting(player, setting);
-            } else {
-                addSetting(player, setting);
-            }
+            addSetting(player, setting);
+        } else if (isEnabled(player, setting) && !enabled) {
+            removeSetting(player, setting);
         }
-
-        if (isEnabled(player, setting) && !enabled) {
-            if (inverted) {
-                addSetting(player, setting);
-            } else {
-                removeSetting(player, setting);
-            }
-        }
-    }
-
-    private static int getSettingsGroup(EntityPlayer player, String[] settings) {
-        String s = settings(player);
-
-        for (int i = 0; i < settings.length; i++) {
-            if (s.contains(settings[i])) {
-                return i + 1;
-            }
-        }
-
-        return 0;
-    }
-
-    private static void setSettingsGroup(EntityPlayer player, String[] settings, int group) {
-        group = Math.max(0, Math.min(settings.length, group));
-
-        int currentGroup = getSettingsGroup(player, settings);
-        String setting = settings[0].charAt(0) + "";
-
-        if (group == 0 && currentGroup == 0) {
-            return;
-        }
-
-        if (currentGroup == 0) {
-            addSetting(player, setting + (group - 1));
-            return;
-        }
-
-        if (group == 0) {
-            removeSetting(player, setting + (currentGroup - 1));
-            return;
-        }
-
-        replaceSetting(player, setting + (currentGroup - 1), setting + (group -1));
-    }
-
-    public static int getFormGroup(EntityPlayer player) {
-        return getSettingsGroup(player, new String[]{"R0", "R1", "R2", "R3"});
-    }
-
-    public static void setFormGroup(EntityPlayer player, int group) {
-        setSettingsGroup(player, new String[]{"R0", "R1", "R2", "R3"}, group);
     }
 
     public static boolean isFusion(EntityPlayer player) {
-        return isEnabled(player, "Z0");
+        return isEnabled(player, DBCSettings.FUSION_ENABLED);
     }
 
     public static void setFusion(EntityPlayer player, boolean enabled) {
-        setEnabled(player, "Z0", enabled);
+        setEnabled(player, DBCSettings.FUSION_ENABLED, enabled);
     }
 
     public static boolean isPotentialUnleashed(EntityPlayer player) {
-        return isEnabled(player, "M0");
+        return isEnabled(player, DBCSettings.POTENTIAL_UNLEASHED);
     }
 
     public static void setPotentialUnleashed(EntityPlayer player, boolean enabled) {
-        setEnabled(player, "M0", enabled);
+        setEnabled(player, DBCSettings.POTENTIAL_UNLEASHED, enabled);
     }
 
     public static boolean isKaioken(EntityPlayer player) {
-        return isEnabled(player, "K0");
+        return isEnabled(player, DBCSettings.KAIOKEN_ENABLED);
     }
 
     public static void setKaioken(EntityPlayer player, boolean enabled) {
-        setEnabled(player, "K0", enabled);
+        setEnabled(player, DBCSettings.KAIOKEN_ENABLED, enabled);
     }
 
     public static boolean isUI(EntityPlayer player) {
-        return isEnabled(player, "U0");
+        return isEnabled(player, DBCSettings.ULTRA_INSTINCT);
     }
 
     public static void setUI(EntityPlayer player, boolean enabled) {
-        setEnabled(player, "U0", enabled);
+        setEnabled(player, DBCSettings.ULTRA_INSTINCT, enabled);
     }
 
     public static boolean isGOD(EntityPlayer player) {
-        return isEnabled(player, "H0");
+        return isEnabled(player, DBCSettings.GOD_OF_DESTRUCTION);
     }
 
     public static void setGOD(EntityPlayer player, boolean enabled) {
-        setEnabled(player, "H0", enabled);
+        setEnabled(player, DBCSettings.GOD_OF_DESTRUCTION, enabled);
     }
 
     public static boolean isFriendlyFist(EntityPlayer player) {
-        return isEnabled(player, "I0");
+        return isEnabled(player, DBCSettings.FRIENDLY_FIST);
     }
 
     public static void setFriendlyFist(EntityPlayer player, boolean enabled) {
-        setEnabled(player, "I0", enabled);
+        setEnabled(player, DBCSettings.FRIENDLY_FIST, enabled);
     }
 
     public static boolean isSwoop(EntityPlayer player) {
-        return isEnabled(player, "D0");
+        return isEnabled(player, DBCSettings.DODGE_ENABLED);
     }
 
     public static void setSwoop(EntityPlayer player, boolean enabled) {
-        setEnabled(player, "D0", enabled);
+        setEnabled(player, DBCSettings.DODGE_ENABLED, enabled);
     }
 
     public static boolean isKiProtection(EntityPlayer player) {
-        return isEnabled(player, "P0");
+        return isEnabled(player, DBCSettings.KI_PROTECTION);
     }
 
     public static void setKiProtection(EntityPlayer player, boolean enabled) {
-        setEnabled(player, "P0", enabled);
+        setEnabled(player, DBCSettings.KI_PROTECTION, enabled);
     }
 
     public static boolean isKiFist(EntityPlayer player) {
-        return isEnabled(player, "F0");
+        return isEnabled(player, DBCSettings.KI_FIST);
     }
 
     public static void setKiFist(EntityPlayer player, boolean enabled) {
-        setEnabled(player, "F0", enabled);
+        setEnabled(player, DBCSettings.KI_FIST, enabled);
     }
 
     public static boolean hasKiWeapon(EntityPlayer player) {
-        return isEnabled(player, "S");
+        return isEnabled(player, DBCSettings.KI_WEAPON_TOGGLE);
     }
 
     public static int getKiWeapon(EntityPlayer player) {
         if (!hasKiWeapon(player)) return -1;
 
-        String s = settings(player);
-        int index = s.indexOf("S");
-        String group = s.substring(index, 2);
-
-        try {
-            return Integer.parseInt(group.charAt(1) + "");
-        } catch (NumberFormatException e) {
-            return -1;
-        }
+        return get(player, DBCSettings.KI_WEAPON_TOGGLE);
     }
 
     public static void setKiWeapon(EntityPlayer player, boolean enabled) {
@@ -214,9 +131,20 @@ public class DBCSettingsUtil {
     }
 
     public static void setKiWeapon(EntityPlayer player, boolean enabled, int mode) {
-        mode = Math.max(0, Math.min(1, mode));
+        mode = Math.max(-1, Math.min(1, mode));
 
-        setEnabled(player, "S" + mode, enabled);
+        if (!enabled) {
+            removeSetting(player, DBCSettings.KI_WEAPON_TOGGLE);
+            return;
+        }
+
+        if (mode == 0) {
+            setEnabled(player, DBCSettings.KI_WEAPON_TOGGLE, true);
+        } else if (mode == 1) {
+            set(player, DBCSettings.KI_WEAPON_TOGGLE, 1);
+        } else {
+            removeSetting(player, DBCSettings.KI_WEAPON_TOGGLE);
+        }
     }
 
     public static void setKiWeaponMode(EntityPlayer player, int mode) {
@@ -227,24 +155,39 @@ public class DBCSettingsUtil {
 
         if (mode == -1) {
             setKiWeapon(player, false);
+            return;
         }
 
-        replaceSetting(player, "S" + getKiWeapon(player), "S" + mode);
+        set(player, DBCSettings.KI_WEAPON_TOGGLE, mode);
     }
 
     public static int getITRangeMode(EntityPlayer player) {
-        return getSettingsGroup(player, new String[]{"A0", "A1"});
+        return get(player, DBCSettings.INSTANT_TRANSMISSION_SHORT_RANGE);
     }
 
     public static void setITRangeMode(EntityPlayer player, int mode) {
-        setSettingsGroup(player, new String[]{"A0", "A1"}, mode);
+        mode = Math.max(-1, Math.min(1, mode));
+
+        if (mode == -1) {
+            removeSetting(player, DBCSettings.INSTANT_TRANSMISSION_SHORT_RANGE);
+            return;
+        }
+
+        set(player, DBCSettings.INSTANT_TRANSMISSION_SHORT_RANGE, mode);
     }
 
     public static int getITSurroundMode(EntityPlayer player) {
-        return getSettingsGroup(player, new String[]{"C0", "C1"});
+        return get(player, DBCSettings.INSTANT_TRANSMISSION_LONG_RANGE);
     }
 
     public static void setITSurroundMode(EntityPlayer player, int mode) {
-        setSettingsGroup(player, new String[]{"C0", "C1"}, mode);
+        mode = Math.max(-1, Math.min(1, mode));
+
+        if (mode == -1) {
+            removeSetting(player, DBCSettings.INSTANT_TRANSMISSION_LONG_RANGE);
+            return;
+        }
+
+        set(player, DBCSettings.INSTANT_TRANSMISSION_LONG_RANGE, mode);
     }
 }
