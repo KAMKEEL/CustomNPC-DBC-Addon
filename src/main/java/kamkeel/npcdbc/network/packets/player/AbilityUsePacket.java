@@ -61,10 +61,10 @@ public final class AbilityUsePacket extends AbstractPacket {
         boolean isDBC = in.readBoolean();
 
         if (AbilityController.Instance.has(abilityId, isDBC)) {
-            Ability ability = AbilityController.getInstance().get(abilityId);
+            Ability ability = AbilityController.getInstance().get(abilityId, isDBC);
             AbilityData data = isDBC ? info.dbcAbilityData : info.customAbilityData;
 
-            if (data.hasAbilityUnlocked(abilityId)) {
+            if (ability != null && data.hasAbilityUnlocked(abilityId)) {
                 if (ability.getType() == Ability.Type.Active) {
                     ability.onActivate(player);
                 } else if (ability.getType() == Ability.Type.Toggle) {

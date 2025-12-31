@@ -3,6 +3,7 @@ package kamkeel.npcdbc.util;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
+//TODO REWORK THIS THING USING DBCDATA SETTING METHODS
 public class DBCSettingsUtil {
     private static final String KEY = "jrmcSettings";
     private static final String[] invertedIDs = new String[]{"D", "P", "F"};
@@ -31,7 +32,7 @@ public class DBCSettingsUtil {
     private static void addSetting(EntityPlayer player, String setting) {
         String s = settings(player) + setting;
 
-        set(player, s);
+        set(player, s.trim());
     }
 
     private static void removeSetting(EntityPlayer player, String setting) {

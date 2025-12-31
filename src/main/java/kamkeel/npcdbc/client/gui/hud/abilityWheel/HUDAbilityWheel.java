@@ -2,7 +2,6 @@ package kamkeel.npcdbc.client.gui.hud.abilityWheel;
 
 import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectAbility;
-import kamkeel.npcdbc.client.gui.hud.WheelSegment;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.AbilityWheelData;
@@ -282,7 +281,7 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
             }
         }
 
-        int code = KeyHandler.UseAbilityKey.getKeyCode();
+        int code = KeyHandler.AbilityWheelKey.getKeyCode();
         keyDown = isMouseButton() ? Mouse.isButtonDown(code + 100) : Keyboard.isKeyDown(code);
         if (!keyDown && !hasSubGui() && !configureEnabled && !isClosing) {
             if (hoveredSlot != -1)
@@ -296,7 +295,7 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
     }
 
     public static boolean isMouseButton() {
-        return KeyHandler.UseAbilityKey.getKeyCode() < 0;
+        return KeyHandler.AbilityWheelKey.getKeyCode() < 0;
     }
 
     protected void drawGradientRectWithFade(int left, int top, int right, int bottom, int startColor, int endColor, float fade) {

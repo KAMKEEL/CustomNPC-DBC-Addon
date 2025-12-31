@@ -23,7 +23,6 @@ import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.SoundSource;
-import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.data.ability.AbilityData;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -34,7 +33,6 @@ import kamkeel.npcdbc.mixins.late.IEntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.AbilityUsePacket;
-import kamkeel.npcdbc.network.packets.player.TransformPacket;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -145,7 +143,7 @@ public class ClientEventHandler {
                 mc.displayGuiScreen(new HUDFormWheel());
         }
 
-        if (KeyHandler.UseAbilityKey.isPressed() && !JRMCoreKeyHandler.Fn.isPressed()) {
+        if (KeyHandler.AbilityWheelKey.isPressed() && !JRMCoreKeyHandler.Fn.isPressed()) {
             if (PlayerDataUtil.getClientDBCInfo() != null)
                 mc.displayGuiScreen(new HUDAbilityWheel());
         }
@@ -162,23 +160,24 @@ public class ClientEventHandler {
                     return;
                 }
 
-                if (KeyHandler.UseAbilityKey.isPressed()) {
-                    if (!JRMCoreKeyHandler.Fn.getIsKeyPressed()) {
-                        mc.displayGuiScreen(new HUDAbilityWheel());
-                    } else {
-                        DBCData data = DBCData.getClient();
+                if (KeyHandler.AbilityWheelKey.isPressed()) {
+                    mc.displayGuiScreen(new HUDAbilityWheel());
+                    return;
+                }
 
-                        if (!data.isFnPressed) return;
+                if (KeyHandler.AbilityCastKey.isPressed()) {
+                    PlayerDBCInfo info = PlayerDataUtil.getClientDBCInfo();
+                    AbilityData dbc = info.dbcAbilityData;
+                    AbilityData custom = info.customAbilityData;
 
-                        PlayerDBCInfo info = PlayerDataUtil.getClientDBCInfo();
-                        AbilityData dbc = info.dbcAbilityData;
-                        AbilityData custom = info.customAbilityData;
+                    if (custom.hasSelectedAbility() && custom.hasAbilityUnlocked(custom.selectedAbility)) {
+                        DBCPacketHandler.Instance.sendToServer(new AbilityUsePacket(Minecraft.getMinecraft().thePlayer, custom.selectedAbility, false));
+                        return;
+                    }
 
-                        if (custom.hasSelectedAbility() && custom.hasAbilityUnlocked(custom.selectedAbility)) {
-                            DBCPacketHandler.Instance.sendToServer(new AbilityUsePacket(Minecraft.getMinecraft().thePlayer, custom.selectedAbility, false));
-                        } else {
-                            DBCPacketHandler.Instance.sendToServer(new AbilityUsePacket(Minecraft.getMinecraft().thePlayer, dbc.selectedAbility, true));
-                        }
+                    if (dbc.hasSelectedAbility() && dbc.hasAbilityUnlocked(dbc.selectedAbility)){
+                        DBCPacketHandler.Instance.sendToServer(new AbilityUsePacket(Minecraft.getMinecraft().thePlayer, dbc.selectedAbility, true));
+                        return;
                     }
 
                     return;

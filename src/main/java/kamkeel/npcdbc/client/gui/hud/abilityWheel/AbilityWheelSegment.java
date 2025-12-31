@@ -2,7 +2,6 @@ package kamkeel.npcdbc.client.gui.hud.abilityWheel;
 
 import kamkeel.npcdbc.client.gui.hud.WheelSegment;
 import kamkeel.npcdbc.client.utils.Color;
-import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.controllers.AbilityController;
 import kamkeel.npcdbc.data.AbilityWheelData;
 import kamkeel.npcdbc.data.ability.Ability;
@@ -15,7 +14,6 @@ import net.minecraft.client.gui.FontRenderer;
 import noppes.npcs.NoppesStringUtils;
 import org.lwjgl.opengl.GL11;
 
-import static org.lwjgl.opengl.GL11.glScaled;
 import static org.lwjgl.opengl.GL11.glTranslatef;
 
 public class AbilityWheelSegment extends WheelSegment {
