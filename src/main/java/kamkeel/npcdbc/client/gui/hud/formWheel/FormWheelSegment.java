@@ -18,7 +18,7 @@ import net.minecraft.client.gui.FontRenderer;
 import static org.lwjgl.opengl.GL11.glScaled;
 import static org.lwjgl.opengl.GL11.glTranslatef;
 
-class FormWheelSegment extends WheelSegment {
+public class FormWheelSegment extends WheelSegment {
     public HUDFormWheel parent;
     public Form form;
     public FormWheelData data = new FormWheelData();
