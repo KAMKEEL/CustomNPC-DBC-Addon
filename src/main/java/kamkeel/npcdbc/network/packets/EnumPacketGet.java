@@ -5,6 +5,7 @@ public enum EnumPacketGet {
     Effect,
     Form,
     Outline,
+    Ability,
     CapsuleInfo,
     InfoSync
 }
