@@ -2,6 +2,8 @@ package kamkeel.npcdbc.client.gui.component;
 
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.player.ability.DBCRequestAbility;
 import net.minecraft.client.gui.GuiButton;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.constants.EnumScrollData;
@@ -19,21 +21,19 @@ public class SubGuiSelectAbility extends SubGuiInterface implements IScrollData,
 
     public int page;
     public boolean confirmed = false;
-    public boolean selectionChild;
     public int selectedAbilityID = -1;
     public int buttonID = -1;
     public boolean isDBC;
-    public boolean removeForm = false;
+    public boolean removeAbility = false;
 
     public boolean useMenuName, showDBCAbilities;
 
     public PlayerDBCInfo dbcInfo;
 
-    //public HashMap<Integer, String> dbcAbilities = new HashMap<>();
+    public HashMap<Integer, String> dbcAbilities = new HashMap<>();
     private ArrayList<Integer> stateIDs = new ArrayList<>();
 
     public SubGuiSelectAbility(int buttonID, boolean playerFormsOnly, boolean useMenuName) {
-        this.selectionChild = selectionChild;
         this.buttonID = buttonID;
         this.closeOnEsc = true;
         this.drawDefaultBackground = true;
@@ -43,7 +43,7 @@ public class SubGuiSelectAbility extends SubGuiInterface implements IScrollData,
 
         this.useMenuName = useMenuName;
         // TODO REQUEST ABILITY PACKET
-        //DBCPacketHandler.Instance.sendToServer(new DBCRequestForm(-1, playerFormsOnly, this.useMenuName));
+        DBCPacketHandler.Instance.sendToServer(new DBCRequestAbility(-1, playerFormsOnly, this.useMenuName));
     }
 
     @Override
@@ -64,9 +64,9 @@ public class SubGuiSelectAbility extends SubGuiInterface implements IScrollData,
         if (page == 0) {
             scrollAbilities.setList(getSearchList());
         } else if (dbcInfo != null) {
-//            dbcForms = dbcData.getUnlockedDBCFormsMap();
-//            stateIDs = new ArrayList<>(dbcForms.keySet());
-//            scrollAbilities.setUnsortedList(getSearchList());
+            dbcAbilities = DBCData.getClient().getUnlockedDBCAbilitiesMap();
+            stateIDs = new ArrayList<>(dbcAbilities.keySet());
+            scrollAbilities.setUnsortedList(getSearchList());
         }
 
         addTextField(new GuiNpcTextField(55, this, fontRendererObj, guiLeft + 4, guiTop + 192, 177, 20, search));
@@ -105,7 +105,7 @@ public class SubGuiSelectAbility extends SubGuiInterface implements IScrollData,
             this.close();
         }
         if (id == 2) {
-            this.removeForm = true;
+            this.removeAbility = true;
             this.close();
         }
         if (id == 3) {

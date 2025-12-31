@@ -3,10 +3,12 @@ package kamkeel.npcdbc.util;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.OptifineHelper;
+import kamkeel.npcdbc.controllers.AbilityController;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -92,6 +94,19 @@ public class PlayerDataUtil {
             Aura aura = (Aura) AuraController.getInstance().get(auraID);
             if (aura != null) {
                 map.put(aura.name, aura.id);
+            }
+        }
+        ScrollDataPacket.sendScrollData(player, map, EnumScrollData.OPTIONAL);
+    }
+
+    public static void sendAbilityDBCInfo(EntityPlayerMP player, boolean useMenuName) {
+        PlayerDBCInfo data = ((IPlayerDBCInfo) PlayerDataController.Instance.getPlayerData(player)).getPlayerDBCInfo();
+
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        for (int abilityID : data.customAbilityData.unlockedAbilities) {
+            Ability ability = (Ability) AbilityController.getInstance().get(abilityID);
+            if (ability != null) {
+                map.put(useMenuName ? ability.menuName : ability.name, ability.id);
             }
         }
         ScrollDataPacket.sendScrollData(player, map, EnumScrollData.OPTIONAL);

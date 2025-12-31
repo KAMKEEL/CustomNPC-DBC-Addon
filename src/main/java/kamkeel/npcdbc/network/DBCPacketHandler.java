@@ -14,6 +14,9 @@ import kamkeel.npcdbc.network.packets.get.aura.DBCGetAura;
 import kamkeel.npcdbc.network.packets.get.form.DBCGetForm;
 import kamkeel.npcdbc.network.packets.get.outline.DBCGetOutline;
 import kamkeel.npcdbc.network.packets.player.*;
+import kamkeel.npcdbc.network.packets.player.ability.DBCRequestAbility;
+import kamkeel.npcdbc.network.packets.player.ability.DBCRequestAbilityWheel;
+import kamkeel.npcdbc.network.packets.player.ability.DBCSaveAbilityWheel;
 import kamkeel.npcdbc.network.packets.player.ability.DBCSelectAbility;
 import kamkeel.npcdbc.network.packets.player.aura.DBCRequestAura;
 import kamkeel.npcdbc.network.packets.player.aura.DBCSelectAura;
@@ -72,13 +75,16 @@ public class DBCPacketHandler {
 
     private void registerPlayerPackets() {
         PLAYER_PACKETS.registerPacket(new DBCRequestFormWheel());
+        PLAYER_PACKETS.registerPacket(new DBCRequestAbilityWheel());
         PLAYER_PACKETS.registerPacket(new DBCRequestAura());
         PLAYER_PACKETS.registerPacket(new DBCSelectAura());
         PLAYER_PACKETS.registerPacket(new DBCRequestForm());
         PLAYER_PACKETS.registerPacket(new DBCSetAura());
         PLAYER_PACKETS.registerPacket(new DBCSelectForm());
         PLAYER_PACKETS.registerPacket(new DBCSaveFormWheel());
+        PLAYER_PACKETS.registerPacket(new DBCRequestAbility());
         PLAYER_PACKETS.registerPacket(new DBCSelectAbility());
+        PLAYER_PACKETS.registerPacket(new DBCSaveAbilityWheel());
         PLAYER_PACKETS.registerPacket(new DBCSetFlight());
         PLAYER_PACKETS.registerPacket(new DBCRequestOutline());
         PLAYER_PACKETS.registerPacket(new TurboPacket());

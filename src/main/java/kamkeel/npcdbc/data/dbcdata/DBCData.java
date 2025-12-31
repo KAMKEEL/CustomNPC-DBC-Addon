@@ -11,10 +11,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.outline.IOutline;
-import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcdbc.constants.DBCRace;
-import kamkeel.npcdbc.constants.DBCSettings;
-import kamkeel.npcdbc.constants.Effects;
+import kamkeel.npcdbc.constants.*;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
@@ -482,6 +479,29 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
 
     public boolean isDBCFormUnlocked(int formID) {
         return getUnlockedDBCFormsMap().containsKey(formID);
+    }
+
+    public HashMap<Integer, String> getUnlockedDBCAbilitiesMap() {
+        HashMap<Integer, String> dbcAbilities = new LinkedHashMap<>();
+        int race = Race;
+
+        dbcAbilities.put(DBCAbilities.Swoop, "§3Swoop");
+        dbcAbilities.put(DBCAbilities.FriendlyFist, "§fFriendly Fist");
+
+        if (Skills.contains("FZ"))
+            dbcAbilities.put(DBCAbilities.Fusion, "§6Fusion");
+        if (Skills.contains("KF"))
+            dbcAbilities.put(DBCAbilities.KiFist, "§3Ki Fist");
+        if (Skills.contains("KP"))
+            dbcAbilities.put(DBCAbilities.KiProtection, "§3Ki Protection");
+        if (Skills.contains("UI"))
+            dbcAbilities.put(DBCAbilities.UltraInstinct, "§bUltra Instinct");
+        if (Skills.contains("KI") && Skills.contains("KF"))
+            dbcAbilities.put(DBCAbilities.KiWeapon, "§3Ki Weapon");
+        if (race == DBCRace.NAMEKIAN)
+            dbcAbilities.put(DBCAbilities.NamekRegen, "§aNamekian Regeneration");
+
+        return dbcAbilities;
     }
 
     public HashMap<Integer, String> getUnlockedDBCFormsMap() {

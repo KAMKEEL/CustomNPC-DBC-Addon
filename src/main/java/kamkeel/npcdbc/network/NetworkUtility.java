@@ -4,6 +4,7 @@ import kamkeel.npcdbc.controllers.AbilityController;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
+import kamkeel.npcdbc.data.AbilityWheelData;
 import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.ability.Ability;
@@ -86,6 +87,21 @@ public class NetworkUtility {
         GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);
     }
 
+    public static void sendPlayerAbilityWheel(EntityPlayer player) {
+        PlayerDataUtil.sendAbilityDBCInfo((EntityPlayerMP) player, false);
+        PlayerDBCInfo data = ((IPlayerDBCInfo) PlayerDataController.Instance.getPlayerData(player)).getPlayerDBCInfo();
+        NBTTagCompound compound = new NBTTagCompound();
+        if (data != null) {
+            for (int i = 0; i < 6; i++) {
+                AbilityWheelData wheelData = data.abilityWheel[i];
+                if (wheelData.abilityID != -1 && !wheelData.isDBC && !AbilityController.getInstance().has(wheelData.abilityID))
+                    wheelData.abilityID = -1;
+                wheelData.writeToNBT(compound);
+            }
+        }
+        GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);
+    }
+
     public static void sendPlayersAuras(EntityPlayer player) {
         PlayerDataUtil.sendAuraDBCInfo((EntityPlayerMP) player);
         PlayerDBCInfo data = ((IPlayerDBCInfo) PlayerDataController.Instance.getPlayerData(player)).getPlayerDBCInfo();
@@ -94,6 +110,18 @@ public class NetworkUtility {
             Aura customAura = (Aura) AuraController.getInstance().get(data.selectedAura);
             if (customAura != null)
                 compound = customAura.writeToNBT();
+        }
+        GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);
+    }
+
+    public static void sendPlayersAbilities(EntityPlayer player, boolean useMenuName) {
+        PlayerDataUtil.sendAbilityDBCInfo((EntityPlayerMP) player, useMenuName);
+        PlayerDBCInfo data = ((IPlayerDBCInfo) PlayerDataController.Instance.getPlayerData(player)).getPlayerDBCInfo();
+        NBTTagCompound compound = new NBTTagCompound();
+        if (data != null && data.customAbilityData.selectedAbility != -1) {
+            Ability ability = (Ability) AbilityController.getInstance().get(data.customAbilityData.selectedAbility);
+            if (ability != null)
+                compound = ability.writeToNBT(false);
         }
         GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);
     }

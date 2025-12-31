@@ -4,7 +4,9 @@ import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
+import kamkeel.npcdbc.constants.DBCAbilities;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.data.ability.AbilityData;
@@ -29,6 +31,7 @@ import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
