@@ -678,29 +678,29 @@ public interface IDBCAddon extends IDBCPlayer {
 
     IOutline getOutline();
 
-    Ability getUnlockedAbility(int id);
-
-    Ability getSelectedAbility();
-
-    void setSelectedAbility(int id);
-
-    void setSelectedAbility(Ability ability);
-
-    void giveAbility(Ability ability);
-
-    void giveAbility(int id);
-
-    boolean hasAbility(int id);
-
-    boolean hasAbility(Ability ability);
-
-    boolean hasSelectedAbility();
-
-    boolean removeAbility(int id);
-
-    boolean removeAbility(Ability ability);
-
-    void clearAbilities();
+//    Ability getUnlockedAbility(int id);
+//
+//    Ability getSelectedAbility();
+//
+//    void setSelectedAbility(int id);
+//
+//    void setSelectedAbility(Ability ability);
+//
+//    void giveAbility(Ability ability);
+//
+//    void giveAbility(int id);
+//
+//    boolean hasAbility(int id);
+//
+//    boolean hasAbility(Ability ability);
+//
+//    boolean hasSelectedAbility();
+//
+//    boolean removeAbility(int id);
+//
+//    boolean removeAbility(Ability ability);
+//
+//    void clearAbilities();
 
     /**
      * @return IPlayer object of the player you are fused with
