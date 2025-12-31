@@ -51,7 +51,7 @@ public class PlayerDBCInfo {
     public HashMap<Integer, FormDisplay.BodyColor> configuredFormColors = new HashMap<>();
     public FormWheelData[] formWheel = new FormWheelData[6];
 
-    public int selectedAbility = -1;
+    public int selectedAbility = -1, selectedDBCAbility = -1, tempSelectedDBCAbility = -1;
     public HashSet<Integer> unlockedAbilities = new HashSet<Integer>();
     public HashMap<Integer, Integer> abilityTimers = new HashMap<>();
     public HashMap<Integer, HashSet<Integer>> toggledAbilities = new HashMap<>();
@@ -595,6 +595,7 @@ public class PlayerDBCInfo {
         dbcCompound.setTag("UnlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
 
         dbcCompound.setInteger("SelectedAbility", selectedAbility);
+        dbcCompound.setInteger("SelectedDBCAbility", selectedDBCAbility);
         dbcCompound.setTag("UnlockedAbilities", NBTTags.nbtIntegerSet(unlockedAbilities));
         dbcCompound.setTag("AbilityCooldowns", NBTTags.nbtIntegerIntegerMap(abilityTimers));
         dbcCompound.setTag("ToggledAbilities", NBTTags.nbtIntegerSet(toggledAbilities.get(0)));
@@ -623,6 +624,7 @@ public class PlayerDBCInfo {
         unlockedAuras = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedAuras", 10));
 
         selectedAbility = dbcCompound.getInteger("SelectedAbility");
+        selectedDBCAbility = dbcCompound.getInteger("SelectedDBCAbility");
         unlockedAbilities = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedAbilities", 10));
         abilityTimers = NBTTags.getIntegerIntegerMap(dbcCompound.getTagList("AbilityCooldowns", 10));
         toggledAbilities.put(0, NBTTags.getIntegerSet(dbcCompound.getTagList("ToggledAbilities", 10)));
