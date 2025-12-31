@@ -7,6 +7,7 @@ import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.ability.Ability;
+import kamkeel.npcdbc.data.ability.AbilityData;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -51,16 +52,18 @@ public class PlayerDBCInfo {
     public HashMap<Integer, FormDisplay.BodyColor> configuredFormColors = new HashMap<>();
     public FormWheelData[] formWheel = new FormWheelData[6];
 
-    public int selectedAbility = -1, selectedDBCAbility = -1, tempSelectedDBCAbility = -1;
-    public HashSet<Integer> unlockedAbilities = new HashSet<Integer>();
-    public HashMap<Integer, Integer> abilityTimers = new HashMap<>();
-    public HashMap<Integer, HashSet<Integer>> toggledAbilities = new HashMap<>();
+    public AbilityData customAbilityData = new AbilityData();
+    public AbilityData dbcAbilityData = new AbilityData(true);
+    public AbilityWheelData[] abilityWheel = new AbilityWheelData[6];
 
     public PlayerDBCInfo(PlayerData parent) {
         this.parent = parent;
 
         for (int i = 0; i < formWheel.length; i++)
             formWheel[i] = new FormWheelData(i);
+
+        for (int i = 0; i < abilityWheel.length; i++)
+            abilityWheel[i] = new AbilityWheelData(i);
     }
 
     public void addForm(Form form) {
@@ -317,157 +320,6 @@ public class PlayerDBCInfo {
 
     }
 
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    // Ability stuff
-    public void addAbility(Ability ability) {
-        if (ability == null)
-            return;
-
-        unlockedAbilities.add(ability.id);
-    }
-
-    public void addAbility(int id) {
-        if (!AbilityController.getInstance().has(id))
-            return;
-
-        unlockedAbilities.add(id);
-    }
-
-    // TODO add ability wheel
-//    public void addFormWheel(int wheelSlot, FormWheelData data) {
-//        if (wheelSlot > 5)
-//            return;
-//        formWheel[wheelSlot].readFromNBT(data.writeToNBT(new NBTTagCompound()));
-//    }
-
-    public boolean hasAbilityUnlocked(int id) {
-        return unlockedAbilities.contains(id);
-    }
-
-    public boolean removeAbility(Ability ability) {
-        if (ability == null)
-            return false;
-
-        return unlockedAbilities.remove(ability.id);
-    }
-
-    public boolean removeAbility(int id) {
-        return unlockedAbilities.remove(id);
-    }
-
-    // TODO clear ability wheel
-//    public void removeFormWheel(int wheelSlot) {
-//        if (wheelSlot <= 5 && wheelSlot >= 0)
-//            formWheel[wheelSlot].reset();
-//    }
-
-    public Ability getUnlockedAbility(int id) {
-        if (unlockedAbilities.contains(id))
-            return AbilityController.getInstance().get(id);
-
-        return null;
-    }
-
-    public boolean hasSelectedAbility() {
-        return selectedAbility > -1 && getSelectedAbility() != null;
-    }
-
-    public boolean hasSelectedAbility(int id) {
-        return selectedAbility == id;
-    }
-
-    public boolean hasSelectedAbility(Ability ability) {
-        if (ability == null)
-            return false;
-        return selectedAbility == ability.id;
-    }
-
-    public boolean hasAbility(int id) {
-        return unlockedAbilities.contains(id);
-    }
-
-    public boolean hasAbility(Ability ability) {
-        if (ability == null)
-            return false;
-        return unlockedAbilities.contains(ability.id);
-    }
-
-    public String getAbilityColorCode(Ability a) {
-        if (a != null && a.getMenuName().contains("§")) {
-            String s = a.getMenuName();
-            int i = s.indexOf("§");
-            return s.substring(i, 2);
-        }
-        return "";
-    }
-
-    public String getColoredName(Ability a) {
-        if (a == null)
-            return "";
-        return getAbilityColorCode(a) + a.getName();
-    }
-
-    public Ability getSelectedAbility() {
-        return AbilityController.Instance.get(selectedAbility);
-    }
-
-    public void setSelectedAbility(int id) {
-        if (unlockedAbilities.contains(id) && AbilityController.getInstance().has(id))
-            selectedAbility = id;
-    }
-
-    public void setSelectedAbility(Ability ability) {
-        if (ability != null && unlockedAbilities.contains(ability.id) && AbilityController.getInstance().has(ability.id))
-            selectedAbility = ability.id;
-    }
-
-    public void clearAllAbilities() {
-        resetAbilityData(true);
-    }
-
-    public void resetAbilityData(boolean removeAbilities) {
-        selectedAbility = -1;
-        if (removeAbilities)
-            unlockedAbilities.clear();
-
-        // TODO reset ability wheel
-        //for (FormWheelData formWheelData : formWheel) formWheelData.reset();
-    }
-
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    // Ability cooldown stuff
-    public void addCooldown(int abilityId, int timeInTicks) {
-        if (!abilityTimers.containsKey(abilityId))
-            abilityTimers.put(abilityId, timeInTicks);
-        abilityTimers.replace(abilityId, timeInTicks);
-    }
-
-    public void decrementCooldown(int abilityId) {
-        if (abilityTimers.containsKey(abilityId)) {
-            int currentTime = abilityTimers.get(abilityId);
-            if (currentTime > 0)
-                abilityTimers.replace(abilityId, currentTime - 1);
-            else if (currentTime == 0) {
-                abilityTimers.remove(abilityId);
-            }
-        }
-    }
-
-    public int getCooldown(int abiltyId) {
-        if (abilityTimers.containsKey(abiltyId))
-            return abilityTimers.get(abiltyId);
-        return -1;
-
-    }
-
-    public boolean hasCooldown(int abilityId) {
-        if (abilityTimers.containsKey(abilityId))
-            return abilityTimers.get(abilityId) > -1;
-        return false;
-    }
-
     ///////////////////////////////////////////
     ///////////////////////////////////////////
     // Aura stuff
@@ -590,16 +442,15 @@ public class PlayerDBCInfo {
         for (int i = 0; i < formWheel.length; i++)
             formWheel[i].writeToNBT(dbcCompound);
 
+        for (int i = 0; i < abilityWheel.length; i++)
+            abilityWheel[i].writeToNBT(dbcCompound);
+
         dbcCompound.setInteger("CurrentAura", currentAura);
         dbcCompound.setInteger("SelectedAura", selectedAura);
         dbcCompound.setTag("UnlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
 
-        dbcCompound.setInteger("SelectedAbility", selectedAbility);
-        dbcCompound.setInteger("SelectedDBCAbility", selectedDBCAbility);
-        dbcCompound.setTag("UnlockedAbilities", NBTTags.nbtIntegerSet(unlockedAbilities));
-        dbcCompound.setTag("AbilityCooldowns", NBTTags.nbtIntegerIntegerMap(abilityTimers));
-        dbcCompound.setTag("ToggledAbilities", NBTTags.nbtIntegerSet(toggledAbilities.get(0)));
-        dbcCompound.setTag("ToggledDBCAbilities", NBTTags.nbtIntegerSet(toggledAbilities.get(1)));
+        customAbilityData.writeToNBT(dbcCompound);
+        dbcAbilityData.writeToNBT(dbcCompound);
 
         saveBonuses(dbcCompound);
         compound.setTag("DBCInfo", dbcCompound);
@@ -619,16 +470,15 @@ public class PlayerDBCInfo {
         for (int i = 0; i < formWheel.length; i++)
             formWheel[i].readFromNBT(dbcCompound.getCompoundTag("FormWheel" + i));
 
+        for (int i = 0; i < abilityWheel.length; i++)
+            abilityWheel[i].readFromNBT(dbcCompound.getCompoundTag("AbilityWheel" + i));
+
         currentAura = dbcCompound.getInteger("CurrentAura");
         selectedAura = dbcCompound.getInteger("SelectedAura");
         unlockedAuras = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedAuras", 10));
 
-        selectedAbility = dbcCompound.getInteger("SelectedAbility");
-        selectedDBCAbility = dbcCompound.getInteger("SelectedDBCAbility");
-        unlockedAbilities = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedAbilities", 10));
-        abilityTimers = NBTTags.getIntegerIntegerMap(dbcCompound.getTagList("AbilityCooldowns", 10));
-        toggledAbilities.put(0, NBTTags.getIntegerSet(dbcCompound.getTagList("ToggledAbilities", 10)));
-        toggledAbilities.put(1, NBTTags.getIntegerSet(dbcCompound.getTagList("ToggledDBCAbilities", 10)));
+        customAbilityData.readFromNBT(dbcCompound);
+        dbcAbilityData.readFromNBT(dbcCompound);
 
         if (dbcCompound.hasKey("ConfigurableFormColors"))
             configuredFormColors = NBTHelper.javaIntegerObjectMap(
