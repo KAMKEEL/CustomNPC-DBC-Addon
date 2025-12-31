@@ -1,8 +1,10 @@
 package kamkeel.npcdbc.data.ability.types;
 
 import kamkeel.npcdbc.constants.DBCAbilities;
+import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.data.ability.AddonAbility;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.util.DBCSettingsUtil;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -20,6 +22,7 @@ public class FriendlyFist extends AddonAbility {
 
     @Override
     public void onToggle(EntityPlayer player) {
+        super.onToggle(player);
         DBCSettingsUtil.setFriendlyFist(player, !DBCSettingsUtil.isFriendlyFist(player));
     }
 }

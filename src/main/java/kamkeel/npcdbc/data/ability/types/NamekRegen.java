@@ -23,6 +23,7 @@ public class NamekRegen extends AddonAbility {
 
     @Override
     public void onActivate(EntityPlayer player) {
+        super.onToggle(player);
         if (!ConfigDBCGameplay.EnableNamekianRegen || DBCData.get(player).Race != DBCRace.NAMEKIAN)
             return;
 

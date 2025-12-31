@@ -21,6 +21,7 @@ public class Fusion extends AddonAbility {
 
     @Override
     public void onToggle(EntityPlayer player) {
+        super.onToggle(player);
         DBCSettingsUtil.setFusion(player, !DBCSettingsUtil.isFusion(player));
     }
 }

@@ -20,6 +20,7 @@ public class Swoop extends AddonAbility {
 
     @Override
     public void onToggle(EntityPlayer player) {
+        super.onToggle(player);
         DBCSettingsUtil.setSwoop(player, !DBCSettingsUtil.isSwoop(player));
     }
 }

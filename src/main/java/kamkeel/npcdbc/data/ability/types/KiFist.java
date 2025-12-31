@@ -21,6 +21,7 @@ public class KiFist extends AddonAbility {
 
     @Override
     public void onToggle(EntityPlayer player) {
+        super.onToggle(player);
         DBCSettingsUtil.setKiFist(player, !DBCSettingsUtil.isKiFist(player));
     }
 }

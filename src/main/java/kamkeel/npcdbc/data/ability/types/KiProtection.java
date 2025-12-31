@@ -21,6 +21,7 @@ public class KiProtection extends AddonAbility {
 
     @Override
     public void onToggle(EntityPlayer player) {
+        super.onToggle(player);
         DBCSettingsUtil.setKiProtection(player, !DBCSettingsUtil.isKiProtection(player));
     }
 }

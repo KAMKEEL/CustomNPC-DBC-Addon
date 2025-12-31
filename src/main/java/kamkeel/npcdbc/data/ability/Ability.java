@@ -172,13 +172,20 @@ public class Ability {
                 return;
             }
 
+            if (event.getCooldown() > -1 && abilityData.hasCooldown(id)) {
+                return;
+            }
+
             if (event.getKiCost() > -1 && data.Ki < event.getKiCost()) {
                 return;
             }
 
-            if (event.getCooldown() > -1 && abilityData.hasCooldown(id)) {
-                return;
+            if (event.getKiCost() > -1) {
+                data.Ki -= event.getKiCost();
+                info.updateClient();
             }
+
+            DBCEventHooks.onAbilityActivateEvent(event);
 
             AbilityScript script = getScriptHandler();
             if (script == null)
@@ -187,7 +194,6 @@ public class Ability {
 
             script.callScript(AbilityScript.ScriptType.OnAbilityActivate, event);
 
-            DBCEventHooks.onAbilityActivateEvent(event);
         }
     }
 
@@ -204,13 +210,20 @@ public class Ability {
                 return;
             }
 
+            if (event.getCooldown() > -1 && abilityData.hasCooldown(id)) {
+                return;
+            }
+
             if (event.getKiCost() > -1 && data.Ki < event.getKiCost()) {
                 return;
             }
 
-            if (event.getCooldown() > -1 && abilityData.hasCooldown(id)) {
-                return;
+            if (event.getKiCost() > -1) {
+                data.Ki -= event.getKiCost();
+                info.updateClient();
             }
+
+            DBCEventHooks.onAbilityToggleEvent(event);
 
             AbilityScript script = getScriptHandler();
             if (script == null)
@@ -218,8 +231,6 @@ public class Ability {
 
 
             script.callScript(AbilityScript.ScriptType.OnAbilityToggle, event);
-
-            DBCEventHooks.onAbilityToggleEvent(event);
         }
     }
 

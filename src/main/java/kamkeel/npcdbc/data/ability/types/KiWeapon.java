@@ -20,6 +20,7 @@ public class KiWeapon extends AddonAbility {
 
     @Override
     public void onToggle(EntityPlayer player) {
+        super.onToggle(player);
         int mode = DBCSettingsUtil.getKiWeapon(player);
 
         if (mode == -1) {
