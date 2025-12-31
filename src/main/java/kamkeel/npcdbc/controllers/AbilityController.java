@@ -73,16 +73,16 @@ public class AbilityController {
     }
 
     private void loadAddonAbilities() {
-        setAddon(new Swoop());
-        setAddon(new Fusion());
-        setAddon(new KiFist());
-        setAddon(new KiProtection());
-        setAddon(new FriendlyFist());
-        setAddon(new KiWeapon());
-        setAddon(new NamekRegen());
+        addonAbility(new Swoop());
+        addonAbility(new Fusion());
+        addonAbility(new KiFist());
+        addonAbility(new KiProtection());
+        addonAbility(new FriendlyFist());
+        addonAbility(new KiWeapon());
+        addonAbility(new NamekRegen());
     }
 
-    private void setAddon(AddonAbility ability) {
+    private void addonAbility(AddonAbility ability) {
         addonAbilities.put(ability.id, ability);
     }
 
@@ -192,7 +192,7 @@ public class AbilityController {
     }
 
     public void delete(String name) {
-        Ability delete = getAbilityFromName(name);
+        Ability delete = getAbilityFromName(name, false);
         if (delete != null) {
             Ability foundAbility = this.abilities.remove(delete.getID());
             abilityScriptHandlers.remove(delete.getID());
@@ -235,21 +235,37 @@ public class AbilityController {
     }
 
     public boolean has(String name) {
-        return getAbilityFromName(name) != null;
+        return getAbilityFromName(name, false) != null;
     }
 
     public boolean has(int id) {
-        return get(id) != null;
+        return get(id, false) != null;
     }
 
-    public Ability get(String name) {
-        return getAbilityFromName(name);
+    public boolean has(String name, boolean dbcAbility) {
+        return getAbilityFromName(name, dbcAbility) != null;
+    }
+
+    public boolean has(int id, boolean dbcAbility) {
+        return get(id, dbcAbility) != null;
     }
 
     public Ability get(int id) {
+        return get(id, false);
+    }
+
+    public Ability get(String name) {
+        return getAbilityFromName(name, false);
+    }
+
+    public Ability get(int id, boolean dbcAbility) {
         if (id == -1)
             return null;
-        return this.abilities.get(id);
+        return getAbilityMap(dbcAbility).get(id);
+    }
+
+    public Ability get(String name, boolean dbcAbility) {
+        return getAbilityFromName(name, dbcAbility);
     }
 
     public Ability[] getAbilities() {
@@ -257,8 +273,13 @@ public class AbilityController {
         return abilities.toArray(new Ability[0]);
     }
 
-    public Ability getAbilityFromName(String abilityName) {
-        for (Map.Entry<Integer, Ability> ability : AbilityController.getInstance().abilities.entrySet()) {
+    public Ability[] getDBCAbilities() {
+        ArrayList<AddonAbility> addonAbilities = new ArrayList<>(this.addonAbilities.values());
+        return addonAbilities.toArray(new AddonAbility[0]);
+    }
+
+    public Ability getAbilityFromName(String abilityName, boolean dbcAbility) {
+        for (Map.Entry<Integer, ? extends Ability> ability : getAbilityMap(dbcAbility).entrySet()) {
             if (ability.getValue().name.equalsIgnoreCase(abilityName)) {
                 return ability.getValue();
             }
@@ -274,6 +295,10 @@ public class AbilityController {
             i++;
         }
         return names;
+    }
+
+    private Map<Integer, ? extends Ability> getAbilityMap(boolean dbcAbility) {
+        return dbcAbility ? addonAbilities : abilities;
     }
 
     public File getMapDir() {

@@ -15,7 +15,6 @@ import net.minecraft.client.gui.FontRenderer;
 import static org.lwjgl.opengl.GL11.glScaled;
 import static org.lwjgl.opengl.GL11.glTranslatef;
 
-// TODO CREATE THE DBC ABILITY HANDLER URGENTLY LMAO
 public class AbilityWheelSegment extends WheelSegment {
     public HUDAbilityWheel parent;
     public Ability ability;
@@ -42,7 +41,7 @@ public class AbilityWheelSegment extends WheelSegment {
     public void setAbility(int abilityID, boolean isDBC, boolean updateServer) {
         data.abilityID = abilityID;
         data.isDBC = isDBC;
-        ability = !data.isDBC ? (Ability) AbilityController.getInstance().get(data.abilityID) : null;
+        ability = (Ability) AbilityController.getInstance().get(data.abilityID, data.isDBC);
         if (updateServer)
             DBCPacketHandler.Instance.sendToServer(new DBCSaveAbilityWheel(index, data));
         //icon = form != null ? new FormIcon(parent, form) : new FormIcon(parent, data.formID);
@@ -50,7 +49,7 @@ public class AbilityWheelSegment extends WheelSegment {
 
     public void setAbility(AbilityWheelData data, boolean updateServer) {
         this.data = data;
-        ability = !data.isDBC ? (Ability) AbilityController.getInstance().get(data.abilityID) : null;
+        ability = (Ability) AbilityController.getInstance().get(data.abilityID, data.isDBC);
         if (updateServer)
             DBCPacketHandler.Instance.sendToServer(new DBCSaveAbilityWheel(index, data));
         //icon = form != null ? new FormIcon(parent, form) : new FormIcon(parent, data.formID);
@@ -115,13 +114,6 @@ public class AbilityWheelSegment extends WheelSegment {
     }
 
     public String getAbilityName() {
-        DBCData dbcData = DBCData.get(parent.dbcInfo.parent.player);
-
-        if (!data.isDBC)
-            return ability != null ? ability.menuName : "";
-
-        // TODO RETURN DBC ABILITIES NAMES
-        //return DBCForm.getMenuName(dbcData.Race, data.abilityID, dbcData.isForm(DBCForm.Divine));
-        return "";
+        return ability != null ? ability.menuName : "";
     }
 }
