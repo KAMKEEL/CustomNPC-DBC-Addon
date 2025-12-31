@@ -10,6 +10,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.client.gui.global.auras.SubGuiAuraDisplay;
+import kamkeel.npcdbc.client.gui.hud.abilityWheel.HUDAbilityWheel;
 import kamkeel.npcdbc.client.gui.hud.formWheel.HUDFormWheel;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.client.sound.SoundHandler;
@@ -23,6 +24,7 @@ import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.data.ability.Ability;
+import kamkeel.npcdbc.data.ability.AbilityData;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -139,11 +141,19 @@ public class ClientEventHandler {
             return;
 
         if (KeyHandler.UseAbilityKey.isPressed()) {
-            if (PlayerDataUtil.getClientDBCInfo() != null) {
-                PlayerDBCInfo info = PlayerDataUtil.getClientDBCInfo();
+            if (PlayerDataUtil.getClientDBCInfo() != null && DBCData.getClient() != null) {
+                DBCData data = DBCData.getClient();
 
-                if (info.hasSelectedAbility() && info.hasAbilityUnlocked(info.selectedAbility)) {
-                    DBCPacketHandler.Instance.sendToServer(new AbilityUsePacket(Minecraft.getMinecraft().thePlayer, info.selectedAbility));
+                if (!data.isFnPressed) return;
+
+                PlayerDBCInfo info = PlayerDataUtil.getClientDBCInfo();
+                AbilityData dbc = info.dbcAbilityData;
+                AbilityData custom = info.customAbilityData;
+
+                if (custom.hasSelectedAbility() && custom.hasAbilityUnlocked(custom.selectedAbility)) {
+                    DBCPacketHandler.Instance.sendToServer(new AbilityUsePacket(Minecraft.getMinecraft().thePlayer, custom.selectedAbility));
+                } else {
+                    DBCPacketHandler.Instance.sendToServer(new AbilityUsePacket(Minecraft.getMinecraft().thePlayer, dbc.selectedAbility));
                 }
             }
         }
@@ -158,6 +168,12 @@ public class ClientEventHandler {
         if (KeyHandler.FormWheelKey.isPressed()) {
             if (PlayerDataUtil.getClientDBCInfo() != null)
                 mc.displayGuiScreen(new HUDFormWheel());
+        }
+
+        if (KeyHandler.UseAbilityKey.isPressed()) {
+            if (PlayerDataUtil.getClientDBCInfo() != null && DBCData.getClient() != null && !DBCData.getClient().isFnPressed) {
+                mc.displayGuiScreen(new HUDAbilityWheel());
+            }
         }
     }
 

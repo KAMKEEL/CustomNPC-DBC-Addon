@@ -70,6 +70,7 @@ public final class DBCSelectAbility extends AbstractPacket {
 
             // TODO figure out a nice way to implement a controller for DBC abilities
             data.selectedAbility = abilityID;
+            dbcInfo.customAbilityData.selectedAbility = -1;
         } else if(abilityID != -1 && AbilityController.getInstance().has(abilityID)) {
             if (abilityID == data.selectedAbility)
                 return;
@@ -77,11 +78,13 @@ public final class DBCSelectAbility extends AbstractPacket {
             Ability ability = (Ability) AbilityController.getInstance().get(abilityID);
             if (ability != null && data.hasAbilityUnlocked(abilityID)) {
                 data.selectedAbility = abilityID;
+                dbcInfo.dbcAbilityData.selectedAbility = -1;
                 NetworkUtility.sendServerMessage(player, "§a", "npcdbc.abilitySelect", " ", ability.getMenuName());
                 compound = ability.writeToNBT(false);
             }
         } else {
-            data.selectedAbility = -1;
+            dbcInfo.dbcAbilityData.selectedAbility = -1;
+            dbcInfo.customAbilityData.selectedAbility = -1;
             NetworkUtility.sendServerMessage(player, "§9", "npcdbc.clearedSelection");
         }
 

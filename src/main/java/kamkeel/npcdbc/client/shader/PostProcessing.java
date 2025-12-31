@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientConstants;
+import kamkeel.npcdbc.client.gui.hud.abilityWheel.HUDAbilityWheel;
 import kamkeel.npcdbc.client.gui.hud.formWheel.HUDFormWheel;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import net.minecraft.client.Minecraft;
@@ -89,7 +90,12 @@ public class PostProcessing {
         }
 
         if (bloomSupported && ShaderHelper.shadersEnabled() &&
-            mc.currentScreen instanceof HUDFormWheel && HUDFormWheel.BLUR_ENABLED) {
+            ((mc.currentScreen instanceof HUDFormWheel && HUDFormWheel.BLUR_ENABLED) ||
+            (mc.currentScreen instanceof HUDAbilityWheel && HUDAbilityWheel.BLUR_ENABLED))) {
+            float blurIntensity = mc.currentScreen instanceof HUDAbilityWheel ?
+                HUDAbilityWheel.BLUR_INTENSITY :
+                HUDFormWheel.BLUR_INTENSITY;
+
             Framebuffer buff = getMainBuffer();
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glLoadIdentity();
@@ -101,11 +107,11 @@ public class PostProcessing {
             drawToBuffers(0);
             disableGLState();
 
-            blurVertical(buff.framebufferTexture, HUDFormWheel.BLUR_INTENSITY, 0, 0, mc.displayWidth, mc.displayHeight);
+            blurVertical(buff.framebufferTexture, blurIntensity, 0, 0, mc.displayWidth, mc.displayHeight);
 
             buff.bindFramebuffer(false);
             disableGLState();
-            blurHorizontal(BLUR_TEXTURE, HUDFormWheel.BLUR_INTENSITY, 0, 0, mc.displayWidth, mc.displayHeight);
+            blurHorizontal(BLUR_TEXTURE, blurIntensity, 0, 0, mc.displayWidth, mc.displayHeight);
             releaseShader();
 
             glEnable(GL_DEPTH_TEST);
