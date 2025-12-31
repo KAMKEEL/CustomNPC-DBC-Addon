@@ -16,7 +16,7 @@ public class Fusion extends AddonAbility {
         skillId = 0;
         iconX = 0;
         iconY = 0;
-        abilityData.type = Ability.Type.Toggle;
+        type = Ability.Type.Toggle;
     }
 
     @Override

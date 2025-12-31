@@ -15,7 +15,7 @@ public class Swoop extends AddonAbility {
         id = DBCAbilities.Swoop;
         iconX = 0;
         iconY = 0;
-        abilityData.type = Ability.Type.Toggle;
+        type = Ability.Type.Toggle;
     }
 
     @Override

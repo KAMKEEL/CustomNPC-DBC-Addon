@@ -18,7 +18,7 @@ public class NamekRegen extends AddonAbility {
         id = DBCAbilities.NamekRegen;
         iconX = 0;
         iconY = 0;
-        abilityData.type = Type.Active;
+        type = Type.Active;
     }
 
     @Override
