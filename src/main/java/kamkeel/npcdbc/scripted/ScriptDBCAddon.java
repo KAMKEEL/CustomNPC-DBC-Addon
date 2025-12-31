@@ -1237,6 +1237,66 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
+    public Ability getUnlockedAbility(int id) {
+        return dbcInfo.customAbilityData.getUnlockedAbility(id);
+    }
+
+    @Override
+    public Ability getSelectedAbility() {
+        return dbcInfo.customAbilityData.getSelectedAbility();
+    }
+
+    @Override
+    public void setSelectedAbility(int id) {
+        dbcInfo.customAbilityData.setSelectedAbility(id);
+    }
+
+    @Override
+    public void setSelectedAbility(Ability ability) {
+        dbcInfo.customAbilityData.setSelectedAbility(ability);
+    }
+
+    @Override
+    public void giveAbility(Ability ability) {
+        dbcInfo.customAbilityData.addAbility(ability);
+    }
+
+    @Override
+    public void giveAbility(int id) {
+        dbcInfo.customAbilityData.addAbility(id);
+    }
+
+    @Override
+    public boolean hasAbility(int id) {
+        return dbcInfo.customAbilityData.hasAbility(id);
+    }
+
+    @Override
+    public boolean hasAbility(Ability ability) {
+        return dbcInfo.customAbilityData.hasAbility(ability);
+    }
+
+    @Override
+    public boolean hasSelectedAbility() {
+        return dbcInfo.customAbilityData.hasSelectedAbility();
+    }
+
+    @Override
+    public boolean removeAbility(int id) {
+        return dbcInfo.customAbilityData.removeAbility(id);
+    }
+
+    @Override
+    public boolean removeAbility(Ability ability) {
+        return dbcInfo.customAbilityData.removeAbility(ability);
+    }
+
+    @Override
+    public void clearAbilities() {
+        dbcInfo.customAbilityData.clearAllAbilities();
+    }
+
+    @Override
     public IPlayer<?> getFusionPartner() {
 
         if (!dbcData.stats.isFused()) {

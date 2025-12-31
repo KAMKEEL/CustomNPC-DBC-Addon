@@ -7,11 +7,12 @@ import noppes.npcs.NBTTags;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 public class AbilityData {
     boolean isDBC = false;
-    public int selectedAbility = -1, tempSelectedAbility = -1;
-    public HashSet<Integer> unlockedAbilities = new HashSet<Integer>();
+    public int selectedAbility = -1;
+    public HashSet<Integer> unlockedAbilities = new HashSet<>();
     public HashMap<Integer, Integer> abilityTimers = new HashMap<>();
     public HashMap<Integer, Integer> toggledAbilities = new HashMap<>();
     public AbilityWheelData[] abilityWheel = new AbilityWheelData[6];
@@ -39,7 +40,7 @@ public class AbilityData {
     }
 
     public void addAbility(int id) {
-        if (!AbilityController.getInstance().has(id))
+        if (!getAbilityMap().containsKey(id))
             return;
 
         unlockedAbilities.add(id);
@@ -73,7 +74,7 @@ public class AbilityData {
 
     public Ability getUnlockedAbility(int id) {
         if (unlockedAbilities.contains(id))
-            return AbilityController.getInstance().get(id);
+            return getAbilityMap().get(id);
 
         return null;
     }
@@ -103,16 +104,16 @@ public class AbilityData {
     }
 
     public Ability getSelectedAbility() {
-        return AbilityController.Instance.get(selectedAbility);
+        return getAbilityMap().get(selectedAbility);
     }
 
     public void setSelectedAbility(int id) {
-        if (unlockedAbilities.contains(id) && AbilityController.getInstance().has(id))
+        if (unlockedAbilities.contains(id) && getAbilityMap().containsKey(id))
             selectedAbility = id;
     }
 
     public void setSelectedAbility(Ability ability) {
-        if (ability != null && unlockedAbilities.contains(ability.id) && AbilityController.getInstance().has(ability.id))
+        if (ability != null && unlockedAbilities.contains(ability.id) && getAbilityMap().containsKey(ability.id))
             selectedAbility = ability.id;
     }
 
@@ -156,6 +157,13 @@ public class AbilityData {
         if (abilityTimers.containsKey(abilityId))
             return abilityTimers.get(abilityId) > -1;
         return false;
+    }
+
+    private Map<Integer, ? extends Ability> getAbilityMap() {
+        if (isDBC)
+            return AbilityController.getInstance().addonAbilities;
+
+        return AbilityController.getInstance().abilities;
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
