@@ -12,7 +12,7 @@ public class Swoop extends AddonAbility {
         name = "Swoop";
         langName = "ability.swoop";
         langDescription = "ability.swoopDesc";
-        id = DBCAbilities.SWOOP.ordinal();
+        id = DBCAbilities.Swoop;
         iconX = 0;
         iconY = 0;
         abilityData.type = Ability.Type.Toggle;

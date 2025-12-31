@@ -12,7 +12,7 @@ public class UltraInstinct extends AddonAbility {
         name = "UltraInstinct";
         langName = "ability.ui";
         langDescription = "ability.uiDesc";
-        id = DBCAbilities.ULTRAINSTINCT.ordinal();
+        id = DBCAbilities.UltraInstinct;
         skillId = 16;
         iconX = 0;
         iconY = 0;

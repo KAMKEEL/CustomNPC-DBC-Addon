@@ -12,7 +12,7 @@ public class GodOfDestruction extends AddonAbility {
         name = "GodOfDestruction";
         langName = "ability.god";
         langDescription = "ability.godDesc";
-        id = DBCAbilities.GODOFDESTRUCTION.ordinal();
+        id = DBCAbilities.GodOfDestruction;
         skillId = 18;
         iconX = 0;
         iconY = 0;

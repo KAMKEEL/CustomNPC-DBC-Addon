@@ -12,7 +12,7 @@ public class FriendlyFist extends AddonAbility {
         name = "FriendlyFist";
         langName = "ability.friendlyfist";
         langDescription = "ability.friendlyfistDesc";
-        id = DBCAbilities.FRIENDLYFIST.ordinal();
+        id = DBCAbilities.FriendlyFist;
         iconX = 0;
         iconY = 0;
         abilityData.type = Ability.Type.Toggle;

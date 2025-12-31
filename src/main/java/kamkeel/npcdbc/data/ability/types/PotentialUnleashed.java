@@ -12,7 +12,7 @@ public class PotentialUnleashed extends AddonAbility {
         name = "PotentialUnleashed";
         langName = "ability.potential";
         langDescription = "ability.potentialDesc";
-        id = DBCAbilities.POTENTIALUNLEASHED.ordinal();
+        id = DBCAbilities.PotentialUnleashed;
         skillId = 10;
         iconX = 0;
         iconY = 0;

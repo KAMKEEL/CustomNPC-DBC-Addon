@@ -15,7 +15,7 @@ public class NamekRegen extends AddonAbility {
         name = "NamekRegen";
         langName = "effect.namekianregeneration";
         langDescription = "ability.namekregenDesc";
-        id = DBCAbilities.NAMEKREGEN.ordinal();
+        id = DBCAbilities.NamekRegen;
         iconX = 0;
         iconY = 0;
         abilityData.type = Type.Active;

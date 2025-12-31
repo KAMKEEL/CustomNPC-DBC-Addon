@@ -11,7 +11,7 @@ public class Kaioken extends AddonAbility {
         name = "Kaioken";
         langName = "ability.kaioken";
         langDescription = "ability.kaiokenDesc";
-        id = DBCAbilities.KAIOKEN.ordinal();
+        id = DBCAbilities.Kaioken;
         skillId = 8;
         iconX = 0;
         iconY = 0;
