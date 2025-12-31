@@ -485,9 +485,10 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
         HashMap<Integer, String> dbcAbilities = new LinkedHashMap<>();
         int race = Race;
 
-        dbcAbilities.put(DBCAbilities.Swoop, "§3Swoop");
         dbcAbilities.put(DBCAbilities.FriendlyFist, "§fFriendly Fist");
 
+        if (Skills.contains("DS"))
+            dbcAbilities.put(DBCAbilities.Swoop, "§3Swoop");
         if (Skills.contains("FZ"))
             dbcAbilities.put(DBCAbilities.Fusion, "§6Fusion");
         if (Skills.contains("KF"))
