@@ -163,6 +163,21 @@ public class Ability {
         return newAbility;
     }
 
+    public static String getAbilityColorCode(Ability a) {
+        if (a != null && a.getMenuName().contains("§")) {
+            String s = a.getMenuName();
+            int i = s.indexOf("§");
+            return s.substring(i, 2);
+        }
+        return "";
+    }
+
+    public static String getColoredName(Ability a) {
+        if (a == null)
+            return "";
+        return getAbilityColorCode(a) + a.getName();
+    }
+
     public NBTTagCompound writeToNBT(boolean saveScripts) {
         NBTTagCompound compound = new NBTTagCompound();
 
