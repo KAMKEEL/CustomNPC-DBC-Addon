@@ -1,160 +1,179 @@
 package kamkeel.npcdbc.data.ability;
 
 import kamkeel.npcdbc.controllers.AbilityController;
-import kamkeel.npcdbc.data.PlayerDBCInfo;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.scripted.DBCEventHooks;
-import kamkeel.npcdbc.scripted.DBCPlayerEvent;
-import kamkeel.npcdbc.util.PlayerDataUtil;
-import net.minecraft.entity.player.EntityPlayer;
+import kamkeel.npcdbc.data.AbilityWheelData;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.Constants;
-import noppes.npcs.NoppesUtilServer;
-import noppes.npcs.api.entity.IPlayer;
-import noppes.npcs.controllers.data.EffectScript;
+import noppes.npcs.NBTTags;
 
-import java.util.function.Consumer;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class AbilityData {
-    private final Ability parent;
-    public Ability.Type type = Ability.Type.Active;
+    boolean isDBC = false;
+    public int selectedAbility = -1, tempSelectedAbility = -1;
+    public HashSet<Integer> unlockedAbilities = new HashSet<Integer>();
+    public HashMap<Integer, Integer> abilityTimers = new HashMap<>();
+    public HashMap<Integer, Integer> toggledAbilities = new HashMap<>();
+    public AbilityWheelData[] abilityWheel = new AbilityWheelData[6];
 
-    public Consumer<DBCPlayerEvent.AbilityEvent.Activate> onActivateConsumer = null;
-
-    public Consumer< DBCPlayerEvent.AbilityEvent.Toggle> onToggleConsumer = null;
-
-    public AbilityData(Ability parent) {
-        this.parent = parent;
+    public AbilityData(boolean isDBC) {
+        this.isDBC = isDBC;
     }
 
-    public Ability.Type getType() {
-        return type;
+    public AbilityData(){
     }
 
-    public void setType(Ability.Type type) {
-        this.type = type;
+    public boolean isDBC() {
+        return isDBC;
     }
 
-    public void onActivate(Consumer<DBCPlayerEvent.AbilityEvent.Activate> function) {
-        onActivateConsumer = function;
+    public void setDBC(boolean DBC) {
+        isDBC = DBC;
     }
 
-    public void onToggle(Consumer< DBCPlayerEvent.AbilityEvent.Toggle> function) {
-        onToggleConsumer = function;
+    public void addAbility(Ability ability) {
+        if (ability == null)
+            return;
+
+        unlockedAbilities.add(ability.id);
     }
 
-    public void onActivate(EntityPlayer player) {
-        IPlayer iPlayer = NoppesUtilServer.getIPlayer(player);
-        DBCData data = DBCData.getData(player);
-        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
+    public void addAbility(int id) {
+        if (!AbilityController.getInstance().has(id))
+            return;
 
-        if (type == Ability.Type.Active) {
-            DBCPlayerEvent.AbilityEvent.Activate event = new DBCPlayerEvent.AbilityEvent.Activate(iPlayer, parent);
+        unlockedAbilities.add(id);
+    }
 
-            if (event.isCanceled()) {
-                return;
+    public void addAbilityWheel(int wheelSlot, AbilityWheelData data) {
+        if (wheelSlot > 5)
+            return;
+        abilityWheel[wheelSlot].readFromNBT(data.writeToNBT(new NBTTagCompound()));
+    }
+
+    public boolean hasAbilityUnlocked(int id) {
+        return unlockedAbilities.contains(id);
+    }
+
+    public boolean removeAbility(Ability ability) {
+        if (ability == null)
+            return false;
+
+        return unlockedAbilities.remove(ability.id);
+    }
+
+    public boolean removeAbility(int id) {
+        return unlockedAbilities.remove(id);
+    }
+
+    public void removeAbilityWheel(int wheelSlot) {
+        if (wheelSlot <= 5 && wheelSlot >= 0)
+            abilityWheel[wheelSlot].reset();
+    }
+
+    public Ability getUnlockedAbility(int id) {
+        if (unlockedAbilities.contains(id))
+            return AbilityController.getInstance().get(id);
+
+        return null;
+    }
+
+    public boolean hasSelectedAbility() {
+        return selectedAbility > -1 && getSelectedAbility() != null;
+    }
+
+    public boolean hasSelectedAbility(int id) {
+        return selectedAbility == id;
+    }
+
+    public boolean hasSelectedAbility(Ability ability) {
+        if (ability == null)
+            return false;
+        return selectedAbility == ability.id;
+    }
+
+    public boolean hasAbility(int id) {
+        return unlockedAbilities.contains(id);
+    }
+
+    public boolean hasAbility(Ability ability) {
+        if (ability == null)
+            return false;
+        return unlockedAbilities.contains(ability.id);
+    }
+
+    public Ability getSelectedAbility() {
+        return AbilityController.Instance.get(selectedAbility);
+    }
+
+    public void setSelectedAbility(int id) {
+        if (unlockedAbilities.contains(id) && AbilityController.getInstance().has(id))
+            selectedAbility = id;
+    }
+
+    public void setSelectedAbility(Ability ability) {
+        if (ability != null && unlockedAbilities.contains(ability.id) && AbilityController.getInstance().has(ability.id))
+            selectedAbility = ability.id;
+    }
+
+    public void clearAllAbilities() {
+        resetAbilityData(true);
+    }
+
+    public void resetAbilityData(boolean removeAbilities) {
+        selectedAbility = -1;
+        if (removeAbilities)
+            unlockedAbilities.clear();
+
+        for (AbilityWheelData abilityWheelData : abilityWheel) abilityWheelData.reset();
+    }
+
+    public void addCooldown(int abilityId, int timeInTicks) {
+        if (!abilityTimers.containsKey(abilityId))
+            abilityTimers.put(abilityId, timeInTicks);
+        abilityTimers.replace(abilityId, timeInTicks);
+    }
+
+    public void decrementCooldown(int abilityId) {
+        if (abilityTimers.containsKey(abilityId)) {
+            int currentTime = abilityTimers.get(abilityId);
+            if (currentTime > 0)
+                abilityTimers.replace(abilityId, currentTime - 1);
+            else if (currentTime == 0) {
+                abilityTimers.remove(abilityId);
             }
-
-            if (event.getKiCost() > -1 && data.Ki < event.getKiCost()) {
-                return;
-            }
-
-            if (event.getCooldown() > -1 && info.hasCooldown(parent.id)) {
-                return;
-            }
-
-            if (onActivateConsumer != null)
-                onActivateConsumer.accept(event);
-
-
-            AbilityScript script = getScriptHandler();
-            if (script == null)
-                return;
-
-
-            script.callScript(AbilityScript.ScriptType.OnAbilityActivate, event);
-
-            DBCEventHooks.onAbilityActivateEvent(event);
         }
     }
 
-    public void onToggle(EntityPlayer player) {
-        IPlayer iPlayer = NoppesUtilServer.getIPlayer(player);
-        DBCData data = DBCData.getData(player);
-        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
+    public int getCooldown(int abiltyId) {
+        if (abilityTimers.containsKey(abiltyId))
+            return abilityTimers.get(abiltyId);
+        return -1;
 
-        if (type == Ability.Type.Toggle) {
-            DBCPlayerEvent.AbilityEvent.Toggle event = new DBCPlayerEvent.AbilityEvent.Toggle(iPlayer, parent);
-
-            if (event.isCanceled()) {
-                return;
-            }
-
-            if (event.getKiCost() > -1 && data.Ki < event.getKiCost()) {
-                return;
-            }
-
-            if (event.getCooldown() > -1 && info.hasCooldown(parent.id)) {
-                return;
-            }
-
-            if (parent.cooldown > -1) {
-                info.addCooldown(parent.id, event.getCooldown());
-            }
-
-            if (onToggleConsumer != null)
-                onToggleConsumer.accept(event);
-
-
-            AbilityScript script = getScriptHandler();
-            if (script == null)
-                return;
-
-
-            script.callScript(AbilityScript.ScriptType.OnAbilityToggle, event);
-
-            DBCEventHooks.onAbilityToggleEvent(event);
-        }
     }
 
-    public AbilityScript getScriptHandler() {
-        return AbilityController.getInstance().abilityScriptHandlers.get(parent.id);
+    public boolean hasCooldown(int abilityId) {
+        if (abilityTimers.containsKey(abilityId))
+            return abilityTimers.get(abilityId) > -1;
+        return false;
     }
 
-    public void setScriptHandler(AbilityScript handler) {
-        AbilityController.getInstance().abilityScriptHandlers.put(parent.id, handler);
-    }
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        NBTTagCompound abilities = new NBTTagCompound();
 
-    public AbilityScript getOrCreateScriptHandler() {
-        AbilityScript data = getScriptHandler();
-        if (data == null)
-            setScriptHandler(data = new AbilityScript());
-        return data;
-    }
+        abilities.setInteger("SelectedAbility", selectedAbility);
+        abilities.setTag("UnlockedAbilities", NBTTags.nbtIntegerSet(unlockedAbilities));
+        abilities.setTag("AbilityCooldowns", NBTTags.nbtIntegerIntegerMap(abilityTimers));
 
-    public NBTTagCompound writeToNBT(boolean saveScripts) {
-        NBTTagCompound compound = new NBTTagCompound();
-
-        compound.setInteger("type", type.ordinal());
-
-        if (saveScripts) {
-            NBTTagCompound scriptData = new NBTTagCompound();
-            AbilityScript handler = getScriptHandler();
-            if (handler != null)
-                handler.writeToNBT(scriptData);
-            compound.setTag("ScriptData", scriptData);
-        }
-
+        compound.setTag(isDBC ? "DBCAbilityData" : "CustomAbilityData", abilities);
         return compound;
     }
 
     public void readFromNBT(NBTTagCompound compound) {
-        type = Ability.Type.values()[compound.getInteger("type")];
+        NBTTagCompound abilities = compound.getCompoundTag(isDBC ? "DBCAbilityData" : "CustomAbilityData");
 
-        if (compound.hasKey("ScriptData", Constants.NBT.TAG_COMPOUND)) {
-            AbilityScript handler = new AbilityScript();
-            handler.readFromNBT(compound.getCompoundTag("ScriptData"));
-            setScriptHandler(handler);
-        }
+        selectedAbility = abilities.getInteger("SelectedAbility");
+        unlockedAbilities = NBTTags.getIntegerSet(abilities.getTagList("UnlockedAbilities", 10));
+        abilityTimers = NBTTags.getIntegerIntegerMap(abilities.getTagList("AbilityCooldowns", 10));
     }
 }

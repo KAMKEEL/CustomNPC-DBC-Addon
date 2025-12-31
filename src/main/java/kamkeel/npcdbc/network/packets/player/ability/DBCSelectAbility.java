@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.AbilityController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.ability.Ability;
+import kamkeel.npcdbc.data.ability.AbilityData;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
@@ -54,33 +55,33 @@ public final class DBCSelectAbility extends AbstractPacket {
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
         int abilityID = in.readInt();
         boolean isDBC = in.readBoolean();
+
         PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
         PlayerDBCInfo dbcInfo = PlayerDataUtil.getDBCInfo(playerData);
+        AbilityData data = isDBC ? dbcInfo.dbcAbilityData : dbcInfo.customAbilityData;
         NBTTagCompound compound = new NBTTagCompound();
 
-        if (abilityID == -1 && (isDBC ? dbcInfo.selectedDBCAbility == -1 : dbcInfo.selectedAbility == -1))
+        if (abilityID == -1 && data.selectedAbility == -1)
             return;
 
         if (isDBC && abilityID != -1) {
-            if (abilityID == dbcInfo.selectedDBCAbility)
+            if (abilityID == data.selectedAbility)
                 return;
 
-            int selected = 0;
-            dbcInfo.selectedDBCAbility = dbcInfo.tempSelectedDBCAbility = selected = abilityID;
-            dbcInfo.selectedAbility = -1;
+            // TODO figure out a nice way to implement a controller for DBC abilities
+            data.selectedAbility = abilityID;
         } else if(abilityID != -1 && AbilityController.getInstance().has(abilityID)) {
-            if (abilityID == dbcInfo.selectedAbility)
+            if (abilityID == data.selectedAbility)
                 return;
 
             Ability ability = (Ability) AbilityController.getInstance().get(abilityID);
-            if (ability != null && dbcInfo.hasFormUnlocked(abilityID)) {
-                dbcInfo.selectedAbility = abilityID;
-                dbcInfo.selectedDBCAbility = dbcInfo.tempSelectedDBCAbility = -1;
+            if (ability != null && data.hasAbilityUnlocked(abilityID)) {
+                data.selectedAbility = abilityID;
                 NetworkUtility.sendServerMessage(player, "§a", "npcdbc.abilitySelect", " ", ability.getMenuName());
                 compound = ability.writeToNBT(false);
             }
         } else {
-            dbcInfo.selectedAbility = dbcInfo.selectedDBCAbility = dbcInfo.tempSelectedDBCAbility = -1;
+            data.selectedAbility = -1;
             NetworkUtility.sendServerMessage(player, "§9", "npcdbc.clearedSelection");
         }
 

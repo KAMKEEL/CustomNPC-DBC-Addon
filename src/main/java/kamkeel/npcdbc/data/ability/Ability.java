@@ -1,9 +1,16 @@
 package kamkeel.npcdbc.data.ability;
 
 import kamkeel.npcdbc.controllers.AbilityController;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.Constants;
+import noppes.npcs.NoppesUtilServer;
+import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.controllers.data.CustomEffect;
 
 import java.util.function.Consumer;
@@ -16,26 +23,23 @@ public class Ability {
     public int cooldown = -1;
     public int kiCost = -1;
 
-    public String icon;
-    public int iconX;
-    public int iconY;
-    public int width;
-    public int height;
-    public int scale;
+    public String icon = "";
+    public int iconX = 0;
+    public int iconY = 0;
+    public int width = 16;
+    public int height = 16;
+    public int scale = 1;
 
-    public AbilityData abilityData;
+    public Type type = Ability.Type.Active;
 
     public Ability() {
-        abilityData = new AbilityData(this);
     }
 
     public Ability(int id) {
-        this();
         this.id = id;
     }
 
     public Ability(int id, String name) {
-        this();;
         this.id = id;
         this.name = name;
     }
@@ -140,27 +144,98 @@ public class Ability {
         return AbilityController.Instance.saveAbility(this);
     }
 
-    public void onActivate(Consumer<DBCPlayerEvent.AbilityEvent.Activate> function) {
-        abilityData.onActivate(function);
-    }
-
-    public void onToggle(Consumer< DBCPlayerEvent.AbilityEvent.Toggle> function) {
-        abilityData.onToggle(function);
-    }
-
-    public void onActivate(EntityPlayer player) {
-        abilityData.onActivate(player);
-    }
-
-    public void onToggle(EntityPlayer player) {
-        abilityData.onToggle(player);
-    }
-
     public Ability cloneAbility() {
         Ability newAbility = new Ability();
         newAbility.readFromNBT(this.writeToNBT(true));
         newAbility.id = -1;
         return newAbility;
+    }
+
+    public Ability.Type getType() {
+        return type;
+    }
+
+    public void setType(Ability.Type type) {
+        this.type = type;
+    }
+
+    public void onActivate(EntityPlayer player) {
+        IPlayer iPlayer = NoppesUtilServer.getIPlayer(player);
+        DBCData data = DBCData.getData(player);
+        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
+        AbilityData abilityData = this instanceof AddonAbility ? info.dbcAbilityData : info.customAbilityData;
+
+        if (type == Ability.Type.Active) {
+            DBCPlayerEvent.AbilityEvent.Activate event = new DBCPlayerEvent.AbilityEvent.Activate(iPlayer, this);
+
+            if (event.isCanceled()) {
+                return;
+            }
+
+            if (event.getKiCost() > -1 && data.Ki < event.getKiCost()) {
+                return;
+            }
+
+            if (event.getCooldown() > -1 && abilityData.hasCooldown(id)) {
+                return;
+            }
+
+            AbilityScript script = getScriptHandler();
+            if (script == null)
+                return;
+
+
+            script.callScript(AbilityScript.ScriptType.OnAbilityActivate, event);
+
+            DBCEventHooks.onAbilityActivateEvent(event);
+        }
+    }
+
+    public void onToggle(EntityPlayer player) {
+        IPlayer iPlayer = NoppesUtilServer.getIPlayer(player);
+        DBCData data = DBCData.getData(player);
+        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
+        AbilityData abilityData = this instanceof AddonAbility ? info.dbcAbilityData : info.customAbilityData;
+
+        if (type == Ability.Type.Toggle) {
+            DBCPlayerEvent.AbilityEvent.Toggle event = new DBCPlayerEvent.AbilityEvent.Toggle(iPlayer, this);
+
+            if (event.isCanceled()) {
+                return;
+            }
+
+            if (event.getKiCost() > -1 && data.Ki < event.getKiCost()) {
+                return;
+            }
+
+            if (event.getCooldown() > -1 && abilityData.hasCooldown(id)) {
+                return;
+            }
+
+            AbilityScript script = getScriptHandler();
+            if (script == null)
+                return;
+
+
+            script.callScript(AbilityScript.ScriptType.OnAbilityToggle, event);
+
+            DBCEventHooks.onAbilityToggleEvent(event);
+        }
+    }
+
+    public AbilityScript getScriptHandler() {
+        return AbilityController.getInstance().abilityScriptHandlers.get(id);
+    }
+
+    public void setScriptHandler(AbilityScript handler) {
+        AbilityController.getInstance().abilityScriptHandlers.put(id, handler);
+    }
+
+    public AbilityScript getOrCreateScriptHandler() {
+        AbilityScript data = getScriptHandler();
+        if (data == null)
+            setScriptHandler(data = new AbilityScript());
+        return data;
     }
 
     public static String getAbilityColorCode(Ability a) {
@@ -190,7 +265,15 @@ public class Ability {
         compound.setInteger("cooldown", cooldown);
         compound.setInteger("kiCost", kiCost);
 
-        compound.setTag("abilityData", abilityData.writeToNBT(saveScripts));
+        compound.setInteger("type", type.ordinal());
+
+        if (saveScripts) {
+            NBTTagCompound scriptData = new NBTTagCompound();
+            AbilityScript handler = getScriptHandler();
+            if (handler != null)
+                handler.writeToNBT(scriptData);
+            compound.setTag("ScriptData", scriptData);
+        }
 
         return compound;
     }
@@ -205,7 +288,13 @@ public class Ability {
         cooldown = compound.getInteger("cooldown");
         kiCost = compound.getInteger("kiCost");
 
-        abilityData.readFromNBT(compound.getCompoundTag("abilityData"));
+        type = Ability.Type.values()[compound.getInteger("type")];
+
+        if (compound.hasKey("ScriptData", Constants.NBT.TAG_COMPOUND)) {
+            AbilityScript handler = new AbilityScript();
+            handler.readFromNBT(compound.getCompoundTag("ScriptData"));
+            setScriptHandler(handler);
+        }
     }
 
     public enum Type {

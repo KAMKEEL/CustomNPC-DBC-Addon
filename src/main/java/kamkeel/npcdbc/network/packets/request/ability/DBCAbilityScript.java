@@ -86,7 +86,7 @@ public class DBCAbilityScript extends AbstractPacket {
         if (ability == null)
             return;
 
-        AbilityScript data = ability.abilityData.getOrCreateScriptHandler();
+        AbilityScript data = ability.getOrCreateScriptHandler();
         if (requestedAction == DBCAbilityScript.Action.GET) {
             PacketUtil.getScripts((IScriptHandler) data, (EntityPlayerMP) player);
         } else {

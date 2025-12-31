@@ -8,6 +8,7 @@ import kamkeel.npcdbc.constants.DBCScriptType;
 import kamkeel.npcdbc.constants.enums.*;
 import kamkeel.npcdbc.data.DBCDamageCalc;
 import kamkeel.npcdbc.data.ability.Ability;
+import kamkeel.npcdbc.data.ability.AddonAbility;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -283,19 +284,23 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
 
     @Cancelable
     public static class AbilityEvent extends DBCPlayerEvent {
-        private final Ability ability;
         public final int id;
         public final int type;
         public int kiCost;
         public int cooldown;
+        boolean isDBC;
 
         public AbilityEvent(IPlayer player, Ability ability) {
             super(player);
-            this.ability = ability;
             this.id = ability.id;
-            this.type = ability.abilityData.getType().ordinal();
+            this.type = ability.getType().ordinal();
             this.kiCost = ability.kiCost;
             this.cooldown = ability.cooldown;
+            this.isDBC = ability instanceof AddonAbility;
+        }
+
+        public boolean isDBC() {
+            return isDBC;
         }
 
         public int getID() {
