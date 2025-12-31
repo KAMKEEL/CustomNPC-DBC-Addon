@@ -2,7 +2,9 @@ package kamkeel.npcdbc.network.packets.player;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.AbilityController;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.ability.Ability;
+import kamkeel.npcdbc.data.ability.AbilityData;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.PacketChannel;
@@ -19,10 +21,12 @@ public final class AbilityUsePacket extends AbstractPacket {
     public static final String packetName = "NPC|AbilityUse";
     private EntityPlayer player;
     private int abilityId;
+    private boolean isDBC;
 
-    public AbilityUsePacket(EntityPlayer player, int abilityId) {
+    public AbilityUsePacket(EntityPlayer player, int abilityId, boolean isDBC) {
         this.player = player;
         this.abilityId = abilityId;
+        this.isDBC = isDBC;
     }
 
     public AbilityUsePacket() {
@@ -42,6 +46,7 @@ public final class AbilityUsePacket extends AbstractPacket {
     public void sendData(ByteBuf out) throws IOException {
         ByteBufUtils.writeUTF8String(out, this.player.getCommandSenderName());
         out.writeInt(this.abilityId);
+        out.writeBoolean(this.isDBC);
     }
 
     @Override
@@ -51,16 +56,26 @@ public final class AbilityUsePacket extends AbstractPacket {
         if (sendingPlayer == null)
             return;
 
+        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
         int abilityId = in.readInt();
+        boolean isDBC = in.readBoolean();
 
-        if (AbilityController.Instance.has(abilityId)) {
+        if (AbilityController.Instance.has(abilityId, isDBC)) {
             Ability ability = AbilityController.getInstance().get(abilityId);
+            AbilityData data = isDBC ? info.dbcAbilityData : info.customAbilityData;
 
-            if (PlayerDataUtil.getDBCInfo(player).hasAbilityUnlocked(abilityId)) {
-                if (ability.abilityData.getType() == Ability.Type.Active) {
-                    ability.abilityData.onActivate(player);
-                } else if (ability.abilityData.getType() == Ability.Type.Toggle) {
-                    ability.abilityData.onToggle(player);
+            if (data.hasAbilityUnlocked(abilityId)) {
+                if (ability.getType() == Ability.Type.Active) {
+                    ability.onActivate(player);
+                } else if (ability.getType() == Ability.Type.Toggle) {
+                    ability.onToggle(player);
+
+                    if (data.toggledAbilities.contains(abilityId))
+                        data.toggledAbilities.remove(abilityId);
+                    else
+                        data.toggledAbilities.add(abilityId);
+
+                    info.updateClient();
                 }
             }
         }

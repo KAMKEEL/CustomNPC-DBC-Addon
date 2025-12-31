@@ -14,7 +14,7 @@ public class AbilityData {
     public int selectedAbility = -1;
     public HashSet<Integer> unlockedAbilities = new HashSet<>();
     public HashMap<Integer, Integer> abilityTimers = new HashMap<>();
-    public HashMap<Integer, Integer> toggledAbilities = new HashMap<>();
+    public HashSet<Integer> toggledAbilities = new HashSet<>();
     public AbilityWheelData[] abilityWheel = new AbilityWheelData[6];
 
     public AbilityData(boolean isDBC) {
@@ -172,6 +172,7 @@ public class AbilityData {
         abilities.setInteger("SelectedAbility", selectedAbility);
         abilities.setTag("UnlockedAbilities", NBTTags.nbtIntegerSet(unlockedAbilities));
         abilities.setTag("AbilityCooldowns", NBTTags.nbtIntegerIntegerMap(abilityTimers));
+        abilities.setTag("ToggledAbilities", NBTTags.nbtIntegerSet(toggledAbilities));
 
         compound.setTag(isDBC ? "DBCAbilityData" : "CustomAbilityData", abilities);
         return compound;
@@ -183,5 +184,6 @@ public class AbilityData {
         selectedAbility = abilities.getInteger("SelectedAbility");
         unlockedAbilities = NBTTags.getIntegerSet(abilities.getTagList("UnlockedAbilities", 10));
         abilityTimers = NBTTags.getIntegerIntegerMap(abilities.getTagList("AbilityCooldowns", 10));
+        toggledAbilities = NBTTags.getIntegerSet(abilities.getTagList("ToggledAbilities", 10));
     }
 }

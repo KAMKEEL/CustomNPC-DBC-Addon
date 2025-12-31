@@ -151,9 +151,9 @@ public class ClientEventHandler {
                 AbilityData custom = info.customAbilityData;
 
                 if (custom.hasSelectedAbility() && custom.hasAbilityUnlocked(custom.selectedAbility)) {
-                    DBCPacketHandler.Instance.sendToServer(new AbilityUsePacket(Minecraft.getMinecraft().thePlayer, custom.selectedAbility));
+                    DBCPacketHandler.Instance.sendToServer(new AbilityUsePacket(Minecraft.getMinecraft().thePlayer, custom.selectedAbility, false));
                 } else {
-                    DBCPacketHandler.Instance.sendToServer(new AbilityUsePacket(Minecraft.getMinecraft().thePlayer, dbc.selectedAbility));
+                    DBCPacketHandler.Instance.sendToServer(new AbilityUsePacket(Minecraft.getMinecraft().thePlayer, dbc.selectedAbility, true));
                 }
             }
         }
