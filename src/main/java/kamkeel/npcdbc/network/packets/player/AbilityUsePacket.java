@@ -64,19 +64,19 @@ public final class AbilityUsePacket extends AbstractPacket {
             Ability ability = AbilityController.getInstance().get(abilityId, isDBC);
             AbilityData data = isDBC ? info.dbcAbilityData : info.customAbilityData;
 
-            if (ability != null && data.hasAbilityUnlocked(abilityId)) {
-                if (ability.getType() == Ability.Type.Active) {
-                    ability.onActivate(player);
-                } else if (ability.getType() == Ability.Type.Toggle) {
-                    ability.onToggle(player);
+            if (ability != null && data.hasAbilityUnlocked(abilityId) && ability.callEvent(player)) {
+                if (ability.cooldown > -1) {
+                    data.addCooldown(abilityId, ability.cooldown);
+                }
 
+                if (ability.getType() == Ability.Type.Toggle) {
                     if (data.toggledAbilities.contains(abilityId))
                         data.toggledAbilities.remove(abilityId);
                     else
                         data.toggledAbilities.add(abilityId);
-
-                    info.updateClient();
                 }
+
+                info.updateClient();
             }
         }
     }

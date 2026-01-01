@@ -159,6 +159,20 @@ public class AbilityData {
         return false;
     }
 
+    public void clearCooldown(int abilityId) {
+        if (abilityTimers.containsKey(abilityId))
+            abilityTimers.remove(abilityId);
+    }
+
+    public void clearAllCooldowns() {
+        abilityTimers.clear();
+    }
+
+    public void resetData() {
+        clearAllAbilities();
+        clearAllCooldowns();
+    }
+
     private Map<Integer, ? extends Ability> getAbilityMap() {
         if (isDBC)
             return AbilityController.getInstance().addonAbilities;

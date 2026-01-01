@@ -7,6 +7,7 @@ import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.data.ability.AddonAbility;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.dbcdata.DBCDataStats;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class NamekRegen extends AddonAbility {
@@ -19,16 +20,20 @@ public class NamekRegen extends AddonAbility {
         iconX = 0;
         iconY = 0;
         type = Type.Active;
+        cooldown = 300;
     }
 
     @Override
-    public void onActivate(EntityPlayer player) {
-        super.onToggle(player);
-        if (!ConfigDBCGameplay.EnableNamekianRegen || DBCData.get(player).Race != DBCRace.NAMEKIAN)
-            return;
+    public boolean callEvent(EntityPlayer player) {
+        if (!super.callEvent(player))
+            return false;
 
-        if (!DBCEffectController.getInstance().hasEffect(player, Effects.NAMEK_REGEN)) {
-            DBCEffectController.getInstance().applyEffect(player, Effects.NAMEK_REGEN, -100);
-        }
+        if (!ConfigDBCGameplay.EnableNamekianRegen || DBCData.get(player).Race != DBCRace.NAMEKIAN)
+            return false;
+
+        DBCDataStats stats = new DBCDataStats(DBCData.get(player));
+        stats.applyNamekianRegen();
+
+        return true;
     }
 }

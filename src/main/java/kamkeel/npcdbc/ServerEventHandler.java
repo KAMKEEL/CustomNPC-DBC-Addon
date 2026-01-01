@@ -19,6 +19,7 @@ import kamkeel.npcdbc.controllers.FusionHandler;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.data.ability.AbilityData;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -120,8 +121,10 @@ public class ServerEventHandler {
             if (player.ticksExisted % 10 == 0) {
                 // Keep the Player informed on their own data
                 DBCData dbcData = DBCData.get(player);
-                if (ConfigDBCGameplay.EnableNamekianRegen && dbcData.Race == DBCRace.NAMEKIAN)
-                    dbcData.stats.applyNamekianRegen();
+
+                // NO LONGER NEEDED, HANDLED THROUGH ABILITY
+//                if (ConfigDBCGameplay.EnableNamekianRegen && dbcData.Race == DBCRace.NAMEKIAN)
+//                    dbcData.stats.applyNamekianRegen();
 
                 if (ConfigDBCGameplay.EnableHumanSpirit && dbcData.Race == DBCRace.HUMAN)
                     DBCEffectController.Instance.checkHumanSpirit(player);
@@ -130,6 +133,7 @@ public class ServerEventHandler {
                 // ChargeKi
             }
             handleFormProcesses(player);
+            handleAbilityProcesses(player);
 
             if (ConfigDBCGameplay.RevampKiCharging) {
                 chargeKi(player);
@@ -186,6 +190,26 @@ public class ServerEventHandler {
             }
 
             PlayerDataUtil.getDBCInfo(player).updateClient();
+        }
+    }
+
+    public void handleAbilityProcesses(EntityPlayer player) {
+        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
+
+        if (player.ticksExisted % 20 == 0) {
+            if (!info.customAbilityData.abilityTimers.isEmpty())
+                for (Map.Entry<Integer, Integer> entry : info.customAbilityData.abilityTimers.entrySet()) {
+                    if (info.customAbilityData.hasAbility(entry.getKey())) {
+                        info.customAbilityData.decrementCooldown(entry.getKey());
+                    }
+                }
+
+            if (!info.dbcAbilityData.abilityTimers.isEmpty())
+                for (Map.Entry<Integer, Integer> entry : info.dbcAbilityData.abilityTimers.entrySet()) {
+                    if (info.dbcAbilityData.hasAbility(entry.getKey())) {
+                        info.dbcAbilityData.decrementCooldown(entry.getKey());
+                    }
+                }
         }
     }
 

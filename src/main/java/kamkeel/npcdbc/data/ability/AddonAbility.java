@@ -1,5 +1,7 @@
 package kamkeel.npcdbc.data.ability;
 
+import net.minecraft.entity.player.EntityPlayer;
+
 public class AddonAbility extends Ability {
     public String langName;
     public String langDescription;

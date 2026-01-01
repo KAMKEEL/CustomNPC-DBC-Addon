@@ -20,8 +20,11 @@ public class KiFist extends AddonAbility {
     }
 
     @Override
-    public void onToggle(EntityPlayer player) {
-        super.onToggle(player);
+    public boolean callEvent(EntityPlayer player) {
+        if (!super.callEvent(player))
+            return false;
+
         DBCSettingsUtil.setKiFist(player, !DBCSettingsUtil.isKiFist(player));
+        return true;
     }
 }

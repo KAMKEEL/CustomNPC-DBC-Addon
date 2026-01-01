@@ -21,8 +21,11 @@ public class FriendlyFist extends AddonAbility {
     }
 
     @Override
-    public void onToggle(EntityPlayer player) {
-        super.onToggle(player);
+    public boolean callEvent(EntityPlayer player) {
+        if (!super.callEvent(player))
+            return false;
+
         DBCSettingsUtil.setFriendlyFist(player, !DBCSettingsUtil.isFriendlyFist(player));
+        return true;
     }
 }

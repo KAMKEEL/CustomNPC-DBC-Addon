@@ -196,6 +196,13 @@ public class PlayerDBCInfo {
         for (FormWheelData formWheelData : formWheel) formWheelData.reset();
     }
 
+    public void resetAbilityData() {
+        customAbilityData.resetData();
+        dbcAbilityData.resetData();
+
+        for (AbilityWheelData abilityWheelData : abilityWheel) abilityWheelData.reset();
+    }
+
     ////////////////////////////////////////////////
     ////////////////////////////////////////////////
     // Form mastery stuff
@@ -411,6 +418,7 @@ public class PlayerDBCInfo {
 
     public void resetChar(boolean removeForms, boolean removeMasteries) {
         resetFormData(removeForms, removeMasteries);
+        resetAbilityData();
         if (ConfigDBCGeneral.AURAS_CLEAR_ON_RESET)
             clearAllAuras();
 

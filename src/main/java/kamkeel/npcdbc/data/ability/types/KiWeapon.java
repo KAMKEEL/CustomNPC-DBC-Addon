@@ -19,8 +19,10 @@ public class KiWeapon extends AddonAbility {
     }
 
     @Override
-    public void onToggle(EntityPlayer player) {
-        super.onToggle(player);
+    public boolean callEvent(EntityPlayer player) {
+        if (!super.callEvent(player))
+            return false;
+
         int mode = DBCSettingsUtil.getKiWeapon(player);
 
         if (mode == -1) {
@@ -30,5 +32,7 @@ public class KiWeapon extends AddonAbility {
         } else if (mode == 1) {
             DBCSettingsUtil.setKiWeapon(player, false);
         }
+
+        return true;
     }
 }

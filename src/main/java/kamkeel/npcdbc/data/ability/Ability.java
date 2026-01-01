@@ -159,7 +159,7 @@ public class Ability {
         this.type = type;
     }
 
-    public void onActivate(EntityPlayer player) {
+    public boolean onActivate(EntityPlayer player) {
         IPlayer iPlayer = NoppesUtilServer.getIPlayer(player);
         DBCData data = DBCData.getData(player);
         PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
@@ -169,15 +169,15 @@ public class Ability {
             DBCPlayerEvent.AbilityEvent.Activate event = new DBCPlayerEvent.AbilityEvent.Activate(iPlayer, this);
 
             if (event.isCanceled()) {
-                return;
+                return false;
             }
 
             if (event.getCooldown() > -1 && abilityData.hasCooldown(id)) {
-                return;
+                return false;
             }
 
             if (event.getKiCost() > -1 && data.Ki < event.getKiCost()) {
-                return;
+                return false;
             }
 
             if (event.getKiCost() > -1) {
@@ -188,16 +188,15 @@ public class Ability {
             DBCEventHooks.onAbilityActivateEvent(event);
 
             AbilityScript script = getScriptHandler();
-            if (script == null)
-                return;
-
-
-            script.callScript(AbilityScript.ScriptType.OnAbilityActivate, event);
-
+            if (script != null) {
+                script.callScript(AbilityScript.ScriptType.OnAbilityActivate, event);
+            }
         }
+
+        return true;
     }
 
-    public void onToggle(EntityPlayer player) {
+    public boolean onToggle(EntityPlayer player) {
         IPlayer iPlayer = NoppesUtilServer.getIPlayer(player);
         DBCData data = DBCData.getData(player);
         PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
@@ -207,31 +206,43 @@ public class Ability {
             DBCPlayerEvent.AbilityEvent.Toggle event = new DBCPlayerEvent.AbilityEvent.Toggle(iPlayer, this);
 
             if (event.isCanceled()) {
-                return;
+                return false;
             }
 
             if (event.getCooldown() > -1 && abilityData.hasCooldown(id)) {
-                return;
+                return false;
             }
 
             if (event.getKiCost() > -1 && data.Ki < event.getKiCost()) {
-                return;
+                return false;
             }
 
             if (event.getKiCost() > -1) {
                 data.Ki -= event.getKiCost();
-                info.updateClient();
             }
 
             DBCEventHooks.onAbilityToggleEvent(event);
 
             AbilityScript script = getScriptHandler();
-            if (script == null)
-                return;
-
-
-            script.callScript(AbilityScript.ScriptType.OnAbilityToggle, event);
+            if (script != null) {
+                script.callScript(AbilityScript.ScriptType.OnAbilityToggle, event);
+            }
         }
+
+        info.updateClient();
+        return true;
+    }
+
+    public boolean callEvent(EntityPlayer player) {
+        if (type == Type.Active) {
+            return this.onActivate(player);
+        }
+
+        if (type == Type.Toggle) {
+            return this.onToggle(player);
+        }
+
+        return false;
     }
 
     public AbilityScript getScriptHandler() {
