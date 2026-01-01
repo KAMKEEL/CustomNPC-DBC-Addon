@@ -14,7 +14,7 @@ public class NamekRegen extends AddonAbility {
     public NamekRegen() {
         super();
         name = "NamekRegen";
-        langName = "effect.namekianregeneration";
+        langName = "ability.namekregen";
         langDescription = "ability.namekregenDesc";
         id = DBCAbilities.NamekRegen;
         iconX = 0;
@@ -25,10 +25,10 @@ public class NamekRegen extends AddonAbility {
 
     @Override
     public boolean callEvent(EntityPlayer player) {
-        if (!super.callEvent(player))
+        if (!ConfigDBCGameplay.EnableNamekianRegen || DBCData.get(player).Race != DBCRace.NAMEKIAN)
             return false;
 
-        if (!ConfigDBCGameplay.EnableNamekianRegen || DBCData.get(player).Race != DBCRace.NAMEKIAN)
+        if (!super.callEvent(player))
             return false;
 
         DBCDataStats stats = new DBCDataStats(DBCData.get(player));
