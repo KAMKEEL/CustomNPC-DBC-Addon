@@ -20,6 +20,7 @@ import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.util.NBTHelper;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -431,6 +432,7 @@ public class PlayerDBCInfo {
 
     public void updateClient() {
         this.handleLinkedFormMastery();
+        this.loadDefaultAbilities();
         ((IPlayerDBCInfo) parent).updateDBCInfo();
     }
 
@@ -583,6 +585,22 @@ public class PlayerDBCInfo {
         double highest = Math.max(currentCustomMastery, currentDBCFormLevel);
         data.stats.setDBCMastery(jrmcFormID, highest);
         setFormLevel(form.id, (float) highest, false);
+    }
+
+    private void loadDefaultAbilities() {
+        EntityPlayer player = parent.player;
+
+        if (PlayerDataUtil.getDBCInfo(player) != null) {
+            AbilityData data = PlayerDataUtil.getDBCInfo(player).dbcAbilityData;
+
+            for (Map.Entry<Integer, String> entry : DBCData.get(player).getUnlockedDBCAbilitiesMap().entrySet()) {
+                if (!data.hasAbilityUnlocked(entry.getKey()))
+                    data.addAbility(entry.getKey());
+            }
+
+            if (DBCData.get(player).Race == DBCRace.NAMEKIAN)
+                data.addAbility(DBCAbilities.NamekRegen);
+        }
     }
 
 

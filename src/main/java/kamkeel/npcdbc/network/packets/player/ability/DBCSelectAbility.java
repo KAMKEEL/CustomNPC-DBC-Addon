@@ -63,7 +63,7 @@ public final class DBCSelectAbility extends AbstractPacket {
         AbilityData data = isDBC ? dbcInfo.dbcAbilityData : dbcInfo.customAbilityData;
         NBTTagCompound compound = new NBTTagCompound();
 
-        if (abilityID == -1 && data.selectedAbility == -1)
+        if (abilityID == -1 && dbcInfo.dbcAbilityData.selectedAbility == -1 && dbcInfo.customAbilityData.selectedAbility == -1)
             return;
 
         if (isDBC && abilityID != -1 && AbilityController.getInstance().has(abilityID, true)) {

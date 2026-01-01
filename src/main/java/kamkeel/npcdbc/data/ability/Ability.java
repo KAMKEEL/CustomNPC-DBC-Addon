@@ -6,12 +6,15 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.controllers.data.CustomEffect;
+
+import static noppes.npcs.NoppesStringUtils.translate;
 
 import java.util.function.Consumer;
 
@@ -173,17 +176,24 @@ public class Ability {
             }
 
             if (event.getCooldown() > -1 && abilityData.hasCooldown(id)) {
+                Utility.sendMessage(player, translate("§c", "npcdbc.abilityCooldown", ": ", abilityData.abilityTimers.get(id) + ""));
                 return false;
             }
 
             if (event.getKiCost() > -1 && data.Ki < event.getKiCost()) {
+                Utility.sendMessage(player, translate("§c", "npcdbc.abilityNoKi"));
                 return false;
             }
 
             if (event.getKiCost() > -1) {
                 data.Ki -= event.getKiCost();
-                info.updateClient();
             }
+
+            if (event.getCooldown() > -1) {
+                abilityData.addCooldown(id, event.getCooldown());
+            }
+
+            info.updateClient();
 
             DBCEventHooks.onAbilityActivateEvent(event);
 
@@ -210,16 +220,24 @@ public class Ability {
             }
 
             if (event.getCooldown() > -1 && abilityData.hasCooldown(id)) {
+                Utility.sendMessage(player, translate("§c", "npcdbc.abilityCooldown", ": ", abilityData.abilityTimers.get(id) + ""));
                 return false;
             }
 
             if (event.getKiCost() > -1 && data.Ki < event.getKiCost()) {
+                Utility.sendMessage(player, translate("§c", "npcdbc.abilityNoKi"));
                 return false;
             }
 
             if (event.getKiCost() > -1) {
                 data.Ki -= event.getKiCost();
             }
+
+            if (event.getCooldown() > -1) {
+                abilityData.addCooldown(id, event.getCooldown());
+            }
+
+            info.updateClient();
 
             DBCEventHooks.onAbilityToggleEvent(event);
 

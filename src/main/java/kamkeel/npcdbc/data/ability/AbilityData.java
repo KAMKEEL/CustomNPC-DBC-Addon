@@ -125,8 +125,6 @@ public class AbilityData {
         selectedAbility = -1;
         if (removeAbilities)
             unlockedAbilities.clear();
-
-        for (AbilityWheelData abilityWheelData : abilityWheel) abilityWheelData.reset();
     }
 
     public void addCooldown(int abilityId, int timeInTicks) {
@@ -160,8 +158,7 @@ public class AbilityData {
     }
 
     public void clearCooldown(int abilityId) {
-        if (abilityTimers.containsKey(abilityId))
-            abilityTimers.remove(abilityId);
+        abilityTimers.remove(abilityId);
     }
 
     public void clearAllCooldowns() {
