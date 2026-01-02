@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.data.ability;
 
-import net.minecraft.entity.player.EntityPlayer;
+import kamkeel.npcdbc.CustomNpcPlusDBC;
 
 public class AddonAbility extends Ability {
     public String langName;
@@ -9,6 +9,7 @@ public class AddonAbility extends Ability {
 
     public AddonAbility() {
         super();
+        icon = CustomNpcPlusDBC.ID + ":textures/gui/icons.png";
     }
 
     @Override
@@ -22,8 +23,8 @@ public class AddonAbility extends Ability {
     }
 
     @Override
-    public int getScale() {
-        return 1;
+    public float getScale() {
+        return 3.5f;
     }
 
     public String getLangName() {

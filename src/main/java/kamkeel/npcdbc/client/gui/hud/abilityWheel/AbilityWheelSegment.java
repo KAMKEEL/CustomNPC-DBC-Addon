@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.gui.hud.abilityWheel;
 
 import kamkeel.npcdbc.client.gui.hud.WheelSegment;
+import kamkeel.npcdbc.client.gui.hud.abilityWheel.icon.AbilityIcon;
 import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.controllers.AbilityController;
 import kamkeel.npcdbc.data.AbilityWheelData;
@@ -11,10 +12,7 @@ import kamkeel.npcdbc.network.packets.player.ability.DBCSaveAbilityWheel;
 import kamkeel.npcdbc.network.packets.player.ability.DBCSelectAbility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.texture.TextureManager;
 import noppes.npcs.NoppesStringUtils;
-import noppes.npcs.client.ClientCacheHandler;
-import noppes.npcs.client.renderer.ImageData;
 import org.lwjgl.opengl.GL11;
 
 import static org.lwjgl.opengl.GL11.glTranslatef;
@@ -23,6 +21,7 @@ public class AbilityWheelSegment extends WheelSegment {
     public HUDAbilityWheel parent;
     public Ability ability;
     public AbilityWheelData data = new AbilityWheelData();
+    private AbilityIcon icon = null;
 
     AbilityWheelSegment(HUDAbilityWheel parent, int index) {
         this(parent, 0, 0, index);
@@ -47,6 +46,7 @@ public class AbilityWheelSegment extends WheelSegment {
         ability = (Ability) AbilityController.getInstance().get(data.abilityID, data.isDBC);
         if (updateServer)
             DBCPacketHandler.Instance.sendToServer(new DBCSaveAbilityWheel(index, data));
+        icon = ability != null ? new AbilityIcon(ability) : null;
     }
 
     public void setAbility(AbilityWheelData data, boolean updateServer) {
@@ -54,6 +54,7 @@ public class AbilityWheelSegment extends WheelSegment {
         ability = (Ability) AbilityController.getInstance().get(data.abilityID, data.isDBC);
         if (updateServer)
             DBCPacketHandler.Instance.sendToServer(new DBCSaveAbilityWheel(index, data));
+        icon = ability != null ? new AbilityIcon(ability) : null;
     }
 
     public void removeAbility() {
@@ -64,6 +65,7 @@ public class AbilityWheelSegment extends WheelSegment {
             parent.selectSlot(-1);
 
         parent.timeClosedSubGui = Minecraft.getSystemTime();
+        icon = null;
     }
 
     @Override
@@ -94,16 +96,22 @@ public class AbilityWheelSegment extends WheelSegment {
 
             switch (index) {
                 case 0:
+                    glTranslatef(2, 0, 0);
+                    break;
                 case 1:
                     glTranslatef(3, 0, 0);
                     break;
                 case 2:
-                case 3:
                     glTranslatef(6, 0, 0);
                     break;
+                case 3:
+                    glTranslatef(7, 0, 0);
+                    break;
                 case 4:
-                case 5:
                     glTranslatef(11, 0, 0);
+                    break;
+                case 5:
+                    glTranslatef(12, 0, 0);
                     break;
                 default:
                     break;
@@ -115,6 +123,12 @@ public class AbilityWheelSegment extends WheelSegment {
             } else {
                 if (!parent.dbcInfo.customAbilityData.hasAbilityUnlocked(data.abilityID))
                     removeAbility();
+            }
+
+            if (icon != null) {
+                glTranslatef(0, (float) -icon.height / 2, 0);
+                icon.draw();
+                glTranslatef(0, icon.height, 0);
             }
 
             drawCenteredString(fontRenderer, getAbilityName(), 0, 0, 0xFFFFFFFF);

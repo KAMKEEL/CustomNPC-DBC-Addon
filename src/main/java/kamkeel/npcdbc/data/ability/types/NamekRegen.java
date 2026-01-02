@@ -17,7 +17,7 @@ public class NamekRegen extends AddonAbility {
         langName = "ability.namekregen";
         langDescription = "ability.namekregenDesc";
         id = DBCAbilities.NamekRegen;
-        iconX = 0;
+        iconX = 48;
         iconY = 0;
         type = Type.Active;
         cooldown = 300;
@@ -28,10 +28,17 @@ public class NamekRegen extends AddonAbility {
         if (!ConfigDBCGameplay.EnableNamekianRegen || DBCData.get(player).Race != DBCRace.NAMEKIAN)
             return false;
 
+        DBCDataStats stats = new DBCDataStats(DBCData.get(player));
+
+        if (stats.getCurrentBodyPercentage() >= ConfigDBCGameplay.NamekianRegenMin)
+            return false;
+
+        if (DBCEffectController.getInstance().hasEffect(player, Effects.NAMEK_REGEN))
+            return false;
+
         if (!super.callEvent(player))
             return false;
 
-        DBCDataStats stats = new DBCDataStats(DBCData.get(player));
         stats.applyNamekianRegen();
 
         return true;

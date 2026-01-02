@@ -12,11 +12,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.api.entity.IPlayer;
-import noppes.npcs.controllers.data.CustomEffect;
 
 import static noppes.npcs.NoppesStringUtils.translate;
-
-import java.util.function.Consumer;
 
 public class Ability {
     public int id = -1;
@@ -31,7 +28,7 @@ public class Ability {
     public int iconY = 0;
     public int width = 16;
     public int height = 16;
-    public int scale = 1;
+    public float scale = 1;
 
     public Type type = Ability.Type.Active;
 
@@ -135,11 +132,11 @@ public class Ability {
         this.height = height;
     }
 
-    public int getScale() {
+    public float getScale() {
         return scale;
     }
 
-    public void setScale(int scale) {
+    public void setScale(float scale) {
         this.scale = scale;
     }
 
@@ -306,6 +303,16 @@ public class Ability {
         compound.setInteger("kiCost", kiCost);
 
         compound.setInteger("type", type.ordinal());
+
+        compound.setString("icon", icon);
+
+        compound.setInteger("iconX", iconX);
+        compound.setInteger("iconY", iconY);
+
+        compound.setInteger("width", width);
+        compound.setInteger("height", height);
+
+        compound.setFloat("scale", scale);
 
         if (saveScripts) {
             NBTTagCompound scriptData = new NBTTagCompound();

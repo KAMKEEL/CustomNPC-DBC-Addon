@@ -2,7 +2,6 @@ package kamkeel.npcdbc.client.gui.hud;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.gui.hud.abilityWheel.AbilityWheelSegment;
-import kamkeel.npcdbc.client.gui.hud.formWheel.FormWheelSegment;
 import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import net.minecraft.client.Minecraft;
@@ -10,7 +9,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
 
 public abstract class WheelSegment extends Gui {
 
