@@ -2,6 +2,7 @@ package kamkeel.npcdbc.data;
 
 public class FuseRequest {
 
+    public Type type;
     private String requester;
     private String target;
     private String hash;
@@ -15,6 +16,13 @@ public class FuseRequest {
         this.rightSide = right;
         this.hash = hash;
         this.tier = tier;
+        this.type = Type.POTARA;
+    }
+
+    public FuseRequest(String requester, String target) {
+        this.requester = requester;
+        this.target = target;
+        this.type = Type.METAMORAN;
     }
 
     public long getRequestTime() {
@@ -42,7 +50,8 @@ public class FuseRequest {
     }
 
     public void setHash(String hash) {
-        this.hash = hash;
+        if (type == Type.POTARA)
+            this.hash = hash;
     }
 
     public int getTier() {
@@ -50,16 +59,23 @@ public class FuseRequest {
     }
 
     public void setTier(int tier) {
-        this.tier = tier;
+        if (type == Type.POTARA)
+            this.tier = tier;
     }
 
     public boolean checkRequest(FuseRequest target) {
-        if (this.rightSide == target.rightSide)
+        if (this.type != target.type)
             return false;
-        if (!this.hash.equals(target.hash))
-            return false;
-        if (this.tier != target.tier)
-            return false;
+
+        if (this.type == Type.POTARA) {
+            if (this.rightSide == target.rightSide)
+                return false;
+            if (!this.hash.equals(target.hash))
+                return false;
+            if (this.tier != target.tier)
+                return false;
+        }
+
         if (!target.target.equals(this.requester))
             return false;
         if (!target.requester.equals(this.target))
@@ -68,16 +84,27 @@ public class FuseRequest {
     }
 
     public boolean newRequest(FuseRequest old) {
-        if (this.rightSide != old.rightSide)
+        if (this.type == old.type)
             return true;
-        if (!this.hash.equals(old.hash))
-            return true;
-        if (this.tier != old.tier)
-            return true;
+
+        if (this.type == Type.POTARA) {
+            if (this.rightSide != old.rightSide)
+                return true;
+            if (!this.hash.equals(old.hash))
+                return true;
+            if (this.tier != old.tier)
+                return true;
+        }
+
         if (!old.requester.equals(this.requester))
             return true;
         if (!old.target.equals(this.target))
             return true;
         return System.currentTimeMillis() > old.getRequestTime() + 5000L;
+    }
+
+    public enum Type {
+        METAMORAN,
+        POTARA
     }
 }

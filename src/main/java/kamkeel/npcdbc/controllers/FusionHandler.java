@@ -19,42 +19,20 @@ import java.util.List;
 import java.util.UUID;
 
 public class FusionHandler {
+    public static HashMap<UUID, FuseRequest> potaraRequest = new HashMap<>();
+    public static HashMap<UUID, FuseRequest> metamoranRequest = new HashMap<>();
 
-    public static HashMap<UUID, FuseRequest> fuseRequest = new HashMap<>();
-
-    public static boolean requestFusion(EntityPlayer sender, EntityPlayer target, boolean rightSide, String hash, int tier) {
-        boolean senderFusion = JRMCoreH.PlyrSettingsB(sender, DBCSettings.FUSION_ENABLED);
-        boolean targetFusion = JRMCoreH.PlyrSettingsB(target, DBCSettings.FUSION_ENABLED);
-
-        if (!senderFusion) {
-            // Fusion is not on- Inform Sender
-            NetworkUtility.sendServerMessage(sender, "§c", sender.getCommandSenderName(), " ", "npcdbc.fusionSkillFusion");
+    public static boolean requestPotaraFusion(EntityPlayer sender, EntityPlayer target, boolean rightSide, String hash, int tier) {
+        if (!canPlayersFuse(sender, target))
             return false;
-        }
-        if (!targetFusion) {
-            // Target Fusion is not on- Inform Sender
-            NetworkUtility.sendServerMessage(sender, "§c", target.getCommandSenderName(), " ", "npcdbc.fusionSkillFusion");
-            return false;
-        }
-
-
-        if (hasNoFuse(sender)) {
-            NetworkUtility.sendServerMessage(sender, "§c", sender.getCommandSenderName(), " ", "npcdbc.noFuse");
-            return false;
-        }
-
-        if (hasNoFuse(target)) {
-            NetworkUtility.sendServerMessage(sender, "§c", target.getCommandSenderName(), " ", "npcdbc.noFuse");
-            return false;
-        }
 
         UUID uuidSender = Utility.getUUID(sender);
         UUID uuidTarget = Utility.getUUID(target);
 
         FuseRequest senderRequest = new FuseRequest(sender.getCommandSenderName(), target.getCommandSenderName(), rightSide, hash, tier);
         FuseRequest targetRequest = null;
-        if (fuseRequest.containsKey(uuidTarget)) {
-            targetRequest = fuseRequest.get(uuidTarget);
+        if (potaraRequest.containsKey(uuidTarget)) {
+            targetRequest = potaraRequest.get(uuidTarget);
             if (senderRequest.checkRequest(targetRequest)) {
                 if (sender.getHeldItem() == null || !(sender.getHeldItem().getItem() instanceof ItemPotara)) {
                     NetworkUtility.sendServerMessage(sender, "§c", "npcdbc.holdPotara");
@@ -95,8 +73,8 @@ public class FusionHandler {
                     return false;
                 }
 
-                fuseRequest.remove(uuidSender);
-                fuseRequest.remove(uuidTarget);
+                potaraRequest.remove(uuidSender);
+                potaraRequest.remove(uuidTarget);
                 sendPotara.splitStack(1);
                 targetPotara.splitStack(1);
                 if (sendPotara.stackSize <= 0)
@@ -120,12 +98,47 @@ public class FusionHandler {
         }
 
         FuseRequest existing = null;
-        if (fuseRequest.containsKey(uuidSender))
-            existing = fuseRequest.get(uuidSender);
+        if (potaraRequest.containsKey(uuidSender))
+            existing = potaraRequest.get(uuidSender);
 
         if (existing == null || senderRequest.newRequest(existing)) {
             NetworkUtility.sendServerMessage(target, "§e", "npcdbc.potaraRequest", " §a", sender.getCommandSenderName());
-            fuseRequest.put(uuidSender, senderRequest);
+            potaraRequest.put(uuidSender, senderRequest);
+        }
+        return false;
+    }
+
+    public static boolean requestMetamoranFusion(EntityPlayer sender, EntityPlayer target) {
+        if (!canPlayersFuse(sender, target))
+            return false;
+
+        UUID uuidSender = Utility.getUUID(sender);
+        UUID uuidTarget = Utility.getUUID(target);
+
+        FuseRequest senderRequest = new FuseRequest(sender.getCommandSenderName(), target.getCommandSenderName());
+        FuseRequest targetRequest = null;
+        if (metamoranRequest.containsKey(uuidTarget)) {
+            targetRequest = metamoranRequest.get(uuidTarget);
+            if (senderRequest.checkRequest(targetRequest)) {
+                metamoranRequest.remove(uuidSender);
+                metamoranRequest.remove(uuidTarget);
+
+                NetworkUtility.sendServerMessage(sender, "§a", "npcdbc.metamoranFusion", " §e", target.getCommandSenderName());
+                NetworkUtility.sendServerMessage(target, "§a", "npcdbc.metamoranFusion", " §e", sender.getCommandSenderName());
+
+                DBCData.fusePlayers(target, sender, 30);
+
+                return true;
+            }
+        }
+
+        FuseRequest existing = null;
+        if (metamoranRequest.containsKey(uuidSender))
+            existing = metamoranRequest.get(uuidSender);
+
+        if (existing == null || senderRequest.newRequest(existing)) {
+            NetworkUtility.sendServerMessage(target, "§e", "npcdbc.metamoranRequest", " §a", sender.getCommandSenderName());
+            metamoranRequest.put(uuidSender, senderRequest);
         }
         return false;
     }
@@ -237,5 +250,34 @@ public class FusionHandler {
             EntityPlayerMP playerMP = (EntityPlayerMP) player;
             playerMP.inventoryContainer.detectAndSendChanges();
         }
+    }
+
+    private static boolean canPlayersFuse(EntityPlayer sender, EntityPlayer target) {
+        boolean senderFusion = JRMCoreH.PlyrSettingsB(sender, DBCSettings.FUSION_ENABLED);
+        boolean targetFusion = JRMCoreH.PlyrSettingsB(target, DBCSettings.FUSION_ENABLED);
+
+        if (!senderFusion) {
+            // Fusion is not on- Inform Sender
+            NetworkUtility.sendServerMessage(sender, "§c", sender.getCommandSenderName(), " ", "npcdbc.fusionSkillFusion");
+            return false;
+        }
+        if (!targetFusion) {
+            // Target Fusion is not on- Inform Sender
+            NetworkUtility.sendServerMessage(sender, "§c", target.getCommandSenderName(), " ", "npcdbc.fusionSkillFusion");
+            return false;
+        }
+
+
+        if (hasNoFuse(sender)) {
+            NetworkUtility.sendServerMessage(sender, "§c", sender.getCommandSenderName(), " ", "npcdbc.noFuse");
+            return false;
+        }
+
+        if (hasNoFuse(target)) {
+            NetworkUtility.sendServerMessage(sender, "§c", target.getCommandSenderName(), " ", "npcdbc.noFuse");
+            return false;
+        }
+
+        return true;
     }
 }

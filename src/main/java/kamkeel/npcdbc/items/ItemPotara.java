@@ -157,7 +157,7 @@ public class ItemPotara extends ItemArmor {
         boolean rightSide = potara.getString("Side").equals("RIGHT");
         String hash = potara.hasKey("Hash") ? potara.getString("Hash") : "";
         int tier = stack.getItemDamage();
-        FusionHandler.requestFusion(player, (EntityPlayer) target, rightSide, hash, tier);
+        FusionHandler.requestPotaraFusion(player, (EntityPlayer) target, rightSide, hash, tier);
         return true;
     }
 

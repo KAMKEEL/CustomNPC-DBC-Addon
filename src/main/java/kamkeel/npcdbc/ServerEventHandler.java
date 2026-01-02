@@ -19,7 +19,6 @@ import kamkeel.npcdbc.controllers.FusionHandler;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
-import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.data.ability.AbilityData;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -45,13 +44,13 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.util.ValueUtil;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
@@ -88,7 +87,8 @@ public class ServerEventHandler {
                 iter.remove();
             }
 
-            loadDefaultAbilities(e);
+            // TODO figure why tf this is throwing errors
+            //loadDefaultAbilities(e);
         }
     }
 
@@ -159,6 +159,18 @@ public class ServerEventHandler {
 
         int newRelease = ValueUtil.clamp(!powerDown ? release + releaseFactor : release - releaseFactor, (byte) releaseFactor, maxRelease);
         dbcData.getRawCompound().setByte("jrmcRelease", (byte) newRelease);
+    }
+
+    @SubscribeEvent
+    public void playerInteractEvent(EntityInteractEvent event) {
+        if (event.entityPlayer == null || event.entityPlayer.worldObj == null)
+            return;
+
+        if (!event.entityPlayer.worldObj.isRemote && event.entityPlayer.worldObj instanceof WorldServer && event.entityPlayer instanceof EntityPlayerMP) {
+            if (event.entityPlayer.isSneaking() && event.target instanceof EntityPlayerMP) {
+                FusionHandler.requestMetamoranFusion(event.entityPlayer, (EntityPlayerMP) event.target);
+            }
+        }
     }
 
     @SubscribeEvent

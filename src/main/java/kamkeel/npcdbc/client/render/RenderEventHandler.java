@@ -13,8 +13,11 @@ import kamkeel.npcdbc.client.model.ModelPotara;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.constants.Effects;
+import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.effects.DBCEffect;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.entity.EntityAura;
@@ -56,14 +59,15 @@ public class RenderEventHandler {
         if (event.slot != 3 || event.stack != null)
             return;
 
-
         DBCData dbcData = DBCData.get(event.entityPlayer);
 
         if (!dbcData.stats.isFused()) {
             return;
         }
 
-        
+        if (!DBCEffectController.Instance.hasEffect(event.entityPlayer, Effects.POTARA) && !dbcData.isFusionSpectator())
+            return;
+
         DBCData data = DBCData.getData(event.entityPlayer);
         byte potaraFusionLevel = data.potaraFusionLevel;
         if (potaraFusionLevel == -1) {
