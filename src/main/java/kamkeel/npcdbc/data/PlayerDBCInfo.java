@@ -8,7 +8,6 @@ import kamkeel.npcdbc.constants.DBCAbilities;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.*;
-import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.data.ability.AbilityData;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -20,7 +19,6 @@ import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.util.NBTHelper;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -32,7 +30,6 @@ import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -599,7 +596,7 @@ public class PlayerDBCInfo {
             }
 
             if (DBCData.get(player).Race == DBCRace.NAMEKIAN)
-                data.addAbility(DBCAbilities.NamekRegen);
+                data.addAbility(DBCAbilities.NAMEK_REGEN);
         }
     }
 

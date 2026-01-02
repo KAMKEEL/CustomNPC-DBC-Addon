@@ -12,7 +12,7 @@ public class Fusion extends AddonAbility {
         name = "Fusion";
         langName = "ability.fusion";
         langDescription = "ability.fusionDesc";
-        id = DBCAbilities.Fusion;
+        id = DBCAbilities.FUSION;
         skillId = 0;
         iconX = 0;
         iconY = 0;

@@ -1,10 +1,8 @@
 package kamkeel.npcdbc.data.ability.types;
 
 import kamkeel.npcdbc.constants.DBCAbilities;
-import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.data.ability.AddonAbility;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.util.DBCSettingsUtil;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -14,7 +12,7 @@ public class FriendlyFist extends AddonAbility {
         name = "FriendlyFist";
         langName = "ability.friendlyfist";
         langDescription = "ability.friendlyfistDesc";
-        id = DBCAbilities.FriendlyFist;
+        id = DBCAbilities.FRIENDLY_FIST;
         iconX = 0;
         iconY = 0;
         type = Ability.Type.Toggle;

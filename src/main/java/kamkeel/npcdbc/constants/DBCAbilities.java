@@ -1,18 +1,18 @@
 package kamkeel.npcdbc.constants;
 
 public class DBCAbilities {
-    public static final int Kaioken = 0;
-    public static final int Swoop = 1;
-    public static final int Fusion = 2;
-    public static final int PotentialUnleashed = 3;
-    public static final int KiFist = 4;
-    public static final int KiProtection = 5;
-    public static final int UltraInstinct = 6;
-    public static final int FriendlyFist = 7;
-    public static final int KiWeapon = 8;
-    public static final int InstantTransmission = 9;
-    public static final int GodOfDestruction = 10;
-    public static final int NamekRegen = 11;
+    public static final int KAIOKEN = 0;
+    public static final int SWOOP = 1;
+    public static final int FUSION = 2;
+    public static final int POTENTIAL_UNLEASHED = 3;
+    public static final int KI_FIST = 4;
+    public static final int KI_PROTECTION = 5;
+    public static final int ULTRA_INSTINCT = 6;
+    public static final int FRIENDLY_FIST = 7;
+    public static final int KI_WEAPON = 8;
+    public static final int INSTANT_TRANSMISSION = 9;
+    public static final int GOD_OF_DESTRUCTION = 10;
+    public static final int NAMEK_REGEN = 11;
 
     public static final int length = 12;
 }

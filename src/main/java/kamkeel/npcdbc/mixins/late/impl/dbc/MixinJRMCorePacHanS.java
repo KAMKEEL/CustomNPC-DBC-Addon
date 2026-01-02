@@ -30,8 +30,8 @@ public abstract class MixinJRMCorePacHanS {
             }
         }
 
-        if (data.Skills.contains("KI") && data.Skills.contains("KF") && !info.dbcAbilityData.hasAbilityUnlocked(DBCAbilities.KiWeapon)) {
-            info.dbcAbilityData.addAbility(DBCAbilities.KiWeapon);
+        if (data.Skills.contains("KI") && data.Skills.contains("KF") && !info.dbcAbilityData.hasAbilityUnlocked(DBCAbilities.KI_WEAPON)) {
+            info.dbcAbilityData.addAbility(DBCAbilities.KI_WEAPON);
         }
 
         info.updateClient();

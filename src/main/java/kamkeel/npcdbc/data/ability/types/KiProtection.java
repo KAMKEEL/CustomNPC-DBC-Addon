@@ -12,7 +12,7 @@ public class KiProtection extends AddonAbility {
         name = "KiProtection";
         langName = "ability.kiprot";
         langDescription = "ability.kiprotDesc";
-        id = DBCAbilities.KiProtection;
+        id = DBCAbilities.KI_PROTECTION;
         skillId = 11;
         iconX = 0;
         iconY = 0;

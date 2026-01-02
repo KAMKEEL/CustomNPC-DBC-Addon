@@ -485,22 +485,22 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
         HashMap<Integer, String> dbcAbilities = new LinkedHashMap<>();
         int race = Race;
 
-        dbcAbilities.put(DBCAbilities.FriendlyFist, "§fFriendly Fist");
+        dbcAbilities.put(DBCAbilities.FRIENDLY_FIST, "§fFriendly Fist");
 
         if (Skills.contains("DS"))
-            dbcAbilities.put(DBCAbilities.Swoop, "§3Swoop");
+            dbcAbilities.put(DBCAbilities.SWOOP, "§3Swoop");
         if (Skills.contains("FZ"))
-            dbcAbilities.put(DBCAbilities.Fusion, "§6Fusion");
+            dbcAbilities.put(DBCAbilities.FUSION, "§6Fusion");
         if (Skills.contains("KF"))
-            dbcAbilities.put(DBCAbilities.KiFist, "§3Ki Fist");
+            dbcAbilities.put(DBCAbilities.KI_FIST, "§3Ki Fist");
         if (Skills.contains("KP"))
-            dbcAbilities.put(DBCAbilities.KiProtection, "§3Ki Protection");
+            dbcAbilities.put(DBCAbilities.KI_PROTECTION, "§3Ki Protection");
         if (Skills.contains("UI"))
-            dbcAbilities.put(DBCAbilities.UltraInstinct, "§bUltra Instinct");
+            dbcAbilities.put(DBCAbilities.ULTRA_INSTINCT, "§bUltra Instinct");
         if (Skills.contains("KI") && Skills.contains("KF"))
-            dbcAbilities.put(DBCAbilities.KiWeapon, "§3Ki Weapon");
+            dbcAbilities.put(DBCAbilities.KI_WEAPON, "§3Ki Weapon");
         if (race == DBCRace.NAMEKIAN)
-            dbcAbilities.put(DBCAbilities.NamekRegen, "§aNamekian Regeneration");
+            dbcAbilities.put(DBCAbilities.NAMEK_REGEN, "§aNamekian Regeneration");
 
         return dbcAbilities;
     }
