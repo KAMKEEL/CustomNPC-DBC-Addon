@@ -44,10 +44,11 @@ public class AbilityIcon extends Gui {
         GL11.glPushMatrix();
 
         renderEngine.bindTexture(imageData.getLocation());
+        GL11.glColor4f(1, 1, 1, 1);
 
-        float s = Math.max(0.1f, Math.min(3.5f, scale));
+        //float s = Math.max(0.1f, Math.min(3.5f, scale));
 
-        GL11.glScalef(s, s, s);
+        //GL11.glScalef(s, s, s);
 
         Tessellator t = getTessellator(imageData);
         t.draw();

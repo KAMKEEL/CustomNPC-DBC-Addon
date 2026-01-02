@@ -182,6 +182,9 @@ public class Ability {
                 return false;
             }
 
+            if (!canFireEvent(player))
+                return false;
+
             if (event.getKiCost() > -1) {
                 data.Ki -= event.getKiCost();
             }

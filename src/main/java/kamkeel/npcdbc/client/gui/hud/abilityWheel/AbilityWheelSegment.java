@@ -91,48 +91,41 @@ public class AbilityWheelSegment extends WheelSegment {
 
     @Override
     protected void drawWheelItem(FontRenderer fontRenderer) {
-        if (data.abilityID != -1) {
-            glTranslatef(0, 10, 0);
+        if (data.abilityID == -1)
+            return;
 
-            switch (index) {
-                case 0:
-                    glTranslatef(2, 0, 0);
-                    break;
-                case 1:
-                    glTranslatef(3, 0, 0);
-                    break;
-                case 2:
-                    glTranslatef(6, 0, 0);
-                    break;
-                case 3:
-                    glTranslatef(7, 0, 0);
-                    break;
-                case 4:
-                    glTranslatef(11, 0, 0);
-                    break;
-                case 5:
-                    glTranslatef(12, 0, 0);
-                    break;
-                default:
-                    break;
+        if (data.isDBC) {
+            if (!parent.dbcAbilities.containsKey(data.abilityID)) {
+                removeAbility();
+                return;
             }
-
-            if (data.isDBC) {
-                if (!parent.dbcAbilities.containsKey(data.abilityID))
-                    removeAbility();
-            } else {
-                if (!parent.dbcInfo.customAbilityData.hasAbilityUnlocked(data.abilityID))
-                    removeAbility();
+        } else {
+            if (!parent.dbcInfo.customAbilityData.hasAbilityUnlocked(data.abilityID)) {
+                removeAbility();
+                return;
             }
-
-            if (icon != null) {
-                glTranslatef(0, (float) -icon.height / 2, 0);
-                icon.draw();
-                glTranslatef(0, icon.height, 0);
-            }
-
-            drawCenteredString(fontRenderer, getAbilityName(), 0, 0, 0xFFFFFFFF);
         }
+
+        GL11.glPushMatrix();
+
+        GL11.glTranslatef(0, 5, 0);
+
+//        switch (index) {
+//            case 0: glTranslatef(1, 0, 0); break;
+//            case 1: glTranslatef(4, 0, 0); break;
+//            case 2: glTranslatef(6, 0, 0); break;
+//            case 3: glTranslatef(8, 0, 0); break;
+//            case 4: glTranslatef(10, 0, 0); break;
+//            case 5: glTranslatef(12, 0, 0); break;
+//        }
+
+        if (icon != null) {
+            icon.draw();
+        }
+
+        drawCenteredString(fontRenderer, getAbilityName(), 0, (icon != null ? icon.height / 2 + 5 : 0), 0xFFFFFFFF);
+
+        GL11.glPopMatrix();
     }
 
     public String getAbilityName() {
