@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.ClientCacheHandler;
 import noppes.npcs.client.renderer.ImageData;
 import org.lwjgl.opengl.GL11;
@@ -37,13 +38,18 @@ public class AbilityIcon extends Gui {
     public void draw() {
         TextureManager renderEngine = Minecraft.getMinecraft().renderEngine;
         ImageData imageData = ClientCacheHandler.getImageData(this.iconTexture);
+        boolean isEmpty = this.iconTexture.isEmpty();
 
-        if (!imageData.imageLoaded())
+        if (!imageData.imageLoaded() && !isEmpty)
             return;
 
         GL11.glPushMatrix();
 
-        renderEngine.bindTexture(imageData.getLocation());
+        if (!isEmpty) {
+            renderEngine.bindTexture(new ResourceLocation("customnpcs", "textures/marks/question.png"));
+        } else {
+            renderEngine.bindTexture(imageData.getLocation());
+        }
         GL11.glColor4f(1, 1, 1, 1);
 
         //float s = Math.max(0.1f, Math.min(3.5f, scale));
