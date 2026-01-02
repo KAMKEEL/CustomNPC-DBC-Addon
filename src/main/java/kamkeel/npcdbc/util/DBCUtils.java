@@ -677,7 +677,26 @@ public class DBCUtils {
                 int WIL = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 3, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
                 int dmg3 = (int) ((float) JRMCoreH.stat(attacker, 3, powerType, 4, WIL, race, classID, 0.0F) * 0.01F);
                 int skf = JRMCoreH.SklLvl(15, PlyrSkills);
-                dam += (float)(dmg3 * release * 0.005F * skf * JRMCoreH.weightPerc(1, attacker));
+
+                // Calculate base projectile damage with Ki Infuse bonus
+                float kiInfuseBonus = (float) (dmg3 * release * 0.005F * skf * JRMCoreH.weightPerc(1, attacker));
+                dam += kiInfuseBonus;
+
+                // Calculate Ki cost for projectile Ki Infuse (matching original JRMCore logic)
+                if (skf > 0) {
+                    int kiCost = (int) (dam * 0.005 * skf * DBCConfig.cnfKIc);
+                    if (currentEnergy >= kiCost) {
+                        // Deduct Ki cost if not in creative mode
+                        if (!JRMCoreH.isInCreativeMode(attacker)) {
+                            JRMCoreH.setInt(currentEnergy - kiCost, attacker, "jrmcEnrgy");
+                        }
+                        // Apply Ki Infuse damage multiplier from config
+                        dam = (float) (dam * DBCConfig.cnfKId);
+                    } else {
+                        // Not enough Ki - remove the Ki Infuse bonus
+                        dam -= kiInfuseBonus;
+                    }
+                }
             }
 
             if (ultraInstinctCounter) {
