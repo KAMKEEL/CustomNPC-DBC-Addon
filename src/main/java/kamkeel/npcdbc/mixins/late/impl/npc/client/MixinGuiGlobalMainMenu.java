@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.mixins.late.impl.npc.client;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.client.gui.global.ability.GuiNPCManageAbilities;
 import kamkeel.npcdbc.client.gui.global.auras.GuiNPCManageAuras;
 import kamkeel.npcdbc.client.gui.global.form.GuiNPCManageForms;
 import kamkeel.npcdbc.client.gui.global.outline.GuiNPCManageOutlines;
@@ -43,6 +44,9 @@ public abstract class MixinGuiGlobalMainMenu extends GuiNPCInterface2 {
     @Unique
     private GuiNpcSquareButton outlinesButton;
 
+    @Unique
+    private GuiNpcSquareButton abilitiesButton;
+
 
     @Inject(method = "initGui", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/gui/mainmenu/GuiNPCGlobalMainMenu;layoutButtons()V", shift = At.Shift.BEFORE, remap = false))
     public void addDBCModelButton(CallbackInfo ci) {
@@ -55,6 +59,9 @@ public abstract class MixinGuiGlobalMainMenu extends GuiNPCInterface2 {
 
         this.registerButton(this.outlinesButton = new GuiNpcSquareButton(202, 0, 0, 20, "global.customoutlines", -13421773));
         this.outlinesButton.setIconPos(24, 24, 48, 66).setIconTexture(MENU_ICONS);
+
+        this.registerButton(this.abilitiesButton = new GuiNpcSquareButton(203, 0, 0, 20, "global.abilities", -13421773));
+        this.abilitiesButton.setIconPos(24, 24, 72, 66).setIconTexture(MENU_ICONS);
     }
 
     @Inject(method = "actionPerformed", at = @At("TAIL"))
@@ -67,6 +74,8 @@ public abstract class MixinGuiGlobalMainMenu extends GuiNPCInterface2 {
             Minecraft.getMinecraft().displayGuiScreen(new GuiNPCManageAuras(npc));
         } else if (id == 202) {
             Minecraft.getMinecraft().displayGuiScreen(new GuiNPCManageOutlines(npc));
+        } else if (id == 203) {
+            Minecraft.getMinecraft().displayGuiScreen(new GuiNPCManageAbilities(npc));
         }
     }
 
