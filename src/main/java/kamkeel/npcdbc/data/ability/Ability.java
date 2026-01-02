@@ -226,6 +226,9 @@ public class Ability {
                 return false;
             }
 
+            if (!canFireEvent(player))
+                return false;
+
             if (event.getKiCost() > -1) {
                 data.Ki -= event.getKiCost();
             }
@@ -258,6 +261,11 @@ public class Ability {
         }
 
         return false;
+    }
+
+    // Extra checking for AddonAbilities
+    protected boolean canFireEvent(EntityPlayer player) {
+        return true;
     }
 
     public AbilityScript getScriptHandler() {

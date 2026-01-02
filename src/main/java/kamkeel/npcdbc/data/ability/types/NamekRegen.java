@@ -25,6 +25,18 @@ public class NamekRegen extends AddonAbility {
 
     @Override
     public boolean callEvent(EntityPlayer player) {
+        if (!super.callEvent(player))
+            return false;
+
+        DBCDataStats stats = new DBCDataStats(DBCData.get(player));
+
+        stats.applyNamekianRegen();
+
+        return true;
+    }
+
+    @Override
+    protected boolean canFireEvent(EntityPlayer player) {
         if (!ConfigDBCGameplay.EnableNamekianRegen || DBCData.get(player).Race != DBCRace.NAMEKIAN)
             return false;
 
@@ -35,11 +47,6 @@ public class NamekRegen extends AddonAbility {
 
         if (DBCEffectController.getInstance().hasEffect(player, Effects.NAMEK_REGEN))
             return false;
-
-        if (!super.callEvent(player))
-            return false;
-
-        stats.applyNamekianRegen();
 
         return true;
     }
