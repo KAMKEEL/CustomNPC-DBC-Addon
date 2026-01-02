@@ -28,7 +28,33 @@ public class DBCDataStats {
     }
 
     public int[] getAllAttributes() {
-        return new int[]{data.STR, data.DEX, data.CON, data.WIL, data.MND, data.SPI};
+        return getAllAttributes(true);
+    }
+
+    public int[] getAllAttributes(boolean applyFusion) {
+        int[] attrs = new int[]{data.STR, data.DEX, data.CON, data.WIL, data.MND, data.SPI};
+
+        // If fused, calculate combined attributes using DBC's fusion formula
+        if (applyFusion && isFused()) {
+            EntityPlayer partner = getFusionPartner();
+            if (partner != null) {
+                DBCData partnerData = DBCData.get(partner);
+                int[] partnerAttrs = new int[]{partnerData.STR, partnerData.DEX, partnerData.CON, partnerData.WIL, partnerData.MND, partnerData.SPI};
+
+                // Apply fusion formula: min(p1, p2) * fusionAttributeMultis[i]
+                // MND (index 4) doesn't get multiplied
+                for (int i = 0; i < attrs.length; i++) {
+                    int minAttr = Math.min(attrs[i], partnerAttrs[i]);
+                    if (i != 4) { // Not MND
+                        attrs[i] = (int) (minAttr * JRMCoreConfig.fusionAttributeMultis[i]);
+                    } else {
+                        attrs[i] = minAttr;
+                    }
+                }
+            }
+        }
+
+        return attrs;
     }
 
     public int getFullAttribute(int attri) {
@@ -305,6 +331,30 @@ public class DBCDataStats {
                     specEntity = NoppesUtilServer.getPlayerByName(spectator);
                 }
                 return specEntity;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets the fusion partner (controller if this player is spectator, spectator if this player is controller)
+     */
+    public EntityPlayer getFusionPartner() {
+        if (!isFused())
+            return null;
+
+        if (data.Fusion.contains(",")) {
+            String[] fusionMembers = data.Fusion.split(",");
+            if (fusionMembers.length == 3) {
+                // If we're the spectator, get the controller; otherwise get the spectator
+                String partnerName = isFusionSpectator() ? fusionMembers[0] : fusionMembers[1];
+                if (!partnerName.isEmpty()) {
+                    if (data.player.worldObj.isRemote) {
+                        return data.player.worldObj.getPlayerEntityByName(partnerName);
+                    } else {
+                        return NoppesUtilServer.getPlayerByName(partnerName);
+                    }
+                }
             }
         }
         return null;
