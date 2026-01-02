@@ -33,7 +33,6 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
     public static float BLUR_INTENSITY = 0;
     public static float MAX_BLUR = 4;
     public static boolean BLUR_ENABLED = true;
-    public static final int SLOT_DELAY = 60; // ms
 
     ScaledResolution scaledResolution;
     public AbilityWheelSegment[] wheelSlot = new AbilityWheelSegment[6];
