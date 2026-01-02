@@ -17,8 +17,8 @@ public class NamekRegen extends AddonAbility {
         langName = "ability.namekregen";
         langDescription = "ability.namekregenDesc";
         id = DBCAbilities.NamekRegen;
-        iconX = 48;
-        iconY = 0;
+        iconX = 0;
+        iconY = 112;
         type = Type.Active;
         cooldown = 300;
     }
