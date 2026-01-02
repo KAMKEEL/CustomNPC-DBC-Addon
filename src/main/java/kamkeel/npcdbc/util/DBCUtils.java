@@ -681,16 +681,9 @@ public class DBCUtils {
                 // Calculate base projectile damage with Ki Infuse bonus
                 float kiInfuseBonus = (float) (dmg3 * release * 0.005F * skf * JRMCoreH.weightPerc(1, attacker));
                 dam += kiInfuseBonus;
-
-                // Calculate Ki cost for projectile Ki Infuse (matching original JRMCore logic)
                 if (skf > 0) {
                     int kiCost = (int) (dam * 0.005 * skf * DBCConfig.cnfKIc);
                     if (currentEnergy >= kiCost) {
-                        // Deduct Ki cost if not in creative mode
-                        if (!JRMCoreH.isInCreativeMode(attacker)) {
-                            JRMCoreH.setInt(currentEnergy - kiCost, attacker, "jrmcEnrgy");
-                        }
-                        // Apply Ki Infuse damage multiplier from config
                         dam = (float) (dam * DBCConfig.cnfKId);
                     } else {
                         // Not enough Ki - remove the Ki Infuse bonus
