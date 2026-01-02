@@ -14,17 +14,12 @@ public class AddonAbility extends Ability {
 
     @Override
     public int getWidth() {
-        return 16;
+        return 48;
     }
 
     @Override
     public int getHeight() {
-        return 16;
-    }
-
-    @Override
-    public float getScale() {
-        return 3.5f;
+        return 48;
     }
 
     public String getLangName() {
