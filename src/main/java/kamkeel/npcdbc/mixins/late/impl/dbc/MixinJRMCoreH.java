@@ -290,33 +290,6 @@ public abstract class MixinJRMCoreH {
             result = (int) (result * (averageMulti * statusMulti));
         }
 
-        // Apply PlayerBonus for fusion and other effects (mirrors applyBonusToDBC logic)
-        if (!DBCUtils.noBonusEffects && !DBCUtils.calculatingKiDrain && !DBCUtils.calculatingCost) {
-            float[] bonus = dbcData.bonus.getMultiBonus();
-            if (attribute == DBCAttribute.Strength && bonus[0] != 0)
-                result += (int) (currAttributes[DBCAttribute.Strength] * bonus[0]);
-            else if (attribute == DBCAttribute.Dexterity && bonus[1] != 0)
-                result += (int) (currAttributes[DBCAttribute.Dexterity] * bonus[1]);
-            else if (attribute == DBCAttribute.Willpower && bonus[2] != 0)
-                result += (int) (currAttributes[DBCAttribute.Willpower] * bonus[2]);
-            else if (attribute == DBCAttribute.Constitution && bonus[3] != 0)
-                result += (int) (currAttributes[DBCAttribute.Constitution] * bonus[3]);
-            else if (attribute == DBCAttribute.Spirit && bonus[4] != 0)
-                result += (int) (currAttributes[DBCAttribute.Spirit] * bonus[4]);
-
-            float[] flatBonus = dbcData.bonus.getFlatBonus();
-            if (attribute == DBCAttribute.Strength)
-                result += (int) flatBonus[0];
-            else if (attribute == DBCAttribute.Dexterity)
-                result += (int) flatBonus[1];
-            else if (attribute == DBCAttribute.Willpower)
-                result += (int) flatBonus[2];
-            else if (attribute == DBCAttribute.Constitution)
-                result += (int) flatBonus[3];
-            else if (attribute == DBCAttribute.Spirit)
-                result += (int) flatBonus[4];
-        }
-
         result = ValueUtil.clamp(result, 0, Integer.MAX_VALUE);
         info.setReturnValue(result);
     }
