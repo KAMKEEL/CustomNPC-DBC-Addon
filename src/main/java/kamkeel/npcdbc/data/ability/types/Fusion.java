@@ -14,7 +14,7 @@ public class Fusion extends AddonAbility {
         langDescription = "ability.fusionDesc";
         id = DBCAbilities.FUSION;
         skillId = 0;
-        iconX = 0;
+        iconX = 336;
         iconY = 0;
         type = Ability.Type.Toggle;
     }

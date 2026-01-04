@@ -13,7 +13,7 @@ public class KiWeapon extends AddonAbility {
         langName = "ability.kiweapon";
         langDescription = "ability.kiweaponDesc";
         id = DBCAbilities.KI_WEAPON;
-        iconX = 0;
+        iconX = 288;
         iconY = 0;
         type = Ability.Type.Toggle;
     }

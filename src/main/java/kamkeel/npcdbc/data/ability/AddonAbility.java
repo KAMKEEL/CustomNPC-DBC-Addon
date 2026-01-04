@@ -9,7 +9,7 @@ public class AddonAbility extends Ability {
 
     public AddonAbility() {
         super();
-        icon = CustomNpcPlusDBC.ID + ":textures/gui/icons.png";
+        icon = CustomNpcPlusDBC.ID + ":textures/gui/ability_icons.png";
     }
 
     @Override

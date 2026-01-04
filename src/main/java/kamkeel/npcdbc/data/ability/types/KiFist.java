@@ -14,7 +14,7 @@ public class KiFist extends AddonAbility {
         langDescription = "ability.kifistDesc";
         id = DBCAbilities.KI_FIST;
         skillId = 12;
-        iconX = 0;
+        iconX = 192;
         iconY = 0;
         type = Ability.Type.Toggle;
     }

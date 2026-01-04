@@ -27,6 +27,19 @@ public abstract class DashAbilities extends AddonAbility {
         return true;
     }
 
+    public static class Swoop extends DashAbilities {
+        public Swoop() {
+            super();
+            name = "Swoop";
+            langName = "ability.swoop";
+            langDescription = "ability.swoopDesc";
+            id = DBCAbilities.SWOOP;
+            iconX = 48;
+            iconY = 0;
+            type = Ability.Type.Toggle;
+        }
+    }
+
     public static class ZVanish extends DashAbilities {
         public ZVanish() {
             super();
@@ -34,7 +47,7 @@ public abstract class DashAbilities extends AddonAbility {
             langName = "ability.zvanish";
             langDescription = "ability.zvanishDesc";
             id = DBCAbilities.Z_VANISH;
-            iconX = 0;
+            iconX = 96;
             iconY = 0;
             cooldown = 15;
             kiCost = 500;
@@ -49,24 +62,11 @@ public abstract class DashAbilities extends AddonAbility {
             langName = "ability.afterimage";
             langDescription = "ability.afterimageDesc";
             id = DBCAbilities.AFTERIMAGE;
-            iconX = 0;
+            iconX = 144;
             iconY = 0;
             cooldown = 30;
             kiCost = 1000;
             type = Ability.Type.Active;
-        }
-    }
-
-    public static class Swoop extends DashAbilities {
-        public Swoop() {
-            super();
-            name = "Swoop";
-            langName = "ability.swoop";
-            langDescription = "ability.swoopDesc";
-            id = DBCAbilities.SWOOP;
-            iconX = 0;
-            iconY = 0;
-            type = Ability.Type.Toggle;
         }
     }
 }
