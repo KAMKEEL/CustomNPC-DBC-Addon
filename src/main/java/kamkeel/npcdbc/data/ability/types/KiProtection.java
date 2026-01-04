@@ -14,7 +14,7 @@ public class KiProtection extends AddonAbility {
         langDescription = "ability.kiprotDesc";
         id = DBCAbilities.KI_PROTECTION;
         skillId = 11;
-        iconX = 0;
+        iconX = 240;
         iconY = 0;
         type = Ability.Type.Toggle;
     }
