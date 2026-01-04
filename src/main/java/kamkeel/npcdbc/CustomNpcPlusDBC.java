@@ -48,6 +48,7 @@ public class CustomNpcPlusDBC {
         CapsuleController.getInstance().load();
         BonusController.getInstance().load();
         DBCEffectController.getInstance().load();
+        DBCAnimationController.getInstance().load();
 
         new DBCItemAttributes();
     }

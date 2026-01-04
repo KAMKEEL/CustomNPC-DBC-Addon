@@ -81,6 +81,10 @@ public class DBCAPI extends AbstractDBCAPI {
         return AbilityController.Instance;
     }
 
+    public DBCAnimationController getDBCAnimationHandler() {
+        return DBCAnimationController.Instance;
+    }
+
     @Override
     public IForm createForm(String name) {
         return FormController.getInstance().createForm(name);

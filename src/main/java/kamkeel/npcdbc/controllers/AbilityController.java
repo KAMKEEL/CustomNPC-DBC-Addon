@@ -73,7 +73,9 @@ public class AbilityController {
     }
 
     private void loadAddonAbilities() {
-        addonAbility(new Swoop());
+        addonAbility(new DashAbilities.Swoop());
+        addonAbility(new DashAbilities.ZVanish());
+        addonAbility(new DashAbilities.Afterimage());
         addonAbility(new Fusion());
         addonAbility(new KiFist());
         addonAbility(new KiProtection());
