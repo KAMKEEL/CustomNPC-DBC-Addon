@@ -46,6 +46,7 @@ import java.util.*;
 
 import static kamkeel.npcdbc.constants.DBCForm.*;
 import static kamkeel.npcdbc.controllers.DBCEffectController.DBC_EFFECT_INDEX;
+import static noppes.npcs.NoppesStringUtils.translate;
 
 public class    DBCData extends DBCDataUniversal implements IAuraData {
 
@@ -485,22 +486,29 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
         HashMap<Integer, String> dbcAbilities = new LinkedHashMap<>();
         int race = Race;
 
-        dbcAbilities.put(DBCAbilities.FRIENDLY_FIST, "§fFriendly Fist");
+        dbcAbilities.put(DBCAbilities.FRIENDLY_FIST, translate("ability.friendlyfist"));
 
-        if (Skills.contains("DS"))
-            dbcAbilities.put(DBCAbilities.SWOOP, "§3Swoop");
+        if (Skills.contains("DS")) {
+            dbcAbilities.put(DBCAbilities.SWOOP, translate("ability.swoop"));
+
+            if (Skills.contains("DS4"))
+                dbcAbilities.put(DBCAbilities.Z_VANISH, translate("ability.zvanish"));
+
+            if (Skills.contains("DS9"))
+                dbcAbilities.put(DBCAbilities.AFTERIMAGE, translate("ability.afterimage"));
+        }
         if (Skills.contains("FZ"))
-            dbcAbilities.put(DBCAbilities.FUSION, "§6Fusion");
+            dbcAbilities.put(DBCAbilities.FUSION, translate("ability.fusion"));
         if (Skills.contains("KF"))
-            dbcAbilities.put(DBCAbilities.KI_FIST, "§3Ki Fist");
+            dbcAbilities.put(DBCAbilities.KI_FIST, translate("ability.kifist"));
         if (Skills.contains("KP"))
-            dbcAbilities.put(DBCAbilities.KI_PROTECTION, "§3Ki Protection");
-        if (Skills.contains("UI"))
-            dbcAbilities.put(DBCAbilities.ULTRA_INSTINCT, "§bUltra Instinct");
+            dbcAbilities.put(DBCAbilities.KI_PROTECTION, translate("ability.kiprot"));
         if (Skills.contains("KI") && Skills.contains("KF"))
-            dbcAbilities.put(DBCAbilities.KI_WEAPON, "§3Ki Weapon");
+            dbcAbilities.put(DBCAbilities.KI_WEAPON, translate("ability.kiweapon"));
+        if (Skills.contains("UI"))
+            dbcAbilities.put(DBCAbilities.ULTRA_INSTINCT, translate("ability.ultrainstinct"));
         if (race == DBCRace.NAMEKIAN)
-            dbcAbilities.put(DBCAbilities.NAMEK_REGEN, "§aNamekian Regeneration");
+            dbcAbilities.put(DBCAbilities.NAMEK_REGEN, translate("ability.namekregen"));
 
         return dbcAbilities;
     }

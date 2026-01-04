@@ -187,24 +187,6 @@ public class ServerEventHandler {
         }
     }
 
-    private void loadDefaultAbilities(Entity e) {
-        if (!(e instanceof EntityPlayer))
-            return;
-
-        EntityPlayer player = (EntityPlayer) e;
-
-        if (PlayerDataUtil.getDBCInfo(player) != null) {
-            AbilityData data = PlayerDataUtil.getDBCInfo(player).dbcAbilityData;
-
-            for (Map.Entry<Integer, String> entry : DBCData.get(player).getUnlockedDBCAbilitiesMap().entrySet()) {
-                if (!data.hasAbilityUnlocked(entry.getKey()))
-                    data.addAbility(entry.getKey());
-            }
-
-            PlayerDataUtil.getDBCInfo(player).updateClient();
-        }
-    }
-
     public void handleAbilityProcesses(EntityPlayer player) {
         PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
 

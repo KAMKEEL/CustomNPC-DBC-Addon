@@ -470,4 +470,20 @@ effect.kiregeneration=Ki Regeneration
 effect.staminaregeneration=Stamina Regeneration
 effect.zenkai=Zenkai
 
+ability.namekregen=§aNamekian Regeneration
+ability.friendlyfist=§fFriendly Fist
+ability.fusion=§6Fusion
+ability.swoop=§3Swoop
+ability.kifist=§3Ki Fist
+ability.kiprot=§3Ki Protection
+ability.kiweapon=§3Ki Weapon
+ability.ultrainstinct=§bUltra Instinct
+
+ability.active=Active
+ability.toggle=Toggle
+
+ability.editor.kicost=Ki Cost
+ability.editor.cooldown=Cooldown
+ability.editor.type=Type
+
 stats.ki=Ki

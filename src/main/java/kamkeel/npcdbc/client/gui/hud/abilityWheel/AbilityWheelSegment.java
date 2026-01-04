@@ -108,8 +108,6 @@ public class AbilityWheelSegment extends WheelSegment {
 
         GL11.glPushMatrix();
 
-        GL11.glTranslatef(0, 5, 0);
-
 //        switch (index) {
 //            case 0: glTranslatef(1, 0, 0); break;
 //            case 1: glTranslatef(4, 0, 0); break;
@@ -122,6 +120,8 @@ public class AbilityWheelSegment extends WheelSegment {
         if (icon != null) {
             icon.draw();
         }
+
+        GL11.glTranslatef(0, 5, 0);
 
         drawCenteredString(fontRenderer, getAbilityName(), 0, (icon != null ? icon.height / 2 + 5 : 0), 0xFFFFFFFF);
 

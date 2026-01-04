@@ -37,28 +37,33 @@ public class AbilityIcon extends Gui {
 
     public void draw() {
         TextureManager renderEngine = Minecraft.getMinecraft().renderEngine;
-        ImageData imageData = ClientCacheHandler.getImageData(this.iconTexture);
-        boolean isEmpty = this.iconTexture.isEmpty();
 
-        if (!imageData.imageLoaded() && !isEmpty)
-            return;
+        ImageData imageData = null;
+        if (!this.iconTexture.isEmpty()) {
+            imageData = ClientCacheHandler.getImageData(this.iconTexture);
+        }
 
         GL11.glPushMatrix();
-
-        if (!isEmpty) {
-            renderEngine.bindTexture(new ResourceLocation("customnpcs", "textures/marks/question.png"));
-        } else {
-            renderEngine.bindTexture(imageData.getLocation());
-        }
         GL11.glColor4f(1, 1, 1, 1);
 
-        //float s = Math.max(0.1f, Math.min(3.5f, scale));
+        if (isDBC) {
+            GL11.glScalef(1.5f, 1.5f, 1);
+        }
 
-        //GL11.glScalef(s, s, s);
+        Tessellator t;
 
-        Tessellator t = getTessellator(imageData);
+        if (imageData == null || !imageData.imageLoaded()) {
+            GL11.glScalef(2, 2, 1);
+            GL11.glTranslatef(0, -3, 1);
+
+            renderEngine.bindTexture(new ResourceLocation("customnpcs", "textures/marks/question.png"));
+            t = getFallbackTessellator();
+        } else {
+            renderEngine.bindTexture(imageData.getLocation());
+            t = getTessellator(imageData);
+        }
+
         t.draw();
-
         GL11.glPopMatrix();
     }
 
@@ -82,4 +87,18 @@ public class AbilityIcon extends Gui {
         t.addVertexWithUV(-hw, -hh, zLevel, u1, v1);
         return t;
     }
+
+    private Tessellator getFallbackTessellator() {
+        float hw = width / 2f;
+        float hh = height / 2f;
+
+        Tessellator t = Tessellator.instance;
+        t.startDrawingQuads();
+        t.addVertexWithUV(-hw,  hh, zLevel, 0, 1);
+        t.addVertexWithUV( hw,  hh, zLevel, 1, 1);
+        t.addVertexWithUV( hw, -hh, zLevel, 1, 0);
+        t.addVertexWithUV(-hw, -hh, zLevel, 0, 0);
+        return t;
+    }
+
 }

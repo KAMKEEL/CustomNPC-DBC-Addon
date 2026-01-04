@@ -140,13 +140,13 @@ public class GuiNPCManageAbilities extends GuiNPCInterface2 implements ICustomSc
         fontRendererObj.drawString(StatCollector.translateToLocal("general.menuName") + ": " + ability.menuName, x, y, 0xFFFFFF, false);
         y += 12;
 
-        fontRendererObj.drawString(StatCollector.translateToLocal("ability.type") + ": §a" + StatCollector.translateToLocal(getTypeName(ability.type)), x, y, 0xFFFFFF, false);
+        fontRendererObj.drawString(StatCollector.translateToLocal("ability.editor.type") + ": §a" + StatCollector.translateToLocal(getTypeName(ability.type)), x, y, 0xFFFFFF, false);
         y += 12;
 
-        fontRendererObj.drawString(StatCollector.translateToLocal("ability.cooldown") + ": " + (ability.cooldown <= -1 ? "None" : ability.cooldown), x, y, 0xFFFFFF, false);
+        fontRendererObj.drawString(StatCollector.translateToLocal("ability.editor.cooldown") + ": " + (ability.cooldown <= -1 ? "None" : ability.cooldown), x, y, 0xFFFFFF, false);
         y += 12;
 
-        fontRendererObj.drawString(StatCollector.translateToLocal("ability.kiCost") + ": §b" + (ability.kiCost <= -1 ? "None" : ability.kiCost), x, y, 0xFFFFFF, false);
+        fontRendererObj.drawString(StatCollector.translateToLocal("ability.editor.kiCost") + ": §b" + (ability.kiCost <= -1 ? "None" : ability.kiCost), x, y, 0xFFFFFF, false);
         y += 12;
     }
 
