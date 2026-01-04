@@ -589,6 +589,7 @@ public class PlayerDBCInfo {
 
         if (PlayerDataUtil.getDBCInfo(player) != null) {
             AbilityData data = PlayerDataUtil.getDBCInfo(player).dbcAbilityData;
+            data.unlockedAbilities.clear();
 
             for (Map.Entry<Integer, String> entry : DBCData.get(player).getUnlockedDBCAbilitiesMap().entrySet()) {
                 if (!data.hasAbilityUnlocked(entry.getKey()))

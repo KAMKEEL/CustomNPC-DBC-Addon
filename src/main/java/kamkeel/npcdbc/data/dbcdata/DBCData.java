@@ -491,10 +491,12 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
         if (Skills.contains("DS")) {
             dbcAbilities.put(DBCAbilities.SWOOP, translate("ability.swoop"));
 
-            if (Skills.contains("DS4"))
+            int level = getSkillLevel("Dash");
+
+            if (level >= 5)
                 dbcAbilities.put(DBCAbilities.Z_VANISH, translate("ability.zvanish"));
 
-            if (Skills.contains("DS9"))
+            if (level >= 10)
                 dbcAbilities.put(DBCAbilities.AFTERIMAGE, translate("ability.afterimage"));
         }
         if (Skills.contains("FZ"))
@@ -595,6 +597,15 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
             dbcForms.put(GodOfDestruction, "§dGod of Destruction");
 
         return dbcForms;
+    }
+
+    public int getSkillLevel(String skillname) {
+        int skillIndex = DBCUtils.getDBCSkillIndex(skillname);
+        if (skillIndex == -1) {
+            return -1;
+        }
+
+        return JRMCoreH.SklLvl(skillIndex, Skills.split(","));
     }
 
     public boolean containsSE(int id) {
