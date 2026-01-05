@@ -8,8 +8,11 @@ import kamkeel.npcdbc.controllers.AbilityController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.ability.AddonAbility;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.scripted.DBCEventHooks;
+import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
+import noppes.npcs.api.entity.IPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,19 +24,17 @@ public abstract class MixinJRMCorePacHanS {
     private void injectDBCAbilities(byte b, byte b2, byte b3, EntityPlayer p, CallbackInfo ci, @Local(name = "tpCost") LocalIntRef tpCost, @Local(name = "currentTP") int currentTP) {
         if (b != 1)
             return;
-        DBCData data = DBCData.get(p);
+
         PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(p);
+        info.updateClient();
+    }
 
-        for (AddonAbility ability : AbilityController.Instance.addonAbilities.values()) {
-            if (ability.skillId == b2) {
-                info.dbcAbilityData.addAbility(ability.id);
-            }
-        }
+    @Inject(method = "handleStats3", at = @At(value = "INVOKE", target = "Ljava/lang/String;substring(II)Ljava/lang/String;", ordinal = 0), cancellable = true, remap = false)
+    private void injectSkillUpgradeEvent(byte b, byte b2, byte b3, EntityPlayer p, CallbackInfo ci, @Local(name = "skillLvl") int skillLvl, @Local(name = "tpCost") LocalIntRef tpCost, @Local(name = "currentTP") int currentTP) {
+        if (b != 3)
+            return;
 
-        if (data.Skills.contains("KI") && data.Skills.contains("KF") && !info.dbcAbilityData.hasAbilityUnlocked(DBCAbilities.KI_WEAPON)) {
-            info.dbcAbilityData.addAbility(DBCAbilities.KI_WEAPON);
-        }
-
+        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(p);
         info.updateClient();
     }
 }

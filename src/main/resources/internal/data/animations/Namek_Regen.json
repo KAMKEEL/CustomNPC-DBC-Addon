@@ -506,7 +506,7 @@
     "CurrentFrameTime": 0,
     "CurrentFrame": 7,
     "Smooth": 0b,
-    "ID": 1,
+    "ID": 2,
     "WhileAttacking": 1b,
     "WhileWalking": 1b,
     "Name": "Namek_Regen",

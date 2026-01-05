@@ -413,7 +413,7 @@
     "CurrentFrameTime": 0,
     "CurrentFrame": 1,
     "Smooth": 0b,
-    "ID": 21,
+    "ID": 1,
     "WhileAttacking": 1b,
     "WhileWalking": 1b,
     "Name": "Fusion_Right",

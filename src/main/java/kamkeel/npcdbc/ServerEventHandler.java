@@ -13,13 +13,9 @@ import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.constants.Effects;
-import kamkeel.npcdbc.controllers.DBCEffectController;
-import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.controllers.FusionHandler;
-import kamkeel.npcdbc.controllers.TransformController;
+import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
-import kamkeel.npcdbc.data.ability.AbilityData;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -86,9 +82,6 @@ public class ServerEventHandler {
                 iter.next().setDead();
                 iter.remove();
             }
-
-            // TODO figure why tf this is throwing errors
-            //loadDefaultAbilities(e);
         }
     }
 
@@ -299,6 +292,26 @@ public class ServerEventHandler {
                 TransformController.npcAscend(npc, (Form) FormController.Instance.get(display.selectedForm));
             } else
                 TransformController.npcDecrementRage(npc, display);
+        } else if (event.entity instanceof EntityPlayer && Utility.isServer(event.entity)) {
+            EntityPlayer player = (EntityPlayer) event.entity;
+            PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
+
+            if (info != null && info.dbcAbilityData.isAnimatingAbility())
+                player.motionX = player.motionY = player.motionZ = 0;
+        }
+    }
+
+    // TODO figure out why this shit is NOT WORKING
+    @SubscribeEvent
+    public void onUpdate(LivingEvent.LivingUpdateEvent event) {
+        if (event.entity instanceof EntityPlayer && Utility.isServer(event.entity)) {
+            EntityPlayer player = (EntityPlayer) event.entity;
+
+            PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
+
+            if (info != null && info.dbcAbilityData.isAnimatingAbility()) {
+                player.motionX = player.motionY = player.motionZ = 0;
+            }
         }
     }
 

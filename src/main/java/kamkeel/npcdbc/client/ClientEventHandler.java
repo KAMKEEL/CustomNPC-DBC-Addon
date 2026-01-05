@@ -37,6 +37,7 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -271,6 +272,20 @@ public class ClientEventHandler {
             }
 
             ticks++;
+        }
+    }
+
+    // TODO figure out why this shit is NOT WORKING
+    @SubscribeEvent
+    public void onUpdate(LivingEvent.LivingUpdateEvent event) {
+        if (event.entity instanceof EntityPlayer && !Utility.isServer(event.entity)) {
+            EntityPlayer player = (EntityPlayer) event.entity;
+
+            PlayerDBCInfo info = PlayerDataUtil.getClientDBCInfo();
+
+            if (info != null && info.dbcAbilityData.isAnimatingAbility()) {
+                player.motionX = player.motionY = player.motionZ = 0;
+            }
         }
     }
 

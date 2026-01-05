@@ -13,6 +13,7 @@ public enum EnumPacketPlayer {
     AbilityWheel,
     AbilityWheelSave,
     AbilitySelect,
+    AbilityAnimate,
     OutlineList,
     Flight,
     SetVal,

@@ -12,6 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.api.entity.IPlayer;
+import noppes.npcs.scripted.event.AnimationEvent;
 
 import static noppes.npcs.NoppesStringUtils.translate;
 
@@ -29,6 +30,7 @@ public class Ability {
     public int width = 16;
     public int height = 16;
     public float scale = 1;
+    public String animationName = "";
 
     public Type type = Ability.Type.Active;
 
@@ -138,6 +140,14 @@ public class Ability {
 
     public void setScale(float scale) {
         this.scale = scale;
+    }
+
+    public String getAnimationName() {
+        return animationName;
+    }
+
+    public void setAnimationName(String animationName) {
+        this.animationName = animationName;
     }
 
     public Ability save() {

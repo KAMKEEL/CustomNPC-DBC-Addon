@@ -2,18 +2,24 @@ package kamkeel.npcdbc.data.ability;
 
 import kamkeel.npcdbc.controllers.AbilityController;
 import kamkeel.npcdbc.data.AbilityWheelData;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.player.ability.DBCAnimateAbility;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
+import noppes.npcs.controllers.data.AnimationData;
+import noppes.npcs.scripted.event.AnimationEvent;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 public class AbilityData {
     boolean isDBC = false;
     public int selectedAbility = -1;
     public HashSet<Integer> unlockedAbilities = new HashSet<>();
     public HashMap<Integer, Integer> abilityTimers = new HashMap<>();
+    public HashSet<Integer> animatingAbilities = new HashSet<>();
     public HashSet<Integer> toggledAbilities = new HashSet<>();
     public AbilityWheelData[] abilityWheel = new AbilityWheelData[6];
 
@@ -117,6 +123,29 @@ public class AbilityData {
             selectedAbility = ability.id;
     }
 
+    public List<Ability> getAllAbilities() {
+        List<Ability> list = new ArrayList<>();
+        for (int id : unlockedAbilities) {
+            if (AbilityController.getInstance().has(id, isDBC()))
+                list.add(AbilityController.getInstance().get(id, isDBC()));
+        }
+
+        return list;
+    }
+
+    public List<AddonAbility> getAllDBCAbilities() {
+        if (!isDBC())
+            return null;
+
+        List<AddonAbility> list = new ArrayList<>();
+        for (int id : unlockedAbilities) {
+            if (AbilityController.getInstance().has(id, true))
+                list.add((AddonAbility) AbilityController.getInstance().get(id, true));
+        }
+
+        return list;
+    }
+
     public void clearAllAbilities() {
         resetAbilityData(true);
     }
@@ -170,6 +199,29 @@ public class AbilityData {
         clearAllCooldowns();
     }
 
+    public boolean isAnimatingAbility() {
+        return !animatingAbilities.isEmpty();
+    }
+
+    public void onAnimationEvent(AnimationEvent event) {
+        if (!isDBC())
+            return;
+
+        EntityPlayerMP player = (EntityPlayerMP) ((AnimationData) event.getAnimationData()).getMCEntity();
+
+        for (AddonAbility ability : getAllDBCAbilities()) {
+            if (ability.onAnimationEvent(this, event)) {
+                if (event instanceof AnimationEvent.Started)
+                    DBCPacketHandler.Instance.sendToPlayer(new DBCAnimateAbility(ability.id, true), player);
+
+                if (event instanceof AnimationEvent.Ended)
+                    DBCPacketHandler.Instance.sendToPlayer(new DBCAnimateAbility(ability.id, false), player);
+
+                break;
+            }
+        }
+    }
+
     private Map<Integer, ? extends Ability> getAbilityMap() {
         if (isDBC)
             return AbilityController.getInstance().addonAbilities;
@@ -184,6 +236,7 @@ public class AbilityData {
         abilities.setTag("UnlockedAbilities", NBTTags.nbtIntegerSet(unlockedAbilities));
         abilities.setTag("AbilityCooldowns", NBTTags.nbtIntegerIntegerMap(abilityTimers));
         abilities.setTag("ToggledAbilities", NBTTags.nbtIntegerSet(toggledAbilities));
+        abilities.setTag("AnimatingAbilities", NBTTags.nbtIntegerSet(animatingAbilities));
 
         compound.setTag(isDBC ? "DBCAbilityData" : "CustomAbilityData", abilities);
         return compound;
@@ -196,5 +249,6 @@ public class AbilityData {
         unlockedAbilities = NBTTags.getIntegerSet(abilities.getTagList("UnlockedAbilities", 10));
         abilityTimers = NBTTags.getIntegerIntegerMap(abilities.getTagList("AbilityCooldowns", 10));
         toggledAbilities = NBTTags.getIntegerSet(abilities.getTagList("ToggledAbilities", 10));
+        animatingAbilities = NBTTags.getIntegerSet(abilities.getTagList("AnimatingAbilities", 10));
     }
 }

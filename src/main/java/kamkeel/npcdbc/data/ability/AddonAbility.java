@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data.ability;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import noppes.npcs.scripted.event.AnimationEvent;
 
 public class AddonAbility extends Ability {
     public String langName;
@@ -36,5 +37,9 @@ public class AddonAbility extends Ability {
 
     public Ability save() {
         return this;
+    }
+
+    public boolean onAnimationEvent(AbilityData data, AnimationEvent event) {
+        return false;
     }
 }

@@ -12,16 +12,26 @@ public abstract class DashAbilities extends AddonAbility {
     }
 
     @Override
-    public boolean callEvent(EntityPlayer player) {
-        if (!super.callEvent(player))
+    public boolean onActivate(EntityPlayer player) {
+        if (!super.onActivate(player))
+            return false;
+
+        if (this instanceof ZVanish) {
+
+        } else if (this instanceof Afterimage) {
+
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onToggle(EntityPlayer player) {
+        if (!super.onToggle(player))
             return false;
 
         if (this instanceof Swoop) {
             DBCSettingsUtil.setSwoop(player, !DBCSettingsUtil.isSwoop(player));
-        } else if (this instanceof ZVanish) {
-
-        } else if (this instanceof Afterimage) {
-
         }
 
         return true;
