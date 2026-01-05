@@ -1,8 +1,8 @@
 package kamkeel.npcdbc.client.gui.hud.abilityWheel;
 
+import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.client.gui.hud.WheelSegment;
 import kamkeel.npcdbc.client.gui.hud.abilityWheel.icon.AbilityIcon;
-import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.controllers.AbilityController;
 import kamkeel.npcdbc.data.AbilityWheelData;
 import kamkeel.npcdbc.data.ability.Ability;

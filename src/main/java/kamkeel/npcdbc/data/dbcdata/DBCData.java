@@ -12,10 +12,7 @@ import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.client.utils.SimplifiedDBCData;
-import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcdbc.constants.DBCRace;
-import kamkeel.npcdbc.constants.DBCSettings;
-import kamkeel.npcdbc.constants.Effects;
+import kamkeel.npcdbc.constants.*;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
@@ -51,6 +48,7 @@ import noppes.npcs.util.ValueUtil;
 
 import java.util.*;
 
+import static com.sun.org.apache.xml.internal.security.utils.I18n.translate;
 import static kamkeel.npcdbc.constants.DBCForm.*;
 import static kamkeel.npcdbc.controllers.DBCEffectController.DBC_EFFECT_INDEX;
 
