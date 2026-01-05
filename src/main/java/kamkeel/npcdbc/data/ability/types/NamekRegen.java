@@ -35,19 +35,7 @@ public class NamekRegen extends AddonAbility {
         if (!super.onActivate(player))
             return false;
 
-        // If this ability is already animating, return false
-//        if (PlayerDataUtil.getDBCInfo(player).dbcAbilityData.canAnimateAbility())
-//            return false;
-
-        IAnimation anim = DBCAnimationController.getInstance().get(DBCAnimations.NAMEKREGEN.ordinal());
-
-        if (anim == null)
-            return false;
-
-        AnimationData data = AnimationData.getData(player);
-        data.setEnabled(true);
-        data.setAnimation(anim);
-        data.updateClient();
+        DBCEffectController.getInstance().applyEffect(player, Effects.NAMEK_REGEN, -100);
 
         return true;
     }
@@ -68,21 +56,20 @@ public class NamekRegen extends AddonAbility {
         return true;
     }
 
-    @Override
-    public boolean onAnimationEvent(AbilityData data, AnimationEvent event) {
-        if (!(event instanceof AnimationEvent.FrameEvent.Entered))
-            return false;
-
-        if (!event.getAnimation().getName().equals(DBCAnimations.NAMEKREGEN.getFileName()))
-            return false;
-
-        if (((AnimationEvent.FrameEvent.Entered) event).getIndex() != 6)
-            return false;
-
-        EntityPlayer player = (EntityPlayer) ((AnimationData) event.getAnimationData()).getMCEntity();
-        //DBCEffectController.getInstance().applyEffect(player, Effects.NAMEK_REGEN, -100);
-        // TODO UNCOMMENT LINE LATER
-
-        return true;
-    }
+//    @Override
+//    public boolean onAnimationEvent(AbilityData data, AnimationEvent event) {
+//        if (!(event instanceof AnimationEvent.FrameEvent.Entered))
+//            return false;
+//
+//        if (!event.getAnimation().getName().equals(DBCAnimations.NAMEKREGEN.getFileName()))
+//            return false;
+//
+//        if (((AnimationEvent.FrameEvent.Entered) event).getIndex() != 6)
+//            return false;
+//
+//        EntityPlayer player = (EntityPlayer) ((AnimationData) event.getAnimationData()).getMCEntity();
+//        //DBCEffectController.getInstance().applyEffect(player, Effects.NAMEK_REGEN, -100);
+//
+//        return true;
+//    }
 }

@@ -82,7 +82,6 @@ public class DBCPacketHandler {
         PLAYER_PACKETS.registerPacket(new DBCRequestAbility());
         PLAYER_PACKETS.registerPacket(new DBCSelectAbility());
         PLAYER_PACKETS.registerPacket(new DBCSaveAbilityWheel());
-        PLAYER_PACKETS.registerPacket(new DBCAnimateAbility());
         PLAYER_PACKETS.registerPacket(new DBCSetFlight());
         PLAYER_PACKETS.registerPacket(new DBCRequestOutline());
         PLAYER_PACKETS.registerPacket(new TurboPacket());

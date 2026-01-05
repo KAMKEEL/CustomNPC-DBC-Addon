@@ -292,26 +292,6 @@ public class ServerEventHandler {
                 TransformController.npcAscend(npc, (Form) FormController.Instance.get(display.selectedForm));
             } else
                 TransformController.npcDecrementRage(npc, display);
-        } else if (event.entity instanceof EntityPlayer && Utility.isServer(event.entity)) {
-            EntityPlayer player = (EntityPlayer) event.entity;
-            PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
-
-            if (info != null && info.dbcAbilityData.canAnimateAbility())
-                player.motionX = player.motionY = player.motionZ = 0;
-        }
-    }
-
-    // TODO figure out why this shit is NOT WORKING
-    @SubscribeEvent
-    public void onUpdate(LivingEvent.LivingUpdateEvent event) {
-        if (event.entity instanceof EntityPlayer && Utility.isServer(event.entity)) {
-            EntityPlayer player = (EntityPlayer) event.entity;
-
-            PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
-
-            if (info != null && info.dbcAbilityData.canAnimateAbility()) {
-                player.motionX = player.motionY = player.motionZ = 0;
-            }
         }
     }
 

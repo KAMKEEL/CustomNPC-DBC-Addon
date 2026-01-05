@@ -2,13 +2,8 @@ package kamkeel.npcdbc.data.ability;
 
 import kamkeel.npcdbc.controllers.AbilityController;
 import kamkeel.npcdbc.data.AbilityWheelData;
-import kamkeel.npcdbc.network.DBCPacketHandler;
-import kamkeel.npcdbc.network.packets.player.ability.DBCAnimateAbility;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
-import noppes.npcs.controllers.data.AnimationData;
-import noppes.npcs.scripted.event.AnimationEvent;
 
 import java.util.*;
 
@@ -198,21 +193,19 @@ public class AbilityData {
     }
 
     public boolean canAnimateAbility() {
-        return animatingAbilities.isEmpty();
+        return !animatingAbilities.isEmpty();
     }
 
-    public void onAnimationEvent(AnimationEvent event) {
-        if (!isDBC())
-            return;
-
-        EntityPlayerMP player = (EntityPlayerMP) ((AnimationData) event.getAnimationData()).getMCEntity();
-
-        for (AddonAbility ability : getAllDBCAbilities()) {
-            if (ability.handleAnimations(this, event)) {
-                break;
-            }
-        }
-    }
+//    public void onAnimationEvent(AnimationEvent event) {
+//        if (!isDBC())
+//            return;
+//
+//        for (AddonAbility ability : getAllDBCAbilities()) {
+//            if (ability.onAnimationEvent(this, event)) {
+//                break;
+//            }
+//        }
+//    }
 
     private Map<Integer, ? extends Ability> getAbilityMap() {
         if (isDBC)

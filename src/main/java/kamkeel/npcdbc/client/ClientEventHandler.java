@@ -274,20 +274,6 @@ public class ClientEventHandler {
         }
     }
 
-    // TODO figure out why this shit is NOT WORKING
-    @SubscribeEvent
-    public void onUpdate(LivingEvent.LivingUpdateEvent event) {
-        if (event.entity instanceof EntityPlayer && !Utility.isServer(event.entity)) {
-            EntityPlayer player = (EntityPlayer) event.entity;
-
-            PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
-
-            if (info != null && info.dbcAbilityData.canAnimateAbility()) {
-                player.motionX = player.motionY = player.motionZ = 0;
-            }
-        }
-    }
-
     @SubscribeEvent
     public void entityAura(LivingEvent.LivingUpdateEvent event) {
         if ((event.entity instanceof EntityCustomNpc || event.entity instanceof EntityPlayer) && !Utility.isServer(event.entity)) {
