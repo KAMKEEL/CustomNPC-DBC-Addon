@@ -17,7 +17,6 @@ public class DBCAnimateAbility extends AbstractPacket {
 
     public DBCAnimateAbility(int abilityId, boolean animate) {
         this.abilityId = abilityId;
-        this.animate = animate;
     }
 
     public DBCAnimateAbility(){}

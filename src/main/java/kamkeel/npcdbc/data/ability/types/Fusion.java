@@ -14,9 +14,19 @@ public class Fusion extends AddonAbility {
         langDescription = "ability.fusionDesc";
         id = DBCAbilities.FUSION;
         skillId = 0;
-        iconX = 336;
+        iconX = 384;
         iconY = 0;
         type = Ability.Type.Toggle;
+    }
+
+    @Override
+    public int getWidth() {
+        return 64;
+    }
+
+    @Override
+    public float getScale() {
+        return 1.25f;
     }
 
     @Override

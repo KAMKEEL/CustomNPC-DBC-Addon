@@ -195,21 +195,19 @@ public class Ability {
             if (!canFireEvent(player))
                 return false;
 
+            DBCEventHooks.onAbilityActivateEvent(event);
+
+            AbilityScript script = getScriptHandler();
+            if (script != null) {
+                script.callScript(AbilityScript.ScriptType.OnAbilityActivate, event);
+            }
+
             if (event.getKiCost() > -1) {
                 data.Ki -= event.getKiCost();
             }
 
             if (event.getCooldown() > -1) {
                 abilityData.addCooldown(id, event.getCooldown());
-            }
-
-            info.updateClient();
-
-            DBCEventHooks.onAbilityActivateEvent(event);
-
-            AbilityScript script = getScriptHandler();
-            if (script != null) {
-                script.callScript(AbilityScript.ScriptType.OnAbilityActivate, event);
             }
         }
 
@@ -242,21 +240,19 @@ public class Ability {
             if (!canFireEvent(player))
                 return false;
 
+            DBCEventHooks.onAbilityToggleEvent(event);
+
+            AbilityScript script = getScriptHandler();
+            if (script != null) {
+                script.callScript(AbilityScript.ScriptType.OnAbilityToggle, event);
+            }
+
             if (event.getKiCost() > -1) {
                 data.Ki -= event.getKiCost();
             }
 
             if (event.getCooldown() > -1) {
                 abilityData.addCooldown(id, event.getCooldown());
-            }
-
-            info.updateClient();
-
-            DBCEventHooks.onAbilityToggleEvent(event);
-
-            AbilityScript script = getScriptHandler();
-            if (script != null) {
-                script.callScript(AbilityScript.ScriptType.OnAbilityToggle, event);
             }
         }
 

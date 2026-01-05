@@ -296,7 +296,7 @@ public class ServerEventHandler {
             EntityPlayer player = (EntityPlayer) event.entity;
             PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
 
-            if (info != null && info.dbcAbilityData.isAnimatingAbility())
+            if (info != null && info.dbcAbilityData.canAnimateAbility())
                 player.motionX = player.motionY = player.motionZ = 0;
         }
     }
@@ -309,7 +309,7 @@ public class ServerEventHandler {
 
             PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
 
-            if (info != null && info.dbcAbilityData.isAnimatingAbility()) {
+            if (info != null && info.dbcAbilityData.canAnimateAbility()) {
                 player.motionX = player.motionY = player.motionZ = 0;
             }
         }

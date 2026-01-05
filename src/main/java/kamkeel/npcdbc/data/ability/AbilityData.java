@@ -4,8 +4,6 @@ import kamkeel.npcdbc.controllers.AbilityController;
 import kamkeel.npcdbc.data.AbilityWheelData;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.ability.DBCAnimateAbility;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
@@ -19,8 +17,8 @@ public class AbilityData {
     public int selectedAbility = -1;
     public HashSet<Integer> unlockedAbilities = new HashSet<>();
     public HashMap<Integer, Integer> abilityTimers = new HashMap<>();
-    public HashSet<Integer> animatingAbilities = new HashSet<>();
     public HashSet<Integer> toggledAbilities = new HashSet<>();
+    public HashSet<Integer> animatingAbilities = new HashSet<>();
     public AbilityWheelData[] abilityWheel = new AbilityWheelData[6];
 
     public AbilityData(boolean isDBC) {
@@ -199,8 +197,8 @@ public class AbilityData {
         clearAllCooldowns();
     }
 
-    public boolean isAnimatingAbility() {
-        return !animatingAbilities.isEmpty();
+    public boolean canAnimateAbility() {
+        return animatingAbilities.isEmpty();
     }
 
     public void onAnimationEvent(AnimationEvent event) {
@@ -210,13 +208,7 @@ public class AbilityData {
         EntityPlayerMP player = (EntityPlayerMP) ((AnimationData) event.getAnimationData()).getMCEntity();
 
         for (AddonAbility ability : getAllDBCAbilities()) {
-            if (ability.onAnimationEvent(this, event)) {
-                if (event instanceof AnimationEvent.Started)
-                    DBCPacketHandler.Instance.sendToPlayer(new DBCAnimateAbility(ability.id, true), player);
-
-                if (event instanceof AnimationEvent.Ended)
-                    DBCPacketHandler.Instance.sendToPlayer(new DBCAnimateAbility(ability.id, false), player);
-
+            if (ability.handleAnimations(this, event)) {
                 break;
             }
         }

@@ -46,10 +46,6 @@ public class AbilityIcon extends Gui {
         GL11.glPushMatrix();
         GL11.glColor4f(1, 1, 1, 1);
 
-        if (isDBC) {
-            GL11.glScalef(1.5f, 1.5f, 1);
-        }
-
         Tessellator t;
 
         if (imageData == null || !imageData.imageLoaded()) {
@@ -59,6 +55,7 @@ public class AbilityIcon extends Gui {
             renderEngine.bindTexture(new ResourceLocation("customnpcs", "textures/marks/question.png"));
             t = getFallbackTessellator();
         } else {
+            GL11.glScalef(scale, scale, 1);
             renderEngine.bindTexture(imageData.getLocation());
             t = getTessellator(imageData);
         }

@@ -24,7 +24,7 @@ public class NamekRegen extends AddonAbility {
         langName = "ability.namekregen";
         langDescription = "ability.namekregenDesc";
         id = DBCAbilities.NAMEK_REGEN;
-        iconX = 384;
+        iconX = 336;
         iconY = 0;
         type = Type.Active;
         cooldown = -1;
@@ -36,8 +36,8 @@ public class NamekRegen extends AddonAbility {
             return false;
 
         // If this ability is already animating, return false
-        if (PlayerDataUtil.getDBCInfo(player).dbcAbilityData.isAnimatingAbility())
-            return false;
+//        if (PlayerDataUtil.getDBCInfo(player).dbcAbilityData.canAnimateAbility())
+//            return false;
 
         IAnimation anim = DBCAnimationController.getInstance().get(DBCAnimations.NAMEKREGEN.ordinal());
 
@@ -80,7 +80,8 @@ public class NamekRegen extends AddonAbility {
             return false;
 
         EntityPlayer player = (EntityPlayer) ((AnimationData) event.getAnimationData()).getMCEntity();
-        DBCEffectController.getInstance().applyEffect(player, Effects.NAMEK_REGEN, -100);
+        //DBCEffectController.getInstance().applyEffect(player, Effects.NAMEK_REGEN, -100);
+        // TODO UNCOMMENT LINE LATER
 
         return true;
     }

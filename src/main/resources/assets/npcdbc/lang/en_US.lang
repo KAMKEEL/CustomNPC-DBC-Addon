@@ -474,6 +474,8 @@ ability.namekregen=§aNamekian Regeneration
 ability.friendlyfist=§fFriendly Fist
 ability.fusion=§6Fusion
 ability.swoop=§3Swoop
+ability.zvanish=§3Z-Vanish
+ability.afterimage=§3Afterimage
 ability.kifist=§3Ki Fist
 ability.kiprot=§3Ki Protection
 ability.kiweapon=§3Ki Weapon
@@ -481,6 +483,7 @@ ability.ultrainstinct=§bUltra Instinct
 
 ability.active=Active
 ability.toggle=Toggle
+ability.abilitySelect=Ability Selected:
 
 ability.editor.kicost=Ki Cost
 ability.editor.cooldown=Cooldown
