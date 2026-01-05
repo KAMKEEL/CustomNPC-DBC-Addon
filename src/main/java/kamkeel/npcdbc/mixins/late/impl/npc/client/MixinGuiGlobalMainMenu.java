@@ -32,6 +32,7 @@ public abstract class MixinGuiGlobalMainMenu extends GuiNPCInterface2 {
 
     @Shadow
     public void registerButton(GuiNpcSquareButton button) {
+        System.out.println();
     }
 
 
