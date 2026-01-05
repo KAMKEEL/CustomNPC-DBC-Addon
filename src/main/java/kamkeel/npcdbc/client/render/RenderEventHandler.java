@@ -59,6 +59,7 @@ public class RenderEventHandler {
         if (event.slot != 3 || event.stack != null)
             return;
 
+
         DBCData dbcData = DBCData.get(event.entityPlayer);
 
         if (!dbcData.stats.isFused()) {

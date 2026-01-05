@@ -520,7 +520,7 @@ public class DBCHair extends ModelHairRenderer {
         boolean isSSJ3 = false, isRaditz = false;
         boolean effectMajinHair = true;
 
-        if ((display.hairCode.equalsIgnoreCase("bald") || display.hairType.equals("oozaru")) && isSaiyan)
+        if ((display.hairCode.equalsIgnoreCase("bald") || display.hairType.equals("oozaru")))
             return;
 
 
@@ -564,7 +564,7 @@ public class DBCHair extends ModelHairRenderer {
                 if (form.display.bodyColors.bodyCM != -1)
                     hairColor = form.display.bodyColors.bodyCM;
             } else {
-                if ((d.hairCode.equalsIgnoreCase("bald") || d.hairType.equals("oozaru")) && isSaiyan)
+                if ((d.hairCode.equalsIgnoreCase("bald") || d.hairType.equals("oozaru")))
                     return;
                 else if (d.hairCode.length() > 3)
                     hairCode = d.hairCode;

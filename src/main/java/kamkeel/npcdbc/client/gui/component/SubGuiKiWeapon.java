@@ -2,7 +2,7 @@ package kamkeel.npcdbc.client.gui.component;
 
 import kamkeel.npcdbc.client.gui.GuiDBCDisplayColor;
 import kamkeel.npcdbc.client.gui.GuiModelDBC;
-import kamkeel.npcdbc.client.utils.Color;
+import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.npc.KiWeaponData;
 import net.minecraft.client.gui.GuiButton;

@@ -132,6 +132,7 @@ public abstract class WheelSegment extends Gui {
         tessellator.addVertexWithUV(posX + width / 2, posY - (height / 2), (double) this.zLevel + 1, (index + 1) * f, 0);
         tessellator.addVertexWithUV(posX - width / 2, posY - (height / 2), (double) this.zLevel + 1, (index) * f, 0);
         tessellator.draw();
+
     }
 
 }

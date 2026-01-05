@@ -5,6 +5,9 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.relauncher.Side;
+import io.github.somehussar.janinoloader.api.IDynamicCompiler;
+import io.github.somehussar.janinoloader.api.IDynamicCompilerBuilder;
+import io.github.somehussar.janinoloader.api.delegates.LoadClassCondition;
 import kamkeel.npcdbc.config.LoadConfiguration;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.DBCProfileData;
@@ -12,8 +15,13 @@ import kamkeel.npcdbc.data.attribute.DBCItemAttributes;
 import kamkeel.npcdbc.items.ModItems;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcs.controllers.ProfileController;
+import noppes.npcs.CustomNpcs;
 
 import java.io.File;
+import java.net.URL;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Mod(
     modid = CustomNpcPlusDBC.ID,
@@ -25,11 +33,15 @@ public class CustomNpcPlusDBC {
 
     public static final String name = "CustomNPC+ DBC Addon";
     public static final String ID = "npcdbc";
-    public static final String version = "1.1.3";
+    public static final String version = "1.1.4";
 
     @SidedProxy(clientSide = "kamkeel.npcdbc.client.ClientProxy", serverSide = "kamkeel.npcdbc.CommonProxy")
     public static CommonProxy proxy;
-    @Mod.Instance
+
+    public CustomNpcPlusDBC() {
+        instance = this;
+    }
+
     public static CustomNpcPlusDBC instance;
     public static String addonConfig;
 

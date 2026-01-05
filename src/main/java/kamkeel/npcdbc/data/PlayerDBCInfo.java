@@ -15,6 +15,7 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.data.form.FormMasteryLinkData;
+import kamkeel.npcdbc.data.overlay.OverlayManager;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.util.NBTHelper;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -52,6 +53,8 @@ public class PlayerDBCInfo {
     public HashMap<Integer, Integer> formTimers = new HashMap<>();
     public HashMap<Integer, FormDisplay.BodyColor> configuredFormColors = new HashMap<>();
     public FormWheelData[] formWheel = new FormWheelData[6];
+
+    public OverlayManager overlayManager = new OverlayManager();
 
     public AbilityData customAbilityData = new AbilityData();
     public AbilityData dbcAbilityData = new AbilityData(true);
@@ -183,7 +186,7 @@ public class PlayerDBCInfo {
     }
 
     public void resetFormData(boolean removeForms, boolean removeMasteries) {
-        TransformController.handleFormDescend(parent.player, -10, -1);
+        TransformController.handleFormDescend(parent.player, -10);
         currentForm = -1;
         selectedForm = -1;
         if (removeForms)
@@ -308,7 +311,7 @@ public class PlayerDBCInfo {
             if (currentTime > 0)
                 formTimers.replace(formid, currentTime - 1);
             else if (currentTime == 0) {
-                TransformController.handleFormDescend(parent.player, 0, -1);
+                TransformController.handleFormDescend(parent.player, 0);
                 formTimers.remove(formid);
             }
         }
@@ -463,6 +466,8 @@ public class PlayerDBCInfo {
         dbcAbilityData.writeToNBT(dbcCompound);
 
         saveBonuses(dbcCompound);
+
+        dbcCompound.setTag("OverlayManager", overlayManager.writeToNBT());
         compound.setTag("DBCInfo", dbcCompound);
     }
 
@@ -504,6 +509,9 @@ public class PlayerDBCInfo {
             );
 
         loadBonuses(dbcCompound);
+
+        if (dbcCompound.hasKey("OverlayManager"))
+            overlayManager.readFromNBT(dbcCompound.getCompoundTag("OverlayManager"));
     }
 
     private void loadBonuses(NBTTagCompound dbcCompound) {

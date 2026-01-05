@@ -73,12 +73,12 @@ public abstract class MixinDBCKiTech {
         if (ClientCache.kiRevamp)
             ci.cancel();
     }
-    //
-    //    @ModifyArgs(method = "DashKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
-    //    private static void changeSprintSpeed(Args args) {
-    //        float speed = args.get(3);
-    //        args.set(3, speed * DBCData.getClient().getSprintSpeed());
-    //    }
+//
+//    @ModifyArgs(method = "DashKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
+//    private static void changeSprintSpeed(Args args) {
+//        float speed = args.get(3);
+//        args.set(3, speed * DBCData.getClient().getSprintSpeed());
+//    }
 
     @Redirect(method = "DashKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
     private static void changeSprintSpeed(float f4, float f5, EntityPlayer pitch, float speedY) {
@@ -87,23 +87,23 @@ public abstract class MixinDBCKiTech {
     }
 
     //    @ModifyArgs(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
-    //    private static void changeBaseSpeed(Args args) {
-    //        float speed = args.get(3);
-    //        args.set(3, speed * DBCData.getClient().getBaseFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100);
-    //
-    //    }
+//    private static void changeBaseSpeed(Args args) {
+//        float speed = args.get(3);
+//        args.set(3, speed * DBCData.getClient().getBaseFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100);
+//
+//    }
     @Redirect(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
     private static void changeBaseSpeed(float f4, float f5, EntityPlayer pitch, float speedY) {
         speedY *= DBCData.getClient().getBaseFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100f;
         mv(f4, f5, pitch, speedY);
     }
 
-    //    @ModifyArgs(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;setThrowableHeading(Lnet/minecraft/entity/Entity;DDDFF)V"))
-    //    private static void changeDynamic(Args args) {
-    //        float speed = args.get(4);
-    //        args.set(4, speed * DBCData.getClient().getDynamicFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100);
-    //
-    //    }
+//    @ModifyArgs(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;setThrowableHeading(Lnet/minecraft/entity/Entity;DDDFF)V"))
+//    private static void changeDynamic(Args args) {
+//        float speed = args.get(4);
+//        args.set(4, speed * DBCData.getClient().getDynamicFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100);
+//
+//    }
 
     @Redirect(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;setThrowableHeading(Lnet/minecraft/entity/Entity;DDDFF)V"))
     private static void changeDynamic(Entity e, double par1, double par3, double par5, float par7, float par8) {
@@ -140,8 +140,8 @@ public abstract class MixinDBCKiTech {
 
     @Inject(method = "chargePart(Z)V", at = @At("HEAD"), cancellable = true)
     private static void cancelAura(boolean b, CallbackInfo ci) {
-        //        if (ConfigDBCClient.RevampAura)
-        //            ci.cancel();
+//        if (ConfigDBCClient.RevampAura)
+//            ci.cancel();
 
     }
 
@@ -310,7 +310,7 @@ public abstract class MixinDBCKiTech {
 
 
             if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
-                DBCPacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -10, false, -1));
+                DBCPacketHandler.Instance.sendToServer(new TransformPacket(-10, false));
             else {
                 if (form.requiredForm.containsKey((int) JRMCoreH.Race)) {
                     int id = dbcData.stats.getJRMCPlayerID();
@@ -318,7 +318,7 @@ public abstract class MixinDBCKiTech {
                     JRMCoreH.data2[id] = JRMCoreH.State + ";" + JRMCoreH.data2[id].split(";")[1];
                 }
 
-                DBCPacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -1, false, -1));
+                DBCPacketHandler.Instance.sendToServer(new TransformPacket(-1, false));
             }
             ci.cancel();
 

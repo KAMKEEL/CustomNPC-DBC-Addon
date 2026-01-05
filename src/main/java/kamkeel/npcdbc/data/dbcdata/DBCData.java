@@ -11,7 +11,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.outline.IOutline;
-import kamkeel.npcdbc.constants.*;
+import kamkeel.npcdbc.client.utils.SimplifiedDBCData;
+import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.constants.DBCSettings;
+import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
@@ -20,9 +24,12 @@ import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
+import kamkeel.npcdbc.data.form.FacePartData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
+import kamkeel.npcdbc.data.overlay.OverlayChain;
+import kamkeel.npcdbc.data.overlay.OverlayManager;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.*;
@@ -46,7 +53,6 @@ import java.util.*;
 
 import static kamkeel.npcdbc.constants.DBCForm.*;
 import static kamkeel.npcdbc.controllers.DBCEffectController.DBC_EFFECT_INDEX;
-import static noppes.npcs.NoppesStringUtils.translate;
 
 public class    DBCData extends DBCDataUniversal implements IAuraData {
 
@@ -87,6 +93,11 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
     public DBCDataStats stats = new DBCDataStats(this);
     public DBCDataBonus bonus = new DBCDataBonus(this);
 
+    /**
+     * ALL overlay chains that were drawn this tick, forms and everything
+     */
+    public List<OverlayChain> cachedOverlays = new ArrayList<>();
+
     //RENDERING DATA
     public float XZSize, YSize, age;
     public int renderingHairColor;
@@ -98,6 +109,8 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
     public List<EntityCusPar> particleRenderQueue = new LinkedList<>();
     // Some servers tend to repeat one tick multiple times (up to 3-4 times in under a second)
     public int lastTicked = -1;
+
+    public final SimplifiedDBCData simplifiedDBCData = new SimplifiedDBCData(this);
 
     public DBCData() {
         this.side = Side.SERVER;
@@ -169,6 +182,7 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
         comp.setBoolean("DBCFlightGravity", flightGravity);
 
         comp.setBoolean("DBCIsFnPressed", isFnPressed);
+
         return comp;
     }
 
@@ -258,6 +272,16 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
         if (!c.hasKey("DBCIsFnPressed"))
             c.setBoolean("DBCIsFnPressed", isFnPressed);
         isFnPressed = c.getBoolean("DBCIsFnPressed");
+    }
+
+    public List<OverlayChain> getOverlayChains() {
+        List<OverlayChain> chains = new ArrayList<>();
+
+        OverlayManager overlays = getDBCInfo().overlayManager;
+        if (overlays.enabled)
+            chains.addAll(overlays.getChains());
+
+        return chains;
     }
 
     @SideOnly(Side.CLIENT)
@@ -1082,6 +1106,44 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
 
         PlayerDBCInfo info = getDBCInfo();
         return info.configuredFormColors.get(form.id);
+    }
+
+    public int getColor(String type) {
+        int customCol = currentCustomizedColors.getColor(type);
+        if (customCol != -1)
+            return customCol;
+
+        Form form = getForm();
+        if (form != null) {
+            int formCol = form.display.getColor(type);
+            if (formCol != -1)
+                return formCol;
+        }
+
+        switch (type.toLowerCase()) {
+            case "hair":
+                return JRMCoreH.dnsHairC(DNS);
+            case "eye":
+                return JRMCoreH.dnsEyeC1(DNS);
+            case "bodycm":
+                return JRMCoreH.dnsBodyCM(DNS);
+            case "bodyc1":
+                return JRMCoreH.dnsBodyC1(DNS);
+            case "bodyc2":
+                return JRMCoreH.dnsBodyC2(DNS);
+            case "bodyc3":
+                return JRMCoreH.dnsBodyC3(DNS);
+            case "fur":
+                int oozaruFur = skinType == 1 ? JRMCoreH.dnsBodyC1(DNS) : JRMCoreH.dnsBodyC1_0(DNS);
+                if (oozaruFur != 0x632700) // 0x632700 is oozaru brown, this means is half saiyan and has custom hair/fur color
+                    return oozaruFur;
+                return 0xDA152C; //ssj4 red
+        }
+        return -1;
+    }
+
+    public Set<FacePartData.Part> getDisabledFaceParts() {
+        return FacePartData.getDisabledParts(null, getForm(), cachedOverlays, JRMCoreH.dnsEyes(DNS));
     }
 
     public void sendCurrentFormColorData() {

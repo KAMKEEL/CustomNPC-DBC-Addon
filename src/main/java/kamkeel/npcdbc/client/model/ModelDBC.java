@@ -7,16 +7,21 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.part.*;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
-import kamkeel.npcdbc.client.utils.Color;
+import kamkeel.npcdbc.client.render.OverlayModelRenderer;
+import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.aura.AuraDisplay;
+import kamkeel.npcdbc.data.form.FacePartData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.npc.KiWeaponData;
+import kamkeel.npcdbc.data.overlay.Overlay;
+import kamkeel.npcdbc.data.overlay.OverlayChain;
+import kamkeel.npcdbc.data.overlay.OverlayContext;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
@@ -31,9 +36,20 @@ import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.data.ModelScalePart;
 import org.lwjgl.opengl.GL11;
 
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
+
+import static java.lang.String.format;
+import static kamkeel.npcdbc.client.render.DBCOverlays.*;
+import static kamkeel.npcdbc.data.form.FacePartData.Part;
+import static kamkeel.npcdbc.api.client.overlay.IOverlay.Type;
+import static kamkeel.npcdbc.api.client.overlay.IOverlay.Type.*;
+
 public class ModelDBC extends ModelBase {
 
-    private final ModelMPM parent;
+    public final ModelMPM parent;
     public static boolean isHurt = false;
     public float rot1;
     public float rot2;
@@ -58,8 +74,9 @@ public class ModelDBC extends ModelBase {
     public ModelRenderer eyebase;
     public ModelRenderer eyebrow;
 
-    private String SDDir = CustomNpcPlusDBC.ID + ":textures/sd/";
-    private String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
+    public static final String SDDir = CustomNpcPlusDBC.ID + ":textures/sd/";
+    public static final String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
+
     public DBCDisplay display;
 
     public final boolean alexArms;
@@ -137,7 +154,7 @@ public class ModelDBC extends ModelBase {
         isHurt = false;
     }
 
-    public void renderFace(EntityCustomNpc entity, DBCDisplay display) {
+    public void renderFace(EntityCustomNpc entity, DBCDisplay display, ModelRenderer bipeadHead) {
         if (display.useSkin) {
             float y = entity.modelData.getBodyY();
             ModelScalePart head = entity.modelData.modelScale.head;
@@ -147,8 +164,9 @@ public class ModelDBC extends ModelBase {
             int bodyCM = display.bodyCM;
 
             boolean isSaiyan = DBCRace.isSaiyan(display.race);
-            boolean hasArcoMask = display.hasArcoMask, isBerserk = false, hasEyebrows = display.hasEyebrows;
+            boolean hasArcoMask = display.hasArcoMask, isBerserk = false, hasEyebrows = display.hasEyebrows, hasPupils = display.hasPupils;
             boolean isSSJ4 = display.hairType.equals("ssj4"), isOozaru = display.hairType.equals("oozaru");
+            boolean isSfH = isSaiyan && display.hasFur && display.furType == 2;
 
             boolean HD = ConfigDBCClient.EnableHDTextures;
 
@@ -167,6 +185,9 @@ public class ModelDBC extends ModelBase {
                 if (customClr.hasAnyColor(d, "bodycm"))
                     bodyCM = customClr.getProperColor(d, "bodyCM");
 
+                if (d.hasBodyFur && d.furType == 2)
+                    isSfH = true;
+
                 if (d.hasArcoMask)
                     hasArcoMask = true;
 
@@ -182,186 +203,118 @@ public class ModelDBC extends ModelBase {
                 }
 
                 isBerserk = d.isBerserk;
+                hasPupils = d.hasPupils;
             }
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
             boolean renderSSJ4Face = isSSJ4 && HD && hasEyebrows && isSaiyan;
-            if (isOozaru && isSaiyan) {
+            if (isOozaru) {
                 ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir : SDDir) + "oozaru/oozarueyes.png")); //eyes
+
                 ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
-                this.eyebase.rotateAngleY = parent.bipedHead.rotateAngleY;
-                this.eyebase.rotateAngleX = parent.bipedHead.rotateAngleX;
-                this.eyebase.rotateAngleZ = parent.bipedHead.rotateAngleZ;
-                this.eyebase.rotationPointX = parent.bipedHead.rotationPointX;
-                this.eyebase.rotationPointY = parent.bipedHead.rotationPointY;
-                this.eyebase.rotationPointZ = parent.bipedHead.rotationPointZ;
-                GL11.glPushMatrix();
-                GL11.glTranslatef(0, y, 0);
-                GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-                this.eyebase.render(0.0625F);
-                GL11.glPopMatrix();
+                applyHeadRotations(eyebase);
+                renderOnHead(eyebase, y);
 
                 ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
-                DBCBody.Oozaru.rotateAngleY = parent.bipedHead.rotateAngleY;
-                DBCBody.Oozaru.rotateAngleX = parent.bipedHead.rotateAngleX;
-                DBCBody.Oozaru.rotateAngleZ = parent.bipedHead.rotateAngleZ;
-                DBCBody.Oozaru.rotationPointX = parent.bipedHead.rotationPointX;
-                DBCBody.Oozaru.rotationPointY = parent.bipedHead.rotationPointY;
-                DBCBody.Oozaru.rotationPointZ = parent.bipedHead.rotationPointZ;
-                GL11.glPushMatrix();
-                GL11.glTranslatef(0, y, 0);
-                GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-                DBCBody.Oozaru.render(0.0625f);
-                GL11.glPopMatrix();
-
+                applyHeadRotations(DBCBody.Oozaru);
+                renderOnHead(DBCBody.Oozaru, y);
                 return;
             }
             ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
-            if (renderSSJ4Face)
-                ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir + "base/nose/" : "jinryuumodscore:cc/") + "humn" + display.noseType + ".png"));
-            else
+
+            Set<FacePartData.Part> disabledParts = display.getDisabledFaceParts();
+
+            if (isBerserk || hasPupils)
+                disabledParts.addAll(EnumSet.of(Part.LeftEye, Part.RightEye));
+
+            if (display.race >= DBCRace.ARCOSIAN) //Arcosians and majins have no brows
+                disabledParts.add(Part.Eyebrows);
+
+            //  if (!faceData.disabled(Part.Nose, display.eyeType)) {
+            if (!disabledParts.contains(Part.Nose)) {
                 ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
 
-            this.nose.rotateAngleY = parent.bipedHead.rotateAngleY;
-            this.nose.rotateAngleX = parent.bipedHead.rotateAngleX;
-            this.nose.rotateAngleZ = parent.bipedHead.rotateAngleZ;
-            this.nose.rotationPointX = parent.bipedHead.rotationPointX;
-            this.nose.rotationPointY = parent.bipedHead.rotationPointY;
-            this.nose.rotationPointZ = parent.bipedHead.rotationPointZ;
-
-            GL11.glPushMatrix();
-            GL11.glTranslatef(0, y, 0);
-            GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-            this.nose.render(0.0625F);
-            GL11.glPopMatrix();
-
-            if (renderSSJ4Face)
-                return;
-
-            String mouthDir = "";
-            if (display.race == 4 && hasArcoMask)
-                mouthDir = "jinryuudragonbc:cc/arc/m/0A" + 2 + display.bodyType + "a.png";
-            else
-                mouthDir = getFaceTexture(display, "m" + display.mouthType);
-
-            ClientProxy.bindTexture(new ResourceLocation(mouthDir));
-            this.mouth.rotateAngleY = parent.bipedHead.rotateAngleY;
-            this.mouth.rotateAngleX = parent.bipedHead.rotateAngleX;
-            this.mouth.rotateAngleZ = parent.bipedHead.rotateAngleZ;
-            this.mouth.rotationPointX = parent.bipedHead.rotationPointX;
-            this.mouth.rotationPointY = parent.bipedHead.rotationPointY;
-            this.mouth.rotationPointZ = parent.bipedHead.rotationPointZ;
-
-            GL11.glPushMatrix();
-            GL11.glTranslatef(0, y, 0);
-            GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-            this.mouth.render(0.0625F);
-            GL11.glPopMatrix();
-
-            GL11.glColor4f(1.0f, 1.0f, 1.0f, this.parent.alpha);
-            ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "b" + display.eyeType)));
-            this.eyebase.rotateAngleY = parent.bipedHead.rotateAngleY;
-            this.eyebase.rotateAngleX = parent.bipedHead.rotateAngleX;
-            this.eyebase.rotateAngleZ = parent.bipedHead.rotateAngleZ;
-            this.eyebase.rotationPointX = parent.bipedHead.rotationPointX;
-            this.eyebase.rotationPointY = parent.bipedHead.rotationPointY;
-            this.eyebase.rotationPointZ = parent.bipedHead.rotationPointZ;
-
-            GL11.glPushMatrix();
-            GL11.glTranslatef(0, y, 0);
-            GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-            this.eyebase.render(0.0625F);
-            GL11.glPopMatrix();
-
-            if (display.race < 4) {
-                if (display.race != DBCRace.NAMEKIAN)
-                    ColorMode.applyModelColor(eyeBrowColor, this.parent.alpha, isHurt);
-                else {
-                    ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
-                }
-                if (!hasEyebrows && display.race != DBCRace.NAMEKIAN)
-                    ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + "humw" + display.eyeType + ".png"));
-                else
-                    ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "w" + display.eyeType)));
-                this.eyebrow.rotateAngleY = parent.bipedHead.rotateAngleY;
-                this.eyebrow.rotateAngleX = parent.bipedHead.rotateAngleX;
-                this.eyebrow.rotateAngleZ = parent.bipedHead.rotateAngleZ;
-                this.eyebrow.rotationPointX = parent.bipedHead.rotationPointX;
-                this.eyebrow.rotationPointY = parent.bipedHead.rotationPointY;
-                this.eyebrow.rotationPointZ = parent.bipedHead.rotationPointZ;
-
-                GL11.glPushMatrix();
-                GL11.glTranslatef(0, y, 0);
-                GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-                this.eyebrow.render(0.0625F);
-                GL11.glPopMatrix();
+                renderOnHead(nose, y);
             }
 
+            if (!disabledParts.contains(Part.Mouth)) {
+                String mouthDir = "";
+                if (display.race == 4 && hasArcoMask)
+                    mouthDir = "jinryuudragonbc:cc/arc/m/0A" + 2 + display.bodyType + "a.png";
+                else
+                    mouthDir = getFaceTexture(display, "m" + display.mouthType);
+                ClientProxy.bindTexture(new ResourceLocation(mouthDir));
 
-            if (!isBerserk) {
+                renderOnHead(mouth, y);
+            }
+
+            if (!disabledParts.contains(Part.EyeWhite)) {
+                ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "b" + display.eyeType)));
+
+                GL11.glColor4f(1.0f, 1.0f, 1.0f, this.parent.alpha);
+                renderOnHead(eyebase, y);
+            }
+
+            if (!disabledParts.contains(Part.Eyebrows)) {
+                ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "w" + display.eyeType)));
+
+                ColorMode.applyModelColor(display.race == DBCRace.NAMEKIAN ? bodyCM : eyeBrowColor, this.parent.alpha, isHurt);
+                renderOnHead(eyebrow, y);
+            }
+
+            //TODO FOR GOATEE: DBC EYE LEFT IS RIGHT AND RIGHT IS LEFT, GOTTA SWITCH THEM FOR OVERLAYS TOO
+            if (!disabledParts.contains(Part.LeftEye)) {
+                String texture = getFaceTexture(display, "l" + display.eyeType);
+                ClientProxy.bindTexture(new ResourceLocation(texture));
+
                 ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
-                ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "l" + display.eyeType)));
-                this.eyeleft.rotateAngleY = parent.bipedHead.rotateAngleY;
-                this.eyeleft.rotateAngleX = parent.bipedHead.rotateAngleX;
-                this.eyeleft.rotateAngleZ = parent.bipedHead.rotateAngleZ;
-                this.eyeleft.rotationPointX = parent.bipedHead.rotationPointX;
-                this.eyeleft.rotationPointY = parent.bipedHead.rotationPointY;
-                this.eyeleft.rotationPointZ = parent.bipedHead.rotationPointZ;
+                renderOnHead(eyeleft, y);
+            }
 
-                GL11.glPushMatrix();
-                GL11.glTranslatef(0, y, 0);
-                GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-                this.eyeleft.render(0.0625F);
-                GL11.glPopMatrix();
+            if (!disabledParts.contains(Part.RightEye)) {
+                String texture = getFaceTexture(display, "r" + display.eyeType);
+                ClientProxy.bindTexture(new ResourceLocation(texture));
 
-                ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "r" + display.eyeType)));
-                this.eyeright.rotateAngleY = parent.bipedHead.rotateAngleY;
-                this.eyeright.rotateAngleX = parent.bipedHead.rotateAngleX;
-                this.eyeright.rotateAngleZ = parent.bipedHead.rotateAngleZ;
-                this.eyeright.rotationPointX = parent.bipedHead.rotationPointX;
-                this.eyeright.rotationPointY = parent.bipedHead.rotationPointY;
-                this.eyeright.rotationPointZ = parent.bipedHead.rotationPointZ;
-                GL11.glPushMatrix();
-                GL11.glTranslatef(0, y, 0);
-                GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-                this.eyeright.render(0.0625F);
-                GL11.glPopMatrix();
+                ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
+                renderOnHead(eyeright, y);
             }
         }
     }
 
-    public void renderSSJ4Face(int eyeColor, int furColor, int hairColor, int bodyCM, boolean isBerserk, boolean hasEyebrows, int eyeType) {
-        boolean isHidden = DBCHair.isHidden;
-        DBCHair.isHidden = true;
+    public void renderOnHead(ModelRenderer model) {
+        renderOnHead(model, parent.npc.modelData.getBodyY());
+    }
 
-        ColorMode.applyModelColor(0xffffff, this.parent.alpha, isHurt);
-        ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4eyewhite.png"));
-        parent.bipedHead.render(1F / 16F);
+    public void renderOnHead(ModelRenderer model, float bodyY) {
+        ModelScalePart head = parent.npc.modelData.modelScale.head;
+        applyHeadRotations(model);
 
-        if (!isBerserk) {
-            ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
-            ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4pupils.png"));
-            parent.bipedHead.render(0.0625F);
+        GL11.glPushMatrix();
+        GL11.glTranslatef(0, bodyY, 0);
+        GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
+        model.render(0.0625F);
+        GL11.glPopMatrix();
+    }
+
+    public void applyHeadRotations(ModelRenderer model) {
+        model.rotateAngleY = parent.bipedHead.rotateAngleY;
+        model.rotateAngleX = parent.bipedHead.rotateAngleX;
+        model.rotateAngleZ = parent.bipedHead.rotateAngleZ;
+        model.rotationPointX = parent.bipedHead.rotationPointX;
+        model.rotationPointY = parent.bipedHead.rotationPointY;
+        model.rotationPointZ = parent.bipedHead.rotationPointZ;
+    }
+
+    public static boolean bindTexture(String texture) {
+        if (texture == null || texture.isEmpty())
+            return false;
+
+        try {
+            Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(texture));
+            return true;
+        } catch (Exception exception) {
+            return false;
         }
-
-        ColorMode.applyModelColor(furColor, this.parent.alpha, isHurt);
-        ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4brows.png"));
-        parent.bipedHead.render(1F / 16F);
-
-        ColorMode.applyModelColor(hairColor, this.parent.alpha, isHurt);
-        ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4brows2.png"));
-        parent.bipedHead.render(1F / 16F);
-
-
-        ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
-        ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4mouth0.png"));
-        parent.bipedHead.render(1F / 16F);
-
-        ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
-        ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4shade.png"));
-        parent.bipedHead.render(1F / 16F);
-
-        DBCHair.isHidden = isHidden;
     }
 
     public void renderBodySkin(DBCDisplay display, ModelRenderer model) {
@@ -375,8 +328,10 @@ public class ModelDBC extends ModelBase {
             int bodyC2 = display.bodyC2;
             int bodyC3 = display.bodyC3;
             int furColor = display.furColor;
+            int furType = display.furType;
             boolean hasFur = display.hasFur;
-            boolean isSSJ4 = display.hairType.equals("ssj4"), isOozaru = display.hairType.equals("oozaru"), hasEyebrows = display.hasEyebrows, isBerserk = false;
+            boolean isSSJ4 = display.hairType.equals("ssj4"), isOozaru = display.hairType.equals("oozaru"), isSSJ3 = display.hairType.equals("ssj3"), hasEyebrows = display.hasEyebrows, isBerserk = false, hasPupils = false;
+            FacePartData faceData = display.faceData;
             //  ModelPartData tailData = ((EntityCustomNpc) display.npc).modelData.getOrCreatePart("tail");
 
             boolean HD = ConfigDBCClient.EnableHDTextures;
@@ -404,6 +359,7 @@ public class ModelDBC extends ModelBase {
                     furColor = customClr.getProperColor(d, "fur");
 
                 hasFur = d.hasBodyFur;
+                furType = d.furType;
                 if (d.hairType.equals("ssj4")) {
                     isSSJ4 = true;
                     if (customClr.getProperColor(d, "eye") == -1)
@@ -413,6 +369,8 @@ public class ModelDBC extends ModelBase {
                 }
                 hasEyebrows = d.hasEyebrows;
                 isBerserk = d.isBerserk;
+                hasPupils = d.hasPupils;
+                faceData = d.faceData;
             }
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
@@ -421,33 +379,6 @@ public class ModelDBC extends ModelBase {
             if (race == DBCRace.HUMAN || DBCRace.isSaiyan(race)) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
                 ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
-
-                if (DBCRace.isSaiyan(race)) {
-                    if (hasFur || isSSJ4 || isOozaru) {
-                        ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:cc/") + "hum.png"));
-                        model.render(0.0625F); //important
-                        if (isSSJ4) {
-                            if (furColor == -1)
-                                furColor = 0xDA152C;
-                            if (HD && hasEyebrows)
-                                renderSSJ4Face(eyeColor, furColor, hairColor, bodyCM, isBerserk, hasEyebrows, display.eyeType);
-                        }
-
-                        if (isOozaru) {
-                            if (furColor == -1)
-                                furColor = 6498048;
-                            ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru1.png" : "jinryuudragonbc:cc/oozaru1.png")); //oozaru hairless body
-                            ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
-                            model.render(0.0625F);
-
-                            ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru2.png" : "jinryuudragonbc:cc/oozaru2.png"));  //the fur
-                        } else {
-                            ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/ss4b.png" : "jinryuudragonbc:cc/ss4b.png"));
-                        }
-                        ColorMode.applyModelColor(furColor, this.parent.alpha, isHurt);
-                    }
-                }
-
             } else if (race == DBCRace.NAMEKIAN) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/0nam" + display.bodyType + ".png"));
                 ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
@@ -487,10 +418,198 @@ public class ModelDBC extends ModelBase {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/majin/majin.png"));
                 ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
             }
+
+
         }
     }
 
+    /*
+         Applies for both players and NPCs!
 
+         This should ONLY be called once per entity's render cycle.
+         To retrieve the fully calculated list below, refer to
+         player/NPC's cachedOverlays
+     */
+    public static List<OverlayChain> applyOverlayChains(List<OverlayChain> uniqueChains, OverlayContext ctx) {
+        ArrayList<OverlayChain> chains = new ArrayList<>();
+
+        /*
+            uniqueChains contains all entity-unique overlays.
+            Whatever you add before the below addAll gets rendered below them all.
+
+            Usually scars or whatever player unique customizations,
+            so a lot of the built-in chains in DBCOverlays will
+            probably be applied before.
+
+            i.e SSJ4_Fur goes here, as you usually want it below most other overlays, as it's basically the skin
+
+         */
+
+
+         /*
+           Create the overlays here to test them (easy to hotswap here), then when finished drop them in DBCOverlays
+
+        i.e.:
+        OverlayChain SSJ4_FUR = OverlayChain.create("SSJ4_Fur");
+        SSJ4_FUR.add(ALL, Fur, (ctx1) -> path("ssj4/ss4b" + ctx1.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
+        chains.add(SSJ4_FUR);
+        */
+
+
+        boolean ssj3 = ctx.hairType("ssj3");
+        boolean ssj4 = ctx.hairType("ssj4");
+        boolean savior = ctx.furSavior();
+        boolean oozaru = ctx.hairType("oozaru");
+        boolean pupils = ctx.pupils();
+        boolean eyebrows = ctx.eyebrows();
+
+        /* ───────── Fur / Body Overlays ───────── */
+        if (oozaru)
+            chains.add(OOZARU_FUR);
+
+        if (ssj4 || ctx.hasFur()) {
+            chains.add(SSJ4_FUR);
+
+            if (savior) {
+                chains.add(SAVIOR);
+            }
+        }
+
+        /* ───────── Face Overlays ───────── */
+        if (HD()) {
+            if (!oozaru && pupils) {
+                if (ssj4 && !savior)
+                    chains.add(SSJ4_FACE);
+                else  //SSJ4 has its own pupils
+                    chains.add(PUPILS);
+            }
+
+            if (ssj3) {
+                chains.add(SSJ3_FACE); // SSJ3 unique face
+            }
+        }
+
+        if (!eyebrows || (ssj3 && !HD())) {
+            chains.add(NO_EYEBROWS);
+        }
+
+        /* ───────── Main Entity Overlays ───────── */
+        if (uniqueChains != null)
+            chains.addAll(uniqueChains);
+
+         /*
+            Whatever you add after gets rendered on top of the above.
+         */
+
+        /**
+         * You usually want form overlays on top of everything else.
+         * They take precedence like form colors do.
+         * So add them at the very end, unless something else goes on top.
+         */
+        if (ctx.form() != null && ctx.form.display.overlays.enabled) {
+            Set<Type> disabledTypes = ctx.form.display.disabledOverlayTypes;
+            if (!disabledTypes.isEmpty())
+                ctx.disabledTypes = disabledTypes;
+
+            chains.add(ctx.exceptFor = ctx.form.display.overlays);
+        }
+
+        return chains;
+    }
+
+    public static void renderOverlays(OverlayContext ctx) {
+        List<OverlayChain> chains = applyOverlayChains(ctx.getOverlayChains(), ctx);
+        ctx.cacheOverlays(chains);
+
+        for (OverlayChain chain : chains) {
+            ctx.chain = chain;
+            if (!chain.isEnabled() || chain.condition != null && !chain.checkCondition(ctx))
+                continue;
+
+
+            for (Overlay overlay : chain.overlays) {
+                ctx.overlay = overlay;
+                overlay.chain = chain;
+
+                if (!overlay.isEnabled() || overlay.condition != null && !overlay.checkCondition(ctx))
+                    continue;
+
+                Type type = overlay.getType();
+
+                /* ───────── Texture ───────── */
+                ctx.texture = overlay.getTexture();
+
+                String textureFunction = overlay.applyTexture(ctx);
+                if (textureFunction != null)
+                    ctx.texture = textureFunction;
+
+                ctx.texture = Overlay.matchTexture(ctx, ctx.texture);
+
+                if (!bindTexture(ctx.texture))
+                    continue;
+
+                /* ───────── Colors ───────── */
+                ctx.color = ctx.color(overlay.colorType);
+
+                Color colorFunction = overlay.applyColor(ctx);
+                if (colorFunction != null)
+                    ctx.color = colorFunction;
+
+                /* ───────── Glow ───────── */
+                boolean glow = overlay.isGlow();
+                if (glow) {
+                    GL11.glDisable(GL11.GL_LIGHTING);
+                    Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+                }
+
+                /* ───────── Pre-Render ───────── */
+                boolean oldArmor = false, oldHairHidden = false;
+                if (ctx.isNPC) {
+                      /*
+                        NPCs bind their skin texture in the ModelBox.render,
+                        like in model.bipedBody.render(), so that screws up
+                        the overlay texture.
+
+                        isArmor = false disables that binding.
+                     */
+                    oldArmor = ctx.mpm().isArmor;
+                    ctx.mpm().isArmor = true;
+
+                    //Hair renders by default with head, not needed here
+                    if (type == Face) {
+                        oldHairHidden = ctx.modelNpc.DBCHair.isHidden;
+                        ctx.modelNpc.DBCHair.isHidden = true;
+                    }
+                }
+
+                /* ───────── Rendering ───────── */
+                GL11.glEnable(GL11.GL_BLEND);
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GL11.glEnable(GL11.GL_ALPHA_TEST);
+                GL11.glAlphaFunc(GL11.GL_GREATER, 0.001f);
+
+                ctx.glColor(ctx.color);
+                OverlayModelRenderer.render(type, ctx);
+
+                /* ───────── Post-Rendering ───────── */
+                if (ctx.isNPC) {
+
+                    //Set DBCHair.isHidden to original value
+                    if (type == Face)
+                        ctx.modelNpc.DBCHair.isHidden = oldHairHidden;
+
+                    //Set isArmor to original value
+                    ctx.mpm().isArmor = oldArmor;
+                }
+
+                /* ───────── Disable Glow ───────── */
+                if (glow) {
+                    GL11.glEnable(GL11.GL_LIGHTING);
+                    Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
+                }
+            }
+        }
+    }
     public void setRotationAngles(float par1, float par2, float par3, float par4, float par5, float par6, Entity entity) {
     }
 
@@ -547,7 +666,7 @@ public class ModelDBC extends ModelBase {
             GL11.glTranslatef((float) Math.sin((double) dancing) * 0.025F, (float) Math.abs(Math.cos((double) dancing)) * 0.125F - 0.02F, 0.0F);
         }
 
-//        ((ModelScaleRenderer)this.bipedLeftArm).setConfig(arms, -x, y, z);
+        //        ((ModelScaleRenderer)this.bipedLeftArm).setConfig(arms, -x, y, z);
         byte hideArms = entity.modelData.hideArms;
 
         KiWeaponData leftArm = display.kiWeaponLeft;
@@ -608,11 +727,11 @@ public class ModelDBC extends ModelBase {
         }
 
 
-//        if (weaponData.syncAuraColor) {
-//            Aura aura = display.getToggledAura();
-//            if (aura != null)
-//                col.color = display.activeAuraColor;
-//        }
+        //        if (weaponData.syncAuraColor) {
+        //            Aura aura = display.getToggledAura();
+        //            if (aura != null)
+        //                col.color = display.activeAuraColor;
+        //        }
 
 
         GL11.glTranslatef(-0.06F, -0.05F, 0.0F);
@@ -672,5 +791,24 @@ public class ModelDBC extends ModelBase {
         } else {
             return KiWeaponData.getColorByAuraTypeName("");
         }
+    }
+
+    /*
+       apply HD/SD paths
+     */
+    public static String path(String tex) {
+        return HD() ? HDDir + tex : SDDir + tex;
+    }
+
+    public static String path(String texHD, String texSD) {
+        return HD() ? HDDir + texHD : texSD; //for SD textures outside of "textures/sd/"
+    }
+
+    public static String HD(String texHD) {
+        return HDDir + texHD;
+    }
+
+    public static boolean HD() {
+        return ConfigDBCClient.EnableHDTextures;
     }
 }
