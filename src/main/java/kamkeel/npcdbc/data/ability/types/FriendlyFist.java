@@ -19,8 +19,8 @@ public class FriendlyFist extends AddonAbility {
     }
 
     @Override
-    public boolean callEvent(EntityPlayer player) {
-        if (!super.callEvent(player))
+    public boolean onUse(EntityPlayer player) {
+        if (!super.onUse(player))
             return false;
 
         DBCSettingsUtil.setFriendlyFist(player, !DBCSettingsUtil.isFriendlyFist(player));

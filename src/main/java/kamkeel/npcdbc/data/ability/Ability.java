@@ -12,7 +12,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.api.entity.IPlayer;
+import noppes.npcs.api.handler.data.IAnimation;
+import noppes.npcs.controllers.AnimationController;
+import noppes.npcs.controllers.data.Animation;
+import noppes.npcs.controllers.data.AnimationData;
 import noppes.npcs.scripted.event.AnimationEvent;
+
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import static noppes.npcs.NoppesStringUtils.translate;
 
@@ -30,9 +37,9 @@ public class Ability {
     public int width = 16;
     public int height = 16;
     public float scale = 1;
-    public String animationName = "";
+    public Animation animation = null;
 
-    public Type type = Ability.Type.Active;
+    public Type type = Type.Active;
 
     public Ability() {
     }
@@ -142,12 +149,13 @@ public class Ability {
         this.scale = scale;
     }
 
-    public String getAnimationName() {
-        return animationName;
+    public Animation getAnimation() {
+        return animation;
     }
 
-    public void setAnimationName(String animationName) {
-        this.animationName = animationName;
+    public void setAnimation(Animation animation) {
+        if (AnimationController.Instance.has(animation.getName()))
+            this.animation = animation;
     }
 
     public Ability save() {
@@ -161,120 +169,109 @@ public class Ability {
         return newAbility;
     }
 
-    public Ability.Type getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(Ability.Type type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
-    public boolean onActivate(EntityPlayer player) {
+    public boolean onUse(EntityPlayer player) {
         IPlayer iPlayer = NoppesUtilServer.getIPlayer(player);
         DBCData data = DBCData.getData(player);
         PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
         AbilityData abilityData = this instanceof AddonAbility ? info.dbcAbilityData : info.customAbilityData;
 
-        if (type == Ability.Type.Active) {
-            DBCPlayerEvent.AbilityEvent.Activate event = new DBCPlayerEvent.AbilityEvent.Activate(iPlayer, this);
+        DBCPlayerEvent.AbilityEvent event = getEventByType(iPlayer);
 
-            if (event.isCanceled()) {
-                return false;
-            }
+        if (event == null)
+            return false;
 
-            if (event.getCooldown() > -1 && abilityData.hasCooldown(id)) {
-                Utility.sendMessage(player, translate("§c", "npcdbc.abilityCooldown", ": ", abilityData.abilityTimers.get(id) + ""));
-                return false;
-            }
+        if (event.isCanceled()) {
+            return false;
+        }
 
-            if (event.getKiCost() > -1 && data.Ki < event.getKiCost()) {
-                Utility.sendMessage(player, translate("§c", "npcdbc.abilityNoKi"));
-                return false;
-            }
+        if (event.getCooldown() > -1 && abilityData.hasCooldown(id)) {
+            Utility.sendMessage(player, translate("§c", "npcdbc.abilityCooldown", ": ", abilityData.abilityTimers.get(id) + ""));
+            return false;
+        }
 
-            if (!canFireEvent(player))
-                return false;
+        if (event.getKiCost() > -1 && data.Ki < event.getKiCost()) {
+            Utility.sendMessage(player, translate("§c", "npcdbc.abilityNoKi"));
+            return false;
+        }
 
-            DBCEventHooks.onAbilityActivateEvent(event);
+        if (!canFireEvent(player))
+            return false;
 
-            AbilityScript script = getScriptHandler();
-            if (script != null) {
-                script.callScript(AbilityScript.ScriptType.OnAbilityActivate, event);
-            }
+        if (this.type == Type.Animated) {
+            setupAnimations();
 
-            if (event.getKiCost() > -1) {
-                data.Ki -= event.getKiCost();
-            }
+            if (this.animation != null) {
+                AnimationData animData = (AnimationData) iPlayer.getAnimationData();
 
-            if (event.getCooldown() > -1) {
-                abilityData.addCooldown(id, event.getCooldown());
+                animData.setEnabled(true);
+                animData.setAnimation(this.animation);
+                animData.updateClient();
             }
         }
 
-        return true;
-    }
+        DBCEventHooks.onAbilityUsed(event);
 
-    public boolean onToggle(EntityPlayer player) {
-        IPlayer iPlayer = NoppesUtilServer.getIPlayer(player);
-        DBCData data = DBCData.getData(player);
-        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
-        AbilityData abilityData = this instanceof AddonAbility ? info.dbcAbilityData : info.customAbilityData;
+        AbilityScript script = getScriptHandler();
+        if (script != null) {
+            script.callScript(getScriptType(), event);
+        }
 
-        if (type == Ability.Type.Toggle) {
-            DBCPlayerEvent.AbilityEvent.Toggle event = new DBCPlayerEvent.AbilityEvent.Toggle(iPlayer, this);
+        if (event.getKiCost() > -1) {
+            data.Ki -= event.getKiCost();
+        }
 
-            if (event.isCanceled()) {
-                return false;
-            }
-
-            if (event.getCooldown() > -1 && abilityData.hasCooldown(id)) {
-                Utility.sendMessage(player, translate("§c", "npcdbc.abilityCooldown", ": ", abilityData.abilityTimers.get(id) + ""));
-                return false;
-            }
-
-            if (event.getKiCost() > -1 && data.Ki < event.getKiCost()) {
-                Utility.sendMessage(player, translate("§c", "npcdbc.abilityNoKi"));
-                return false;
-            }
-
-            if (!canFireEvent(player))
-                return false;
-
-            DBCEventHooks.onAbilityToggleEvent(event);
-
-            AbilityScript script = getScriptHandler();
-            if (script != null) {
-                script.callScript(AbilityScript.ScriptType.OnAbilityToggle, event);
-            }
-
-            if (event.getKiCost() > -1) {
-                data.Ki -= event.getKiCost();
-            }
-
-            if (event.getCooldown() > -1) {
-                abilityData.addCooldown(id, event.getCooldown());
-            }
+        if (event.getCooldown() > -1) {
+            abilityData.addCooldown(id, event.getCooldown());
         }
 
         info.updateClient();
         return true;
     }
 
-    public boolean callEvent(EntityPlayer player) {
-        if (type == Type.Active) {
-            return this.onActivate(player);
-        }
+    private DBCPlayerEvent.AbilityEvent getEventByType(IPlayer player) {
+        if (type == Type.Active)
+            return new DBCPlayerEvent.AbilityEvent.Activate(player, this);
+        else if (type == Type.Toggle)
+            return new DBCPlayerEvent.AbilityEvent.Toggle(player, this);
+        else if (type == Type.Animated)
+            return new DBCPlayerEvent.AbilityEvent.Animated(player, this);
+        return null;
+    }
 
-        if (type == Type.Toggle) {
-            return this.onToggle(player);
-        }
-
-        return false;
+    private AbilityScript.ScriptType getScriptType() {
+        return AbilityScript.ScriptType.values()[type.ordinal()];
     }
 
     // Extra checking for AddonAbilities
     protected boolean canFireEvent(EntityPlayer player) {
         return true;
+    }
+
+    protected void setupAnimations() {
+
+    }
+
+    public void onStart(Consumer<IAnimation> onStart) {
+        if (animation != null)
+            animation.onStart(onStart);
+    }
+
+    public void onFrame(BiConsumer<Integer, IAnimation> onFrame) {
+        if (animation != null)
+            animation.onFrame(onFrame);
+    }
+
+    public void onEnd(Consumer<IAnimation> onEnd) {
+        if (animation != null)
+            animation.onEnd(onEnd);
     }
 
     public AbilityScript getScriptHandler() {
@@ -352,7 +349,7 @@ public class Ability {
         cooldown = compound.getInteger("cooldown");
         kiCost = compound.getInteger("kiCost");
 
-        type = Ability.Type.values()[compound.getInteger("type")];
+        type = Type.values()[compound.getInteger("type")];
 
         if (compound.hasKey("ScriptData", Constants.NBT.TAG_COMPOUND)) {
             AbilityScript handler = new AbilityScript();
@@ -363,6 +360,7 @@ public class Ability {
 
     public enum Type {
         Active,
-        Toggle
+        Toggle,
+        Animated
     }
 }

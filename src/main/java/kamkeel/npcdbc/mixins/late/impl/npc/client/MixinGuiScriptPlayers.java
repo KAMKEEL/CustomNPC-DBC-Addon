@@ -20,5 +20,6 @@ public abstract class MixinGuiScriptPlayers extends GuiScriptInterface {
         this.hookList.add(DBCScriptType.SENZUUSED.function);
         this.hookList.add(DBCScriptType.REVIVED.function);
         this.hookList.add(DBCScriptType.KNOCKOUT.function);
+        this.hookList.add(DBCScriptType.ABILITYUSED.function);
     }
 }

@@ -285,7 +285,6 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
     @Cancelable
     public static class AbilityEvent extends DBCPlayerEvent {
         public final int id;
-        public final int type;
         public int kiCost;
         public int cooldown;
         boolean isDBC;
@@ -293,7 +292,6 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         public AbilityEvent(IPlayer player, Ability ability) {
             super(player);
             this.id = ability.id;
-            this.type = ability.getType().ordinal();
             this.kiCost = ability.kiCost;
             this.cooldown = ability.cooldown;
             this.isDBC = ability instanceof AddonAbility;
@@ -308,7 +306,14 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         }
 
         public int getType() {
-            return type;
+            if (this instanceof AbilityEvent.Activate)
+                return 0;
+            else if (this instanceof AbilityEvent.Toggle)
+                return 1;
+            else if (this instanceof AbilityEvent.Animated)
+                return 2;
+
+            return -1;
         }
 
         public int getKiCost() {
@@ -335,6 +340,12 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
 
         public static class Toggle extends AbilityEvent {
             public Toggle(IPlayer player, Ability ability) {
+                super(player, ability);
+            }
+        }
+
+        public static class Animated extends AbilityEvent {
+            public Animated(IPlayer player, Ability ability) {
                 super(player, ability);
             }
         }

@@ -149,7 +149,8 @@ public class AbilityScript implements INpcScriptHandler {
 
     public static enum ScriptType {
         OnAbilityActivate("onAbilityActivate"),
-        OnAbilityToggle("onAbilityToggle");
+        OnAbilityToggle("onAbilityToggle"),
+        OnAbilityAnimation("onAbilityAnimation");
 
         public final String function;
 

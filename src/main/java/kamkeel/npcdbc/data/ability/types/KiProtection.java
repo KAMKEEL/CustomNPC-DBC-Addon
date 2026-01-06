@@ -20,8 +20,8 @@ public class KiProtection extends AddonAbility {
     }
 
     @Override
-    public boolean callEvent(EntityPlayer player) {
-        if (!super.callEvent(player))
+    public boolean onUse(EntityPlayer player) {
+        if (!super.onUse(player))
             return false;
 
         DBCSettingsUtil.setKiProtection(player, !DBCSettingsUtil.isKiProtection(player));

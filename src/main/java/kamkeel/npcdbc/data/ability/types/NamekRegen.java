@@ -5,17 +5,12 @@ import kamkeel.npcdbc.constants.DBCAbilities;
 import kamkeel.npcdbc.constants.DBCAnimations;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.Effects;
-import kamkeel.npcdbc.controllers.DBCAnimationController;
 import kamkeel.npcdbc.controllers.DBCEffectController;
-import kamkeel.npcdbc.data.ability.AbilityData;
 import kamkeel.npcdbc.data.ability.AddonAbility;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.dbcdata.DBCDataStats;
-import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
-import noppes.npcs.api.handler.data.IAnimation;
 import noppes.npcs.controllers.data.AnimationData;
-import noppes.npcs.scripted.event.AnimationEvent;
 
 public class NamekRegen extends AddonAbility {
     public NamekRegen() {
@@ -26,18 +21,20 @@ public class NamekRegen extends AddonAbility {
         id = DBCAbilities.NAMEK_REGEN;
         iconX = 336;
         iconY = 0;
-        type = Type.Active;
-        cooldown = -1;
+        type = Type.Animated;
+        cooldown = 300;
     }
 
     @Override
-    public boolean onActivate(EntityPlayer player) {
-        if (!super.onActivate(player))
-            return false;
+    protected void setupAnimations() {
+        animation = DBCAnimations.NAMEK_REGEN.get();
 
-        DBCEffectController.getInstance().applyEffect(player, Effects.NAMEK_REGEN, -100);
-
-        return true;
+        onFrame((frame, anim) -> {
+            if (frame == 6 && ((AnimationData) anim.getParent()).getMCEntity() instanceof EntityPlayer) {
+                EntityPlayer player = (EntityPlayer) ((AnimationData) anim.getParent()).getMCEntity();
+                DBCEffectController.getInstance().applyEffect(player, Effects.NAMEK_REGEN, -100);
+            }
+        });
     }
 
     @Override

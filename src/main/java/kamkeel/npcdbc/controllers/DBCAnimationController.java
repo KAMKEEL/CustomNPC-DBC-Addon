@@ -2,11 +2,8 @@ package kamkeel.npcdbc.controllers;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.constants.DBCAnimations;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
 import noppes.npcs.LogWriter;
 import noppes.npcs.api.handler.data.IAnimation;
-import noppes.npcs.controllers.AnimationController;
 import noppes.npcs.controllers.data.Animation;
 import noppes.npcs.util.NBTJsonUtil;
 import org.apache.commons.io.FileUtils;
@@ -37,7 +34,6 @@ public class DBCAnimationController {
     private void loadAnimations() {
         try {
             for (DBCAnimations anim : DBCAnimations.values()) {
-                ResourceLocation location = new ResourceLocation(CustomNpcPlusDBC.ID, "animations/" + anim.getFileName() + ".json");
                 File file = getFile(anim.getFileName() + ".json");
 
                 if (file == null) {
@@ -47,6 +43,7 @@ public class DBCAnimationController {
 
                 Animation animation = new Animation();
                 animation.readFromNBT(NBTJsonUtil.LoadFile(file));
+                animation.name = anim.getFileName();
 
                 animations.put(anim.ordinal(), animation);
             }
@@ -77,7 +74,7 @@ public class DBCAnimationController {
     }
 
     public Animation getAnimationFromName(String animation) {
-        for (Map.Entry<Integer, Animation> entryAnimation : AnimationController.getInstance().animations.entrySet()) {
+        for (Map.Entry<Integer, Animation> entryAnimation : DBCAnimationController.getInstance().animations.entrySet()) {
             if (entryAnimation.getValue().name.equalsIgnoreCase(animation)) {
                 return entryAnimation.getValue();
             }

@@ -1,11 +1,16 @@
 package kamkeel.npcdbc.constants;
 
+import kamkeel.npcdbc.controllers.DBCAnimationController;
+import noppes.npcs.LogWriter;
+import noppes.npcs.controllers.data.Animation;
+
 public enum DBCAnimations {
-    NAMEKREGEN("Namek_Regen"),
-    FUSIONLEFT("Fusion_Left"),
-    FUSIONRIGHT("Fusion_Right");
+    NAMEK_REGEN("Namek_Regen"),
+    FUSION_LEFT("Fusion_Left"),
+    FUSION_RIGHT("Fusion_Right");
 
     public final String fileName;
+    private Animation animation;
 
     DBCAnimations(String fileName) {
         this.fileName = fileName;
@@ -13,5 +18,12 @@ public enum DBCAnimations {
 
     public String getFileName() {
         return fileName;
+    }
+
+    public Animation get() {
+        if (animation == null)
+            animation = ((Animation) DBCAnimationController.getInstance().get(this.fileName));
+        LogWriter.info(DBCAnimationController.Instance.get(this.fileName) != null ? "not null" : "null");
+        return animation;
     }
 }
