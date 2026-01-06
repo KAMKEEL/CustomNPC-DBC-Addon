@@ -22,8 +22,7 @@ public enum DBCAnimations {
 
     public Animation get() {
         if (animation == null)
-            animation = ((Animation) DBCAnimationController.getInstance().get(this.fileName));
-        LogWriter.info(DBCAnimationController.Instance.get(this.fileName) != null ? "not null" : "null");
+            animation = (Animation) DBCAnimationController.getInstance().get(this.fileName);
         return animation;
     }
 }

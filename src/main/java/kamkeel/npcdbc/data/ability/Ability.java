@@ -39,6 +39,8 @@ public class Ability {
     public float scale = 1;
     public Animation animation = null;
 
+    protected boolean cooldownCancelled = false;
+
     public Type type = Type.Active;
 
     public Ability() {
@@ -202,7 +204,7 @@ public class Ability {
             return false;
         }
 
-        if (!canFireEvent(player))
+        if (!canFireEvent(player, event))
             return false;
 
         if (this.type == Type.Animated) {
@@ -217,6 +219,8 @@ public class Ability {
             }
         }
 
+        fireEvent(player, event);
+
         DBCEventHooks.onAbilityUsed(event);
 
         AbilityScript script = getScriptHandler();
@@ -224,14 +228,17 @@ public class Ability {
             script.callScript(getScriptType(), event);
         }
 
+        afterEvent(player, event);
+
         if (event.getKiCost() > -1) {
             data.Ki -= event.getKiCost();
         }
 
-        if (event.getCooldown() > -1) {
+        if (event.getCooldown() > -1 && !cooldownCancelled) {
             abilityData.addCooldown(id, event.getCooldown());
         }
 
+        cooldownCancelled = false;
         info.updateClient();
         return true;
     }
@@ -251,11 +258,18 @@ public class Ability {
     }
 
     // Extra checking for AddonAbilities
-    protected boolean canFireEvent(EntityPlayer player) {
+    protected boolean canFireEvent(EntityPlayer player, DBCPlayerEvent.AbilityEvent event) {
         return true;
     }
 
     protected void setupAnimations() {
+    }
+
+    protected void fireEvent(EntityPlayer player, DBCPlayerEvent.AbilityEvent event) {
+
+    }
+
+    protected void afterEvent(EntityPlayer player, DBCPlayerEvent.AbilityEvent event) {
 
     }
 

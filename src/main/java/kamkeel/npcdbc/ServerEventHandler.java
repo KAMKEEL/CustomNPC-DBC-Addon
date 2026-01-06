@@ -109,7 +109,7 @@ public class ServerEventHandler {
 
             if (ConfigDBCGameplay.WearableEarrings)
                 if (player.ticksExisted % 60 == 0)
-                    FusionHandler.checkNearbyPlayers(player);
+                    FusionHandler.checkNearbyPlayersPotara(player);
 
             if (player.ticksExisted % 10 == 0) {
                 // Keep the Player informed on their own data

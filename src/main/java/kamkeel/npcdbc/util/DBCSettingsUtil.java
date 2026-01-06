@@ -4,7 +4,6 @@ import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 
 public class DBCSettingsUtil {
 
@@ -44,11 +43,11 @@ public class DBCSettingsUtil {
         }
     }
 
-    public static boolean isFusion(EntityPlayer player) {
+    public static boolean isFusionEnabled(EntityPlayer player) {
         return isEnabled(player, DBCSettings.FUSION_ENABLED);
     }
 
-    public static void setFusion(EntityPlayer player, boolean enabled) {
+    public static void setFusionEnabled(EntityPlayer player, boolean enabled) {
         setEnabled(player, DBCSettings.FUSION_ENABLED, enabled);
     }
 

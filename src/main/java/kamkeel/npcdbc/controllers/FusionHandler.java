@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.controllers;
 
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.constants.DBCAnimations;
 import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.constants.enums.EnumPotaraTypes;
@@ -8,15 +9,19 @@ import kamkeel.npcdbc.data.FuseRequest;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.network.NetworkUtility;
+import kamkeel.npcdbc.util.DBCSettingsUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.controllers.data.Animation;
+import noppes.npcs.controllers.data.AnimationData;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 
 public class FusionHandler {
     public static HashMap<UUID, FuseRequest> potaraRequest = new HashMap<>();
@@ -109,6 +114,10 @@ public class FusionHandler {
     }
 
     public static boolean requestMetamoranFusion(EntityPlayer sender, EntityPlayer target) {
+        return requestMetamoranFusion(sender, target, FusionHandler::handleMetamoranFusion);
+    }
+
+    public static boolean requestMetamoranFusion(EntityPlayer sender, EntityPlayer target, BiConsumer<EntityPlayer, EntityPlayer> onFuse) {
         if (!canPlayersFuse(sender, target))
             return false;
 
@@ -123,10 +132,7 @@ public class FusionHandler {
                 metamoranRequest.remove(uuidSender);
                 metamoranRequest.remove(uuidTarget);
 
-                NetworkUtility.sendServerMessage(sender, "§a", "npcdbc.metamoranFusion", " §e", target.getCommandSenderName());
-                NetworkUtility.sendServerMessage(target, "§a", "npcdbc.metamoranFusion", " §e", sender.getCommandSenderName());
-
-                DBCData.fusePlayers(target, sender, 30);
+                onFuse.accept(sender, target);
 
                 return true;
             }
@@ -143,7 +149,7 @@ public class FusionHandler {
         return false;
     }
 
-    public static void checkNearbyPlayers(EntityPlayer player) {
+    public static void checkNearbyPlayersPotara(EntityPlayer player) {
         ItemStack potara = player.getCurrentArmor(3);
         if (potara == null)
             return;
@@ -198,6 +204,48 @@ public class FusionHandler {
 
     }
 
+    public static boolean checkNearbyPlayersMetamoran(EntityPlayer player) {
+        return checkNearbyPlayersMetamoran(player, FusionHandler::handleMetamoranFusion);
+    }
+
+    public static boolean checkNearbyPlayersMetamoran(EntityPlayer player, BiConsumer<EntityPlayer, EntityPlayer> task) {
+        if (!player.isSneaking())
+            return false;
+
+        if (!DBCSettingsUtil.isFusionEnabled(player))
+            return false;
+
+        if (hasNoFuse(player)) {
+            DBCSettingsUtil.setFusionEnabled(player, false);
+            NetworkUtility.sendServerMessage(player, "§c", player.getCommandSenderName(), " ", "npcdbc.noFuse");
+            NetworkUtility.sendServerMessage(player, "§e", "npcdbc.disableFuse");
+            return false;
+        }
+
+        double range = 8;
+
+        List<EntityPlayer> nearbyPlayers = player.worldObj.getEntitiesWithinAABB(EntityPlayer.class, player.boundingBox.expand(range, range, range));
+
+        for (EntityPlayer nearbyPlayer : nearbyPlayers) {
+            if (nearbyPlayer == player)
+                continue;
+
+            boolean doesPlayerHaveFusion = DBCSettingsUtil.isFusionEnabled(nearbyPlayer);
+
+            if (doesPlayerHaveFusion) {
+                if (nearbyPlayer.isSneaking()) {
+                    task.accept(player, nearbyPlayer);
+                    return true;
+                } else {
+                    NetworkUtility.sendServerMessage(player, "§a", "npcdbc.fusionFound");
+                    return false;
+                }
+            }
+        }
+
+        return false;
+    }
+
     private static boolean hasNoFuse(EntityPlayer player) {
         DBCData data = DBCData.get(player);
         String fusionString = data.getRawCompound().getString("jrmcFuzion");
@@ -225,7 +273,7 @@ public class FusionHandler {
         if (!ItemPotara.isSplit(potara))
             return false;
 
-        if (!JRMCoreH.PlyrSettingsB(player, DBCSettings.FUSION_ENABLED))
+        if (!DBCSettingsUtil.isFusionEnabled(player))
             return false;
 
         int wornTier = potara.getItemDamage();
@@ -253,8 +301,8 @@ public class FusionHandler {
     }
 
     private static boolean canPlayersFuse(EntityPlayer sender, EntityPlayer target) {
-        boolean senderFusion = JRMCoreH.PlyrSettingsB(sender, DBCSettings.FUSION_ENABLED);
-        boolean targetFusion = JRMCoreH.PlyrSettingsB(target, DBCSettings.FUSION_ENABLED);
+        boolean senderFusion = DBCSettingsUtil.isFusionEnabled(sender);
+        boolean targetFusion = DBCSettingsUtil.isFusionEnabled(target);
 
         if (!senderFusion) {
             // Fusion is not on- Inform Sender
@@ -279,5 +327,35 @@ public class FusionHandler {
         }
 
         return true;
+    }
+
+    private static void handleMetamoranFusion(EntityPlayer sender, EntityPlayer target) {
+        if (false) { // replace with fusion dance animation config later
+            NetworkUtility.sendServerMessage(sender, "§a", "npcdbc.metamoranFusion", " §e", target.getCommandSenderName());
+            NetworkUtility.sendServerMessage(target, "§a", "npcdbc.metamoranFusion", " §e", sender.getCommandSenderName());
+            DBCData.fusePlayers(sender, target, 20);
+        } else {
+            Animation left = DBCAnimations.FUSION_LEFT.get();
+            Animation right = DBCAnimations.FUSION_RIGHT.get();
+
+            if (left != null && right != null) {
+                left.onEnd((anim) -> {
+                    NetworkUtility.sendServerMessage(sender, "§a", "npcdbc.metamoranFusion", " §e", target.getCommandSenderName());
+                    NetworkUtility.sendServerMessage(target, "§a", "npcdbc.metamoranFusion", " §e", sender.getCommandSenderName());
+                    DBCData.fusePlayers(sender, target, 20);
+                });
+            }
+
+            toggleAnimation(sender, left);
+            toggleAnimation(target, right);
+        }
+    }
+
+    private static void toggleAnimation(EntityPlayer player, Animation animation) {
+        AnimationData data = AnimationData.getData(player);
+
+        data.setEnabled(true);
+        data.setAnimation(animation);
+        data.updateClient();
     }
 }

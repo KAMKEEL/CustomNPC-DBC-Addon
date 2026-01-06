@@ -9,6 +9,7 @@ import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.data.ability.AddonAbility;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.dbcdata.DBCDataStats;
+import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.controllers.data.AnimationData;
 
@@ -38,13 +39,11 @@ public class NamekRegen extends AddonAbility {
     }
 
     @Override
-    protected boolean canFireEvent(EntityPlayer player) {
+    protected boolean canFireEvent(EntityPlayer player, DBCPlayerEvent.AbilityEvent event) {
         if (!ConfigDBCGameplay.EnableNamekianRegen || DBCData.get(player).Race != DBCRace.NAMEKIAN)
             return false;
 
-        DBCDataStats stats = new DBCDataStats(DBCData.get(player));
-
-        if (stats.getCurrentBodyPercentage() >= ConfigDBCGameplay.NamekianRegenMin)
+        if (DBCData.get(player).stats.getCurrentBodyPercentage() >= ConfigDBCGameplay.NamekianRegenMin)
             return false;
 
         if (DBCEffectController.getInstance().hasEffect(player, Effects.NAMEK_REGEN))
