@@ -48,7 +48,7 @@ import noppes.npcs.util.ValueUtil;
 
 import java.util.*;
 
-import static com.sun.org.apache.xml.internal.security.utils.I18n.translate;
+import static noppes.npcs.NoppesStringUtils.translate;
 import static kamkeel.npcdbc.constants.DBCForm.*;
 import static kamkeel.npcdbc.controllers.DBCEffectController.DBC_EFFECT_INDEX;
 
