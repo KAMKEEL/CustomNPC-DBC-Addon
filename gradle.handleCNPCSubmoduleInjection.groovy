@@ -156,9 +156,6 @@ tasks.register("generateTypeScriptDefinitionsCNPC", tasks.named("generateTypeScr
     outputDirectory = "CustomNPC-Plus/src/main/resources/assets/customnpcs/api"
     apiPackages = ['noppes.npcs.api','net.minecraft'] as Set
     cleanOutputFirst = true
-    
-    group = 'build'
-    description = 'Generates TypeScript definitions for CustomNPC-Plus API'
 }
 
 // Make the main TypeScript task depend on CNPC+ generation
