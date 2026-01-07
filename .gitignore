@@ -9,6 +9,9 @@
 .project
 /bin/
 /config/
+/groovy/
+/copilot/
+/api_old/
 /crash-reports/
 /logs/
 options.txt
