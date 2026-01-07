@@ -1,5 +1,14 @@
 
 pluginManagement {
+    resolutionStrategy {
+        eachPlugin {
+            if(requested.id.toString() == "dts.typescript-generator") {
+                useModule("com.github.bigguy345:dts-gradle-plugin:main-SNAPSHOT")
+            }
+        }
+    }
+
+    
     repositories {
         maven {
             // RetroFuturaGradle
@@ -10,6 +19,7 @@ pluginManagement {
                 includeGroupByRegex("com\\.gtnewhorizons\\..+")
             }
         }
+        maven{ url "https://jitpack.io" }
         gradlePluginPortal()
         mavenCentral()
         mavenLocal()
