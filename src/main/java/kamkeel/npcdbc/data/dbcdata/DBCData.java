@@ -52,7 +52,7 @@ import static noppes.npcs.NoppesStringUtils.translate;
 import static kamkeel.npcdbc.constants.DBCForm.*;
 import static kamkeel.npcdbc.controllers.DBCEffectController.DBC_EFFECT_INDEX;
 
-public class    DBCData extends DBCDataUniversal implements IAuraData {
+public class DBCData extends DBCDataUniversal implements IAuraData {
 
     public static String DBCPersisted = "PlayerPersisted";
     public final Side side;
