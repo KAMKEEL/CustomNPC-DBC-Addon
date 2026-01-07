@@ -154,7 +154,7 @@ tasks.named("runClient").configure {
 tasks.register("generateTypeScriptDefinitionsCNPC", tasks.named("generateTypeScriptDefinitions").get().class) {
     sourceDirectories = ['CustomNPC-Plus/src/api/java']
     outputDirectory = "CustomNPC-Plus/src/main/resources/assets/customnpcs/api"
-    apiPackages = ['noppes.npcs.api'] as Set
+    apiPackages = ['noppes.npcs.api','net.minecraft'] as Set
     cleanOutputFirst = true
     
     group = 'build'
