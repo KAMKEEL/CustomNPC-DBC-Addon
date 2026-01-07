@@ -147,3 +147,21 @@ tasks.named("runClient").configure {
         "--mixin",
         "mixins.customnpcs.json")
 }
+
+// TypeScript generation for CustomNPC-Plus API
+// Create a separate task that generates to CNPC+'s own resources directory
+
+tasks.register("generateTypeScriptDefinitionsCNPC", tasks.named("generateTypeScriptDefinitions").get().class) {
+    sourceDirectories = ['CustomNPC-Plus/src/api/java']
+    outputDirectory = "CustomNPC-Plus/src/main/resources/assets/customnpcs/api"
+    apiPackages = ['noppes.npcs.api'] as Set
+    cleanOutputFirst = true
+    
+    group = 'build'
+    description = 'Generates TypeScript definitions for CustomNPC-Plus API'
+}
+
+// Make the main TypeScript task depend on CNPC+ generation
+tasks.named("generateTypeScriptDefinitions").configure {
+    dependsOn tasks.named("generateTypeScriptDefinitionsCNPC")
+}
