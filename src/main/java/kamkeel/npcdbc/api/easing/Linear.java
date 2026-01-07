@@ -3,7 +3,7 @@ package kamkeel.npcdbc.api.easing;
 /**
  * Simple constant-speed linear from startY to endY (default 0 to 1)
  */
-final class Linear implements Easing {
+public final class Linear implements Easing {
     private final double startY;
     private final double deltaY; // endY - startY
 

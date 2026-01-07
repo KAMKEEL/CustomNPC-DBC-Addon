@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.api.easing;
 
-final class CubicBezier implements Easing {
+public final class CubicBezier implements Easing {
 
     private static final int NEWTON_RAPHSON_ITERATIONS = 8;
     private static final int BISECTION_LIMIT = 30;

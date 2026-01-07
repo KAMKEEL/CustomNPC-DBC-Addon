@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.api.easing;
 
-final class LinearPiecewise implements Easing {
+public final class LinearPiecewise implements Easing {
 
     private final double[] xStops;
     private double[] yValues;

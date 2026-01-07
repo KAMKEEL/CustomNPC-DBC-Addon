@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.api.easing;
 
-final class ConstantEasing implements Easing {
+public final class ConstantEasing implements Easing {
     private final double value;
 
     ConstantEasing(double value) {
