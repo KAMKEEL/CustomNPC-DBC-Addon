@@ -1,9 +1,7 @@
 //version: 1707058017
-
 plugins {
     id 'com.gtnewhorizons.gtnhconvention'
-    id "dts.typescript-generator"
-
+    id 'dts.typescript-generator'
 }
 
 var BUILD_USING_CNPC_SOURCE = !(project.hasProperty("useCNPCJar") && project.useCNPCJar == 'true')
@@ -35,19 +33,16 @@ tasks.named("runClient").configure {
 
 }
 
-
-
-
 // ============================================================================
 // TypeScript Definition Generation Task
 // Generates .d.ts files from Java API sources for scripting IDE support
 // ============================================================================
-import dts.GenerateTypeScriptTask
+// TypeScript plugin is applied above in the main plugins block
 
-tasks.withType(GenerateTypeScriptTask).configureEach {
-    sourceDirectories = [file('src/main/java')]
-    outputDirectory = file('src/main/resources/assets/customnpcs/api')
-    apiPackages = ['noppes.npcs.api', 'kamkeel.npcdbc.api'] as Set
+tasks.named("generateTypeScriptDefinitions").configure {
+    sourceDirectories = ['src/main/java']
+    outputDirectory = "src/main/resources/assets/${project.property("modId")}/api"
+    apiPackages = ['kamkeel.npcdbc.api'] as Set
     cleanOutputFirst = true  // Clean old generated files before regenerating
 }
 

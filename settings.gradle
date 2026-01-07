@@ -1,12 +1,12 @@
 
 pluginManagement {
-    resolutionStrategy {
-        eachPlugin {
-            if(requested.id.toString() == "dts.typescript-generator") {
-                useModule("com.github.bigguy345:dts-gradle-plugin:main-SNAPSHOT")
-            }
-        }
-    }
+//    resolutionStrategy {
+//        eachPlugin {
+//            if(requested.id.toString() == "dts.typescript-generator") {
+//               // useModule("com.github.bigguy345:dts-gradle-plugin:main-SNAPSHOT")
+//            }
+//        }
+//    }
 
     
     repositories {
@@ -19,7 +19,7 @@ pluginManagement {
                 includeGroupByRegex("com\\.gtnewhorizons\\..+")
             }
         }
-        maven{ url "https://jitpack.io" }
+      //  maven{ url "https://jitpack.io" }
         gradlePluginPortal()
         mavenCentral()
         mavenLocal()
@@ -29,3 +29,6 @@ pluginManagement {
 plugins {
     id 'com.gtnewhorizons.gtnhsettingsconvention' version '1.0.14'
 }
+
+// Include the local gradle-plugins composite build so plugin is resolved locally
+includeBuild 'gradle-plugins'
