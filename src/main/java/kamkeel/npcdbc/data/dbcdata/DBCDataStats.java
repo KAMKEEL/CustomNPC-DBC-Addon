@@ -8,6 +8,7 @@ import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.constants.DBCStatusEffects;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.DBCEffectController;
 import net.minecraft.entity.player.EntityPlayer;
@@ -263,7 +264,7 @@ public class DBCDataStats {
     }
 
     public boolean isFused() {
-        if (data.containsSE(10) || data.containsSE(11))
+        if (data.containsSE(DBCStatusEffects.FusionController) || data.containsSE(DBCStatusEffects.FusionSpectator))
             return true;
         if (data.Fusion.contains(",")) {
             String[] fusionMembers = data.Fusion.split(",");
@@ -273,12 +274,24 @@ public class DBCDataStats {
     }
 
     public boolean isFusionSpectator() {
-        if (data.containsSE(11))
+        if (data.containsSE(DBCStatusEffects.FusionSpectator))
             return true;
         if (data.Fusion.contains(",")) {
             String[] fusionMembers = data.Fusion.split(",");
             if (fusionMembers.length == 3)
                 return fusionMembers[1].equalsIgnoreCase(data.player.getCommandSenderName());
+
+        }
+        return false;
+    }
+
+    public boolean isFusionController() {
+        if (data.containsSE(DBCStatusEffects.FusionController))
+            return true;
+        if (data.Fusion.contains(",")) {
+            String[] fusionMembers = data.Fusion.split(",");
+            if (fusionMembers.length == 3)
+                return fusionMembers[0].equalsIgnoreCase(data.player.getCommandSenderName());
 
         }
         return false;
