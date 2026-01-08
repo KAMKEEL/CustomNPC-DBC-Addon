@@ -642,29 +642,29 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         switch (dbcForm) {
             case DBCForm.Kaioken:
-                StatusEffects = setSE(5, on);
+                StatusEffects = setSE(DBCStatusEffects.Kaioken, on);
                 State2 = (byte) (on ? 1 : 0);
                 getRawCompound().setByte("jrmcState2", State2);
                 break;
             case DBCForm.UltraInstinct:
-                StatusEffects = setSE(19, on);
+                StatusEffects = setSE(DBCStatusEffects.UI, on);
                 State2 = (byte) (on ? 1 : 0);
                 getRawCompound().setByte("jrmcState2", State2);
                 break;
             case DBCForm.GodOfDestruction:
-                StatusEffects = setSE(20, on);
+                StatusEffects = setSE(DBCStatusEffects.GoD, on);
                 break;
             case DBCForm.Mystic:
-                StatusEffects = setSE(13, on);
+                StatusEffects = setSE(DBCStatusEffects.Mystic, on);
                 break;
             case DBCForm.Legendary:
-                StatusEffects = setSE(14, on);
+                StatusEffects = setSE(DBCStatusEffects.Legendary, on);
                 break;
             case DBCForm.Divine:
-                StatusEffects = setSE(17, on);
+                StatusEffects = setSE(DBCStatusEffects.Divine, on);
                 break;
             case DBCForm.Majin:
-                StatusEffects = setSE(12, on);
+                StatusEffects = setSE(DBCStatusEffects.Majin, on);
                 break;
         }
         return StatusEffects;
@@ -708,7 +708,12 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public boolean isAuraOn() {
-        return isTransforming() || containsSE(3) || containsSE(4) || containsSE(5) || containsSE(7);
+        return
+            isTransforming() ||
+            containsSE(DBCStatusEffects.Turbo) ||
+            containsSE(DBCStatusEffects.Release) ||
+            containsSE(DBCStatusEffects.Kaioken) ||
+            containsSE(DBCStatusEffects.Swooping);
     }
 
     @Override
@@ -725,15 +730,15 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         if (FMLCommonHandler.instance().getEffectiveSide().isClient() && player == Minecraft.getMinecraft().thePlayer && TransformController.ascending)
             return true;
 
-        return containsSE(1);
+        return containsSE(DBCStatusEffects.Transforming);
     }
 
     public boolean isChargingKi() {
-        return containsSE(4);
+        return containsSE(DBCStatusEffects.Release);
     }
 
     public void setTurboState(boolean on) {
-        StatusEffects = setSE(3, on);
+        StatusEffects = setSE(DBCStatusEffects.Turbo, on);
 
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
             DBCPacketHandler.Instance.sendToPlayer(new TurboPacket(on), (EntityPlayerMP) player);
@@ -919,8 +924,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         controllerTag.setString("jrmcFuzion", fusionString);
         spectatorTag.setString("jrmcFuzion", fusionString);
 
-        this.setSE(10, true);
-        spectator.setSE(11, true);
+        this.setSE(DBCStatusEffects.FusionController, true);
+        spectator.setSE(DBCStatusEffects.FusionSpectator, true);
 
         JRMCoreH.PlyrSettingsRem(this.player, DBCSettings.FUSION_ENABLED);
         JRMCoreH.PlyrSettingsRem(spectator.player, DBCSettings.FUSION_ENABLED);
@@ -928,9 +933,9 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         controllerTag.setByte("jrmcState2", (byte) 0);
         spectatorTag.setByte("jrmcState2", (byte) 0);
 
-        spectator.setSE(3, false);
-        spectator.setSE(4, false);
-        spectator.setSE(5, false);
+        spectator.setSE(DBCStatusEffects.Turbo, false);
+        spectator.setSE(DBCStatusEffects.Release, false);
+        spectator.setSE(DBCStatusEffects.Kaioken, false);
 
         this.stats.restoreHealthPercent(100);
         spectator.stats.restoreHealthPercent(100);

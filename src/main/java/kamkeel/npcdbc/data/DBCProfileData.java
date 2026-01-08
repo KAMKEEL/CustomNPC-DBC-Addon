@@ -2,6 +2,7 @@ package kamkeel.npcdbc.data;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
+import kamkeel.npcdbc.constants.DBCStatusEffects;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcs.controllers.data.profile.IProfileData;
@@ -55,8 +56,8 @@ public class DBCProfileData implements IProfileData {
             return ProfileOperation.error("Player is fused");
 
         // If Player has Legendary
-        if (ConfigDBCGameplay.ProfileSwitchingRemovesLegendary && StusEfcts(14, dbcData.StatusEffects)) {
-            dbcData.setSE(14, false);
+        if (ConfigDBCGameplay.ProfileSwitchingRemovesLegendary && StusEfcts(DBCStatusEffects.Legendary, dbcData.StatusEffects)) {
+            dbcData.setSE(DBCStatusEffects.Legendary, false);
             dbcData.saveNBTData(false);
         }
         return ProfileOperation.success("");
