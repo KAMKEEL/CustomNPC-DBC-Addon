@@ -8,7 +8,6 @@ import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.data.ability.AddonAbility;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.data.dbcdata.DBCDataStats;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.controllers.data.AnimationData;
@@ -27,10 +26,10 @@ public class NamekRegen extends AddonAbility {
     }
 
     @Override
-    protected void setupAnimations() {
+    protected void setupAnimations(DBCPlayerEvent.AbilityEvent.Animated event) {
         animation = DBCAnimations.NAMEK_REGEN.get();
 
-        onFrame((frame, anim) -> {
+        onAnimationFrame((frame, anim) -> {
             if (frame == 6 && ((AnimationData) anim.getParent()).getMCEntity() instanceof EntityPlayer) {
                 EntityPlayer player = (EntityPlayer) ((AnimationData) anim.getParent()).getMCEntity();
                 DBCEffectController.getInstance().applyEffect(player, Effects.NAMEK_REGEN, -100);

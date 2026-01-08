@@ -16,7 +16,6 @@ import noppes.npcs.api.handler.data.IAnimation;
 import noppes.npcs.controllers.AnimationController;
 import noppes.npcs.controllers.data.Animation;
 import noppes.npcs.controllers.data.AnimationData;
-import noppes.npcs.scripted.event.AnimationEvent;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -208,7 +207,7 @@ public class Ability {
             return false;
 
         if (this.type == Type.Animated) {
-            setupAnimations();
+            setupAnimations((DBCPlayerEvent.AbilityEvent.Animated) event);
 
             if (this.animation != null) {
                 AnimationData animData = (AnimationData) iPlayer.getAnimationData();
@@ -262,7 +261,9 @@ public class Ability {
         return true;
     }
 
-    protected void setupAnimations() {
+    // Setup for AddonAbilities
+    protected void setupAnimations(DBCPlayerEvent.AbilityEvent.Animated event) {
+        this.animation = (Animation) event.getAnimation();
     }
 
     protected void fireEvent(EntityPlayer player, DBCPlayerEvent.AbilityEvent event) {
@@ -273,19 +274,24 @@ public class Ability {
 
     }
 
-    public void onStart(Consumer<IAnimation> onStart) {
+    protected void onAnimationStart(Consumer<IAnimation> onStart) {
         if (animation != null)
             animation.onStart(onStart);
     }
 
-    public void onFrame(BiConsumer<Integer, IAnimation> onFrame) {
+    protected void onAnimationFrame(BiConsumer<Integer, IAnimation> onFrame) {
         if (animation != null)
             animation.onFrame(onFrame);
     }
 
-    public void onEnd(Consumer<IAnimation> onEnd) {
+    protected void onAnimationEnd(Consumer<IAnimation> onEnd) {
         if (animation != null)
             animation.onEnd(onEnd);
+    }
+
+    protected void onAnimationTick(BiConsumer<Long, IAnimation> onTick) {
+        if (animation != null)
+            animation.onTick(onTick);
     }
 
     public AbilityScript getScriptHandler() {

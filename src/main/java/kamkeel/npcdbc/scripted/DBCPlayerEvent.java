@@ -17,6 +17,8 @@ import net.minecraft.util.DamageSource;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import noppes.npcs.api.IDamageSource;
 import noppes.npcs.api.entity.IPlayer;
+import noppes.npcs.api.handler.data.IAnimation;
+import noppes.npcs.controllers.AnimationController;
 import noppes.npcs.scripted.NpcAPI;
 import noppes.npcs.scripted.event.player.PlayerEvent;
 
@@ -345,8 +347,20 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         }
 
         public static class Animated extends AbilityEvent {
+            IAnimation animation;
+
             public Animated(IPlayer player, Ability ability) {
                 super(player, ability);
+                this.animation = ability.animation;
+            }
+
+            public IAnimation getAnimation() {
+                return animation;
+            }
+
+            public void setAnimation(IAnimation animation) {
+                if (animation != null && AnimationController.getInstance().has(animation.getName()))
+                    this.animation = animation;
             }
         }
     }
