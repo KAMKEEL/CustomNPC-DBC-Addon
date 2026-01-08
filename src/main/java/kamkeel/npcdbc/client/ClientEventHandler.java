@@ -166,17 +166,17 @@ public class ClientEventHandler {
                 }
 
                 if (KeyHandler.AbilityCastKey.isPressed()) {
-                    PlayerDBCInfo info = PlayerDataUtil.getClientDBCInfo();
+                    PlayerDBCInfo info = DBCData.getClient().getDBCInfo();
                     AbilityData dbc = info.dbcAbilityData;
                     AbilityData custom = info.customAbilityData;
 
                     if (custom.hasSelectedAbility() && custom.hasAbilityUnlocked(custom.selectedAbility)) {
-                        DBCPacketHandler.Instance.sendToServer(new AbilityUsePacket(Minecraft.getMinecraft().thePlayer, custom.selectedAbility, false));
+                        DBCPacketHandler.Instance.sendToServer(new AbilityUsePacket(custom.selectedAbility, false));
                         return;
                     }
 
                     if (dbc.hasSelectedAbility() && dbc.hasAbilityUnlocked(dbc.selectedAbility)){
-                        DBCPacketHandler.Instance.sendToServer(new AbilityUsePacket(Minecraft.getMinecraft().thePlayer, dbc.selectedAbility, true));
+                        DBCPacketHandler.Instance.sendToServer(new AbilityUsePacket(dbc.selectedAbility, true));
                         return;
                     }
 

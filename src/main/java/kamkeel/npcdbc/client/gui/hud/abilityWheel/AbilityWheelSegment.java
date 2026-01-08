@@ -22,18 +22,23 @@ public class AbilityWheelSegment extends WheelSegment {
     public Ability ability;
     public AbilityWheelData data = new AbilityWheelData();
     private AbilityIcon icon = null;
+    private boolean isSelected;
 
-    AbilityWheelSegment(HUDAbilityWheel parent, int index) {
-        this(parent, 0, 0, index);
+    public static Color TOGGLED_HOVERED = new Color(0x92FF70, 0.65f);
+    public static Color TOGGLED_NOT_HOVERED = new Color(0x92FF70, 0.35f);
+
+    AbilityWheelSegment(HUDAbilityWheel parent, int index, boolean isSelected) {
+        this(parent, 0, 0, index, isSelected);
 
     }
 
-    AbilityWheelSegment(HUDAbilityWheel parent, int posX, int posY, int index) {
+    AbilityWheelSegment(HUDAbilityWheel parent, int posX, int posY, int index, boolean isSelected) {
         super(index);
         this.parent = parent;
         this.posX = posX;
         this.posY = posY;
         this.index = data.slot = index;
+        this.isSelected = isSelected;
     }
 
     public void selectAbility() {
@@ -75,7 +80,12 @@ public class AbilityWheelSegment extends WheelSegment {
 
         float finalScale = open * (0.85f + hover * 0.15f);
 
-        currentColor = Color.lerpRGBA(NOT_HOVERED, HOVERED, hover);
+        if (isSelected) {
+            currentColor = Color.lerpRGBA(TOGGLED_NOT_HOVERED, TOGGLED_HOVERED, hover);
+        } else {
+            currentColor = Color.lerpRGBA(NOT_HOVERED, HOVERED, hover);
+        }
+
         currentColor.glColor();
 
         GL11.glPushMatrix();

@@ -2,13 +2,13 @@ package kamkeel.npcdbc.data;
 
 public class FuseRequest {
 
-    public Type type;
     private String requester;
     private String target;
     private String hash;
     private boolean rightSide;
     private int tier;
     private final long requestTime = System.currentTimeMillis();
+    private boolean isPotara;
 
     public FuseRequest(String requester, String target, boolean right, String hash, int tier) {
         this.requester = requester;
@@ -16,13 +16,13 @@ public class FuseRequest {
         this.rightSide = right;
         this.hash = hash;
         this.tier = tier;
-        this.type = Type.POTARA;
+        this.isPotara = true;
     }
 
     public FuseRequest(String requester, String target) {
         this.requester = requester;
         this.target = target;
-        this.type = Type.METAMORAN;
+        this.isPotara = false;
     }
 
     public long getRequestTime() {
@@ -50,7 +50,7 @@ public class FuseRequest {
     }
 
     public void setHash(String hash) {
-        if (type == Type.POTARA)
+        if (isPotara)
             this.hash = hash;
     }
 
@@ -59,15 +59,19 @@ public class FuseRequest {
     }
 
     public void setTier(int tier) {
-        if (type == Type.POTARA)
+        if (isPotara)
             this.tier = tier;
     }
 
+    public boolean isPotara() {
+        return isPotara;
+    }
+
     public boolean checkRequest(FuseRequest target) {
-        if (this.type != target.type)
+        if (this.isPotara() != target.isPotara())
             return false;
 
-        if (this.type == Type.POTARA) {
+        if (isPotara) {
             if (this.rightSide == target.rightSide)
                 return false;
             if (!this.hash.equals(target.hash))
@@ -84,10 +88,10 @@ public class FuseRequest {
     }
 
     public boolean newRequest(FuseRequest old) {
-        if (this.type == old.type)
+        if (this.isPotara() == old.isPotara())
             return true;
 
-        if (this.type == Type.POTARA) {
+        if (this.isPotara) {
             if (this.rightSide != old.rightSide)
                 return true;
             if (!this.hash.equals(old.hash))
@@ -101,10 +105,5 @@ public class FuseRequest {
         if (!old.target.equals(this.target))
             return true;
         return System.currentTimeMillis() > old.getRequestTime() + 5000L;
-    }
-
-    public enum Type {
-        METAMORAN,
-        POTARA
     }
 }

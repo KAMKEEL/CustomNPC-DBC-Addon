@@ -39,8 +39,9 @@ public class Fusion extends AddonAbility {
     @Override
     protected void fireEvent(EntityPlayer player, DBCPlayerEvent.AbilityEvent event) {
         if (player.isSneaking()) {
-            if (!FusionHandler.checkNearbyPlayersMetamoran(player))
-                cooldownCancelled = true;
+            if (!FusionHandler.checkNearbyPlayersMetamoran(player)) {
+                event.setCooldown(3);
+            }
         } else {
             DBCSettingsUtil.setFusionEnabled(player, !DBCSettingsUtil.isFusionEnabled(player));
             cooldownCancelled = true;

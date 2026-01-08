@@ -64,7 +64,19 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
         dbcInfo = PlayerDataUtil.getClientDBCInfo();
 
         for (int i = 0; i < 6; i++) {
-            wheelSlot[i] = new AbilityWheelSegment(this, i);
+            if (dbcInfo == null)
+                continue;
+
+            AbilityWheelData data = dbcInfo.abilityWheel[i];
+            boolean isSelected;
+
+            if (data.isDBC) {
+                isSelected = dbcInfo.dbcAbilityData.toggledAbilities.contains(data.abilityID);
+            } else {
+                isSelected = dbcInfo.customAbilityData.toggledAbilities.contains(data.abilityID);
+            }
+
+            wheelSlot[i] = new AbilityWheelSegment(this, i, isSelected);
             wheelSlot[i].setAbility(dbcInfo.abilityWheel[i], false);
         }
 
