@@ -1,7 +1,6 @@
 package kamkeel.npcdbc.constants;
 
 import kamkeel.npcdbc.controllers.DBCAnimationController;
-import noppes.npcs.LogWriter;
 import noppes.npcs.controllers.data.Animation;
 
 public enum DBCAnimations {
