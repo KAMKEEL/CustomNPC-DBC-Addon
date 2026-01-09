@@ -74,14 +74,6 @@ public class TransformController {
                 return;
             JRMCoreH.Cost(cost);
         }
-        //        if (player.ticksExisted % 5 == 0) { //increments rage meter and drain ki cost every 6 ticks
-        //            float toDrain = form.mastery.kiDrain * form.mastery.calculateMulti("kiDrain", formLevel);
-        //
-        //            dbcData.stats.restoreKiPercent(-toDrain / form.mastery.kiDrainTimer * 10);
-        //            PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcEnrgy", (int) dbcData.Ki));
-        //
-        //
-        //        }
         if (JRMCoreH.curRelease < 50 && releaseTime >= 10) { //if release is less than 50%, increment it until it is so
             float en = 100.0F / JRMCoreH.maxEnergy * JRMCoreH.curEnergy;
             float re = JRMCoreH.curRelease;
