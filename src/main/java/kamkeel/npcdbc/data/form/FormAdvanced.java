@@ -1,8 +1,8 @@
 package kamkeel.npcdbc.data.form;
 
-import kamkeel.npcdbc.constants.DBCStatistics;
 import kamkeel.npcdbc.api.form.IAdvancedFormStat;
 import kamkeel.npcdbc.api.form.IFormAdvanced;
+import kamkeel.npcdbc.constants.DBCStatistics;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class FormAdvanced implements IFormAdvanced {

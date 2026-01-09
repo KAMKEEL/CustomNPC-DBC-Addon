@@ -56,7 +56,39 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.text.DecimalFormat;
 
-import static JinRyuu.JRMCore.JRMCoreH.*;
+import static JinRyuu.JRMCore.JRMCoreH.DBC;
+import static JinRyuu.JRMCore.JRMCoreH.DBCSkillNames;
+import static JinRyuu.JRMCore.JRMCoreH.DBCSkillsIDs;
+import static JinRyuu.JRMCore.JRMCoreH.KaiKFBal;
+import static JinRyuu.JRMCore.JRMCoreH.NC;
+import static JinRyuu.JRMCore.JRMCoreH.PlyrAttrbts;
+import static JinRyuu.JRMCore.JRMCoreH.Races;
+import static JinRyuu.JRMCore.JRMCoreH.SklLvl;
+import static JinRyuu.JRMCore.JRMCoreH.SklLvlX;
+import static JinRyuu.JRMCore.JRMCoreH.StusEfcts;
+import static JinRyuu.JRMCore.JRMCoreH.TransFrStBnP;
+import static JinRyuu.JRMCore.JRMCoreH.TransHalfSaiStBnP;
+import static JinRyuu.JRMCore.JRMCoreH.TransHmStBnP;
+import static JinRyuu.JRMCore.JRMCoreH.TransKaiDrainLevel;
+import static JinRyuu.JRMCore.JRMCoreH.TransKaiDrainRace;
+import static JinRyuu.JRMCore.JRMCoreH.getArcosianReserveMaxPointPercentage;
+import static JinRyuu.JRMCore.JRMCoreH.getByte;
+import static JinRyuu.JRMCore.JRMCoreH.getCurrentFormName;
+import static JinRyuu.JRMCore.JRMCoreH.getFormID;
+import static JinRyuu.JRMCore.JRMCoreH.getFormMasteryData;
+import static JinRyuu.JRMCore.JRMCoreH.getFormMasteryValue;
+import static JinRyuu.JRMCore.JRMCoreH.getInt;
+import static JinRyuu.JRMCore.JRMCoreH.getMajinAbsorptionValueS;
+import static JinRyuu.JRMCore.JRMCoreH.getNBTFormMasteryRacialKey;
+import static JinRyuu.JRMCore.JRMCoreH.getStatBonus;
+import static JinRyuu.JRMCore.JRMCoreH.getString;
+import static JinRyuu.JRMCore.JRMCoreH.isFused;
+import static JinRyuu.JRMCore.JRMCoreH.jrmcDam;
+import static JinRyuu.JRMCore.JRMCoreH.nbt;
+import static JinRyuu.JRMCore.JRMCoreH.round;
+import static JinRyuu.JRMCore.JRMCoreH.setByte;
+import static JinRyuu.JRMCore.JRMCoreH.setInt;
+import static JinRyuu.JRMCore.JRMCoreH.vlblSklsUps;
 import static kamkeel.npcdbc.util.DBCUtils.lastSetDamage;
 
 @Mixin(value = JRMCoreH.class, remap = false)

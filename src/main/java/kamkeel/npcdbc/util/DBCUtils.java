@@ -44,7 +44,32 @@ import noppes.npcs.scripted.CustomNPCsException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static JinRyuu.JRMCore.JRMCoreH.*;
+import static JinRyuu.JRMCore.JRMCoreH.DBCRacialSkillMindCost;
+import static JinRyuu.JRMCore.JRMCoreH.DBCRacialSkillTPCost;
+import static JinRyuu.JRMCore.JRMCoreH.DBCSkillMindCost;
+import static JinRyuu.JRMCore.JRMCoreH.DBCSkillNames;
+import static JinRyuu.JRMCore.JRMCoreH.DBCSkillTPCost;
+import static JinRyuu.JRMCore.JRMCoreH.PlyrAttrbts;
+import static JinRyuu.JRMCore.JRMCoreH.PlyrSettingsB;
+import static JinRyuu.JRMCore.JRMCoreH.PlyrSkills;
+import static JinRyuu.JRMCore.JRMCoreH.SklLvl;
+import static JinRyuu.JRMCore.JRMCoreH.SklLvlY;
+import static JinRyuu.JRMCore.JRMCoreH.SklLvl_KiBs;
+import static JinRyuu.JRMCore.JRMCoreH.StusEfcts;
+import static JinRyuu.JRMCore.JRMCoreH.difp;
+import static JinRyuu.JRMCore.JRMCoreH.getByte;
+import static JinRyuu.JRMCore.JRMCoreH.getInt;
+import static JinRyuu.JRMCore.JRMCoreH.getPlayerAttribute;
+import static JinRyuu.JRMCore.JRMCoreH.getString;
+import static JinRyuu.JRMCore.JRMCoreH.isInCreativeMode;
+import static JinRyuu.JRMCore.JRMCoreH.nbt;
+import static JinRyuu.JRMCore.JRMCoreH.pwr_cha;
+import static JinRyuu.JRMCore.JRMCoreH.pwr_ki;
+import static JinRyuu.JRMCore.JRMCoreH.pwr_sa;
+import static JinRyuu.JRMCore.JRMCoreH.setByte;
+import static JinRyuu.JRMCore.JRMCoreH.setInt;
+import static JinRyuu.JRMCore.JRMCoreH.stat;
+import static JinRyuu.JRMCore.JRMCoreH.weightPerc;
 
 // Created by Goatee
 public class DBCUtils {
@@ -330,7 +355,7 @@ public class DBCUtils {
                         dbcA = AttributeAttackUtil.calculateDamagePlayerToPlayer(attackingPlayer, defendingPlayer, dbcA);
                     }
                 }
-                
+
                 float hpRemaining = currentHP - dbcA;
                 float newHP;
                 if (dse) {

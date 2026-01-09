@@ -1,10 +1,6 @@
 package kamkeel.npcdbc.scripted;
 
 import kamkeel.npcdbc.constants.DBCScriptType;
-import kamkeel.npcs.controllers.AttributeController;
-import kamkeel.npcs.controllers.data.attribute.tracker.PlayerAttributeTracker;
-import net.minecraft.entity.player.EntityPlayer;
-import noppes.npcs.config.ConfigMain;
 import noppes.npcs.controllers.ScriptController;
 import noppes.npcs.controllers.data.PlayerDataScript;
 import noppes.npcs.scripted.NpcAPI;

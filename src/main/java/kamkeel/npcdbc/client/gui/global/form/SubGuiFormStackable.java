@@ -9,7 +9,15 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormCustomStackable;
 import kamkeel.npcdbc.data.form.FormStackable;
 import net.minecraft.client.gui.GuiButton;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcButtonYesNo;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.GuiNpcTextField;
+import noppes.npcs.client.gui.util.GuiScrollWindow;
+import noppes.npcs.client.gui.util.GuiSelectionListener;
+import noppes.npcs.client.gui.util.ISubGuiListener;
+import noppes.npcs.client.gui.util.ITextfieldListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 
 public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener, ITextfieldListener {
     private GuiNpcFormMenu menu;

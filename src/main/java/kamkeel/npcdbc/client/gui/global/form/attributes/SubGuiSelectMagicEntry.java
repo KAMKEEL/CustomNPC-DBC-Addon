@@ -2,7 +2,10 @@ package kamkeel.npcdbc.client.gui.global.form.attributes;
 
 import kamkeel.npcdbc.data.form.FormAttributes;
 import net.minecraft.client.gui.GuiButton;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiCustomScroll;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.ICustomScrollListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 import noppes.npcs.controllers.MagicController;
 import noppes.npcs.controllers.data.Magic;
 

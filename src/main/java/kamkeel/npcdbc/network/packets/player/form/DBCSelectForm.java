@@ -23,7 +23,11 @@ import noppes.npcs.controllers.data.PlayerData;
 
 import java.io.IOException;
 
-import static kamkeel.npcdbc.constants.DBCForm.*;
+import static kamkeel.npcdbc.constants.DBCForm.GodOfDestruction;
+import static kamkeel.npcdbc.constants.DBCForm.Kaioken;
+import static kamkeel.npcdbc.constants.DBCForm.Kaioken6;
+import static kamkeel.npcdbc.constants.DBCForm.Mystic;
+import static kamkeel.npcdbc.constants.DBCForm.UltraInstinct;
 
 public final class DBCSelectForm extends AbstractPacket {
     public static final String packetName = "NPC|SelectForm";

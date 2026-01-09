@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.data.npc;
 
-import kamkeel.npcdbc.api.npc.IKiWeaponData;
 import kamkeel.npcdbc.api.Color;
+import kamkeel.npcdbc.api.npc.IKiWeaponData;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.data.aura.AuraDisplay;
 import net.minecraft.nbt.NBTTagCompound;

@@ -18,7 +18,10 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import static kamkeel.npcdbc.constants.DBCForm.*;
+import static kamkeel.npcdbc.constants.DBCForm.GodOfDestruction;
+import static kamkeel.npcdbc.constants.DBCForm.Kaioken;
+import static kamkeel.npcdbc.constants.DBCForm.Kaioken6;
+import static kamkeel.npcdbc.constants.DBCForm.UltraInstinct;
 import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 

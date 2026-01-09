@@ -7,7 +7,6 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import kamkeel.npcdbc.CommonProxy;
-import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.client.render.PotaraItemRenderer;
 import kamkeel.npcdbc.client.render.RenderEventHandler;

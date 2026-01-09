@@ -13,7 +13,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import java.util.ArrayList;
 import java.util.List;
 
-import static JinRyuu.JRMCore.JRMCoreH.*;
+import static JinRyuu.JRMCore.JRMCoreH.Races;
+import static JinRyuu.JRMCore.JRMCoreH.StusEfcts;
+import static JinRyuu.JRMCore.JRMCoreH.getPlayerLevel;
 import static kamkeel.npcdbc.data.dbcdata.DBCData.DBCPersisted;
 
 public class DBCProfileData implements IProfileData {
