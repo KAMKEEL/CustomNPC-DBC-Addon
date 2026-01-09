@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.api.client.overlay.IOverlay;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.janino.JaninoScriptable;
 
 import java.util.function.Function;
 
