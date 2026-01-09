@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.gui.global.ability;
 
 import kamkeel.npcdbc.api.ability.IAbility;
+import kamkeel.npcdbc.client.gui.global.auras.SubGuiAuraDisplay;
 import kamkeel.npcdbc.controllers.AbilityController;
 import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.network.DBCPacketHandler;
@@ -8,6 +9,7 @@ import kamkeel.npcdbc.network.packets.get.ability.DBCGetAbility;
 import kamkeel.npcdbc.network.packets.player.ability.DBCRequestAbility;
 import kamkeel.npcdbc.network.packets.request.ability.DBCRemoveAbility;
 import kamkeel.npcdbc.network.packets.request.ability.DBCSaveAbility;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.gui.GuiYesNoCallback;
@@ -178,7 +180,7 @@ public class GuiNPCManageAbilities extends GuiNPCInterface2 implements ICustomSc
 
         if (button.id == 3) {
             if (data.containsKey(scrollAbilities.getSelected()) && ability != null && ability.id >= 0) {
-                //setSubGui(new SubGuiAbilityGeneral(this, ability));
+                Minecraft.getMinecraft().displayGuiScreen(new SubGuiAbilityGeneral(this));
             }
         }
 

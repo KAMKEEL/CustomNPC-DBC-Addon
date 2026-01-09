@@ -495,5 +495,9 @@ ability.animated=Animated
 ability.editor.kicost=Ki Cost
 ability.editor.cooldown=Cooldown
 ability.editor.type=Type
+ability.editor.height=Icon Height
+ability.editor.width=Icon Width
+ability.editor.xPos=Icon X Pos
+ability.editor.yPos=Icon Y Pos
 
 stats.ki=Ki

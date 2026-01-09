@@ -29,8 +29,8 @@ public class Ability implements IAbility {
     public int id = -1;
     public String name = "";
     public String menuName = "NEW ABILITY";
-    public int cooldown = -1;
-    public int kiCost = -1;
+    public int cooldown = 0;
+    public int kiCost = 0;
     public boolean multiUse = false;
     public int maxUses = 1;
 
@@ -274,13 +274,13 @@ public class Ability implements IAbility {
 
         afterEvent(player, event);
 
-        if (event.getKiCost() > -1) {
+        if (event.getKiCost() > 0) {
             data.Ki -= event.getKiCost();
         }
 
         boolean maxAmountReached = abilityData.abilityCounter.get(id) != null && abilityData.abilityCounter.get(id) == maxUses;
         boolean shouldActivateCooldown =
-            event.getCooldown() > -1 &&
+            event.getCooldown() > 0 &&
             !cooldownCancelled &&
             (type != Type.Toggle && (!multiUse || maxAmountReached));
 
