@@ -304,6 +304,33 @@ public abstract class MixinJRMCoreH {
             result = (int) (result * (averageMulti * statusMulti));
         }
 
+        // Apply player bonuses for custom forms (since applyBonusToDBC won't run)
+        if (!DBCUtils.noBonusEffects && !DBCUtils.calculatingKiDrain && !DBCUtils.calculatingCost) {
+            float[] bonus = dbcData.bonus.getMultiBonus();
+            if (attribute == DBCAttribute.Strength && bonus[0] != 0)
+                result += (currAttributes[DBCAttribute.Strength] * bonus[0]);
+            else if (attribute == DBCAttribute.Dexterity && bonus[1] != 0)
+                result += (currAttributes[DBCAttribute.Dexterity] * bonus[1]);
+            else if (attribute == DBCAttribute.Willpower && bonus[2] != 0)
+                result += (currAttributes[DBCAttribute.Willpower] * bonus[2]);
+            else if (attribute == DBCAttribute.Constitution && bonus[3] != 0)
+                result += (currAttributes[DBCAttribute.Constitution] * bonus[3]);
+            else if (attribute == DBCAttribute.Spirit && bonus[4] != 0)
+                result += (currAttributes[DBCAttribute.Spirit] * bonus[4]);
+
+            float[] flatBonus = dbcData.bonus.getFlatBonus();
+            if (attribute == DBCAttribute.Strength)
+                result += flatBonus[0];
+            else if (attribute == DBCAttribute.Dexterity)
+                result += flatBonus[1];
+            else if (attribute == DBCAttribute.Willpower)
+                result += flatBonus[2];
+            else if (attribute == DBCAttribute.Constitution)
+                result += flatBonus[3];
+            else if (attribute == DBCAttribute.Spirit)
+                result += flatBonus[4];
+        }
+
         result = ValueUtil.clamp(result, 0, Integer.MAX_VALUE);
 
         if (!DBCUtils.noBonusEffects && !DBCUtils.calculatingKiDrain && !DBCUtils.calculatingCost) {

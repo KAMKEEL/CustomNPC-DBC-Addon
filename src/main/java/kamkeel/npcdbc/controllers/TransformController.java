@@ -91,30 +91,6 @@ public class TransformController {
             releaseTime = 0;
         }
         if (rage >= 100) { //transform when rage meter reaches 100 (max)
-//            int selectedId = PlayerDataUtil.getClientDBCInfo() != null ?
-//                PlayerDataUtil.getClientDBCInfo().selectedForm :
-//                -1;
-//
-//            int definitiveId;
-//            int stackedFrom;
-
-//            definitiveId = form.getID();
-//            stackedFrom = -1;
-//
-//            boolean canStack =
-//                form.customStackable.customStackable
-//                    && currentForm != null
-//                    && FormController.Instance.has(selectedId);
-//
-//            if (canStack) {
-//                Form stackForm = getStackForm(currentForm,
-//                    (Form) FormController.Instance.get(selectedId));
-//
-//                if (stackForm != null) {
-//                    stackedFrom = currentForm.getID();
-//                }
-//            }
-
             DBCPacketHandler.Instance.sendToServer(new TransformPacket(form.getID(), true));
             resetTimers();
             cantTransform = true;
@@ -274,8 +250,15 @@ public class TransformController {
         Form stackedForm = getStackForm(data.getForm(), form);
         if (stackedForm != null)
             form = stackedForm;
+          
 
-        if (formData.currentForm != form.id) {
+        if (!formData.hasForm(form)) {
+            LogWriter.error(String.format("Potential exploiting: %s tried to transform into a form they don't have unlocked (\"%s\" - ID: %d)",
+                player.getCommandSenderName(), form.getName(), formID));
+            return;
+        }
+
+        if (formData.currentForm != formID) {
             DBCData dbcData = DBCData.get(player);
 
 

@@ -1323,13 +1323,20 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
+    public boolean isTransforming() {
+        return dbcData.containsSE(1);
+    }
+
+    @Override
     public boolean isReleasing() {
-        return dbcData.simplifiedDBCData.isReleasing();
+        return dbcData.containsSE(4);
     }
 
     @Override
     public boolean isMeditating() {
-        return dbcData.simplifiedDBCData.isMeditating();
+        if (dbcData.Skills.contains("MD")) {
+            return isReleasing();
+        } else return false;
     }
 
     @Override
@@ -1337,10 +1344,9 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return dbcData.simplifiedDBCData.isSuperRegen();
     }
 
-
     @Override
     public boolean isSwooping() {
-        return dbcData.simplifiedDBCData.isSwooping();
+        return dbcData.containsSE(7);
     }
 
     @Override
