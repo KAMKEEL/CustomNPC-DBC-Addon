@@ -82,7 +82,7 @@ public class DBCAbilityScript extends AbstractPacket {
             return;
 
         DBCAbilityScript.Action requestedAction = DBCAbilityScript.Action.values()[in.readInt()];
-        Ability ability = AbilityController.getInstance().get(in.readInt());
+        Ability ability = (Ability) AbilityController.getInstance().get(in.readInt());
         if (ability == null)
             return;
 

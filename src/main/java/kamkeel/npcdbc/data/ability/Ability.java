@@ -1,8 +1,11 @@
 package kamkeel.npcdbc.data.ability;
 
+import kamkeel.npcdbc.api.ability.IAbility;
 import kamkeel.npcdbc.controllers.AbilityController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.player.AbilityAnimatePacket;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -22,13 +25,14 @@ import java.util.function.Consumer;
 
 import static noppes.npcs.NoppesStringUtils.translate;
 
-public class Ability {
+public class Ability implements IAbility {
     public int id = -1;
     public String name = "";
     public String menuName = "NEW ABILITY";
-    public String description = "";
     public int cooldown = -1;
     public int kiCost = -1;
+    public boolean multiUse = false;
+    public int maxUses = 1;
 
     public String icon = "";
     public int iconX = 0;
@@ -40,7 +44,7 @@ public class Ability {
 
     protected boolean cooldownCancelled = false;
 
-    public Type type = Type.Active;
+    public Type type = Type.Cast;
 
     public Ability() {
     }
@@ -54,116 +58,153 @@ public class Ability {
         this.name = name;
     }
 
+    @Override
     public int getID() {
         return id;
     }
 
+    @Override
     public void setID(int id) {
-        this.id = id;
+        if (id > 0 || id == -1)
+            this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public String getMenuName() {
         return menuName;
     }
 
+    @Override
     public void setMenuName(String menuName) {
         this.menuName = menuName;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
+    @Override
     public int getKiCost() {
         return kiCost;
     }
 
+    @Override
     public void setKiCost(int kiCost) {
         this.kiCost = kiCost;
     }
 
+    @Override
     public int getCooldown() {
         return cooldown;
     }
 
+    @Override
     public void setCooldown(int cooldown) {
         this.cooldown = cooldown;
     }
 
+    public boolean isMultiUse() {
+        return multiUse;
+    }
+
+    public void setMultiUse(boolean multiUse) {
+        this.multiUse = multiUse;
+    }
+
+    @Override
+    public int getMaxUses() {
+        return maxUses;
+    }
+
+    @Override
+    public void setMaxUses(int maxUses) {
+        this.maxUses = maxUses;
+    }
+
+    @Override
     public String getIcon() {
         return icon;
     }
 
+    @Override
     public void setIcon(String icon) {
         this.icon = icon;
     }
 
+    @Override
     public int getIconX() {
         return iconX;
     }
 
+    @Override
     public void setIconX(int iconX) {
         this.iconX = iconX;
     }
 
+    @Override
     public int getIconY() {
         return iconY;
     }
 
+    @Override
     public void setIconY(int iconY) {
         this.iconY = iconY;
     }
 
+    @Override
     public int getWidth() {
         return width;
     }
 
+    @Override
     public void setWidth(int width) {
         this.width = width;
     }
 
+    @Override
     public int getHeight() {
         return height;
     }
 
+    @Override
     public void setHeight(int height) {
         this.height = height;
     }
 
+    @Override
     public float getScale() {
         return scale;
     }
 
+    @Override
     public void setScale(float scale) {
         this.scale = scale;
     }
 
+    @Override
     public Animation getAnimation() {
         return animation;
     }
 
+    @Override
     public void setAnimation(Animation animation) {
         if (AnimationController.Instance.has(animation.getName()))
             this.animation = animation;
     }
 
-    public Ability save() {
+    @Override
+    public IAbility save() {
         return AbilityController.Instance.saveAbility(this);
     }
 
-    public Ability cloneAbility() {
+    @Override
+    public IAbility cloneAbility() {
         Ability newAbility = new Ability();
         newAbility.readFromNBT(this.writeToNBT(true));
         newAbility.id = -1;
@@ -194,7 +235,7 @@ public class Ability {
         }
 
         if (event.getCooldown() > -1 && abilityData.hasCooldown(id)) {
-            Utility.sendMessage(player, translate("§c", "npcdbc.abilityCooldown", ": ", abilityData.abilityTimers.get(id) + ""));
+            Utility.sendMessage(player, translate("§c", "npcdbc.abilityCooldown", ": ", abilityData.abilityTimers.get(id) + "", "s"));
             return false;
         }
 
@@ -203,11 +244,15 @@ public class Ability {
             return false;
         }
 
+        if (abilityData.animatingAbility != -1)
+            return false;
+
         if (!canFireEvent(player, event))
             return false;
 
         if (this.type == Type.Animated) {
             setupAnimations((DBCPlayerEvent.AbilityEvent.Animated) event);
+            finishAnimationSetup();
 
             if (this.animation != null) {
                 AnimationData animData = (AnimationData) iPlayer.getAnimationData();
@@ -233,7 +278,13 @@ public class Ability {
             data.Ki -= event.getKiCost();
         }
 
-        if (event.getCooldown() > -1 && !cooldownCancelled) {
+        boolean maxAmountReached = abilityData.abilityCounter.get(id) != null && abilityData.abilityCounter.get(id) >= maxUses;
+        boolean shouldActivateCooldown =
+            event.getCooldown() > -1 &&
+            !cooldownCancelled &&
+            (type != Type.Toggle && (!multiUse || maxAmountReached));
+
+        if (shouldActivateCooldown) {
             abilityData.addCooldown(id, event.getCooldown());
         }
 
@@ -243,10 +294,10 @@ public class Ability {
     }
 
     private DBCPlayerEvent.AbilityEvent getEventByType(IPlayer player) {
-        if (type == Type.Active)
-            return new DBCPlayerEvent.AbilityEvent.Activate(player, this);
+        if (type == Type.Cast)
+            return new DBCPlayerEvent.AbilityEvent.Casted(player, this);
         else if (type == Type.Toggle)
-            return new DBCPlayerEvent.AbilityEvent.Toggle(player, this);
+            return new DBCPlayerEvent.AbilityEvent.Toggled(player, this);
         else if (type == Type.Animated)
             return new DBCPlayerEvent.AbilityEvent.Animated(player, this);
         return null;
@@ -264,6 +315,26 @@ public class Ability {
     // Setup for AddonAbilities
     protected void setupAnimations(DBCPlayerEvent.AbilityEvent.Animated event) {
         this.animation = (Animation) event.getAnimation();
+    }
+
+    private void finishAnimationSetup() {
+        if (animation == null)
+            return;
+
+        Consumer<IAnimation> originalStart = animation.onAnimationStart;
+        Consumer<IAnimation> originalEnd = animation.onAnimationEnd;
+
+        onAnimationStart((a) -> {
+            if (originalStart != null)
+                originalStart.accept(a);
+            DBCPacketHandler.Instance.sendToServer(new AbilityAnimatePacket(this.id, this instanceof AddonAbility, true));
+        });
+
+        onAnimationEnd((a) -> {
+            if (originalEnd != null)
+                originalEnd.accept(a);
+            DBCPacketHandler.Instance.sendToServer(new AbilityAnimatePacket(this.id, this instanceof AddonAbility, false));
+        });
     }
 
     protected void fireEvent(EntityPlayer player, DBCPlayerEvent.AbilityEvent event) {
@@ -331,10 +402,10 @@ public class Ability {
 
         compound.setString("name", name);
         compound.setString("menuName", menuName);
-        compound.setString("description", description);
 
         compound.setInteger("cooldown", cooldown);
         compound.setInteger("kiCost", kiCost);
+        compound.setInteger("maxUses", maxUses);
 
         compound.setInteger("type", type.ordinal());
 
@@ -364,10 +435,10 @@ public class Ability {
 
         name = compound.getString("name");
         menuName = compound.getString("menuName");
-        description = compound.getString("description");
 
         cooldown = compound.getInteger("cooldown");
         kiCost = compound.getInteger("kiCost");
+        maxUses = compound.getInteger("maxUses");
 
         type = Type.values()[compound.getInteger("type")];
 
@@ -379,7 +450,7 @@ public class Ability {
     }
 
     public enum Type {
-        Active,
+        Cast,
         Toggle,
         Animated
     }

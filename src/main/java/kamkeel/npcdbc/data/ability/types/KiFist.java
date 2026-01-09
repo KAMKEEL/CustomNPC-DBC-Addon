@@ -11,7 +11,6 @@ public class KiFist extends AddonAbility {
         super();
         name = "KiFist";
         langName = "ability.kifist";
-        langDescription = "ability.kifistDesc";
         id = DBCAbilities.KI_FIST;
         skillId = 12;
         iconX = 192;

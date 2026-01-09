@@ -606,6 +606,8 @@ public class PlayerDBCInfo {
 
             if (DBCData.get(player).Race == DBCRace.NAMEKIAN)
                 data.addAbility(DBCAbilities.NAMEK_REGEN);
+
+            data.addAbility(17);
         }
     }
 

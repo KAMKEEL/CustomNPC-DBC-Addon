@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.controllers;
 
+import kamkeel.npcdbc.api.ability.IAbility;
 import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.ability.Ability;
@@ -53,7 +54,7 @@ public class AbilityController {
         LogWriter.info("Done loading abilities.");
     }
 
-    public Ability createAbility(String name) {
+    public IAbility createAbility(String name) {
         if (hasName(name))
             return get(name);
         else {
@@ -86,6 +87,7 @@ public class AbilityController {
         addonAbility(new FriendlyFist());
         addonAbility(new KiWeapon());
         addonAbility(new NamekRegen());
+        addonAbility(new MultiuseTest());
     }
 
     private void addonAbility(AddonAbility ability) {
@@ -149,7 +151,7 @@ public class AbilityController {
         return lastUsedID;
     }
 
-    public Ability saveAbility(Ability ability) {
+    public IAbility saveAbility(IAbility ability) {
         if (ability.getID() < 0) {
             ability.setID(getUnusedId());
             while (hasName(ability.getName()))
@@ -162,7 +164,7 @@ public class AbilityController {
         }
 
         abilities.remove(ability.getID());
-        abilities.put(ability.getID(), ability);
+        abilities.put(ability.getID(), (Ability) ability);
 
         saveAbilityLoadMap();
 
@@ -175,7 +177,7 @@ public class AbilityController {
         File file2 = new File(dir, ability.getName() + ".json");
 
         try {
-            NBTTagCompound nbtTagCompound = ability.writeToNBT(true);
+            NBTTagCompound nbtTagCompound = ((Ability) ability).writeToNBT(true);
             NBTJsonUtil.SaveFile(file, nbtTagCompound);
             if (file2.exists())
                 file2.delete();
@@ -256,30 +258,30 @@ public class AbilityController {
         return get(id, dbcAbility) != null;
     }
 
-    public Ability get(int id) {
+    public IAbility get(int id) {
         return get(id, false);
     }
 
-    public Ability get(String name) {
+    public IAbility get(String name) {
         return getAbilityFromName(name, false);
     }
 
-    public Ability get(int id, boolean dbcAbility) {
+    public IAbility get(int id, boolean dbcAbility) {
         if (id == -1)
             return null;
         return getAbilityMap(dbcAbility).get(id);
     }
 
-    public Ability get(String name, boolean dbcAbility) {
+    public IAbility get(String name, boolean dbcAbility) {
         return getAbilityFromName(name, dbcAbility);
     }
 
-    public Ability[] getAbilities() {
+    public IAbility[] getAbilities() {
         ArrayList<Ability> abilities = new ArrayList<>(this.abilities.values());
-        return abilities.toArray(new Ability[0]);
+        return abilities.toArray(new IAbility[0]);
     }
 
-    public Ability[] getDBCAbilities() {
+    public AddonAbility[] getDBCAbilities() {
         ArrayList<AddonAbility> addonAbilities = new ArrayList<>(this.addonAbilities.values());
         return addonAbilities.toArray(new AddonAbility[0]);
     }

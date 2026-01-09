@@ -3,6 +3,7 @@ package kamkeel.npcdbc.api.event;
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import noppes.npcs.api.IDamageSource;
 import noppes.npcs.api.event.IPlayerEvent;
+import noppes.npcs.api.handler.data.IAnimation;
 
 public interface IDBCEvent extends IPlayerEvent {
 
@@ -52,6 +53,81 @@ public interface IDBCEvent extends IPlayerEvent {
          * @return If form after transformation is a vanilla DBC (SSJ/SSGod/SSBEvo) and not a CNPC Custom Form, this returns false
          */
         boolean isFormAfterCustom();
+    }
+
+    @Cancelable
+    interface AbilityEvent extends IDBCEvent {
+        /**
+         * @return The ID of the Ability.
+         */
+        int getID();
+
+        /**
+         * @return The type of the Ability. 0 = Active; 1 = Toggle; 2 = Animated
+         */
+        int getType();
+
+        /**
+         * @return The amount of ki necessary to cast the Ability.
+         */
+        int getKiCost();
+
+        /**
+         * Allows you to change / intercept the amount of Ki
+         * taken from the player upon casting the ability
+         * @param kiCost The new Ki cost
+         */
+        void setKiCost(int kiCost);
+
+        /**
+         * @return The amount of time in seconds it takes to re-cast the Ability
+         */
+        int getCooldown();
+
+        /**
+         * Allows you to change the ability's cooldown
+         * @param cooldown The new cooldown in seconds
+         */
+        void setCooldown(int cooldown);
+
+        /**
+         * @return If ability is added by the Addon, returns true. Returns false otherwise
+         */
+        boolean isDBC();
+
+        interface Casted extends AbilityEvent{
+
+        }
+
+        interface MultiCasted extends AbilityEvent{
+            /**
+             * @return The amount of times you can cast the Ability before triggering cooldown
+             */
+            int getMaxUses();
+
+            /**
+             * Allows you to change the max amount of uses before triggering cooldown
+             * @param maxUses The new amount of uses
+             */
+            void setMaxUses(int maxUses);
+        }
+
+        interface Toggled extends AbilityEvent{
+
+        }
+
+        interface Animated extends AbilityEvent {
+            /**
+             * @return The animation that plays when casting the ability
+             */
+            IAnimation getAnimation();
+
+            /**
+             * Allows you to change the animation that plays when casting the ability
+             * @param animation The new animation
+             */
+            void setAnimation(IAnimation animation);
+        }
     }
 
     @Cancelable

@@ -17,12 +17,11 @@ public class NamekRegen extends AddonAbility {
         super();
         name = "NamekRegen";
         langName = "ability.namekregen";
-        langDescription = "ability.namekregenDesc";
         id = DBCAbilities.NAMEK_REGEN;
         iconX = 336;
         iconY = 0;
         type = Type.Animated;
-        cooldown = 300;
+        cooldown = -1;
     }
 
     @Override
@@ -50,21 +49,4 @@ public class NamekRegen extends AddonAbility {
 
         return true;
     }
-
-//    @Override
-//    public boolean onAnimationEvent(AbilityData data, AnimationEvent event) {
-//        if (!(event instanceof AnimationEvent.FrameEvent.Entered))
-//            return false;
-//
-//        if (!event.getAnimation().getName().equals(DBCAnimations.NAMEKREGEN.getFileName()))
-//            return false;
-//
-//        if (((AnimationEvent.FrameEvent.Entered) event).getIndex() != 6)
-//            return false;
-//
-//        EntityPlayer player = (EntityPlayer) ((AnimationData) event.getAnimationData()).getMCEntity();
-//        //DBCEffectController.getInstance().applyEffect(player, Effects.NAMEK_REGEN, -100);
-//
-//        return true;
-//    }
 }

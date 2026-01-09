@@ -510,6 +510,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         dbcAbilities.put(DBCAbilities.FRIENDLY_FIST, translate("ability.friendlyfist"));
 
+        dbcAbilities.put(17, "test");
+
         if (Skills.contains("DS")) {
             dbcAbilities.put(DBCAbilities.SWOOP, translate("ability.swoop"));
 

@@ -388,6 +388,9 @@ npcdbc.cannotTransformDirect=You cannot transform to this form directly
 npcdbc.clearedSelection=Cleared selection
 npcdbc.formSelect=Form Selected:
 npcdbc.auraSelect=Aura Selected:
+npcdbc.abilitySelect=Ability Selected:
+npcdbc.abilityNoKi=Not enough Ki to use ability
+npcdbc.abilityCooldown=Ability in cooldown
 npcdbc.transform=Transformed to
 npcdbc.descend=Descended to
 npcdbc.descendFrom=Descended from
@@ -487,7 +490,7 @@ ability.ultrainstinct=§bUltra Instinct
 
 ability.active=Active
 ability.toggle=Toggle
-ability.abilitySelect=Ability Selected:
+ability.animated=Animated
 
 ability.editor.kicost=Ki Cost
 ability.editor.cooldown=Cooldown

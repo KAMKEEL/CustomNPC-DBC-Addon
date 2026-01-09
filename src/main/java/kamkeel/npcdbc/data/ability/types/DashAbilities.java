@@ -32,7 +32,6 @@ public abstract class DashAbilities extends AddonAbility {
             super();
             name = "Swoop";
             langName = "ability.swoop";
-            langDescription = "ability.swoopDesc";
             id = DBCAbilities.SWOOP;
             iconX = 48;
             iconY = 0;
@@ -45,13 +44,12 @@ public abstract class DashAbilities extends AddonAbility {
             super();
             name = "ZVanish";
             langName = "ability.zvanish";
-            langDescription = "ability.zvanishDesc";
             id = DBCAbilities.Z_VANISH;
             iconX = 96;
             iconY = 0;
             cooldown = 15;
             kiCost = 500;
-            type = Ability.Type.Active;
+            type = Ability.Type.Cast;
         }
     }
 
@@ -60,13 +58,12 @@ public abstract class DashAbilities extends AddonAbility {
             super();
             name = "Afterimage";
             langName = "ability.afterimage";
-            langDescription = "ability.afterimageDesc";
             id = DBCAbilities.AFTERIMAGE;
             iconX = 144;
             iconY = 0;
             cooldown = 30;
             kiCost = 1000;
-            type = Ability.Type.Active;
+            type = Ability.Type.Cast;
         }
     }
 }

@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.gui.global.ability;
 
+import kamkeel.npcdbc.api.ability.IAbility;
 import kamkeel.npcdbc.controllers.AbilityController;
 import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.network.DBCPacketHandler;
@@ -166,7 +167,7 @@ public class GuiNPCManageAbilities extends GuiNPCInterface2 implements ICustomSc
                 displayGuiScreen(guiyesno);
             }
         } else if (button.id == 2) {
-            Ability ability = this.ability.cloneAbility();
+            Ability ability = (Ability) this.ability.cloneAbility();
             while (data.containsKey(ability.name))
                 ability.name += "_";
             DBCPacketHandler.Instance.sendToServer(new DBCSaveAbility(ability.writeToNBT(false), ""));
@@ -282,7 +283,7 @@ public class GuiNPCManageAbilities extends GuiNPCInterface2 implements ICustomSc
     }
 
     private String getTypeName(Ability.Type type) {
-        if (type == Ability.Type.Active)
+        if (type == Ability.Type.Cast)
             return "ability.active";
         else
             return "ability.toggle";

@@ -87,6 +87,7 @@ public class DBCPacketHandler {
         PLAYER_PACKETS.registerPacket(new TurboPacket());
         PLAYER_PACKETS.registerPacket(new TransformPacket());
         PLAYER_PACKETS.registerPacket(new AbilityUsePacket());
+        PLAYER_PACKETS.registerPacket(new AbilityAnimatePacket());
         PLAYER_PACKETS.registerPacket(new StopSound());
         PLAYER_PACKETS.registerPacket(new SendChat());
         PLAYER_PACKETS.registerPacket(new SaveFormCustomization());

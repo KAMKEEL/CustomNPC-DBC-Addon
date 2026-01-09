@@ -26,5 +26,6 @@ public enum EnumPacketPlayer {
     StopSound,
     Transform,
     AbilityUse,
+    AbilityAnimate,
     NPCPingForm, Turbo
 }

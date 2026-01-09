@@ -7,6 +7,7 @@ import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.data.ability.AbilityData;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.network.PacketChannel;
 import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -14,22 +15,23 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import java.io.IOException;
 
-public final class AbilityUsePacket extends AbstractPacket {
-    public static final String packetName = "NPC|AbilityUse";
+public class AbilityAnimatePacket extends AbstractPacket {
+    public static final String packetName = "NPC|AbilityAnimate";
     private int abilityId;
     private boolean isDBC;
+    private boolean animate;
 
-    public AbilityUsePacket(int abilityId, boolean isDBC) {
+    public AbilityAnimatePacket() {}
+
+    public AbilityAnimatePacket(int abilityId, boolean isDBC, boolean animate) {
         this.abilityId = abilityId;
         this.isDBC = isDBC;
-    }
-
-    public AbilityUsePacket() {
+        this.animate = animate;
     }
 
     @Override
     public Enum getType() {
-        return EnumPacketPlayer.AbilityUse;
+        return EnumPacketPlayer.AbilityAnimate;
     }
 
     @Override
@@ -39,11 +41,11 @@ public final class AbilityUsePacket extends AbstractPacket {
 
     @Override
     public void sendData(ByteBuf out) throws IOException {
-        out.writeInt(this.abilityId);
-        out.writeBoolean(this.isDBC);
+        out.writeInt(abilityId);
+        out.writeBoolean(isDBC);
+        out.writeBoolean(animate);
     }
 
-    // TODO find out why ts not working on multiplayer
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
         if (player == null)
@@ -51,35 +53,25 @@ public final class AbilityUsePacket extends AbstractPacket {
 
         int abilityId = in.readInt();
         boolean isDBC = in.readBoolean();
+        boolean animate = in.readBoolean();
 
         Ability ability = (Ability) AbilityController.getInstance().get(abilityId, isDBC);
-        if (ability == null)
+        if (ability == null || ability.getType() != Ability.Type.Animated)
             return;
 
         PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
         AbilityData data = isDBC ? info.dbcAbilityData : info.customAbilityData;
 
-        if (data.hasAbilityUnlocked(abilityId) && ability.onUse(player)) {
-            if (ability.getType() == Ability.Type.Toggle) {
-                if (data.toggledAbilities.contains(abilityId))
-                    data.toggledAbilities.remove(abilityId);
-                else
-                    data.toggledAbilities.add(abilityId);
-            }
+        if (!data.hasAbilityUnlocked(abilityId))
+            return;
 
-            if (ability.isMultiUse()) {
-                if (!data.abilityCounter.containsKey(abilityId)) {
-                    data.abilityCounter.put(abilityId, 1);
-                } else {
-                    if (data.abilityCounter.get(abilityId) >= ability.maxUses) {
-                        data.abilityCounter.remove(abilityId);
-                    } else {
-                        data.abilityCounter.put(abilityId, data.abilityCounter.get(abilityId) + 1);
-                    }
-                }
-            }
-
-            info.updateClient();
+        if (animate) {
+            data.animatingAbility = abilityId;
+//            NetworkUtility.sendServerMessage(player, "I AM INSIDE YOUR WALLS");
+        } else {
+            data.animatingAbility = -1;
+//            NetworkUtility.sendServerMessage(player, "I AM OUTSIDE YOUR WALLS");
         }
+        info.updateClient();
     }
 }

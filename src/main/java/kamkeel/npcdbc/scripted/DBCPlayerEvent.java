@@ -285,7 +285,7 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
     }
 
     @Cancelable
-    public static class AbilityEvent extends DBCPlayerEvent {
+    public static class AbilityEvent extends DBCPlayerEvent implements IDBCEvent.AbilityEvent {
         public final int id;
         public int kiCost;
         public int cooldown;
@@ -299,54 +299,81 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
             this.isDBC = ability instanceof AddonAbility;
         }
 
-        public boolean isDBC() {
-            return isDBC;
-        }
-
+        @Override
         public int getID() {
             return id;
         }
 
+        @Override
         public int getType() {
-            if (this instanceof AbilityEvent.Activate)
+            if (this instanceof IDBCEvent.AbilityEvent.Casted)
                 return 0;
-            else if (this instanceof AbilityEvent.Toggle)
+            if (this instanceof IDBCEvent.AbilityEvent.MultiCasted)
                 return 1;
-            else if (this instanceof AbilityEvent.Animated)
+            else if (this instanceof IDBCEvent.AbilityEvent.Toggled)
                 return 2;
+            else if (this instanceof IDBCEvent.AbilityEvent.Animated)
+                return 3;
 
             return -1;
         }
 
+        @Override
         public int getKiCost() {
             return kiCost;
         }
 
+        @Override
         public void setKiCost(int kiCost) {
             this.kiCost = kiCost;
         }
 
+        @Override
         public int getCooldown() {
             return cooldown;
         }
 
+        @Override
         public void setCooldown(int cooldown) {
             this.cooldown = cooldown;
         }
 
-        public static class Activate extends AbilityEvent {
-            public Activate(IPlayer player, Ability ability) {
+        @Override
+        public boolean isDBC() {
+            return isDBC;
+        }
+
+        public static class Casted extends DBCPlayerEvent.AbilityEvent implements IDBCEvent.AbilityEvent.Casted {
+            public Casted(IPlayer player, Ability ability) {
                 super(player, ability);
             }
         }
 
-        public static class Toggle extends AbilityEvent {
-            public Toggle(IPlayer player, Ability ability) {
+        public static class MultiCasted extends DBCPlayerEvent.AbilityEvent implements IDBCEvent.AbilityEvent.MultiCasted {
+            public int maxUses;
+            public MultiCasted(IPlayer player, Ability ability) {
+                super(player, ability);
+                this.maxUses = ability.maxUses;
+            }
+
+            @Override
+            public int getMaxUses() {
+                return maxUses;
+            }
+
+            @Override
+            public void setMaxUses(int maxUses) {
+                this.maxUses = maxUses;
+            }
+        }
+
+        public static class Toggled extends DBCPlayerEvent.AbilityEvent implements IDBCEvent.AbilityEvent.Toggled {
+            public Toggled(IPlayer player, Ability ability) {
                 super(player, ability);
             }
         }
 
-        public static class Animated extends AbilityEvent {
+        public static class Animated extends DBCPlayerEvent.AbilityEvent implements IDBCEvent.AbilityEvent.Animated {
             IAnimation animation;
 
             public Animated(IPlayer player, Ability ability) {
@@ -354,10 +381,12 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
                 this.animation = ability.animation;
             }
 
+            @Override
             public IAnimation getAnimation() {
                 return animation;
             }
 
+            @Override
             public void setAnimation(IAnimation animation) {
                 if (animation != null && AnimationController.getInstance().has(animation.getName()))
                     this.animation = animation;

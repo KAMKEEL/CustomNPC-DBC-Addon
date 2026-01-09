@@ -4,7 +4,6 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 
 public class AddonAbility extends Ability {
     public String langName;
-    public String langDescription;
     public int skillId = -1;
 
     public AddonAbility() {
@@ -29,10 +28,6 @@ public class AddonAbility extends Ability {
 
     public String getLangName() {
         return this.langName;
-    }
-
-    public String getLangDescription() {
-        return langDescription;
     }
 
     public int getSkillId() {

@@ -11,7 +11,6 @@ public class FriendlyFist extends AddonAbility {
         super();
         name = "FriendlyFist";
         langName = "ability.friendlyfist";
-        langDescription = "ability.friendlyfistDesc";
         id = DBCAbilities.FRIENDLY_FIST;
         iconX = 0;
         iconY = 0;

@@ -1,29 +1,23 @@
 package kamkeel.npcdbc.data.ability.types;
 
 import kamkeel.npcdbc.constants.DBCAbilities;
-import kamkeel.npcdbc.constants.DBCAnimations;
-import kamkeel.npcdbc.controllers.DBCAnimationController;
 import kamkeel.npcdbc.controllers.FusionHandler;
 import kamkeel.npcdbc.data.ability.AddonAbility;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.data.dbcdata.DBCDataStats;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.DBCSettingsUtil;
 import net.minecraft.entity.player.EntityPlayer;
-import noppes.npcs.controllers.data.Animation;
-import noppes.npcs.controllers.data.AnimationData;
 
 public class Fusion extends AddonAbility {
     public Fusion() {
         super();
         name = "Fusion";
         langName = "ability.fusion";
-        langDescription = "ability.fusionDesc";
         id = DBCAbilities.FUSION;
         skillId = 0;
         iconX = 384;
         iconY = 0;
-        type = Type.Active;
+        type = Type.Cast;
     }
 
     @Override

@@ -10,10 +10,11 @@ import java.util.*;
 public class AbilityData {
     boolean isDBC = false;
     public int selectedAbility = -1;
+    public int animatingAbility = -1;
     public HashSet<Integer> unlockedAbilities = new HashSet<>();
     public HashMap<Integer, Integer> abilityTimers = new HashMap<>();
+    public HashMap<Integer, Integer> abilityCounter = new HashMap<>();
     public HashSet<Integer> toggledAbilities = new HashSet<>();
-    public HashSet<Integer> animatingAbilities = new HashSet<>();
     public AbilityWheelData[] abilityWheel = new AbilityWheelData[6];
 
     public AbilityData(boolean isDBC) {
@@ -119,8 +120,8 @@ public class AbilityData {
     public List<Ability> getAllAbilities() {
         List<Ability> list = new ArrayList<>();
         for (int id : unlockedAbilities) {
-            if (AbilityController.getInstance().has(id, isDBC()))
-                list.add(AbilityController.getInstance().get(id, isDBC()));
+            if (AbilityController.getInstance().has(id, false))
+                list.add((Ability) AbilityController.getInstance().get(id, false));
         }
 
         return list;
@@ -192,21 +193,6 @@ public class AbilityData {
         clearAllCooldowns();
     }
 
-    public boolean canAnimateAbility() {
-        return !animatingAbilities.isEmpty();
-    }
-
-//    public void onAnimationEvent(AnimationEvent event) {
-//        if (!isDBC())
-//            return;
-//
-//        for (AddonAbility ability : getAllDBCAbilities()) {
-//            if (ability.onAnimationEvent(this, event)) {
-//                break;
-//            }
-//        }
-//    }
-
     private Map<Integer, ? extends Ability> getAbilityMap() {
         if (isDBC)
             return AbilityController.getInstance().addonAbilities;
@@ -218,10 +204,11 @@ public class AbilityData {
         NBTTagCompound abilities = new NBTTagCompound();
 
         abilities.setInteger("SelectedAbility", selectedAbility);
+        abilities.setInteger("AnimatingAbility", animatingAbility);
         abilities.setTag("UnlockedAbilities", NBTTags.nbtIntegerSet(unlockedAbilities));
         abilities.setTag("AbilityCooldowns", NBTTags.nbtIntegerIntegerMap(abilityTimers));
+        abilities.setTag("AbilityCounter", NBTTags.nbtIntegerIntegerMap(abilityCounter));
         abilities.setTag("ToggledAbilities", NBTTags.nbtIntegerSet(toggledAbilities));
-        abilities.setTag("AnimatingAbilities", NBTTags.nbtIntegerSet(animatingAbilities));
 
         compound.setTag(isDBC ? "DBCAbilityData" : "CustomAbilityData", abilities);
         return compound;
@@ -233,7 +220,13 @@ public class AbilityData {
         selectedAbility = abilities.getInteger("SelectedAbility");
         unlockedAbilities = NBTTags.getIntegerSet(abilities.getTagList("UnlockedAbilities", 10));
         abilityTimers = NBTTags.getIntegerIntegerMap(abilities.getTagList("AbilityCooldowns", 10));
+        abilityCounter = NBTTags.getIntegerIntegerMap(abilities.getTagList("AbilityCounter", 10));
         toggledAbilities = NBTTags.getIntegerSet(abilities.getTagList("ToggledAbilities", 10));
-        animatingAbilities = NBTTags.getIntegerSet(abilities.getTagList("AnimatingAbilities", 10));
+
+        if (abilities.hasKey("AnimatingAbility")) {
+            animatingAbility = abilities.getInteger("AnimatingAbility");
+        } else {
+            animatingAbility = -1;
+        }
     }
 }

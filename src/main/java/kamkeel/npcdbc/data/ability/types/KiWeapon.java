@@ -11,7 +11,6 @@ public class KiWeapon extends AddonAbility {
         super();
         name = "KiWeapon";
         langName = "ability.kiweapon";
-        langDescription = "ability.kiweaponDesc";
         id = DBCAbilities.KI_WEAPON;
         iconX = 288;
         iconY = 0;
