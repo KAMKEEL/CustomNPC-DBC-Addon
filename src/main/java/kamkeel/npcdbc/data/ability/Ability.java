@@ -40,6 +40,7 @@ public class Ability implements IAbility {
     public int width = 16;
     public int height = 16;
     public float scale = 1;
+
     public Animation animation = null;
 
     protected boolean cooldownCancelled = false;
@@ -195,7 +196,16 @@ public class Ability implements IAbility {
     @Override
     public void setAnimation(Animation animation) {
         if (AnimationController.Instance.has(animation.getName()))
-            this.animation = animation;
+            setAnimation(animation.getID());
+    }
+
+    @Override
+    public void setAnimation(int id) {
+        if (AnimationController.Instance.animations.containsKey(id)) {
+            Animation anim = new Animation();
+            anim.readFromNBT(((Animation) AnimationController.Instance.get(id)).writeToNBT());
+            this.animation = anim;
+        }
     }
 
     @Override
@@ -255,13 +265,16 @@ public class Ability implements IAbility {
         DBCEventHooks.onAbilityUsed(event);
 
         AbilityScript script = getScriptHandler();
-        if (script != null) {
-            script.callScript(getScriptType(), event);
+        if (script != null && type != Type.Animated) {
+            AbilityScript.ScriptType scriptType = type == Type.Cast ?
+                AbilityScript.ScriptType.AbilityCast : AbilityScript.ScriptType.AbilityToggle;
+
+            script.callScript(scriptType, event);
         }
 
         if (this.type == Type.Animated) {
-            setupAnimations((DBCPlayerEvent.AbilityEvent.Animated) event);
-            finishAnimationSetup();
+            setupAnimation((DBCPlayerEvent.AbilityEvent.Animated) event);
+            finishAnimationSetup((DBCPlayerEvent.AbilityEvent.Animated) event);
 
             if (this.animation != null) {
                 AnimationData animData = (AnimationData) iPlayer.getAnimationData();
@@ -303,37 +316,64 @@ public class Ability implements IAbility {
         return null;
     }
 
-    private AbilityScript.ScriptType getScriptType() {
-        return AbilityScript.ScriptType.values()[type.ordinal()];
-    }
-
     // Extra checking for AddonAbilities
     protected boolean canFireEvent(EntityPlayer player, DBCPlayerEvent.AbilityEvent event) {
         return true;
     }
 
     // Setup for AddonAbilities
-    protected void setupAnimations(DBCPlayerEvent.AbilityEvent.Animated event) {
+    protected void setupAnimation(DBCPlayerEvent.AbilityEvent.Animated event) {
         this.animation = (Animation) event.getAnimation();
     }
 
-    private void finishAnimationSetup() {
+    private void finishAnimationSetup(DBCPlayerEvent.AbilityEvent.Animated event) {
         if (animation == null)
             return;
 
+        AbilityScript script = getScriptHandler();
         Consumer<IAnimation> originalStart = animation.onAnimationStart;
         Consumer<IAnimation> originalEnd = animation.onAnimationEnd;
+        BiConsumer<Integer, IAnimation> originalFrame = animation.onAnimationFrame;
+        BiConsumer<Long, IAnimation> originalTick = animation.onAnimationTick;
 
         onAnimationStart((a) -> {
             if (originalStart != null)
                 originalStart.accept(a);
+
+            if (script != null)
+                script.callScript(AbilityScript.ScriptType.AbilityAnimationStart, event);
+
+
             DBCPacketHandler.Instance.sendToServer(new AbilityAnimatePacket(this.id, this instanceof AddonAbility, true));
         });
 
         onAnimationEnd((a) -> {
             if (originalEnd != null)
                 originalEnd.accept(a);
+
+            if (script != null)
+                script.callScript(AbilityScript.ScriptType.AbilityAnimationEnd, event);
+
+
             DBCPacketHandler.Instance.sendToServer(new AbilityAnimatePacket(this.id, this instanceof AddonAbility, false));
+        });
+
+        onAnimationFrame((f, a) -> {
+            if (originalFrame != null)
+                originalFrame.accept(f, a);
+
+            if (script != null)
+                script.callScript(AbilityScript.ScriptType.AbilityAnimationFrame, event);
+
+        });
+
+        onAnimationTick((t, a) -> {
+            if (originalTick != null)
+                originalTick.accept(t, a);
+
+            if (script != null)
+                script.callScript(AbilityScript.ScriptType.AbilityAnimationTick, event);
+
         });
     }
 
@@ -443,6 +483,16 @@ public class Ability implements IAbility {
         maxUses = compound.getInteger("maxUses");
 
         type = Type.values()[compound.getInteger("type")];
+
+        icon = compound.getString("icon");
+
+        iconX = compound.getInteger("iconX");
+        iconY = compound.getInteger("iconY");
+
+        width = compound.getInteger("width");
+        height = compound.getInteger("height");
+
+        scale = compound.getInteger("scale");
 
         if (compound.hasKey("ScriptData", Constants.NBT.TAG_COMPOUND)) {
             AbilityScript handler = new AbilityScript();

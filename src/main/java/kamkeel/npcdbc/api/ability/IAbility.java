@@ -55,6 +55,8 @@ public interface IAbility {
 
     void setAnimation(Animation animation);
 
+    void setAnimation(int id);
+
     IAbility save();
 
     IAbility cloneAbility();

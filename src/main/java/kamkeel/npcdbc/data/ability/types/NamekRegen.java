@@ -25,7 +25,7 @@ public class NamekRegen extends AddonAbility {
     }
 
     @Override
-    protected void setupAnimations(DBCPlayerEvent.AbilityEvent.Animated event) {
+    protected void setupAnimation(DBCPlayerEvent.AbilityEvent.Animated event) {
         animation = DBCAnimations.NAMEK_REGEN.get();
 
         onAnimationFrame((frame, anim) -> {

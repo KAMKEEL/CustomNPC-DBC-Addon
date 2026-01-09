@@ -19,6 +19,7 @@ import noppes.npcs.api.IDamageSource;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.api.handler.data.IAnimation;
 import noppes.npcs.controllers.AnimationController;
+import noppes.npcs.controllers.data.Animation;
 import noppes.npcs.scripted.NpcAPI;
 import noppes.npcs.scripted.event.player.PlayerEvent;
 
@@ -349,24 +350,6 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
             }
         }
 
-        public static class MultiCasted extends DBCPlayerEvent.AbilityEvent implements IDBCEvent.AbilityEvent.MultiCasted {
-            public int maxUses;
-            public MultiCasted(IPlayer player, Ability ability) {
-                super(player, ability);
-                this.maxUses = ability.maxUses;
-            }
-
-            @Override
-            public int getMaxUses() {
-                return maxUses;
-            }
-
-            @Override
-            public void setMaxUses(int maxUses) {
-                this.maxUses = maxUses;
-            }
-        }
-
         public static class Toggled extends DBCPlayerEvent.AbilityEvent implements IDBCEvent.AbilityEvent.Toggled {
             public Toggled(IPlayer player, Ability ability) {
                 super(player, ability);
@@ -388,8 +371,11 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
 
             @Override
             public void setAnimation(IAnimation animation) {
-                if (animation != null && AnimationController.getInstance().has(animation.getName()))
-                    this.animation = animation;
+                if (animation != null && AnimationController.Instance.has(animation.getName())) {
+                    Animation anim = new Animation();
+                    anim.readFromNBT(((Animation) animation).writeToNBT());
+                    this.animation = anim;
+                }
             }
         }
     }
