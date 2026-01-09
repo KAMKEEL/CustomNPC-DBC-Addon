@@ -707,6 +707,11 @@ public interface IDBCAddon extends IDBCPlayer {
     void fireKiAttack(IKiAttack kiAttack);
 
     /**
+     * @return True if player is transforming
+     */
+    boolean isTransforming();
+
+    /**
      * @return True if player is releasing ki
      */
     boolean isReleasing();
