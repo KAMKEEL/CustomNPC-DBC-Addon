@@ -150,14 +150,6 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
         }
     }
 
-    @Override
-    public void keyTyped(char c, int i) {
-        super.keyTyped(c, i);
-        if (i == 1)
-            menu.close();
-
-    }
-
     private int getRaceButton(int button) {
         switch (button) {
             case 0:
@@ -299,5 +291,6 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
     }
 
     public void save() {
+        menu.save();
     }
 }

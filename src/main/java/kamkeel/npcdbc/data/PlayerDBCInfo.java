@@ -12,6 +12,7 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.data.form.FormMasteryLinkData;
+import kamkeel.npcdbc.data.overlay.OverlayManager;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.util.NBTHelper;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -38,6 +39,7 @@ public class PlayerDBCInfo {
 
     public int currentForm = -1;
     public int selectedForm = -1, selectedDBCForm = -1, tempSelectedDBCForm = -1;
+    public int lastFormBeforeStack = -1;
 
     public int currentAura = -1;
     public int selectedAura = -1;
@@ -48,6 +50,8 @@ public class PlayerDBCInfo {
     public HashMap<Integer, Integer> formTimers = new HashMap<>();
     public HashMap<Integer, FormDisplay.BodyColor> configuredFormColors = new HashMap<>();
     public FormWheelData[] formWheel = new FormWheelData[6];
+
+    public OverlayManager overlayManager = new OverlayManager();
 
     public PlayerDBCInfo(PlayerData parent) {
         this.parent = parent;
@@ -310,7 +314,6 @@ public class PlayerDBCInfo {
 
     }
 
-
     ///////////////////////////////////////////
     ///////////////////////////////////////////
     // Aura stuff
@@ -419,6 +422,7 @@ public class PlayerDBCInfo {
         dbcCompound.setInteger("CurrentForm", currentForm);
         dbcCompound.setInteger("SelectedForm", selectedForm);
         dbcCompound.setInteger("SelectedDBCForm", selectedDBCForm);
+        dbcCompound.setInteger("LastFormBeforeStack", lastFormBeforeStack);
         dbcCompound.setTag("UnlockedForms", NBTTags.nbtIntegerSet(unlockedForms));
         dbcCompound.setTag("FormMastery", NBTTags.nbtIntegerFloatMap(formLevels));
         dbcCompound.setTag("FormTimers", NBTTags.nbtIntegerIntegerMap(formTimers));
@@ -436,6 +440,8 @@ public class PlayerDBCInfo {
         dbcCompound.setInteger("SelectedAura", selectedAura);
         dbcCompound.setTag("UnlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
         saveBonuses(dbcCompound);
+
+        dbcCompound.setTag("OverlayManager", overlayManager.writeToNBT());
         compound.setTag("DBCInfo", dbcCompound);
     }
 
@@ -445,6 +451,7 @@ public class PlayerDBCInfo {
         currentForm = dbcCompound.getInteger("CurrentForm");
         selectedForm = dbcCompound.hasKey("SelectedForm") ? dbcCompound.getInteger("SelectedForm") : -1;
         selectedDBCForm = dbcCompound.hasKey("SelectedDBCForm") ? dbcCompound.getInteger("SelectedDBCForm") : -1;
+        lastFormBeforeStack = dbcCompound.hasKey("LastFormBeforeStack") ? dbcCompound.getInteger("LastFormBeforeStack") : -1;
         unlockedForms = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedForms", 10));
         formLevels = NBTTags.getIntegerFloatMap(dbcCompound.getTagList("FormMastery", 10));
         formTimers = NBTTags.getIntegerIntegerMap(dbcCompound.getTagList("FormTimers", 10));
@@ -470,6 +477,9 @@ public class PlayerDBCInfo {
             );
 
         loadBonuses(dbcCompound);
+
+        if (dbcCompound.hasKey("OverlayManager"))
+            overlayManager.readFromNBT(dbcCompound.getCompoundTag("OverlayManager"));
     }
 
     private void loadBonuses(NBTTagCompound dbcCompound) {

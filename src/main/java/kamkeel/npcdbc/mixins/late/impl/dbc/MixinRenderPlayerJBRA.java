@@ -5,6 +5,7 @@ import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHDBC;
+import JinRyuu.JRMCore.JRMCoreHJYC;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
@@ -16,8 +17,10 @@ import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.ColorMode;
+import kamkeel.npcdbc.client.model.ModelDBC;
+import kamkeel.npcdbc.client.render.OverlayModelRenderer;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
-import kamkeel.npcdbc.client.utils.Color;
+import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.TransformController;
@@ -26,7 +29,12 @@ import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
+import kamkeel.npcdbc.data.form.FacePartData;
 import kamkeel.npcdbc.data.npc.KiWeaponData;
+import kamkeel.npcdbc.data.overlay.Overlay;
+import kamkeel.npcdbc.data.overlay.OverlayChain;
+import kamkeel.npcdbc.api.client.overlay.IOverlay.Type;
+import kamkeel.npcdbc.data.overlay.OverlayContext;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
@@ -51,6 +59,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static kamkeel.npcdbc.data.form.FacePartData.Part.*;
+
 @Mixin(value = RenderPlayerJBRA.class, remap = false)
 public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Shadow
@@ -67,13 +80,20 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     private String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
 
     @Shadow
-    public static float r;
+    private static float r;
 
     @Shadow
-    public static float b;
+    private static float b;
 
     @Shadow
-    public static float g;
+    private static float g;
+
+    @Shadow
+    private static boolean kk2;
+
+    @Shadow
+    private static int kk;
+
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.BEFORE))
     public void customKaiokenTint(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
@@ -306,11 +326,20 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         }
     }
 
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA19:Z", shift = At.Shift.BEFORE))
+    private void renderOverlays(AbstractClientPlayer pl, float par2, CallbackInfo ci, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "eyes") LocalIntRef eyes, @Local(name = "gen") LocalIntRef gender) {
+        //renderOverlays(DBCData.get(pl));
+        OverlayContext ctx = OverlayContext.from(DBCData.get(pl));
+        ctx.model = modelMain;
+        ModelDBC.renderOverlays(ctx);
+
+    }
+
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.BEFORE))
-    private void renderSaiyanStates(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "hc") LocalIntRef hairCol, @Local(name = "pl") LocalIntRef pl, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "hairback") LocalIntRef hairback, @Local(name = "race") LocalIntRef race, @Local(name = "gen") LocalIntRef gender, @Local(name = "facen") LocalIntRef nose) {
+    private void renderSaiyanStates(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "hc") LocalIntRef hairCol, @Local(name = "pl") LocalIntRef pl, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "hairback") LocalIntRef hairback, @Local(name = "race") LocalIntRef race, @Local(name = "gen") LocalIntRef gender, @Local(name = "facen") LocalIntRef nose, @Local(name = "eyes") LocalIntRef eyes) {
         Form form = DBCData.getForm(par1AbstractClientPlayer);
         DBCData data = DBCData.get(par1AbstractClientPlayer);
-
+        boolean usesHumanBody = race.get() == 0 || JRMCoreH.isRaceSaiyan(race.get());
 
         /**
          * @INFO: This fixes base hair color.
@@ -322,16 +351,20 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             FormDisplay display = form.display;
 
             HD = ConfigDBCClient.EnableHDTextures;
+            int age = 10;
+            boolean isSSJ4 = form.display.hairType.equals("ssj4") && JRMCoreH.isRaceSaiyan(race.get());
+
             //only saiyans
             if (race.get() == 1 || race.get() == 2) {
-                boolean isSSJ4 = form.display.hairType.equals("ssj4");
-                if (form.display.hasBodyFur() || isSSJ4)
-                    renderBodyFur(form, gender.get(), bodyCM.get(), data, data.skinType);
+//                if (form.display.hasBodyFur() || isSSJ4)
+//                    renderBodyFur(form, gender.get(), bodyCM.get(), data, data.skinType);
 
                 //renders all ssj4
                 if (isSSJ4) {
-                    if (form.display.hasEyebrows && data.skinType != 0)
-                        renderSSJ4Face(form, gender.get(), nose.get(), bodyCM.get(), data.renderingHairColor, age, data.DNS, data);
+                    if (form.display.hasEyebrows && data.skinType != 0) {
+//                        if (form.display.furType != 2)
+//                            renderSSJ4Face(par1AbstractClientPlayer, form, gender.get(), nose.get(), eyes.get(), bodyCM.get(), data.renderingHairColor, age, data.DNS, data);
+                    }
                     if (hairback.get() != 12)
                         this.modelMain.renderHairsV2(0.0625F, "", 0.0F, 0, 0, pl.get(), race.get(), (RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);
                     //all oozaru rendering
@@ -388,53 +421,189 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
         FormDisplay.BodyColor playerColors = data.currentCustomizedColors;
 
-        String fur = "ss4" + (skintype == 0 ? "a" : "b") + ".png";
-        this.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/" + fur : "jinryuudragonbc:cc/" + fur));
+        int furType = form.display.furType;
+        String fur = "ss4" + (skintype == 0 ? "a" : "b") + furType + ".png";
+        String texture = (HD ? HDDir : SDDir) + "ssj4/" + fur;
+        this.bindTexture(new ResourceLocation(texture));
         RenderPlayerJBRA.glColor3f(playerColors.getFurColor(form.display, data));
         this.modelMain.renderBody(0.0625F);
+
+        if (form.display.furType == 2) {
+            int eyeColor = playerColors.getProperColor(form.display, "eye");
+            RenderPlayerJBRA.glColor3f(eyeColor == -1 ? 0xFFFF55 : eyeColor);
+            this.bindTexture(new ResourceLocation((HD ? HDDir : SDDir) + "savior/saviorchest.png"));
+            this.modelMain.renderBody(0.0625F);
+        }
     }
 
     @Unique
-    private void renderSSJ4Face(Form form, int gender, int nose, int bodyCM, int defaultHairColor, float age, String dns, DBCData data) {
+    private void renderOverlays(DBCData data) {
+        OverlayContext ctx = OverlayContext.from(data);
+        ctx.form = data.getForm();
+        ctx.model = modelMain;
+
+        List<OverlayChain> chains = new ArrayList<>();//ModelDBC.applyOverlayChains(data.getOverlayChains(), ctx);
+
+        for (OverlayChain chain : chains) {
+            ctx.chain = chain;
+            if (!chain.isEnabled() || chain.condition != null && !chain.checkCondition(ctx))
+                continue;
+
+            for (Overlay overlay : chain.overlays) {
+                ctx.overlay = overlay;
+                if (!overlay.isEnabled() || overlay.condition != null && !overlay.checkCondition(ctx))
+                    continue;
+
+                Type type = overlay.getType();
+
+                /* ───────── Texture ───────── */
+                String texture = overlay.getTexture();
+
+                ctx.texture = texture;
+                if (overlay.applyTexture != null)
+                    texture = overlay.applyTexture(ctx);
+
+                if (!ModelDBC.bindTexture(texture))
+                    continue;
+
+                /* ───────── Colors ───────── */
+                //TODO this stuff needs a method
+                //int furColor = data.currentCustomizedColors.getProperColor(displayData.getFurColor(data), "fur");
+                //int hairColor = data.currentCustomizedColors.getProperColor(displayData.getHairColor(data), "hair");
+                //int eyeColor = data.currentCustomizedColors.getProperColor(displayData.getColor("eye"), "eye");
+
+                //int color = overlay.getColorType() == Overlay.ColorType.Body.ordinal() ? bodyCM : overlay.getColorType() == Overlay.ColorType.Eye.ordinal() ? (eyeColor < 0 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor) : overlay.getColorType() == Overlay.ColorType.Hair.ordinal() ? (hairColor < 0 ? defaultHairColor : hairColor) : overlay.getColorType() == Overlay.ColorType.Fur.ordinal() ? furColor : overlay.getColor();
+
+                int color = 0xffffff;
+                Color finalColor = ctx.color = new Color(color, overlay.alpha);
+
+                if (overlay.applyColor != null)
+                    finalColor = overlay.applyColor(ctx);
+
+                /* ───────── Glow ───────── */
+                boolean glow = overlay.isGlow();
+                if (glow) {
+                    GL11.glDisable(GL11.GL_LIGHTING);
+                    if (!RenderEventHandler.renderingPlayerInGUI) //in-game not in GUI, as lightmap is disabled in GUIs so cant enable it again
+                        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+                }
+
+                /* ───────── Rendering ───────── */
+                GL11.glEnable(GL11.GL_BLEND);
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GL11.glAlphaFunc(GL11.GL_GREATER, 0.001f);
+                GL11.glEnable(GL11.GL_ALPHA_TEST);
+
+                new Color(finalColor.color, finalColor.alpha).glColor();
+                OverlayModelRenderer.render(type, ctx);
+
+                GL11.glDisable(GL11.GL_BLEND);
+
+                /* ───────── Disable Glow ───────── */
+                if (glow) {
+                    GL11.glEnable(GL11.GL_LIGHTING);
+                    if (!RenderEventHandler.renderingPlayerInGUI) //in-game not in GUI
+                        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
+                }
+
+            }
+        }
+    }
+
+
+    /*
+     * OVERLAYS NOW HAVE THIS CALCULATION BAKED IN SO NO LONGER NEEDED!
+     *
+     * Used mostly for rendering bipeadHead correctly on female/younger than adult ages.
+     * No need in modelMain.renderBody() as it already applies these in its calculations.
+     */
+    @Unique
+    private void applyAgeGenderTransformations(AbstractClientPlayer player, int gender) {
+        int g = gender + 1;
+        float ageFactor = 3.0F - JRMCoreHJYC.JYCsizeBasedOnAge(player) * 2.0F; //from 0-1 where 0 is child and 1 is full adult
+        GL11.glScalef((0.5F + 0.5F / ageFactor) * (g <= 1 ? 1.0F : 0.85F), 0.5F + 0.5F / ageFactor, (0.5F + 0.5F / ageFactor) * (g <= 1 ? 1.0F : 0.85F));
+        GL11.glTranslatef(0.0F, (ageFactor - 1.0F) / ageFactor * (2.0F - (ageFactor >= 1.5F && ageFactor <= 2.0F ? (2.0F - ageFactor) / 2.5F : (ageFactor < 1.5F && ageFactor >= 1.0F ? (ageFactor * 2.0F - 2.0F) * 0.2F : 0.0F))), 0.0F);
+    }
+
+    @Unique
+    private void renderSSJ4Face(AbstractClientPlayer player, Form form, int gender, int nose, int eyes, int bodyCM, int defaultHairColor, float age, String dns, DBCData data) {
+        FormDisplay display = form.display;
+        FacePartData faceData = display.faceData;
+
+        GL11.glPushMatrix();
+        applyAgeGenderTransformations(player, gender);
+
         if (ConfigDBCClient.EnableHDTextures) {
-            GL11.glColor3f(1.0f, 1.0f, 1.0f);
-            this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4eyewhite.png"));
-            this.modelMain.bipedHead.render(1F / 16F);
-
             FormDisplay.BodyColor playerColors = data.currentCustomizedColors;
-            FormDisplay display = form.display;
+            String eyeDir = (form.display.furType == 1 ? "ssj4d" : "ssj4") + (gender == 1 ? "/female" : "/male") + "/face_" + eyes + "/";
 
+            if (!faceData.disabled(EyeWhite, eyes)) {
+                GL11.glColor3f(1.0f, 1.0f, 1.0f);
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4eyewhite.png"));
+                this.modelMain.bipedHead.render(1F / 16F);
+            }
 
-            if (!form.display.isBerserk) {
+            if (!form.display.isBerserk && !faceData.disabled(RightEye, eyes)) {
                 int eyeColor = playerColors.getProperColor(display, "eye");
                 RenderPlayerJBRA.glColor3f(eyeColor == -1 ? 0xF3C807 : eyeColor);
-                this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4pupils.png"));
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4eyeright.png"));
+                this.modelMain.bipedHead.render(0.0625F);
+
+                if (form.display.furType == 1) {
+                    GL11.glColor3f(1.0f, 1.0f, 1.0f);
+                    this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4glowright.png"));
+                    this.modelMain.bipedHead.render(0.0625F);
+                }
+            }
+
+            if (!form.display.isBerserk && !faceData.disabled(LeftEye, eyes)) {
+                int eyeColor = playerColors.getProperColor(display, "eye");
+                RenderPlayerJBRA.glColor3f(eyeColor == -1 ? 0xF3C807 : eyeColor);
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4eyeleft.png"));
+                this.modelMain.bipedHead.render(0.0625F);
+
+                if (form.display.furType == 1) {
+                    GL11.glColor3f(1.0f, 1.0f, 1.0f);
+                    this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4glowleft.png"));
+                    this.modelMain.bipedHead.render(0.0625F);
+                }
+            }
+
+            if (!faceData.disabled(Eyebrows, eyes)) {
+                RenderPlayerJBRA.glColor3f(playerColors.getFurColor(form.display, data));
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4brows.png"));
+                this.modelMain.bipedHead.render(1F / 16F);
+
+                int hairColor = playerColors.getProperColor(form.display.getHairColor(data), "hair");
+                RenderPlayerJBRA.glColor3f(hairColor < 0 ? defaultHairColor : hairColor, age);
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4brows2.png"));
+                this.modelMain.bipedHead.render(1F / 16F);
+
+                RenderPlayerJBRA.glColor3f(bodyCM);
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4shade.png"));
                 this.modelMain.bipedHead.render(0.0625F);
             }
-            RenderPlayerJBRA.glColor3f(playerColors.getFurColor(form.display, data));
-            this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4brows.png"));
-            this.modelMain.bipedHead.render(1F / 16F);
+        }
+        GL11.glPopMatrix(); //Pop the age/gender transformations here as finished rendering bipeadHead
 
-            int hairColor = playerColors.getProperColor(form.display.getHairColor(data), "hair");
-            RenderPlayerJBRA.glColor3f(hairColor < 0 ? defaultHairColor : hairColor, age);
-            this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4brows2.png"));
-            this.modelMain.bipedHead.render(1F / 16F);
+
+        if (!faceData.disabled(Nose, eyes)) {
             RenderPlayerJBRA.glColor3f(bodyCM);
-            this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4mouth0.png"));
-            this.modelMain.bipedHead.render(1F / 16F);
-            this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4shade.png"));
-            this.modelMain.bipedHead.render(0.0625F);
+            String noseTexture = (gender == 1 ? "f" : "") + "humn" + nose + ".png";
+            this.bindTexture(new ResourceLocation((HD ? HDDir + "base/nose/" : "jinryuumodscore:cc/") + noseTexture));
+            this.modelMain.renderHairs(0.0625F, "FACENOSE");
         }
 
-        RenderPlayerJBRA.glColor3f(bodyCM);
-        String noseTexture = (gender == 1 ? "f" : "") + "humn" + nose + ".png";
-        this.bindTexture(new ResourceLocation((HD ? HDDir + "base/nose/" : "jinryuumodscore:cc/") + noseTexture));
-        this.modelMain.renderHairs(0.0625F, "FACENOSE");
+        if (!faceData.disabled(Mouth, eyes)) {
+            RenderPlayerJBRA.glColor3f(bodyCM);
+            String mouthTexture = (gender == 1 ? "f" : "") + "humm" + JRMCoreH.dnsFaceM(dns) + ".png";
+            this.bindTexture(new ResourceLocation((HD ? HDDir + "base/mouth/" : "jinryuumodscore:cc/") + mouthTexture));
+            this.modelMain.renderHairs(0.0625F, "FACEMOUTH");
+        }
     }
 
     @Unique
     private void renderOozaru(int bodyCM, int eyeColor, int furColor) {
-
         ResourceLocation bdyskn = new ResourceLocation(HD ? HDDir + "oozaru/oozaru1.png" : "jinryuudragonbc:cc/oozaru1.png"); //human hairless face
         this.bindTexture(bdyskn);
         RenderPlayerJBRA.glColor3f(bodyCM);
@@ -450,8 +619,68 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         this.modelMain.renderHairs(0.0625F, "OOZARU");
     }
 
+    @Unique
+    private void renderSSJ3Face(AbstractClientPlayer player, Form form, int gender, int nose, int eyes, int bodyCM, int defaultHairColor, float age, String dns, DBCData data) {
+        FormDisplay display = form.display;
+        FacePartData faceData = display.faceData;
+
+        GL11.glPushMatrix();
+        applyAgeGenderTransformations(player, gender);
+
+        if (ConfigDBCClient.EnableHDTextures) {
+            FormDisplay.BodyColor playerColors = data.currentCustomizedColors;
+            String eyeDir = "ssj3/" + (gender == 1 ? "female" : "male") + "/face_" + eyes + "/";
+
+            if (!faceData.disabled(EyeWhite, eyes)) {
+                GL11.glColor3f(1.0f, 1.0f, 1.0f);
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3eyewhite.png"));
+                this.modelMain.bipedHead.render(0.0625F);
+            }
+
+            if (!form.display.isBerserk && !faceData.disabled(RightEye, eyes)) {
+                int eyeColor = playerColors.getProperColor(display, "eye");
+                RenderPlayerJBRA.glColor3f(eyeColor == -1 ? 0xF3C807 : eyeColor);
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3eyeright.png"));
+                this.modelMain.bipedHead.render(0.0625F);
+            }
+
+            if (!form.display.isBerserk && !faceData.disabled(LeftEye, eyes)) {
+                int eyeColor = playerColors.getProperColor(display, "eye");
+                RenderPlayerJBRA.glColor3f(eyeColor == -1 ? 0xF3C807 : eyeColor);
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3eyeleft.png"));
+                this.modelMain.bipedHead.render(0.0625F);
+            }
+
+            if (!faceData.disabled(Eyebrows, eyes)) {
+                int hairColor = playerColors.getProperColor(form.display.getHairColor(data), "hair");
+                RenderPlayerJBRA.glColor3f(hairColor < 0 ? defaultHairColor : hairColor, age);
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3brows.png"));
+                this.modelMain.bipedHead.render(1F / 16F);
+
+                RenderPlayerJBRA.glColor3f(bodyCM);
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3shade.png"));
+                this.modelMain.bipedHead.render(0.0625F);
+            }
+        }
+        GL11.glPopMatrix(); //Pop the age/gender transformations here as finished rendering bipeadHead
+
+        if (!faceData.disabled(Nose, eyes)) {
+            RenderPlayerJBRA.glColor3f(bodyCM);
+            String noseTexture = (gender == 1 ? "f" : "") + "humn" + nose + ".png";
+            this.bindTexture(new ResourceLocation((HD ? HDDir + "base/nose/" : "jinryuumodscore:cc/") + noseTexture));
+            this.modelMain.renderHairs(0.0625F, "FACENOSE");
+        }
+
+        if (!faceData.disabled(Mouth, eyes)) {
+            RenderPlayerJBRA.glColor3f(bodyCM);
+            String mouthTexture = (gender == 1 ? "f" : "") + "humm" + JRMCoreH.dnsFaceM(dns) + ".png";
+            this.bindTexture(new ResourceLocation((HD ? HDDir + "base/mouth/" : "jinryuumodscore:cc/") + mouthTexture));
+            this.modelMain.renderHairs(0.0625F, "FACEMOUTH");
+        }
+    }
+
     @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;DBC()Z", ordinal = 0, shift = At.Shift.AFTER), remap = true)
-    private void changeFormArmData(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "State") LocalIntRef st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3) {
+    private void changeFormArmData(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "State") LocalIntRef st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3, @Local(name = "id") LocalIntRef id) {
         Form form = DBCData.getForm(par1EntityPlayer);
         ClientEventHandler.renderingPlayer = par1EntityPlayer;
         if (form != null) {
@@ -495,7 +724,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @Inject(method = "renderFirstPersonArm", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA19:Z", ordinal = 0, shift = At.Shift.BEFORE), remap = true)
     private void renderSaiyanArm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "id") LocalIntRef id, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "gen") LocalIntRef gender) {
-
         Form form = DBCData.getForm(par1EntityPlayer);
         if (form != null && (race.get() == 1 || race.get() == 2)) {
             if (this.renderManager != null && this.renderManager.renderEngine != null) {
@@ -536,8 +764,9 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         }
         FormDisplay.BodyColor playerColors = DBCData.get(player).currentCustomizedColors;
 
-        String fur = "ss4" + (data.skinType == 0 ? "a" : "b") + ".png";
-        this.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/" + fur : "jinryuudragonbc:cc/" + fur));
+        int furType = form.display.furType;
+        String fur = "ss4" + (data.skinType == 0 ? "a" : "b") + furType + ".png";
+        this.bindTexture(new ResourceLocation((HD ? HDDir : SDDir) + "ssj4/" + fur));
         RenderPlayerJBRA.glColor3f(playerColors.getFurColor(form.display, data));
         renderArm(id, player);
     }
@@ -594,13 +823,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @Shadow
     abstract int i(String n);
-
-    @Shadow
-    private static boolean kk2;
-
-    @Shadow
-    public static int kk;
-
+    
     /**
      * Methods Below so we don't need
      * to constantly scan stack traces

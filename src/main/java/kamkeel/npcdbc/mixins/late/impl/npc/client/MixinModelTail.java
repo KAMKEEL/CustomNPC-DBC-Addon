@@ -4,7 +4,7 @@ package kamkeel.npcdbc.mixins.late.impl.npc.client;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
-import kamkeel.npcdbc.client.utils.Color;
+import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.form.Form;
@@ -23,6 +23,7 @@ import noppes.npcs.entity.EntityCustomNpc;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -117,32 +118,60 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
 
 
             } else if (display.race == DBCRace.ARCOSIAN) {
-                if (!monkey.monkey_large.isHidden && display.arcoState < 4)
+                if (!monkey.monkey_large.isHidden && display.arcoState < 4 && display.bodyType != 2)
                     ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/3B00.png"));
 
-                int arcoState = display.getArco();
-                if (arcoState < 4 || arcoState == 6)
-                    tailColor = display.bodyC3;
-                else
-                    tailColor = display.bodyCM;
-
-                Form form = display.getForm();
-                if (form != null) {
-                    FormDisplay d = form.display;
-                    FormDisplay.BodyColor customClr = display.formColor;
-
-                    if ((form.display.bodyType.contains("first") || form.display.bodyType.contains("second") || form.display.bodyType.contains("third"))) {
-                        if (customClr.hasAnyColor(d, "bodyc3"))
-                            tailColor = customClr.getProperColor(d, "bodyc3");
-                    } else if (customClr.hasAnyColor(d, "bodycm"))
-                        tailColor = customClr.getProperColor(d, "bodycm");
-
-                }
-
+                tailColor = getTailColor(display, display.getForm());
             }
 
             new Color(tailColor, base.alpha).glColor();
         }
+    }
+
+    @Unique
+    private int getTailColor(DBCDisplay display, Form form) {
+        int bodyType = display.bodyType;
+
+        if (form != null) {
+            FormDisplay d = form.display;
+            String state = d.bodyType;
+            FormDisplay.BodyColor customClr = display.formColor;
+
+            if (state.contains("first") || state.contains("second") || state.contains("third")) {
+                if (customClr.hasAnyColor(d, "bodyc3"))
+                    return customClr.getProperColor(d, "bodyc3");
+            } else if (state.contains("final") || state.contains("ultimate")) {
+                if (bodyType == 0) {
+                    if (customClr.hasAnyColor(d, "bodycm"))
+                        return customClr.getProperColor(d, "bodycm");
+                } else if (bodyType == 1) {
+                    if (customClr.hasAnyColor(d, "bodyc1"))
+                        return customClr.getProperColor(d, "bodyc1");
+                } else if (bodyType == 2) {
+                    if (customClr.hasAnyColor(d, "bodyc3"))
+                        return customClr.getProperColor(d, "bodyc3");
+                }
+            } else {
+                if (customClr.hasAnyColor(d, "bodycm"))
+                    return customClr.getProperColor(d, "bodycm");
+            }
+        } else {
+            int state = display.arcoState;
+
+            if (state < 4) {
+                return display.bodyC3;
+            } else if (state == 4 || state == 5 || state == 7) {
+                if (bodyType == 0) {
+                    return display.bodyCM;
+                } else if (bodyType == 1) {
+                    return display.bodyC1;
+                } else if (bodyType == 2) {
+                    return display.bodyC3;
+                }
+            }
+        }
+
+        return display.bodyCM;
     }
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", shift = At.Shift.AFTER, remap = true), remap = true)

@@ -11,6 +11,8 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormCustomStackable;
+import kamkeel.npcdbc.data.form.FormStack;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.network.DBCPacketHandler;
@@ -155,6 +157,21 @@ public class TransformController {
         return 0;
     }
 
+    private static Form getStackForm(Form current, Form selected) {
+        if (selected == null || current == null)
+            return null;
+        FormCustomStackable stackable = current.customStackable;
+        int selectedId = selected.id;
+
+        for (FormStack stack : stackable.formStacks.values()) {
+            if (stack.fromForm.id == selectedId) {
+                return stack.toForm;
+            }
+        }
+
+        return null;
+    }
+
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
     // NPC transformation handling
@@ -220,7 +237,20 @@ public class TransformController {
         if (form == null)
             return;
 
+
+
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+        DBCData data = DBCData.getData(player);
+
+        int originalForm = formData.currentForm;
+        if (!formData.hasForm(form)) {
+            return;
+        }
+
+        Form stackedForm = getStackForm(data.getForm(), form);
+        if (stackedForm != null)
+            form = stackedForm;
+          
 
         if (!formData.hasForm(form)) {
             LogWriter.error(String.format("Potential exploiting: %s tried to transform into a form they don't have unlocked (\"%s\" - ID: %d)",
@@ -246,7 +276,7 @@ public class TransformController {
             }
 
             int prevID = formData.currentForm != 1 ? formData.currentForm : dbcData.State;
-            if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), formData.currentForm != 1, prevID, true, formID)))
+            if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), formData.currentForm != 1, prevID, true, form.id)))
                 return;
 
             PlaySound.play(new SoundSource(form.getAscendSound(), player));
@@ -270,11 +300,15 @@ public class TransformController {
             if (!form.stackable.kaiokenStackable && dbcData.isForm(DBCForm.Kaioken))
                 dbcData.setForm(DBCForm.Kaioken, false);
 
-            formData.currentForm = formID;
-            if (formData.getForm(formID).hasTimer())
-                formData.addTimer(formID, formData.getForm(formID).getTimer());
+            formData.lastFormBeforeStack = originalForm;
+
+            formData.currentForm = form.id;
+
+            if (form.hasTimer())
+                formData.addTimer(form.id, form.getTimer());
 
             formData.updateClient();
+            LogWriter.info(form.getMenuName());
             NetworkUtility.sendInfoMessage(player, "§a", "npcdbc.transform", "§r ", form.getMenuName());
             dbcData.saveNBTData(true);
 
@@ -290,7 +324,6 @@ public class TransformController {
         if (formData.isInCustomForm()) {
             Form form = formData.getCurrentForm();
             DBCData dbcData = DBCData.get(player);
-
 
             Form parent = (Form) form.getParent();
             boolean intoParent = parent != null && formData.hasFormUnlocked(form.getParentID());
@@ -318,7 +351,15 @@ public class TransformController {
                 NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descend", "§r ", form.getMenuName());
                 dbcData.State = form.requiredForm.get((int) dbcData.Race);
             } else {
-                if (intoParent) {
+                int realStackedFrom = formData.lastFormBeforeStack;
+
+                if (realStackedFrom != -1) {
+                    Form previousForm = (Form) FormController.Instance.get(realStackedFrom);
+                    NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descend", "§r ", previousForm.getMenuName());
+                    formData.currentForm = realStackedFrom;
+
+                    formData.lastFormBeforeStack = -1;
+                } else if (intoParent) {
                     NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descend", "§r ", form.getParent().getMenuName());
                     formData.currentForm = form.getParentID();
                 } else if (formData.getTimer(form.id) == 0) {
