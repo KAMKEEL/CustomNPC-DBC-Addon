@@ -237,8 +237,6 @@ public class TransformController {
         if (form == null)
             return;
 
-
-
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         DBCData data = DBCData.getData(player);
 
@@ -250,7 +248,6 @@ public class TransformController {
         Form stackedForm = getStackForm(data.getForm(), form);
         if (stackedForm != null)
             form = stackedForm;
-          
 
         if (!formData.hasForm(form)) {
             LogWriter.error(String.format("Potential exploiting: %s tried to transform into a form they don't have unlocked (\"%s\" - ID: %d)",
@@ -260,8 +257,6 @@ public class TransformController {
 
         if (formData.currentForm != formID) {
             DBCData dbcData = DBCData.get(player);
-
-
             boolean allowBypass = form.mastery.canInstantTransform(formData.getFormLevel(form.id)) && ConfigDBCGameplay.InstantTransform;
             if (!allowBypass) {
                 // Check for in Required DBC Form before Transforming
