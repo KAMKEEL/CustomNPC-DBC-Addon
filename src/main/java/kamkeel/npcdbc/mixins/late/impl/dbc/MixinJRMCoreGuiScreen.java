@@ -1,6 +1,10 @@
 package kamkeel.npcdbc.mixins.late.impl.dbc;
 
-import JinRyuu.JRMCore.*;
+import JinRyuu.JRMCore.JRMCoreClient;
+import JinRyuu.JRMCore.JRMCoreGuiButtons00;
+import JinRyuu.JRMCore.JRMCoreGuiButtonsA2;
+import JinRyuu.JRMCore.JRMCoreGuiScreen;
+import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ColorMode;

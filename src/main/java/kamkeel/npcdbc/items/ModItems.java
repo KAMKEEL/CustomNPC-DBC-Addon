@@ -3,7 +3,11 @@ package kamkeel.npcdbc.items;
 import cpw.mods.fml.common.registry.GameRegistry;
 import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.config.ConfigCapsules;
-import kamkeel.npcdbc.items.capsules.*;
+import kamkeel.npcdbc.items.capsules.ItemHealthCapsule;
+import kamkeel.npcdbc.items.capsules.ItemKiCapsule;
+import kamkeel.npcdbc.items.capsules.ItemMiscCapsule;
+import kamkeel.npcdbc.items.capsules.ItemRegenCapsule;
+import kamkeel.npcdbc.items.capsules.ItemStaminaCapsule;
 import net.minecraft.item.Item;
 
 public class ModItems {

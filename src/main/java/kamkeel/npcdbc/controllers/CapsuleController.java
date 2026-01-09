@@ -2,9 +2,17 @@ package kamkeel.npcdbc.controllers;
 
 import kamkeel.npcdbc.config.ConfigCapsules;
 import kamkeel.npcdbc.constants.Capsule;
-import kamkeel.npcdbc.constants.enums.*;
+import kamkeel.npcdbc.constants.enums.EnumHealthCapsules;
+import kamkeel.npcdbc.constants.enums.EnumKiCapsules;
+import kamkeel.npcdbc.constants.enums.EnumMiscCapsules;
+import kamkeel.npcdbc.constants.enums.EnumRegenCapsules;
+import kamkeel.npcdbc.constants.enums.EnumStaminaCapsules;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.UUID;
 

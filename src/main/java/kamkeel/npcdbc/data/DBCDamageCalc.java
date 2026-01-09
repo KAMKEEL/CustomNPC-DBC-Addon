@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 
 import static JinRyuu.JRMCore.JRMCoreH.DBC;
-import static JinRyuu.JRMCore.JRMCoreH.setInt;
 
 public class DBCDamageCalc {
 

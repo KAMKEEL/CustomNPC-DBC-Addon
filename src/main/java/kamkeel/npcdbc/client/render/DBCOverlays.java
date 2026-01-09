@@ -5,10 +5,20 @@ import kamkeel.npcdbc.data.overlay.OverlayChain;
 import kamkeel.npcdbc.data.overlay.OverlayContext;
 
 import static java.lang.String.format;
-import static kamkeel.npcdbc.client.model.ModelDBC.*;
-import static kamkeel.npcdbc.api.client.overlay.IOverlay.ColorType.*;
-
-import static kamkeel.npcdbc.api.client.overlay.IOverlay.Type.*;
+import static kamkeel.npcdbc.api.client.overlay.IOverlay.ColorType.BodyCM;
+import static kamkeel.npcdbc.api.client.overlay.IOverlay.ColorType.Eye;
+import static kamkeel.npcdbc.api.client.overlay.IOverlay.ColorType.Fur;
+import static kamkeel.npcdbc.api.client.overlay.IOverlay.ColorType.Hair;
+import static kamkeel.npcdbc.api.client.overlay.IOverlay.Type.ALL;
+import static kamkeel.npcdbc.api.client.overlay.IOverlay.Type.Chest;
+import static kamkeel.npcdbc.api.client.overlay.IOverlay.Type.EyeWhite;
+import static kamkeel.npcdbc.api.client.overlay.IOverlay.Type.Eyebrows;
+import static kamkeel.npcdbc.api.client.overlay.IOverlay.Type.Face;
+import static kamkeel.npcdbc.api.client.overlay.IOverlay.Type.LeftEye;
+import static kamkeel.npcdbc.api.client.overlay.IOverlay.Type.Mouth;
+import static kamkeel.npcdbc.api.client.overlay.IOverlay.Type.RightEye;
+import static kamkeel.npcdbc.client.model.ModelDBC.HDDir;
+import static kamkeel.npcdbc.client.model.ModelDBC.path;
 
 public class DBCOverlays {
 

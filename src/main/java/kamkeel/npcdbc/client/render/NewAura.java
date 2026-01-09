@@ -12,7 +12,24 @@ import net.minecraft.entity.Entity;
 import noppes.npcs.client.renderer.ImageData;
 import org.lwjgl.opengl.GL11;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_LEQUAL;
+import static org.lwjgl.opengl.GL11.GL_LIGHTING;
+import static org.lwjgl.opengl.GL11.GL_NOTEQUAL;
+import static org.lwjgl.opengl.GL11.GL_ONE;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glDepthFunc;
+import static org.lwjgl.opengl.GL11.glDepthMask;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glRotatef;
+import static org.lwjgl.opengl.GL11.glScalef;
+import static org.lwjgl.opengl.GL11.glTranslated;
+import static org.lwjgl.opengl.GL11.glTranslatef;
 
 public class NewAura {
     public static final String AURA_DIR = CustomNpcPlusDBC.ID + ":textures/aura/";

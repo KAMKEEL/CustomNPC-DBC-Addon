@@ -1,6 +1,17 @@
 package kamkeel.npcdbc.constants.enums;
 
-import static kamkeel.npcdbc.config.ConfigCapsules.*;
+import static kamkeel.npcdbc.config.ConfigCapsules.KiBaseCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.KiBaseStrength;
+import static kamkeel.npcdbc.config.ConfigCapsules.KiGigaCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.KiGigaStrength;
+import static kamkeel.npcdbc.config.ConfigCapsules.KiMasterCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.KiMasterStrength;
+import static kamkeel.npcdbc.config.ConfigCapsules.KiMegaCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.KiMegaStrength;
+import static kamkeel.npcdbc.config.ConfigCapsules.KiSuperCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.KiSuperStrength;
+import static kamkeel.npcdbc.config.ConfigCapsules.KiSuperiorCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.KiSuperiorStrength;
 
 public enum EnumKiCapsules {
 

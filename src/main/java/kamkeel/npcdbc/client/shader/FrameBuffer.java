@@ -6,7 +6,22 @@ import org.lwjgl.opengl.GL30;
 
 import java.nio.ByteBuffer;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_LINEAR;
+import static org.lwjgl.opengl.GL11.GL_RGBA;
+import static org.lwjgl.opengl.GL11.GL_RGBA12;
+import static org.lwjgl.opengl.GL11.GL_STENCIL_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glGetInteger;
+import static org.lwjgl.opengl.GL11.glTexImage2D;
+import static org.lwjgl.opengl.GL11.glTexParameteri;
 
 public class FrameBuffer {
     public int object, texture1, texture2;

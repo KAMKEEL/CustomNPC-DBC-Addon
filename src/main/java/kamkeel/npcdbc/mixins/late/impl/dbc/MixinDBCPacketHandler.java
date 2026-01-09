@@ -34,7 +34,38 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static kamkeel.npcdbc.constants.DBCForm.*;
+import static kamkeel.npcdbc.constants.DBCForm.ArcoGod;
+import static kamkeel.npcdbc.constants.DBCForm.BlueEvo;
+import static kamkeel.npcdbc.constants.DBCForm.FinalForm;
+import static kamkeel.npcdbc.constants.DBCForm.FirstForm;
+import static kamkeel.npcdbc.constants.DBCForm.GodOfDestruction;
+import static kamkeel.npcdbc.constants.DBCForm.HumanBuffed;
+import static kamkeel.npcdbc.constants.DBCForm.HumanFullRelease;
+import static kamkeel.npcdbc.constants.DBCForm.HumanGod;
+import static kamkeel.npcdbc.constants.DBCForm.Kaioken;
+import static kamkeel.npcdbc.constants.DBCForm.Kaioken6;
+import static kamkeel.npcdbc.constants.DBCForm.MajinEvil;
+import static kamkeel.npcdbc.constants.DBCForm.MajinFullPower;
+import static kamkeel.npcdbc.constants.DBCForm.MajinGod;
+import static kamkeel.npcdbc.constants.DBCForm.MajinPure;
+import static kamkeel.npcdbc.constants.DBCForm.MasteredSuperSaiyan;
+import static kamkeel.npcdbc.constants.DBCForm.Mystic;
+import static kamkeel.npcdbc.constants.DBCForm.NamekFullRelease;
+import static kamkeel.npcdbc.constants.DBCForm.NamekGiant;
+import static kamkeel.npcdbc.constants.DBCForm.NamekGod;
+import static kamkeel.npcdbc.constants.DBCForm.SecondForm;
+import static kamkeel.npcdbc.constants.DBCForm.SuperForm;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyan;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyan2;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyan3;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyan4;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyanBlue;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyanG2;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyanG3;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyanGod;
+import static kamkeel.npcdbc.constants.DBCForm.ThirdForm;
+import static kamkeel.npcdbc.constants.DBCForm.UltimateForm;
+import static kamkeel.npcdbc.constants.DBCForm.UltraInstinct;
 
 @Mixin(value = DBCPacketHandlerServer.class, remap = false)
 public class MixinDBCPacketHandler {

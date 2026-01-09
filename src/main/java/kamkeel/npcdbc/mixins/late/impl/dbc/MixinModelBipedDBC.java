@@ -17,9 +17,9 @@ import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.form.FacePartData.Part;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
-import kamkeel.npcdbc.data.form.FacePartData;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -36,9 +36,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import kamkeel.npcdbc.data.form.FacePartData.Part;
-import java.util.HashMap;
-import java.util.HashSet;
+
 import java.util.Set;
 
 @Mixin(value = ModelBipedDBC.class, remap = false)

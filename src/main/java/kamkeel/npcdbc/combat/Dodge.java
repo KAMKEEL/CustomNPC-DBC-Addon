@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.combat;
 
-import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.PlaySound;

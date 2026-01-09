@@ -5,7 +5,11 @@ import JinRyuu.DragonBC.common.Npcs.RenderAura2;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.ref.*;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalDoubleRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.gui.global.auras.SubGuiAuraDisplay;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -26,7 +30,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_ALWAYS;
+import static org.lwjgl.opengl.GL11.GL_GREATER;
+import static org.lwjgl.opengl.GL11.glStencilFunc;
+import static org.lwjgl.opengl.GL11.glStencilMask;
 
 @Mixin(value = RenderAura2.class, remap = false)
 public class MixinRenderAura2 implements IRenderEntityAura2 {

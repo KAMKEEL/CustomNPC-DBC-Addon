@@ -1,6 +1,13 @@
 package kamkeel.npcdbc.client.gui.dbc;
 
-import JinRyuu.JRMCore.*;
+import JinRyuu.JRMCore.JRMCoreConfig;
+import JinRyuu.JRMCore.JRMCoreGuiButtons00;
+import JinRyuu.JRMCore.JRMCoreGuiButtons02;
+import JinRyuu.JRMCore.JRMCoreGuiButtons03;
+import JinRyuu.JRMCore.JRMCoreGuiScreen;
+import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.JRMCoreHJFC;
+import JinRyuu.JRMCore.JRMCoreHJYC;
 import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
@@ -13,7 +20,8 @@ import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Desktop;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;

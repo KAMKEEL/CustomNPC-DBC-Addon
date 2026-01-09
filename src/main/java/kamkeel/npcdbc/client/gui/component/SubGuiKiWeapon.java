@@ -1,12 +1,17 @@
 package kamkeel.npcdbc.client.gui.component;
 
+import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.client.gui.GuiDBCDisplayColor;
 import kamkeel.npcdbc.client.gui.GuiModelDBC;
-import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.npc.KiWeaponData;
 import net.minecraft.client.gui.GuiButton;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiButtonBiDirectional;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.GuiNpcTextField;
+import noppes.npcs.client.gui.util.ITextfieldListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 import noppes.npcs.entity.EntityCustomNpc;
 import org.lwjgl.opengl.GL11;
 

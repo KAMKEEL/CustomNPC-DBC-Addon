@@ -3,9 +3,18 @@ package kamkeel.npcdbc.data.form;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
 import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import static kamkeel.npcdbc.data.form.FacePartData.Part.*;
+import static kamkeel.npcdbc.data.form.FacePartData.Part.EyeWhite;
+import static kamkeel.npcdbc.data.form.FacePartData.Part.Eyebrows;
+import static kamkeel.npcdbc.data.form.FacePartData.Part.LeftEye;
+import static kamkeel.npcdbc.data.form.FacePartData.Part.Mouth;
+import static kamkeel.npcdbc.data.form.FacePartData.Part.Nose;
+import static kamkeel.npcdbc.data.form.FacePartData.Part.RightEye;
 
 public class FacePartData {
 

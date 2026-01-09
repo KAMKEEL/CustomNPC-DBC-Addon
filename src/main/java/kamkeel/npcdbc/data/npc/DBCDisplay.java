@@ -42,7 +42,11 @@ import noppes.npcs.entity.data.ModelPartData;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 public class DBCDisplay implements IDBCDisplay, IAuraData {
 

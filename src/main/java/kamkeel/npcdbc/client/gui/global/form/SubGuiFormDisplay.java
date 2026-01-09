@@ -1,14 +1,16 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
 import kamkeel.npcdbc.api.aura.IAura;
-import kamkeel.npcdbc.client.gui.component.*;
+import kamkeel.npcdbc.client.gui.component.SubGuiFormFaceParts;
+import kamkeel.npcdbc.client.gui.component.SubGuiOverlays;
+import kamkeel.npcdbc.client.gui.component.SubGuiSelectAura;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
-import kamkeel.npcdbc.data.overlay.OverlayChain;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
+import kamkeel.npcdbc.data.overlay.OverlayChain;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
@@ -16,14 +18,27 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
 import noppes.npcs.client.ClientEventHandler;
 import noppes.npcs.client.gui.SubGuiColorSelector;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiButtonBiDirectional;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcButtonYesNo;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.GuiNpcTextField;
+import noppes.npcs.client.gui.util.GuiScrollWindow;
+import noppes.npcs.client.gui.util.GuiSelectionListener;
+import noppes.npcs.client.gui.util.ISubGuiListener;
+import noppes.npcs.client.gui.util.ITextfieldListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 import noppes.npcs.entity.EntityCustomNpc;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import java.awt.*;
-import java.awt.datatransfer.*;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 
 import static JinRyuu.JRMCore.JRMCoreH.dnsHairG1toG2;
 

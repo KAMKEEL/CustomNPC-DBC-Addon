@@ -1,9 +1,9 @@
 package kamkeel.npcdbc.client.gui.component;
 
 import kamkeel.npcdbc.client.gui.global.form.SubGuiFormDisplay;
+import kamkeel.npcdbc.data.form.FacePartData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
-import kamkeel.npcdbc.data.form.FacePartData;
 import net.minecraft.client.gui.GuiButton;
 import noppes.npcs.client.gui.util.GuiNpcButton;
 import noppes.npcs.client.gui.util.GuiNpcLabel;

@@ -4,7 +4,13 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.form.DBCRequestForm;
 import net.minecraft.client.gui.GuiButton;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiCustomScroll;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcTextField;
+import noppes.npcs.client.gui.util.ICustomScrollListener;
+import noppes.npcs.client.gui.util.IScrollData;
+import noppes.npcs.client.gui.util.ITextfieldListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 import noppes.npcs.constants.EnumScrollData;
 
 import java.util.ArrayList;

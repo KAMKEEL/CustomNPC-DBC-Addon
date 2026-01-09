@@ -24,7 +24,6 @@ import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.DBCSetValPacket;
 import kamkeel.npcdbc.network.packets.player.TransformPacket;
 import kamkeel.npcdbc.util.PlayerDataUtil;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;

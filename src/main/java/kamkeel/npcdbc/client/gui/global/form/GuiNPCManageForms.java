@@ -1,7 +1,6 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
 import JinRyuu.JRMCore.JRMCoreH;
-import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
@@ -27,7 +26,16 @@ import net.minecraft.util.StatCollector;
 import noppes.npcs.client.ClientEventHandler;
 import noppes.npcs.client.CustomNpcResourceListener;
 import noppes.npcs.client.NoppesUtil;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiCustomScroll;
+import noppes.npcs.client.gui.util.GuiNPCInterface2;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.GuiNpcTextField;
+import noppes.npcs.client.gui.util.ICustomScrollListener;
+import noppes.npcs.client.gui.util.IGuiData;
+import noppes.npcs.client.gui.util.IScrollData;
+import noppes.npcs.client.gui.util.ISubGuiListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 import noppes.npcs.constants.EnumScrollData;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;

@@ -1,6 +1,10 @@
 package kamkeel.npcdbc.client;
 
-import JinRyuu.JBRA.*;
+import JinRyuu.JBRA.DBC_GiTurtleMdl;
+import JinRyuu.JBRA.GiTurtleMdl;
+import JinRyuu.JBRA.JBRAH;
+import JinRyuu.JBRA.ModelBipedDBC;
+import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
@@ -13,7 +17,11 @@ import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -46,7 +54,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED_FIRST_PERSON;
 

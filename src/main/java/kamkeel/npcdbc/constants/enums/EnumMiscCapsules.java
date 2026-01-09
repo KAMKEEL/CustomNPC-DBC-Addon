@@ -1,6 +1,13 @@
 package kamkeel.npcdbc.constants.enums;
 
-import static kamkeel.npcdbc.config.ConfigCapsules.*;
+import static kamkeel.npcdbc.config.ConfigCapsules.AbsorptionCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.ExhaustedCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.HeatCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.KOCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.NoFuseCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.PowerPointCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.ReviveCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.StrainCooldown;
 
 public enum EnumMiscCapsules {
 

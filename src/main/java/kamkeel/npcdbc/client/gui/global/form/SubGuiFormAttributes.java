@@ -8,10 +8,17 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormAttributes;
 import net.minecraft.client.gui.GuiButton;
 import noppes.npcs.client.CustomNpcResourceListener;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiCustomScroll;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.ICustomScrollListener;
+import noppes.npcs.client.gui.util.ISubGuiListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 import noppes.npcs.controllers.MagicController;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class SubGuiFormAttributes extends SubGuiInterface implements ICustomScrollListener, ISubGuiListener {
     private static final int SCROLL_WIDTH        = 170;

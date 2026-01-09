@@ -12,7 +12,16 @@ import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.SubGuiColorSelector;
 import noppes.npcs.client.gui.script.GuiJaninoScript;
 import noppes.npcs.client.gui.select.GuiTextureSelection;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiCustomScroll;
+import noppes.npcs.client.gui.util.GuiMenuTopButton;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcButtonYesNo;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.GuiNpcTextField;
+import noppes.npcs.client.gui.util.GuiScrollWindow;
+import noppes.npcs.client.gui.util.ISubGuiListener;
+import noppes.npcs.client.gui.util.ITextfieldListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 import noppes.npcs.entity.EntityNPCInterface;
 
 import java.util.Arrays;

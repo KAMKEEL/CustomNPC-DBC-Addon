@@ -15,12 +15,23 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import noppes.npcs.client.gui.model.GuiCreationScreen;
 import noppes.npcs.client.gui.model.GuiModelColor;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiButtonBiDirectional;
+import noppes.npcs.client.gui.util.GuiModelInterface;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcButtonYesNo;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.GuiScrollWindow;
+import noppes.npcs.client.gui.util.ISubGuiListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.data.ModelPartData;
 
-import java.awt.*;
-import java.awt.datatransfer.*;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 
 import static JinRyuu.JRMCore.JRMCoreH.dnsHairG1toG2;
 

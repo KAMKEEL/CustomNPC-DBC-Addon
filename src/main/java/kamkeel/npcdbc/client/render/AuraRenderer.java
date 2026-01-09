@@ -31,7 +31,27 @@ import java.util.Random;
 
 import static JinRyuu.DragonBC.common.Npcs.RenderAura2.cf;
 import static JinRyuu.DragonBC.common.Npcs.RenderAura2.glColor4f;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_ALWAYS;
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_GREATER;
+import static org.lwjgl.opengl.GL11.GL_LIGHTING;
+import static org.lwjgl.opengl.GL11.GL_ONE;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glAlphaFunc;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glDepthMask;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glRotatef;
+import static org.lwjgl.opengl.GL11.glScalef;
+import static org.lwjgl.opengl.GL11.glStencilFunc;
+import static org.lwjgl.opengl.GL11.glStencilMask;
+import static org.lwjgl.opengl.GL11.glTranslated;
+import static org.lwjgl.opengl.GL11.glTranslatef;
 
 @SideOnly(Side.CLIENT)
 public class AuraRenderer extends RenderDBC {

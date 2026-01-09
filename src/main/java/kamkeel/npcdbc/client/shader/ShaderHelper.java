@@ -7,7 +7,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.*;
+import org.lwjgl.opengl.ARBFragmentShader;
+import org.lwjgl.opengl.ARBShaderObjects;
+import org.lwjgl.opengl.ARBVertexShader;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Matrix4f;
 
 import java.io.BufferedReader;
@@ -18,7 +23,9 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW_MATRIX;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION_MATRIX;
+import static org.lwjgl.opengl.GL11.glGetFloat;
 
 /**
  * TODO: CLEAN UP OLD OPTIFINE "SUPPORT"

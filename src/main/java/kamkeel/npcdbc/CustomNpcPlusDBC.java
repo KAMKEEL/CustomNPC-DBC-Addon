@@ -3,25 +3,26 @@ package kamkeel.npcdbc;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.relauncher.Side;
-import io.github.somehussar.janinoloader.api.IDynamicCompiler;
-import io.github.somehussar.janinoloader.api.IDynamicCompilerBuilder;
-import io.github.somehussar.janinoloader.api.delegates.LoadClassCondition;
 import kamkeel.npcdbc.config.LoadConfiguration;
-import kamkeel.npcdbc.controllers.*;
+import kamkeel.npcdbc.controllers.AuraController;
+import kamkeel.npcdbc.controllers.BonusController;
+import kamkeel.npcdbc.controllers.CapsuleController;
+import kamkeel.npcdbc.controllers.DBCEffectController;
+import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.DBCProfileData;
 import kamkeel.npcdbc.data.attribute.DBCItemAttributes;
 import kamkeel.npcdbc.items.ModItems;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcs.controllers.ProfileController;
-import noppes.npcs.CustomNpcs;
 
 import java.io.File;
-import java.net.URL;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Mod(
     modid = CustomNpcPlusDBC.ID,

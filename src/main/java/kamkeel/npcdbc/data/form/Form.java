@@ -1,7 +1,11 @@
 package kamkeel.npcdbc.data.form;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.api.form.*;
+import kamkeel.npcdbc.api.form.IForm;
+import kamkeel.npcdbc.api.form.IFormAdvanced;
+import kamkeel.npcdbc.api.form.IFormDisplay;
+import kamkeel.npcdbc.api.form.IFormMastery;
+import kamkeel.npcdbc.api.form.IFormStackable;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.FormController;

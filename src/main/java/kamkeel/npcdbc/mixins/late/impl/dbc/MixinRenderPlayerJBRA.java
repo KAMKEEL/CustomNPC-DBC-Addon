@@ -13,6 +13,8 @@ import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.api.Color;
+import kamkeel.npcdbc.api.client.overlay.IOverlay.Type;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.ClientProxy;
@@ -20,20 +22,18 @@ import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.client.render.OverlayModelRenderer;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
-import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.form.FacePartData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
-import kamkeel.npcdbc.data.form.FacePartData;
 import kamkeel.npcdbc.data.npc.KiWeaponData;
 import kamkeel.npcdbc.data.overlay.Overlay;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
-import kamkeel.npcdbc.api.client.overlay.IOverlay.Type;
 import kamkeel.npcdbc.data.overlay.OverlayContext;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.items.ItemPotara;
@@ -62,7 +62,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.ArrayList;
 import java.util.List;
 
-import static kamkeel.npcdbc.data.form.FacePartData.Part.*;
+import static kamkeel.npcdbc.data.form.FacePartData.Part.EyeWhite;
+import static kamkeel.npcdbc.data.form.FacePartData.Part.Eyebrows;
+import static kamkeel.npcdbc.data.form.FacePartData.Part.LeftEye;
+import static kamkeel.npcdbc.data.form.FacePartData.Part.Mouth;
+import static kamkeel.npcdbc.data.form.FacePartData.Part.Nose;
+import static kamkeel.npcdbc.data.form.FacePartData.Part.RightEye;
 
 @Mixin(value = RenderPlayerJBRA.class, remap = false)
 public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
@@ -823,7 +828,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @Shadow
     abstract int i(String n);
-    
+
     /**
      * Methods Below so we don't need
      * to constantly scan stack traces

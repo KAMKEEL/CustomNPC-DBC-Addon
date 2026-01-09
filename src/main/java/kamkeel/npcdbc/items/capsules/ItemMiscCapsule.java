@@ -34,9 +34,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static JinRyuu.JRMCore.JRMCoreH.getInt;
-import static JinRyuu.JRMCore.JRMCoreH.getString;
 import static JinRyuu.JRMCore.JRMCoreH.setInt;
-import static JinRyuu.JRMCore.JRMCoreH.setString;
 
 public class ItemMiscCapsule extends Item {
 

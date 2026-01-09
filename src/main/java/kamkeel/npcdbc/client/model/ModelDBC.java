@@ -4,11 +4,15 @@ import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHJBRA;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.client.ColorMode;
-import kamkeel.npcdbc.client.model.part.*;
+import kamkeel.npcdbc.client.model.part.DBCBody;
+import kamkeel.npcdbc.client.model.part.DBCEars;
+import kamkeel.npcdbc.client.model.part.DBCHorns;
+import kamkeel.npcdbc.client.model.part.DBCLeftArms;
+import kamkeel.npcdbc.client.model.part.DBCRightArms;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.client.render.OverlayModelRenderer;
-import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
@@ -41,11 +45,16 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import static java.lang.String.format;
-import static kamkeel.npcdbc.client.render.DBCOverlays.*;
-import static kamkeel.npcdbc.data.form.FacePartData.Part;
 import static kamkeel.npcdbc.api.client.overlay.IOverlay.Type;
-import static kamkeel.npcdbc.api.client.overlay.IOverlay.Type.*;
+import static kamkeel.npcdbc.api.client.overlay.IOverlay.Type.Face;
+import static kamkeel.npcdbc.client.render.DBCOverlays.NO_EYEBROWS;
+import static kamkeel.npcdbc.client.render.DBCOverlays.OOZARU_FUR;
+import static kamkeel.npcdbc.client.render.DBCOverlays.PUPILS;
+import static kamkeel.npcdbc.client.render.DBCOverlays.SAVIOR;
+import static kamkeel.npcdbc.client.render.DBCOverlays.SSJ3_FACE;
+import static kamkeel.npcdbc.client.render.DBCOverlays.SSJ4_FACE;
+import static kamkeel.npcdbc.client.render.DBCOverlays.SSJ4_FUR;
+import static kamkeel.npcdbc.data.form.FacePartData.Part;
 
 public class ModelDBC extends ModelBase {
 

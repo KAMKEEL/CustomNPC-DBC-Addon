@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.data.overlay;
 
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;

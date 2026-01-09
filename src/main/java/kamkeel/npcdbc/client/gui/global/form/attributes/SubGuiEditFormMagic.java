@@ -2,9 +2,13 @@ package kamkeel.npcdbc.client.gui.global.form.attributes;
 
 import kamkeel.npcdbc.client.gui.global.form.SubGuiFormAttributes;
 import kamkeel.npcdbc.data.form.FormAttributes;
-import noppes.npcs.controllers.MagicController;
 import net.minecraft.client.gui.GuiButton;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.GuiNpcTextField;
+import noppes.npcs.client.gui.util.ITextfieldListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
+import noppes.npcs.controllers.MagicController;
 
 public class SubGuiEditFormMagic extends SubGuiInterface implements ITextfieldListener {
     private final SubGuiFormAttributes parent;

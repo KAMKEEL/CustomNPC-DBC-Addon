@@ -1,6 +1,17 @@
 package kamkeel.npcdbc.constants.enums;
 
-import static kamkeel.npcdbc.config.ConfigCapsules.*;
+import static kamkeel.npcdbc.config.ConfigCapsules.HealthBaseCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.HealthBaseStrength;
+import static kamkeel.npcdbc.config.ConfigCapsules.HealthGigaCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.HealthGigaStrength;
+import static kamkeel.npcdbc.config.ConfigCapsules.HealthMasterCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.HealthMasterStrength;
+import static kamkeel.npcdbc.config.ConfigCapsules.HealthMegaCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.HealthMegaStrength;
+import static kamkeel.npcdbc.config.ConfigCapsules.HealthSuperCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.HealthSuperStrength;
+import static kamkeel.npcdbc.config.ConfigCapsules.HealthSuperiorCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.HealthSuperiorStrength;
 
 public enum EnumHealthCapsules {
 

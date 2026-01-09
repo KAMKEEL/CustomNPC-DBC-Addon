@@ -24,8 +24,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static kamkeel.npcdbc.client.shader.PostProcessing.*;
-import static org.lwjgl.opengl.GL11.*;
+import static kamkeel.npcdbc.client.shader.PostProcessing.endBlooming;
+import static kamkeel.npcdbc.client.shader.PostProcessing.mc;
+import static kamkeel.npcdbc.client.shader.PostProcessing.startBlooming;
+import static org.lwjgl.opengl.GL11.GL_GREATER;
+import static org.lwjgl.opengl.GL11.glStencilFunc;
+import static org.lwjgl.opengl.GL11.glStencilMask;
 
 @Mixin(value = ModelMPM.class, remap = false)
 public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
