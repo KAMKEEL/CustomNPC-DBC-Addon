@@ -250,6 +250,15 @@ public class Ability implements IAbility {
         if (!canFireEvent(player, event))
             return false;
 
+        fireEvent(player, event);
+
+        DBCEventHooks.onAbilityUsed(event);
+
+        AbilityScript script = getScriptHandler();
+        if (script != null) {
+            script.callScript(getScriptType(), event);
+        }
+
         if (this.type == Type.Animated) {
             setupAnimations((DBCPlayerEvent.AbilityEvent.Animated) event);
             finishAnimationSetup();
@@ -263,22 +272,13 @@ public class Ability implements IAbility {
             }
         }
 
-        fireEvent(player, event);
-
-        DBCEventHooks.onAbilityUsed(event);
-
-        AbilityScript script = getScriptHandler();
-        if (script != null) {
-            script.callScript(getScriptType(), event);
-        }
-
         afterEvent(player, event);
 
         if (event.getKiCost() > -1) {
             data.Ki -= event.getKiCost();
         }
 
-        boolean maxAmountReached = abilityData.abilityCounter.get(id) != null && abilityData.abilityCounter.get(id) >= maxUses;
+        boolean maxAmountReached = abilityData.abilityCounter.get(id) != null && abilityData.abilityCounter.get(id) == maxUses;
         boolean shouldActivateCooldown =
             event.getCooldown() > -1 &&
             !cooldownCancelled &&
@@ -337,10 +337,12 @@ public class Ability implements IAbility {
         });
     }
 
+    // Event for AddonAbilities
     protected void fireEvent(EntityPlayer player, DBCPlayerEvent.AbilityEvent event) {
 
     }
 
+    // Event for AddonAbilities
     protected void afterEvent(EntityPlayer player, DBCPlayerEvent.AbilityEvent event) {
 
     }

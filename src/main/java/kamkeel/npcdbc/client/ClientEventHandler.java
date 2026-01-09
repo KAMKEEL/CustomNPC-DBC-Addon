@@ -37,6 +37,7 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -271,6 +272,21 @@ public class ClientEventHandler {
             }
 
             ticks++;
+        }
+    }
+
+    @SubscribeEvent
+    public void abilityAnimation(LivingEvent.LivingUpdateEvent event) {
+        EntityLivingBase entity = event.entityLiving;
+        if (entity instanceof EntityPlayer && !Utility.isServer(entity)) {
+            DBCData data = DBCData.getClient();
+
+            if (
+                data.getDBCInfo().dbcAbilityData.animatingAbility != -1 ||
+                data.getDBCInfo().customAbilityData.animatingAbility != -1
+            ) {
+                entity.motionX = entity.motionY = entity.motionZ = 0;
+            }
         }
     }
 

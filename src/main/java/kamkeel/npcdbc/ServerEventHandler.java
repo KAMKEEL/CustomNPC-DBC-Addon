@@ -31,6 +31,7 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import kamkeel.npcs.network.enums.EnumSyncAction;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -292,6 +293,21 @@ public class ServerEventHandler {
                 TransformController.npcAscend(npc, (Form) FormController.Instance.get(display.selectedForm));
             } else
                 TransformController.npcDecrementRage(npc, display);
+        }
+    }
+
+    @SubscribeEvent
+    public void abilityAnimation(LivingEvent.LivingUpdateEvent event) {
+        EntityLivingBase entity = event.entityLiving;
+        if (entity instanceof EntityPlayer) {
+            DBCData data = DBCData.get((EntityPlayer) entity);
+
+            if (
+                data.getDBCInfo().dbcAbilityData.animatingAbility != -1 ||
+                data.getDBCInfo().customAbilityData.animatingAbility != -1
+            ) {
+                entity.motionX = entity.motionY = entity.motionZ = 0;
+            }
         }
     }
 

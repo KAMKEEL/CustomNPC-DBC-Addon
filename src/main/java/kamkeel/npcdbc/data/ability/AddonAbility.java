@@ -37,8 +37,4 @@ public class AddonAbility extends Ability {
     public Ability save() {
         return this;
     }
-
-//    public boolean onAnimationEvent(AbilityData data, AnimationEvent event) {
-//        return false;
-//    }
 }
