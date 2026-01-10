@@ -44,6 +44,8 @@ public class TransformController {
     public static DBCData dbcData;
     public static Form transformedInto;
 
+    public static int FULL_DESCEND = -10;
+
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
     // Client  side handling
@@ -234,18 +236,14 @@ public class TransformController {
 
         int originalForm = formData.currentForm;
         if (!formData.hasForm(form)) {
+            LogWriter.error(String.format("Potential exploiting: %s tried to transform into a form they don't have unlocked (\"%s\" - ID: %d)",
+                player.getCommandSenderName(), form.getName(), formID));
             return;
         }
 
         Form stackedForm = getStackForm(data.getForm(), form);
         if (stackedForm != null)
             form = stackedForm;
-
-        if (!formData.hasForm(form)) {
-            LogWriter.error(String.format("Potential exploiting: %s tried to transform into a form they don't have unlocked (\"%s\" - ID: %d)",
-                player.getCommandSenderName(), form.getName(), formID));
-            return;
-        }
 
         if (formData.currentForm != formID) {
             DBCData dbcData = DBCData.get(player);
@@ -331,7 +329,7 @@ public class TransformController {
                 dbcData.Pain = (int) (form.mastery.painTime * 60 / 5 * form.mastery.calculateMulti("pain", formData.getCurrentLevel()) * heatRatio);
                 dbcData.addonCurrentHeat = 0;
             }
-            if (formID == -10) {
+            if (formID == FULL_DESCEND) {
                 formData.currentForm = -1;
             } else if (form.requiredForm.containsKey((int) dbcData.Race)) {
                 formData.currentForm = -1;

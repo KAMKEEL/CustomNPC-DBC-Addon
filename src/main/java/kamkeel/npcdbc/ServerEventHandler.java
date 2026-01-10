@@ -234,14 +234,14 @@ public class ServerEventHandler {
                 int painTime = (int) (form.mastery.painTime * 60f / 5f * form.mastery.calculateMulti("pain", formData.getCurrentLevel()));
                 dbcData.getRawCompound().setInteger("jrmcGyJ7dp", painTime);
                 newHeat = 0;
-                TransformController.handleFormDescend(player, -10);
+                TransformController.handleFormDescend(player, TransformController.FULL_DESCEND);
             }
 
             dbcData.getRawCompound().setFloat("addonCurrentHeat", newHeat);
         }
 
         if ((form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")) && DBCRace.isSaiyan(dbcData.Race) && !dbcData.hasTail()) {
-            TransformController.handleFormDescend(player, -10);
+            TransformController.handleFormDescend(player, TransformController.FULL_DESCEND);
         }
     }
 
