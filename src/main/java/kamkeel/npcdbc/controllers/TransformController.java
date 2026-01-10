@@ -44,6 +44,8 @@ public class TransformController {
     public static DBCData dbcData;
     public static Form transformedInto;
 
+    public static int FULL_DESCEND = -10;
+
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
     // Client  side handling
@@ -233,10 +235,6 @@ public class TransformController {
         DBCData data = DBCData.getData(player);
 
         int originalForm = formData.currentForm;
-        if (!formData.hasForm(form)) {
-            return;
-        }
-
         Form stackedForm = getStackForm(data.getForm(), form);
         if (stackedForm != null)
             form = stackedForm;
@@ -331,7 +329,7 @@ public class TransformController {
                 dbcData.Pain = (int) (form.mastery.painTime * 60 / 5 * form.mastery.calculateMulti("pain", formData.getCurrentLevel()) * heatRatio);
                 dbcData.addonCurrentHeat = 0;
             }
-            if (formID == -10) {
+            if (formID == FULL_DESCEND) {
                 formData.currentForm = -1;
             } else if (form.requiredForm.containsKey((int) dbcData.Race)) {
                 formData.currentForm = -1;

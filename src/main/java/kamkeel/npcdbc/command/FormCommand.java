@@ -144,7 +144,7 @@ public class FormCommand extends CommandKamkeelBase {
                 if (info.selectedForm == form.id)
                     info.selectedForm = -1;
                 if (info.currentForm == form.id) {
-                    TransformController.handleFormDescend(playerdata.player, -10);
+                    TransformController.handleFormDescend(playerdata.player,  TransformController.FULL_DESCEND);
                     info.currentForm = -1;
                 }
                 info.removeForm(form);
@@ -177,14 +177,13 @@ public class FormCommand extends CommandKamkeelBase {
             return;
         }
 
-
         for (PlayerData playerdata : data) {
             PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(playerdata);
             if (info.hasForm(form)) {
                 if (info.selectedForm == form.id)
                     info.selectedForm = -1;
                 if (info.currentForm == form.id) {
-                    TransformController.handleFormDescend(playerdata.player, -10);
+                    TransformController.handleFormDescend(playerdata.player,  TransformController.FULL_DESCEND);
                     info.currentForm = -1;
                 }
                 info.removeForm(form);
