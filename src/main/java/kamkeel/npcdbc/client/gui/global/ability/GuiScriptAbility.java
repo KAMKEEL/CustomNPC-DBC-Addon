@@ -2,6 +2,7 @@ package kamkeel.npcdbc.client.gui.global.ability;
 
 import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.data.ability.AbilityScript;
+import kamkeel.npcdbc.network.packets.request.ability.DBCAbilityScript;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiConfirmOpenLink;
 import net.minecraft.client.gui.GuiYesNo;
@@ -62,7 +63,7 @@ public class GuiScriptAbility extends GuiNPCInterface implements GuiYesNoCallbac
             this.hookList.add(type.function);
         }
 
-        //AbilityScriptPacket.Get(ability.id);
+        DBCAbilityScript.Get(ability.id);
     }
 
     public void initGui() {
@@ -382,14 +383,14 @@ public class GuiScriptAbility extends GuiNPCInterface implements GuiYesNoCallbac
             List<ScriptContainer> containers = this.scriptHandler.getScripts();
             for (int i = 0; i < containers.size(); i++) {
                 ScriptContainer container = containers.get(i);
-                //AbilityScriptPacket.Save(ability.id, i, containers.size(), container.writeToNBT(new NBTTagCompound()));
+                DBCAbilityScript.Save(ability.id, i, containers.size(), container.writeToNBT(new NBTTagCompound()));
             }
             NBTTagCompound scriptData = new NBTTagCompound();
             scriptData.setString("ScriptLanguage", this.scriptHandler.getLanguage());
             scriptData.setBoolean("ScriptEnabled", this.scriptHandler.getEnabled());
             scriptData.setTag("ScriptConsole", NBTTags.NBTLongStringMap(this.scriptHandler.getConsoleText()));
 
-            //AbilityScriptPacket.Save(ability.id, -1, containers.size(), scriptData);
+            DBCAbilityScript.Save(ability.id, -1, containers.size(), scriptData);
         }
     }
 

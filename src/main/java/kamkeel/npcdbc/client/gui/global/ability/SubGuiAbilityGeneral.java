@@ -230,7 +230,11 @@ public class SubGuiAbilityGeneral extends GuiNPCInterface implements ISubGuiList
         }
 
         if (id == 113) {
-            // TODO OPEN SCRIPT GUI
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveAbility(ability.writeToNBT(false), originalName));
+            GuiScriptAbility scriptGUI = new GuiScriptAbility(parent, ability);
+            scriptGUI.setWorldAndResolution(mc, width, height);
+            scriptGUI.initGui();
+            mc.currentScreen = scriptGUI;
         }
     }
 
