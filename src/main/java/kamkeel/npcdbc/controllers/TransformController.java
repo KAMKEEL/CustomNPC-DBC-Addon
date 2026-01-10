@@ -235,15 +235,15 @@ public class TransformController {
         DBCData data = DBCData.getData(player);
 
         int originalForm = formData.currentForm;
-        Form stackedForm = getStackForm(data.getForm(), form);
-        if (stackedForm != null)
-            form = stackedForm;
-
         if (!formData.hasForm(form)) {
             LogWriter.error(String.format("Potential exploiting: %s tried to transform into a form they don't have unlocked (\"%s\" - ID: %d)",
                 player.getCommandSenderName(), form.getName(), formID));
             return;
         }
+
+        Form stackedForm = getStackForm(data.getForm(), form);
+        if (stackedForm != null)
+            form = stackedForm;
 
         if (formData.currentForm != formID) {
             DBCData dbcData = DBCData.get(player);
