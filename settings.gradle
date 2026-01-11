@@ -1,12 +1,12 @@
 
 pluginManagement {
-    resolutionStrategy {
-        eachPlugin {
-            if (requested.id.toString() == "dts.typescript-generator") {
-                useModule("com.github.bigguy345:dts-gradle-plugin:main-SNAPSHOT")
-            }
-        }
-    }
+//    resolutionStrategy {
+//        eachPlugin {
+//            if (requested.id.toString() == "dts.typescript-generator") {
+//                useModule("com.github.bigguy345:dts-gradle-plugin:main-SNAPSHOT")
+//            }
+//        }
+//    }
 
     
     repositories {
@@ -31,4 +31,4 @@ plugins {
 }
 
 // Include the local gradle-plugins composite build so plugin is resolved locally
-//includeBuild 'gradle-plugins'
+includeBuild 'gradle-plugins'
