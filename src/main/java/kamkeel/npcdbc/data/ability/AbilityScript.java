@@ -20,101 +20,119 @@ public class AbilityScript implements INpcScriptHandler {
     public String scriptLanguage = "ECMAScript";
     public boolean enabled = false;
 
-    public AbilityScript() {
-    }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        compound.setString("ScriptLanguage", this.scriptLanguage);
-        compound.setBoolean("ScriptEnabled", this.enabled);
-        if (this.container != null) {
-            compound.setTag("ScriptContent", this.container.writeToNBT(new NBTTagCompound()));
-        }
+        compound.setString("ScriptLanguage", scriptLanguage);
+        compound.setBoolean("ScriptEnabled", enabled);
 
+        if (container != null)
+            compound.setTag("ScriptContent", container.writeToNBT(new NBTTagCompound()));
         return compound;
     }
 
     public AbilityScript readFromNBT(NBTTagCompound compound) {
-        this.scriptLanguage = compound.getString("ScriptLanguage");
-        this.enabled = compound.getBoolean("ScriptEnabled");
+        scriptLanguage = compound.getString("ScriptLanguage");
+        enabled = compound.getBoolean("ScriptEnabled");
         if (compound.hasKey("ScriptContent", 10)) {
-            this.container = new ScriptContainer(this);
-            this.container.readFromNBT(compound.getCompoundTag("ScriptContent"));
+            container = new ScriptContainer(this);
+            container.readFromNBT(compound.getCompoundTag("ScriptContent"));
         }
-
         return this;
     }
 
-    public void callScript(AbilityScript.ScriptType type, DBCPlayerEvent.AbilityEvent event) {
-        this.callScript((String)type.function, (Event)event);
+    public void callScript(ScriptType type, DBCPlayerEvent.AbilityEvent event) {
+        callScript((String)type.function, (Event)event);
     }
 
     public boolean isEnabled() {
-        return this.enabled && ScriptController.HasStart && this.container != null && ConfigScript.ScriptingEnabled;
+        return this.enabled && ScriptController.HasStart && container != null && ConfigScript.ScriptingEnabled;
     }
 
+    @Override
     public void callScript(EnumScriptType type, Event event) {
         this.callScript(type.function, event);
     }
 
+    @Override
     public void callScript(String s, Event event) {
-        if (this.isEnabled()) {
-            this.container.run(s, event);
+        if (!this.isEnabled()) {
+            return;
         }
+        container.run(s, event);
     }
 
+    @Override
     public boolean isClient() {
         return FMLCommonHandler.instance().getEffectiveSide().isClient();
     }
 
+    @Override
     public boolean getEnabled() {
         return this.enabled;
     }
 
+    @Override
     public void setEnabled(boolean b) {
         this.enabled = b;
     }
 
+    @Override
     public String getLanguage() {
         return this.scriptLanguage;
     }
 
+    @Override
     public void setLanguage(String s) {
         this.scriptLanguage = s;
     }
 
+    @Override
     public void setScripts(List<ScriptContainer> list) {
-        if (list != null && !list.isEmpty()) {
-            this.container = (ScriptContainer)list.get(0);
-        } else {
-            this.container = null;
+        if (list == null || list.isEmpty()) {
+            container = null;
+            return;
         }
+        container = list.get(0);
     }
 
+    @Override
     public List<ScriptContainer> getScripts() {
-        return (List<ScriptContainer>)(this.container == null ? new ArrayList() : Collections.singletonList(this.container));
+        if (container == null)
+            return new ArrayList<>();
+        return Collections.singletonList(container);
     }
 
+    @Override
     public String noticeString() {
         return "";
     }
 
+    @Override
     public Map<Long, String> getConsoleText() {
         TreeMap<Long, String> map = new TreeMap();
         int tab = 0;
+        Iterator var3 = this.getScripts().iterator();
 
-        for(ScriptContainer script : this.getScripts()) {
+        while (var3.hasNext()) {
+            ScriptContainer script = (ScriptContainer) var3.next();
             ++tab;
+            Iterator var5 = script.console.entrySet().iterator();
 
-            for(Map.Entry<Long, String> longStringEntry : script.console.entrySet()) {
-                map.put(longStringEntry.getKey(), " tab " + tab + ":\n" + (String)longStringEntry.getValue());
+            while (var5.hasNext()) {
+                Map.Entry<Long, String> longStringEntry = (Map.Entry) var5.next();
+                map.put(longStringEntry.getKey(), " tab " + tab + ":\n" + (String) longStringEntry.getValue());
             }
         }
 
         return map;
     }
 
+    @Override
     public void clearConsole() {
-        for(ScriptContainer script : this.getScripts()) {
+        Iterator var1 = this.getScripts().iterator();
+
+        while (var1.hasNext()) {
+            ScriptContainer script = (ScriptContainer) var1.next();
             script.console.clear();
         }
     }
@@ -136,24 +154,22 @@ public class AbilityScript implements INpcScriptHandler {
             this.setLanguage(compound.getString("ScriptLanguage"));
             if (!ScriptController.Instance.languages.containsKey(this.getLanguage())) {
                 if (!ScriptController.Instance.languages.isEmpty()) {
-                    this.setLanguage((String)ScriptController.Instance.languages.keySet().toArray()[0]);
+                    this.setLanguage((String) ScriptController.Instance.languages.keySet().toArray()[0]);
                 } else {
                     this.setLanguage("ECMAScript");
                 }
             }
-
             this.setEnabled(compound.getBoolean("ScriptEnabled"));
         }
-
     }
 
     public enum ScriptType {
-        AbilityCast("abilityCast"),
-        AbilityToggle("abilityToggle"),
-        AbilityAnimationStart("abilityAnimationStart"),
-        AbilityAnimationEnd("abilityAnimationEnd"),
-        AbilityAnimationFrame("abilityAnimationFrame"),
-        AbilityAnimationTick("abilityAnimationTick");
+        AbilityCast("onCast"),
+        AbilityToggle("onToggle"),
+        AbilityAnimationStart("onAnimationStart"),
+        AbilityAnimationEnd("onAnimationEnd"),
+        AbilityAnimationFrame("onAnimationFrame"),
+        AbilityAnimationTick("onAnimationTick");
 
         public final String function;
 

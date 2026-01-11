@@ -285,9 +285,11 @@ public class GuiNPCManageAbilities extends GuiNPCInterface2 implements ICustomSc
     }
 
     private String getTypeName(Ability.Type type) {
-        if (type == Ability.Type.Cast)
-            return "ability.active";
-        else
+        if (type == Ability.Type.Animated)
+            return "ability.animated";
+        else if (type == Ability.Type.Toggle)
             return "ability.toggle";
+        else
+            return "ability.cast";
     }
 }

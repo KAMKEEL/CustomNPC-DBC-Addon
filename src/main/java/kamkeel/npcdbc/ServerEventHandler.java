@@ -307,6 +307,7 @@ public class ServerEventHandler {
                 data.getDBCInfo().customAbilityData.animatingAbility != -1
             ) {
                 entity.motionX = entity.motionY = entity.motionZ = 0;
+                entity.velocityChanged = false;
             }
         }
     }

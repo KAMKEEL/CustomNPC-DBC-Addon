@@ -4,6 +4,7 @@ import cpw.mods.fml.common.eventhandler.Cancelable;
 import noppes.npcs.api.IDamageSource;
 import noppes.npcs.api.event.IPlayerEvent;
 import noppes.npcs.api.handler.data.IAnimation;
+import noppes.npcs.api.handler.data.IAnimationData;
 
 public interface IDBCEvent extends IPlayerEvent {
 
@@ -95,27 +96,17 @@ public interface IDBCEvent extends IPlayerEvent {
          */
         boolean isDBC();
 
+        @Cancelable
         interface Casted extends AbilityEvent{
 
         }
 
-        interface MultiCasted extends AbilityEvent{
-            /**
-             * @return The amount of times you can cast the Ability before triggering cooldown
-             */
-            int getMaxUses();
-
-            /**
-             * Allows you to change the max amount of uses before triggering cooldown
-             * @param maxUses The new amount of uses
-             */
-            void setMaxUses(int maxUses);
-        }
-
+        @Cancelable
         interface Toggled extends AbilityEvent{
 
         }
 
+        @Cancelable
         interface Animated extends AbilityEvent {
             /**
              * @return The animation that plays when casting the ability
@@ -127,6 +118,8 @@ public interface IDBCEvent extends IPlayerEvent {
              * @param animation The new animation
              */
             void setAnimation(IAnimation animation);
+
+            IAnimationData getAnimationData();
         }
     }
 

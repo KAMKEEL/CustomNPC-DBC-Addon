@@ -197,13 +197,6 @@ public class PlayerDBCInfo {
         for (FormWheelData formWheelData : formWheel) formWheelData.reset();
     }
 
-    public void resetAbilityData() {
-        customAbilityData.resetData();
-        dbcAbilityData.resetData();
-
-        for (AbilityWheelData abilityWheelData : abilityWheel) abilityWheelData.reset();
-    }
-
     ////////////////////////////////////////////////
     ////////////////////////////////////////////////
     // Form mastery stuff
@@ -330,6 +323,21 @@ public class PlayerDBCInfo {
         return false;
 
     }
+
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    // Ability stuff
+    public AbilityData getAbilityData(boolean isDBC) {
+        return isDBC ? dbcAbilityData : customAbilityData;
+    }
+
+    public void resetAbilityData() {
+        customAbilityData.resetData();
+        dbcAbilityData.resetData();
+
+        for (AbilityWheelData abilityWheelData : abilityWheel) abilityWheelData.reset();
+    }
+
 
     ///////////////////////////////////////////
     ///////////////////////////////////////////

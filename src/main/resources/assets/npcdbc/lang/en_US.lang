@@ -13,6 +13,7 @@ global.customforms=Forms
 global.customauras=Auras
 global.customoutlines=Outlines
 global.customeffects=Effects
+global.abilities=Abilities
 
 stats.dbcsettings=DBC Settings
 inventory.extras=Extras
@@ -488,12 +489,14 @@ ability.kiprot=§3Ki Protection
 ability.kiweapon=§3Ki Weapon
 ability.ultrainstinct=§bUltra Instinct
 
-ability.active=Active
+ability.cast=Cast
 ability.toggle=Toggle
 ability.animated=Animated
 
-ability.editor.kicost=Ki Cost
+ability.editor.kiCost=Ki Cost
 ability.editor.cooldown=Cooldown
+ability.editor.multiUse=Multi Use
+ability.editor.maxUses=Max Uses
 ability.editor.type=Type
 ability.editor.height=Icon Height
 ability.editor.width=Icon Width

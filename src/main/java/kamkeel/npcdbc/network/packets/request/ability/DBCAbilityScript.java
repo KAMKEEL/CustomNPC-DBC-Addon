@@ -34,7 +34,7 @@ public class DBCAbilityScript extends AbstractPacket {
     private int maxSize;
     private NBTTagCompound compound;
 
-    public DBCAbilityScript(DBCAbilityScript.Action type, int id, int page, int maxSize, NBTTagCompound compound) {
+    public DBCAbilityScript(Action type, int id, int page, int maxSize, NBTTagCompound compound) {
         this.type = type;
         this.id = id;
         this.page = page;
@@ -66,7 +66,7 @@ public class DBCAbilityScript extends AbstractPacket {
         out.writeInt(type.ordinal());
         out.writeInt(id);
 
-        if (type == DBCAbilityScript.Action.SAVE) {
+        if (type == Action.SAVE) {
             out.writeInt(this.page);
             out.writeInt(this.maxSize);
             ByteBufUtils.writeNBT(out, this.compound);
@@ -81,13 +81,13 @@ public class DBCAbilityScript extends AbstractPacket {
         if (!ConfigScript.canScript(player, CustomNpcsPermissions.SCRIPT))
             return;
 
-        DBCAbilityScript.Action requestedAction = DBCAbilityScript.Action.values()[in.readInt()];
+        Action requestedAction = Action.values()[in.readInt()];
         Ability ability = (Ability) AbilityController.getInstance().get(in.readInt());
         if (ability == null)
             return;
 
         AbilityScript data = ability.getOrCreateScriptHandler();
-        if (requestedAction == DBCAbilityScript.Action.GET) {
+        if (requestedAction == Action.GET) {
             PacketUtil.getScripts((IScriptHandler) data, (EntityPlayerMP) player);
         } else {
             data.saveScript(in);
@@ -98,11 +98,11 @@ public class DBCAbilityScript extends AbstractPacket {
     }
 
     public static void Save(int effectID, int id, int maxSize, NBTTagCompound compound) {
-        DBCPacketClient.sendClient(new DBCAbilityScript(DBCAbilityScript.Action.SAVE, effectID, id, maxSize, compound));
+        DBCPacketClient.sendClient(new DBCAbilityScript(Action.SAVE, effectID, id, maxSize, compound));
     }
 
     public static void Get(int effectID) {
-        DBCPacketClient.sendClient(new DBCAbilityScript(DBCAbilityScript.Action.GET, effectID, -1, -1, new NBTTagCompound()));
+        DBCPacketClient.sendClient(new DBCAbilityScript(Action.GET, effectID, -1, -1, new NBTTagCompound()));
     }
 
     private enum Action {

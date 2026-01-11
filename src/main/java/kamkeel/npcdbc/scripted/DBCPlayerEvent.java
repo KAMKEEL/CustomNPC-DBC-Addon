@@ -7,8 +7,10 @@ import kamkeel.npcdbc.constants.DBCDamageSource;
 import kamkeel.npcdbc.constants.DBCScriptType;
 import kamkeel.npcdbc.constants.enums.*;
 import kamkeel.npcdbc.data.DBCDamageCalc;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.ability.Ability;
 import kamkeel.npcdbc.data.ability.AddonAbility;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -18,6 +20,7 @@ import net.minecraftforge.client.event.RenderPlayerEvent;
 import noppes.npcs.api.IDamageSource;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.api.handler.data.IAnimation;
+import noppes.npcs.api.handler.data.IAnimationData;
 import noppes.npcs.controllers.AnimationController;
 import noppes.npcs.controllers.data.Animation;
 import noppes.npcs.scripted.NpcAPI;
@@ -254,7 +257,7 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
     }
 
 
-    public static class ReviveEvent extends DBCPlayerEvent implements IDBCEvent.DBCReviveEvent {
+    public static class ReviveEvent extends DBCPlayerEvent implements DBCReviveEvent {
 
         public ReviveEvent(IPlayer player) {
             super(player);
@@ -266,7 +269,7 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
     }
 
     @Cancelable
-    public static class KnockoutEvent extends DBCPlayerEvent implements IDBCEvent.DBCKnockout {
+    public static class KnockoutEvent extends DBCPlayerEvent implements DBCKnockout {
 
         public final IDamageSource damageSource;
 
@@ -290,7 +293,7 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         public final int id;
         public int kiCost;
         public int cooldown;
-        boolean isDBC;
+        public boolean isDBC;
 
         public AbilityEvent(IPlayer player, Ability ability) {
             super(player);
@@ -309,12 +312,10 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         public int getType() {
             if (this instanceof IDBCEvent.AbilityEvent.Casted)
                 return 0;
-            if (this instanceof IDBCEvent.AbilityEvent.MultiCasted)
-                return 1;
             else if (this instanceof IDBCEvent.AbilityEvent.Toggled)
-                return 2;
+                return 1;
             else if (this instanceof IDBCEvent.AbilityEvent.Animated)
-                return 3;
+                return 2;
 
             return -1;
         }
@@ -344,24 +345,29 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
             return isDBC;
         }
 
+        @Cancelable
         public static class Casted extends DBCPlayerEvent.AbilityEvent implements IDBCEvent.AbilityEvent.Casted {
             public Casted(IPlayer player, Ability ability) {
                 super(player, ability);
             }
         }
 
+        @Cancelable
         public static class Toggled extends DBCPlayerEvent.AbilityEvent implements IDBCEvent.AbilityEvent.Toggled {
             public Toggled(IPlayer player, Ability ability) {
                 super(player, ability);
             }
         }
 
+        @Cancelable
         public static class Animated extends DBCPlayerEvent.AbilityEvent implements IDBCEvent.AbilityEvent.Animated {
-            IAnimation animation;
+            protected IAnimation animation;
+            protected IAnimationData animationData;
 
             public Animated(IPlayer player, Ability ability) {
                 super(player, ability);
                 this.animation = ability.animation;
+                this.animationData = ability.animation != null ? ability.animation.getParent() : null;
             }
 
             @Override
@@ -375,7 +381,13 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
                     Animation anim = new Animation();
                     anim.readFromNBT(((Animation) animation).writeToNBT());
                     this.animation = anim;
+                    this.animationData = this.animation.getParent();
                 }
+            }
+
+            @Override
+            public IAnimationData getAnimationData() {
+                return this.animationData;
             }
         }
     }

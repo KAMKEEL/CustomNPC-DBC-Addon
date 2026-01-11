@@ -240,10 +240,6 @@ public class Ability implements IAbility {
         if (event == null)
             return false;
 
-        if (event.isCanceled()) {
-            return false;
-        }
-
         if (event.getCooldown() > -1 && abilityData.hasCooldown(id)) {
             Utility.sendMessage(player, translate("§c", "npcdbc.abilityCooldown", ": ", abilityData.abilityTimers.get(id) + "", "s"));
             return false;
@@ -265,9 +261,12 @@ public class Ability implements IAbility {
         DBCEventHooks.onAbilityUsed(event);
 
         AbilityScript script = getScriptHandler();
-        if (script != null && type != Type.Animated) {
+        if (script != null) {
             AbilityScript.ScriptType scriptType = type == Type.Cast ?
-                AbilityScript.ScriptType.AbilityCast : AbilityScript.ScriptType.AbilityToggle;
+                AbilityScript.ScriptType.AbilityCast : type == Type.Toggle ?
+                AbilityScript.ScriptType.AbilityToggle :
+                AbilityScript.ScriptType.AbilityAnimationStart;
+
 
             script.callScript(scriptType, event);
         }
@@ -339,10 +338,6 @@ public class Ability implements IAbility {
         onAnimationStart((a) -> {
             if (originalStart != null)
                 originalStart.accept(a);
-
-            if (script != null)
-                script.callScript(AbilityScript.ScriptType.AbilityAnimationStart, event);
-
 
             DBCPacketHandler.Instance.sendToServer(new AbilityAnimatePacket(this.id, this instanceof AddonAbility, true));
         });
