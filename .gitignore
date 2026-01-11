@@ -12,7 +12,7 @@
 /groovy/
 /copilot/
 /api_old/
-/gradle-plugins
+src/main/resources/assets/npcdbc/api
 /crash-reports/
 /logs/
 options.txt
