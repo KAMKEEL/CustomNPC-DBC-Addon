@@ -12,7 +12,7 @@ import java.util.List;
 @Mixin(value = GuiScript.class, remap = false)
 public abstract class MixinGuiScript {
 
-    @Inject(method = "initGui", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 14, shift = At.Shift.AFTER))
+   // @Inject(method = "initGui", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 14, shift = At.Shift.AFTER))
     public void onConstructorComplete(CallbackInfo info, @Local(name = "list") List<String> lis) {
 //        List<String> list = lis.get();
     }
