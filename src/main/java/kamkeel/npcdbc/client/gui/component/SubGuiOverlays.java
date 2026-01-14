@@ -10,7 +10,7 @@ import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.SubGuiColorSelector;
-import noppes.npcs.client.gui.script.GuiJaninoScript;
+import noppes.npcs.client.gui.script.GuiScriptInterface;
 import noppes.npcs.client.gui.script.SubGuiSelectList;
 import noppes.npcs.client.gui.select.GuiTextureSelection;
 import noppes.npcs.client.gui.util.GuiCustomScroll;
@@ -286,7 +286,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
 
         //Script
         if (buttonType == 11)
-            GuiJaninoScript.create(this.parent.parent, get(overlayID).createScript(), width, height);
+            GuiScriptInterface.create(this.parent.parent, get(overlayID).createScript()).setDimensions(width, height);
     }
 
     public void confirmClicked(boolean flag, int i) {
