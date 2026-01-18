@@ -5,11 +5,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.api.client.overlay.IOverlay;
 import net.minecraft.nbt.NBTTagCompound;
-import noppes.npcs.janino.JaninoScriptable;
+import noppes.npcs.controllers.data.JaninoScriptHandler;
 
 import java.util.function.Function;
 
-public class Overlay implements JaninoScriptable, IOverlay {
+public class Overlay implements IOverlay {
     public OverlayChain chain;
     public String texture = "";
     public ColorType colorType = ColorType.Custom;
@@ -24,7 +24,7 @@ public class Overlay implements JaninoScriptable, IOverlay {
     public RenderFunction renderer;
     public Function<OverlayContext, Boolean> condition;
 
-    public OverlayScript script;
+    public final JaninoScriptHandler<OverlayScript> scriptHandler = new JaninoScriptHandler(OverlayScript::new, OverlayScript.class);
 
     public Overlay() {
     }
@@ -41,8 +41,8 @@ public class Overlay implements JaninoScriptable, IOverlay {
 
     @SideOnly(Side.CLIENT)
     public String applyTexture(OverlayContext ctx) {
-        if (hasScript()) {
-            String script = getScript().call(f -> f.getTexture(ctx));
+        if (scriptHandler.hasScript()) {
+            String script = scriptHandler.getScript().call(f -> f.getTexture(ctx));
             if (script != null)
                 return script;
         }
@@ -75,8 +75,8 @@ public class Overlay implements JaninoScriptable, IOverlay {
 
     @SideOnly(Side.CLIENT)
     public Color applyColor(OverlayContext ctx) {
-        if (hasScript()) {
-            Color script = getScript().call(f -> f.getColor(ctx));
+        if (scriptHandler.hasScript()) {
+            Color script = scriptHandler.getScript().call(f -> f.getColor(ctx));
             if (script != null)
                 return script;
         }
@@ -309,7 +309,7 @@ public class Overlay implements JaninoScriptable, IOverlay {
         alpha = compound.hasKey("alpha") ? compound.getFloat("alpha") : 1;
         glow = compound.hasKey("glow") && compound.getBoolean("glow");
 
-        script = JaninoScriptable.readFromNBT(compound, script, OverlayScript::new);
+        scriptHandler.readFromNBT(compound);
     }
 
     public NBTTagCompound writeToNBT() {
@@ -325,34 +325,8 @@ public class Overlay implements JaninoScriptable, IOverlay {
         compound.setFloat("alpha", alpha);
         compound.setBoolean("glow", glow);
 
-        JaninoScriptable.writeToNBT(compound, script);
+        scriptHandler.writeToNBT(compound);
 
         return compound;
     }
-
-    public OverlayScript getScript() {
-        return script;
-    }
-
-    public OverlayScript createScript() {
-        if (script == null)
-            script = new OverlayScript();
-        return script;
-    }
-
-    public void deleteScript() {
-        unloadScript();
-        script = null;
-    }
-
-    public void unloadScript() {
-        if (script != null)
-            script.unload();
-    }
-
-    public boolean hasScript() {
-        return script != null;
-    }
-
-
 }
