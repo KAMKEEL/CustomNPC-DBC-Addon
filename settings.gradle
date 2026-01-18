@@ -31,4 +31,4 @@ plugins {
 }
 
 // Include the local gradle-plugins composite build so plugin is resolved locally
-includeBuild 'gradle-plugins'
+includeBuild 'CustomNPC-Plus/gradle-plugins'
