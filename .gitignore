@@ -10,6 +10,7 @@
 /bin/
 /config/
 /groovy/
+/.$state/
 /copilot/
 /api_old/
 src/main/resources/assets/npcdbc/api
@@ -41,3 +42,5 @@ addon.late.local.gradle
 addon.late.local.gradle.kts
 layout.json
 debug.log
+AGENTS.md
+nul
