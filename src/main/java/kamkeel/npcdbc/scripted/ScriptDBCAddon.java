@@ -1087,6 +1087,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         AuraData.updateClient();
     }
 
+    @Override
     public IAura getAura() {
         return dbcData.simplifiedDBCData.getAura();
     }
