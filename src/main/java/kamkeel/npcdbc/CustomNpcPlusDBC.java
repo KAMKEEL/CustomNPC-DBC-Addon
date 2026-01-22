@@ -22,7 +22,7 @@ import kamkeel.npcdbc.items.ModItems;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.constants.DBCScriptType;
 import kamkeel.npcs.controllers.ProfileController;
-import noppes.npcs.api.handler.IScriptHookHandler;
+import noppes.npcs.constants.ScriptContext;
 import noppes.npcs.controllers.ScriptHookController;
 
 import java.io.File;
@@ -69,12 +69,10 @@ public class CustomNpcPlusDBC {
 
         // Register DBC player hooks so handler-based GUIs include them
         if (ScriptHookController.Instance != null) {
-            ScriptHookController.Instance.registerHook(IScriptHookHandler.CONTEXT_PLAYER, DBCScriptType.FORMCHANGE.function);
-            ScriptHookController.Instance.registerHook(IScriptHookHandler.CONTEXT_PLAYER, DBCScriptType.DAMAGED.function);
-            ScriptHookController.Instance.registerHook(IScriptHookHandler.CONTEXT_PLAYER, DBCScriptType.CAPSULEUSED.function);
-            ScriptHookController.Instance.registerHook(IScriptHookHandler.CONTEXT_PLAYER, DBCScriptType.SENZUUSED.function);
-            ScriptHookController.Instance.registerHook(IScriptHookHandler.CONTEXT_PLAYER, DBCScriptType.REVIVED.function);
-            ScriptHookController.Instance.registerHook(IScriptHookHandler.CONTEXT_PLAYER, DBCScriptType.KNOCKOUT.function);
+            ScriptHookController.Instance.registerHooks(ScriptContext.PLAYER, DBCScriptType.FORMCHANGE.function,
+                    DBCScriptType.DAMAGED.function, DBCScriptType.CAPSULEUSED.function,
+                    DBCScriptType.SENZUUSED.function, DBCScriptType.REVIVED.function,
+                    DBCScriptType.KNOCKOUT.function);
         }
     }
 
