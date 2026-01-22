@@ -22,10 +22,6 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
     public List<String> getMixins(Set<String> loadedMods) {
         List<String> mixins = new ArrayList<>();
         if (side == MixinEnvironment.Side.CLIENT) {
-            mixins.add("npc.client.MixinGuiScriptPlayers");
-            mixins.add("npc.client.MixinGuiNPCEventScripts");
-            mixins.add("npc.client.MixinGuiScriptAllNPCs");
-            mixins.add("npc.client.MixinGuiScript");
             mixins.add("npc.client.MixinDBCClient");
             mixins.add("npc.client.MixinModelMPM");
             mixins.add("npc.client.MixinGuiCreationScreen");
