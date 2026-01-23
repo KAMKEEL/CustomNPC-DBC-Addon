@@ -39,7 +39,7 @@ public class SubGuiKiWeapon extends SubGuiInterface implements ITextfieldListene
         y += 3;
         addLabel(new GuiNpcLabel(1, "display.leftArm", guiLeft + 5, y + 5));
         getLabel(1).color = 0xffffff;
-        addButton(new GuiButtonBiDirectional(1, guiLeft + 80, y, 110, 20, new String[]{"gui.no", "Ki Blade", "Ki Scythe"}, left.weaponType));
+        addButton(new GuiButtonBiDirectional(1, guiLeft + 80, y, 110, 20, new String[]{"gui.no", "display.kiBlade", "display.kiScythe"}, left.weaponType));
         if (left.isEnabled()) {
             y += 22;
             addLabel(new GuiNpcLabel(2, "display.color", guiLeft + 5, y + 5));
@@ -99,7 +99,7 @@ public class SubGuiKiWeapon extends SubGuiInterface implements ITextfieldListene
         y += 50;
         addLabel(new GuiNpcLabel(11, "display.rightArm", guiLeft + 5, y + 5));
         getLabel(11).color = 0xffffff;
-        addButton(new GuiButtonBiDirectional(11, guiLeft + 80, y, 110, 20, new String[]{"gui.no", "Ki Blade", "Ki Scythe"}, right.weaponType));
+        addButton(new GuiButtonBiDirectional(11, guiLeft + 80, y, 110, 20, new String[]{"gui.no", "display.kiBlade", "display.kiScythe"}, right.weaponType));
         if (right.isEnabled()) {
             y += 22;
             addLabel(new GuiNpcLabel(12, "display.color", guiLeft + 5, y + 5));

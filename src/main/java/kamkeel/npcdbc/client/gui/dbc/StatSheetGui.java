@@ -685,7 +685,8 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         //Button to adjust GUI
 
         if (ConfigDBCClient.EnableDebugStatSheetSwitching) {
-            String s = (!ConfigDBCClient.EnhancedGui ? "Old" : "§aModern") + " GUI";
+            String guiType = StatCollector.translateToLocal(!ConfigDBCClient.EnhancedGui ? "statsheet.old" : "statsheet.modern");
+            String s = (!ConfigDBCClient.EnhancedGui ? guiType : "§a" + guiType) + " GUI";
             int button1Width = this.fontRendererObj.getStringWidth(s) + 10;
             this.buttonList.add(new JRMCoreGuiButtons00(303030303, guiWidthOffset + 260, height / 2 - 10, button1Width + 8, 20, s, 0));
         }
@@ -914,12 +915,12 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
 
 
         if (JRMCoreEH.dt) {
-            String name = "Update vanity";
+            String name = StatCollector.translateToLocal("statsheet.updateVanity");
             int width = this.fontRendererObj.getStringWidth(name);
             UPDATE_VANITY_BUTTON = new JRMCoreGuiButtons00(100, guiWidthOffset - 78, guiHeightOffset, width + 8, 20, name, 0);
             buttonList.add(UPDATE_VANITY_BUTTON);
 
-            name = (JRMCoreEH.gk ? "Hide" : "Show") + " own vanity";
+            name = StatCollector.translateToLocal(JRMCoreEH.gk ? "statsheet.hideVanity" : "statsheet.showVanity");
             width = this.fontRendererObj.getStringWidth(name);
             buttonList.add(new JRMCoreGuiButtons00(101, guiWidthOffset - 88, guiHeightOffset + 21, width + 8, 20, name, 0));
         }
@@ -1031,7 +1032,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
 
     public String getAttributeBonusDescription(int attributeID) {
         if (JRMCoreConfig.JRMCABonusOn) {
-            String description = "\nBonus Attributes:";
+            String description = "\n" + StatCollector.translateToLocal("statsheet.bonusAttributes");
             String[] bonuses = getBonusAttributes(attributeID).split("\\|");
             String[] var5 = bonuses;
             int var6 = bonuses.length;
@@ -1082,7 +1083,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         String description = "";
         DBCData dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
         if (!dbcData.bonus.getCurrentBonuses().isEmpty()) {
-            description += "\nBonus Stats:";
+            description += "\n" + StatCollector.translateToLocal("statsheet.bonusStats");
             for (PlayerBonus playerBonus : dbcData.bonus.getCurrentBonuses().values()) {
                 float value = getBonusValue(playerBonus, attributeID);
                 if (value == 0)

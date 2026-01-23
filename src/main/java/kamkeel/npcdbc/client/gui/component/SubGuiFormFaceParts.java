@@ -42,12 +42,12 @@ public class SubGuiFormFaceParts extends SubGuiInterface {
     public void initGui() {
         super.initGui();
         int y = guiTop + 27;
-        String[] labelNames = new String[]{"Eyebrows", "Eye White", "Eye Left", "Eye Right", "Nose", "Mouth"};
+        String[] labelNames = new String[]{"facepart.eyebrows", "facepart.eyeWhite", "facepart.eyeLeft", "facepart.eyeRight", "facepart.nose", "facepart.mouth"};
 
         addButton(new GuiNpcButton(6, guiLeft + xSize + 3, guiTop, 20, 20, "X"));
 
-        addLabel(new GuiNpcLabel(7, "Face Type", guiLeft + 8, y + 5));
-        addButton(new GuiNpcButton(7, guiLeft + xSize - 50 - 8, y, 50, 20, new String[]{"1", "2", "3", "4", "5", "6", "All"}, faceType));
+        addLabel(new GuiNpcLabel(7, "facepart.faceType", guiLeft + 8, y + 5));
+        addButton(new GuiNpcButton(7, guiLeft + xSize - 50 - 8, y, 50, 20, new String[]{"1", "2", "3", "4", "5", "6", "facepart.all"}, faceType));
         y += 25;
 
         for (int i = 0; i < 6; i++) {
@@ -60,7 +60,7 @@ public class SubGuiFormFaceParts extends SubGuiInterface {
             boolean isRemoved = faceData.disabled(faceType, partId);
 
             addLabel(new GuiNpcLabel(i, labelNames[i], guiLeft + 8, y + 5));
-            addButton(new GuiNpcButton(i, guiLeft + xSize - 50 - 8, y, 50, 20, new String[]{"Enabled", "Disabled"}, isRemoved || isAllRemoved || isBerserk ? 1 : 0));
+            addButton(new GuiNpcButton(i, guiLeft + xSize - 50 - 8, y, 50, 20, new String[]{"gui.enabled", "gui.disabled"}, isRemoved || isAllRemoved || isBerserk ? 1 : 0));
             getButton(i).setEnabled(!isBerserk && !(isAllRemoved && faceType != 6));
 
             y += 25;

@@ -99,8 +99,8 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
             GuiNpcTextField textField;
 
 
-            window.addLabel(new GuiNpcLabel(id(1, i), "Overlay " + (i + 1) + ":", 5, y + 5, 0xffffff));
-            button = new GuiNpcButton(id(5, i), 240, y, 50, 20, new String[]{"Disabled", "Enabled"},
+            window.addLabel(new GuiNpcLabel(id(1, i), StatCollector.translateToLocalFormatted("overlay.title", (i + 1)), 5, y + 5, 0xffffff));
+            button = new GuiNpcButton(id(5, i), 240, y, 50, 20, new String[]{"gui.disabled", "gui.enabled"},
                     currentOverlay.isEnabled() ? 1 : 0);
             window.addButton(button); // id 5
 
@@ -114,29 +114,29 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
             window.addButton(button);  // id 1
 
             if (currentOverlay.isEnabled()) {
-                button = new GuiNpcButton(id(11, i), 240, y += 23, 50, 20, "Scripts");
+                button = new GuiNpcButton(id(11, i), 240, y += 23, 50, 20, "script.scripts");
                 window.addButton(button);  // id 11
             }
 
-            button = new GuiNpcButton(id(10, i), 240, y += 23, 50, 20, "Delete");
+            button = new GuiNpcButton(id(10, i), 240, y += 23, 50, 20, "gui.remove");
             window.addButton(button); // id 9
             y -= 23;
 
             if (currentOverlay.isEnabled()) {
                 int x = 5;
-                window.addLabel(new GuiNpcLabel(id(8, i), "Type:", x, y + 5, 0xffffff));
+                window.addLabel(new GuiNpcLabel(id(8, i), "gui.type", x, y + 5, 0xffffff));
                 String[] names = Arrays.stream(IOverlay.Type.values()).map(Enum::name).toArray(String[]::new);
                 button = new GuiNpcButton(id(8, i), x += buttonOneRowOneX, y, 50, 20, names,
                         currentOverlay.getType().ordinal());
                 window.addButton(button); // id 8
 
-                window.addLabel(new GuiNpcLabel(id(4, i), "Glow:", x += 53, y + 5, 0xffffff));
+                window.addLabel(new GuiNpcLabel(id(4, i), "overlay.glow", x += 53, y + 5, 0xffffff));
                 button = new GuiNpcButtonYesNo(id(4, i), x += buttonOneRowOneX, y, 50, 20, currentOverlay.isGlow());
                 window.addButton(button); // id 4
 
                 y += 23;
                 x = 5;
-                window.addLabel(new GuiNpcLabel(id(2, i), "Color:", x, y + 5, 0xffffff));
+                window.addLabel(new GuiNpcLabel(id(2, i), "gui.color", x, y + 5, 0xffffff));
 
                 names = Arrays.stream(IOverlay.ColorType.values()).map(Enum::name).toArray(String[]::new);
                 button = new GuiNpcButton(id(2, i), x += 32, y, 50, 20, names, currentOverlay.getColorType());
@@ -150,7 +150,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
 
                 int tempY = currentOverlay.getColorType() == IOverlay.ColorType.Custom.ordinal() ? y : y;
 
-                window.addLabel(new GuiNpcLabel(id(9, i), "Alpha:", x += 53, tempY + 5, 0xffffff));
+                window.addLabel(new GuiNpcLabel(id(9, i), "overlay.alpha", x += 53, tempY + 5, 0xffffff));
                 textField = new GuiNpcTextField(id(9, i), this, x += 34, tempY, 47, 20, currentOverlay.getAlpha() + "");
                 textField.setFloatsOnly();
                 textField.setMinMaxDefaultFloat(0.0f, 1.0f, 1.0f);
@@ -164,15 +164,15 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         }
 
         if (overlays.overlays.size() >= 10) {
-            addLabel(new GuiNpcLabel(1, "WARNING: Too many overlays may cause lag or file deletion!",parent.guiLeft+5, guiTop - 26, 0xFF0000));
+            addLabel(new GuiNpcLabel(1, "overlay.warning", parent.guiLeft+5, guiTop - 26, 0xFF0000));
         }
 
-        window.addButton(new GuiNpcButton(1, 240, y, 50, 20, "Add"));
+        window.addButton(new GuiNpcButton(1, 240, y, 50, 20, "gui.add"));
         y += 45; //Don't forget the extra 3 pixels after the +
 
         int thisY = y > window.clipHeight ? y += 23 : window.clipHeight;
-        window.addLabel(new GuiNpcLabel(1171, "Disable Other Overlays", 5, thisY - 25, 0xFFFFFF));
-        window.addButton(new GuiNpcButton(4, 155, thisY - 30, 100, 20, "Select Types"));
+        window.addLabel(new GuiNpcLabel(1171, "overlay.disableOther", 5, thisY - 25, 0xFFFFFF));
+        window.addButton(new GuiNpcButton(4, 155, thisY - 30, 100, 20, "overlay.selectTypes"));
 
         /**
          * y is the TOTAL height of all elements, even outside the scroll window height
@@ -221,7 +221,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         if (id == 4) {
             List<String> all = Arrays.stream(IOverlay.Type.values()).map(Enum::name).collect(Collectors.toList());
             List<String> selected = form.display.disabledOverlayTypes.stream().map(Enum::name).collect(Collectors.toList());
-            setSubGui(new SubGuiSelectList(all, selected, "All Types", "Selected Types"));
+            setSubGui(new SubGuiSelectList(all, selected, StatCollector.translateToLocal("overlay.allTypes"), StatCollector.translateToLocal("overlay.selectedTypes")));
             initGui();
         }
 
@@ -286,7 +286,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
 
         //Script
         if (buttonType == 11)
-            GuiScriptInterface.open(this.parent.parent, get(overlayID).scriptHandler).setDimensions(width, height);
+            GuiScriptInterface.open(this.parent.parent, get(overlayID).scriptHandler);
     }
 
     public void confirmClicked(boolean flag, int i) {

@@ -475,3 +475,52 @@ effect.staminaregeneration=Stamina Regeneration
 effect.zenkai=Zenkai
 
 stats.ki=Ki
+
+############################
+## GUI LABELS
+############################
+
+# Overlay GUI
+overlay.title=Overlay %s:
+overlay.glow=Glow:
+overlay.alpha=Alpha:
+overlay.warning=WARNING: Too many overlays may cause lag or file deletion!
+overlay.disableOther=Disable Other Overlays
+overlay.selectTypes=Select Types
+overlay.allTypes=All Types
+overlay.selectedTypes=Selected Types
+
+# Kaioken Settings
+kaioken.drainMultiScaling=Drain multi scaling:
+kaioken.multiplyCurrentDrain=Multiply current form drain:
+kaioken.strainedMultis=Strained Kaioken Multis:
+kaioken.drainMulti=%s Drain Multi:
+kaioken.multiScaling=Multi scaling:
+kaioken.useGlobalMulti=Use Global Multi:
+kaioken.multi=%s Multi:
+
+# Custom Stackable
+stackable.stack=Stack %s:
+stackable.configMulti=Config Multi
+
+# Form Parents
+formparents.races=Races
+formparents.forms=Forms
+formparents.removeAll=Remove All
+
+# Face Parts
+facepart.eyebrows=Eyebrows
+facepart.eyeWhite=Eye White
+facepart.eyeLeft=Eye Left
+facepart.eyeRight=Eye Right
+facepart.nose=Nose
+facepart.mouth=Mouth
+facepart.faceType=Face Type
+facepart.all=All
+
+# StatSheet
+statsheet.updateVanity=Update vanity
+statsheet.hideVanity=Hide own vanity
+statsheet.showVanity=Show own vanity
+statsheet.bonusAttributes=Bonus Attributes:
+statsheet.bonusStats=Bonus Stats:
