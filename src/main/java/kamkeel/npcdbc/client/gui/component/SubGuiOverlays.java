@@ -286,7 +286,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
 
         //Script
         if (buttonType == 11)
-            GuiScriptInterface.create(this.parent.parent, get(overlayID).scriptHandler).setDimensions(width, height);
+            GuiScriptInterface.open(this.parent.parent, get(overlayID).scriptHandler).setDimensions(width, height);
     }
 
     public void confirmClicked(boolean flag, int i) {
