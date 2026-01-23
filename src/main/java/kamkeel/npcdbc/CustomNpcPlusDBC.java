@@ -9,6 +9,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.relauncher.Side;
+import kamkeel.npcdbc.api.event.IDBCEvent;
 import kamkeel.npcdbc.config.LoadConfiguration;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.BonusController;
@@ -69,10 +70,20 @@ public class CustomNpcPlusDBC {
 
         // Register DBC player hooks so handler-based GUIs include them
         if (ScriptHookController.Instance != null) {
-            ScriptHookController.Instance.registerHooks(ScriptContext.PLAYER, DBCScriptType.FORMCHANGE.function,
-                    DBCScriptType.DAMAGED.function, DBCScriptType.CAPSULEUSED.function,
-                    DBCScriptType.SENZUUSED.function, DBCScriptType.REVIVED.function,
-                    DBCScriptType.KNOCKOUT.function);
+            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.FORMCHANGE.function,
+                    IDBCEvent.FormChangeEvent.class);
+            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.DAMAGED.function,
+                    IDBCEvent.DamagedEvent.class);
+            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.CAPSULEUSED.function,
+                    IDBCEvent.CapsuleUsedEvent.class);
+            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.KNOCKOUT.function,
+                    IDBCEvent.DBCKnockout.class);
+            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.REVIVED.function,
+                    IDBCEvent.DBCReviveEvent.class);
+            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.KNOCKOUT.function,
+                    IDBCEvent.DBCKnockout.class);
+            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.SENZUUSED.function,
+                    IDBCEvent.SenzuUsedEvent.class);
         }
     }
 
