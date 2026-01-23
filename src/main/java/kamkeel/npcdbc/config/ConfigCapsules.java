@@ -314,9 +314,9 @@ public class ConfigCapsules {
             HeatCooldown = config.get(MISC, "Heat Cooldown", 10).getInt(10);
             PowerPointCooldown = config.get(MISC, "PowerPoint Cooldown", 10, "Only usable by Arcosians to restore PP Value").getInt(10);
             AbsorptionCooldown = config.get(MISC, "Absorption Cooldown", 10, "Only usable by Majins to restore absorption").getInt(10);
-            StrainCooldown = config.get(MISC,"Strain Cooldown",10).getInt(10);
-            NoFuseCooldown = config.get(MISC,"No Fuse Cooldown",10).getInt(10);
-            ExhaustedCooldown = config.get(MISC,"Exhausted Cooldown",10).getInt(10);
+            StrainCooldown = config.get(MISC, "Strain Cooldown", 10).getInt(10);
+            NoFuseCooldown = config.get(MISC, "No Fuse Cooldown", 10).getInt(10);
+            ExhaustedCooldown = config.get(MISC, "Exhausted Cooldown", 10).getInt(10);
 
         } catch (Exception e) {
             FMLLog.log(Level.ERROR, e, "DBC Addon has had a problem loading its capsule configuration");

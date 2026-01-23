@@ -18,6 +18,7 @@ import net.minecraft.block.Block;
 
 public class SimplifiedDBCData implements ISimpleDBCData {
     public final DBCData dbcData;
+
     public SimplifiedDBCData(DBCData dbcData) {
         this.dbcData = dbcData;
     }

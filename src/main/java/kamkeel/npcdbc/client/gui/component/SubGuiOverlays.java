@@ -88,7 +88,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
 
         window.backgroundColor = 0xbb000000;
         addScrollableGui(3, window);
-        addTopButton(new GuiMenuTopButton(0, guiLeft  + width + 98, guiTop - 17, "X"));
+        addTopButton(new GuiMenuTopButton(0, guiLeft + width + 98, guiTop - 17, "X"));
 
         y = 5;
 
@@ -101,13 +101,13 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
 
             window.addLabel(new GuiNpcLabel(id(1, i), StatCollector.translateToLocalFormatted("overlay.title", (i + 1)), 5, y + 5, 0xffffff));
             button = new GuiNpcButton(id(5, i), 240, y, 50, 20, new String[]{"gui.disabled", "gui.enabled"},
-                    currentOverlay.isEnabled() ? 1 : 0);
+                currentOverlay.isEnabled() ? 1 : 0);
             window.addButton(button); // id 5
 
             y += 23;
             textField = new GuiNpcTextField(id(1, i), this, 5, y, 228, 20, ""); // id 1
             window.addTextField(textField);
-                window.getTextField(id(1, i)).setText(currentOverlay.getTexture());
+            window.getTextField(id(1, i)).setText(currentOverlay.getTexture());
 
 
             button = new GuiNpcButton(id(1, i), 240, y, 50, 20, "form.select");
@@ -127,7 +127,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
                 window.addLabel(new GuiNpcLabel(id(8, i), "gui.type", x, y + 5, 0xffffff));
                 String[] names = Arrays.stream(IOverlay.Type.values()).map(Enum::name).toArray(String[]::new);
                 button = new GuiNpcButton(id(8, i), x += buttonOneRowOneX, y, 50, 20, names,
-                        currentOverlay.getType().ordinal());
+                    currentOverlay.getType().ordinal());
                 window.addButton(button); // id 8
 
                 window.addLabel(new GuiNpcLabel(id(4, i), "overlay.glow", x += 53, y + 5, 0xffffff));
@@ -164,7 +164,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         }
 
         if (overlays.overlays.size() >= 10) {
-            addLabel(new GuiNpcLabel(1, "overlay.warning", parent.guiLeft+5, guiTop - 26, 0xFF0000));
+            addLabel(new GuiNpcLabel(1, "overlay.warning", parent.guiLeft + 5, guiTop - 26, 0xFF0000));
         }
 
         window.addButton(new GuiNpcButton(1, 240, y, 50, 20, "gui.add"));
@@ -232,7 +232,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
                 initGui();
             } else {
                 GuiYesNo guiyesno = new GuiYesNo(this.parent.parent, StatCollector.translateToLocal("gui.paste"),
-                        StatCollector.translateToLocal("gui.sure"), 1);
+                    StatCollector.translateToLocal("gui.sure"), 1);
                 this.displayGuiScreen(guiyesno);
             }
         }
@@ -349,7 +349,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         String text = textField.getText();
 
         if (fieldType == 1)
-                ov.texture(text);
+            ov.texture(text);
 
         if (fieldType == 9) {
             try {

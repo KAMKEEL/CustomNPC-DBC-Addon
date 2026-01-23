@@ -292,8 +292,8 @@ public final class ShaderHelper {
         return optifineShadersLoaded = false;
     }
 
-    //////////////////////////////////////////////////
-    //////////////////////////////////////////////////
+    /// ///////////////////////////////////////////////
+    /// ///////////////////////////////////////////////
     //Uniform helpers
     public static void uniform1f(String name, float x) {
         int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);

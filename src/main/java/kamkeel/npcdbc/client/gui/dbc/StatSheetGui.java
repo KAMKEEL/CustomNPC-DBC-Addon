@@ -533,7 +533,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             (bonusOutput > 0 ? numSep(bonusOutput) : null),
             0,
             (int) (100.0F - weightPerc(1) * 100.0F)
-        ) +  getFormAdvancedStat(DBCStatistics.Defense);
+        ) + getFormAdvancedStat(DBCStatistics.Defense);
         dynamicLabels.get("defense")
             .updateDisplay(formStatColor + numSep(longValue))
             .setTooltip(defDesc);
@@ -572,7 +572,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                     null,
                     (isReductionWorthDisplaying ? dmgReduction : 0),
                     0
-                ) +  getFormAdvancedStat(DBCStatistics.Body)
+                ) + getFormAdvancedStat(DBCStatistics.Body)
             );
 
         stat = stat(mc.thePlayer, 2, 1, 3, statVals[2], dbcClient.Race, dbcClient.Class, 0);
@@ -1055,9 +1055,9 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
     public String getFormAdvancedStat(int statID) {
         DBCData dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
         Form form = dbcData.getForm();
-        if(form != null && form.advanced.isStatEnabled(statID)){
+        if (form != null && form.advanced.isStatEnabled(statID)) {
             String description = "";
-            if(ConfigDBCClient.AdvancedGui){
+            if (ConfigDBCClient.AdvancedGui) {
                 description += "\n§8" + Utility.removeColorCodes(form.getMenuName()) + ":";
                 description += "§8\n> ";
                 int bonus = form.advanced.getStat(statID).getBonus();
@@ -1068,7 +1068,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                 float multi = form.advanced.getStat(statID).getMultiplier();
                 String multiplier = String.format("%.2f", multi);
 
-                if(multi > 1.0f)
+                if (multi > 1.0f)
                     description += "§2";
                 else
                     description += "§4";

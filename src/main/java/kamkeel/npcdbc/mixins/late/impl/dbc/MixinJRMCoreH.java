@@ -131,13 +131,13 @@ public abstract class MixinJRMCoreH {
         remap = false
     )
     private static int mutateAttribute(int attribute, Entity player, int attributeID, int powerType, int stat, int _attribute, int race, int classID, float skillBonus) {
-        if(DBCUtils.calculatingCost || DBCUtils.calculatingKiDrain || DBCUtils.noBonusEffects)
+        if (DBCUtils.calculatingCost || DBCUtils.calculatingKiDrain || DBCUtils.noBonusEffects)
             return attribute;
 
-        if(!(player instanceof EntityPlayer) || powerType != 1)
+        if (!(player instanceof EntityPlayer) || powerType != 1)
             return attribute;
 
-        if(attributeID != DBCAttribute.Constitution && attributeID != DBCAttribute.Spirit)
+        if (attributeID != DBCAttribute.Constitution && attributeID != DBCAttribute.Spirit)
             return attribute;
 
         DBCData dbcData = DBCData.get((EntityPlayer) player);
@@ -146,20 +146,21 @@ public abstract class MixinJRMCoreH {
     }
 
     @Inject(method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;JRMCABonusOn:Z", shift = At.Shift.BEFORE))
-    private static void applyPlayerBonusToStat(Entity player, int attributeID, int powerType, int stat, int attribute, int race, int classID, float skillBonus, CallbackInfoReturnable<Integer> cir, @Local(name = "value") LocalIntRef value, @Local(name = "bs") double bs) { if(DBCUtils.calculatingCost || DBCUtils.calculatingKiDrain)
+    private static void applyPlayerBonusToStat(Entity player, int attributeID, int powerType, int stat, int attribute, int race, int classID, float skillBonus, CallbackInfoReturnable<Integer> cir, @Local(name = "value") LocalIntRef value, @Local(name = "bs") double bs) {
+        if (DBCUtils.calculatingCost || DBCUtils.calculatingKiDrain)
             return;
 
-        if(player instanceof EntityPlayer && powerType == 1){
+        if (player instanceof EntityPlayer && powerType == 1) {
             DBCData dbcData = DBCData.get((EntityPlayer) player);
             int modifiedValue = value.get();
             Form form = dbcData.getForm();
-            if(form != null && form.advanced.isStatEnabled(stat)){
+            if (form != null && form.advanced.isStatEnabled(stat)) {
                 // Multi
                 double bsValue = bs;
                 bsValue *= form.advanced.getStatMulti(stat);
 
                 // Bonus
-                modifiedValue = (int)round(bsValue + (double)getStatBonus(powerType, race, classID, stat, false) * 0.01 * bsValue + (double)getStatBonus(powerType, race, classID, stat, true) * 0.01 * bsValue + bsValue * (double)skillBonus, 0, 0);
+                modifiedValue = (int) round(bsValue + (double) getStatBonus(powerType, race, classID, stat, false) * 0.01 * bsValue + (double) getStatBonus(powerType, race, classID, stat, true) * 0.01 * bsValue + bsValue * (double) skillBonus, 0, 0);
                 modifiedValue += form.advanced.getStatBonus(stat);
             }
             value.set(modifiedValue);
@@ -526,26 +527,26 @@ public abstract class MixinJRMCoreH {
                 float newHealth = curBody - damage;
 
                 // Perform KO
-                if(lastSetDamage.ko){
+                if (lastSetDamage.ko) {
                     String ste = getString(player, "jrmcStatusEff");
                     NBTTagCompound nbt = nbt(player, "pres");
                     byte state = nbt.getByte("jrmcState");
                     byte race = nbt.getByte("jrmcRace");
-                    if(!DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer(player), lastSetDamage.source))){
+                    if (!DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer(player), lastSetDamage.source))) {
                         newHealth = 20;
                         int koAmount = 6;
-                        if(lastSetDamage.source != null && lastSetDamage.source.getSourceOfDamage() instanceof EntityNPCInterface){
+                        if (lastSetDamage.source != null && lastSetDamage.source.getSourceOfDamage() instanceof EntityNPCInterface) {
                             DBCStats inpcStats = ((INPCStats) ((EntityNPCInterface) lastSetDamage.source.getSourceOfDamage()).stats).getDBCStats();
-                            if(inpcStats.enabled && inpcStats.isFriendlyFist()){
+                            if (inpcStats.enabled && inpcStats.isFriendlyFist()) {
                                 koAmount = inpcStats.getFriendlyFistAmount();
                             }
                         }
                         setInt(koAmount, player, "jrmcHar4va");
                         setByte(race == 4 ? (state < 4 ? state : 4) : 0, player, "jrmcState");
-                        setByte((int)0, player, "jrmcState2");
-                        setByte((int)0, player, "jrmcRelease");
-                        setInt((int)0, player, "jrmcStamina");
-                        StusEfcts(19, ste, (EntityPlayer)player, false);
+                        setByte((int) 0, player, "jrmcState2");
+                        setByte((int) 0, player, "jrmcRelease");
+                        setInt((int) 0, player, "jrmcStamina");
+                        StusEfcts(19, ste, (EntityPlayer) player, false);
                     }
                 }
 

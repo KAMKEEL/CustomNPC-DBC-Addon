@@ -31,12 +31,12 @@ public class InstantTransmission {
             double dz = Math.cos((angle * Math.PI) / 180) * distance;
             if (blockSuitable(tar, (int) (tar.posX + dx), (int) tar.posY, (int) (tar.posZ + dz))) {
                 IEntity<?> pl = NpcAPI.Instance().getIEntity(p);
-                if(ConfigDBCGameplay.DodgeTeleport){
+                if (ConfigDBCGameplay.DodgeTeleport) {
                     pl.setPosition(tar.posX + dx, tar.posY, tar.posZ + dz); // y needs fixing
                     if (pl.getDimension() != tar.dimension)
                         pl.setDimension(tar.dimension);
                 }
-                if(ConfigDBCGameplay.DodgeCameraLock) pl.setRotation((float) (angle + lookinga));
+                if (ConfigDBCGameplay.DodgeCameraLock) pl.setRotation((float) (angle + lookinga));
 
 
                 itType.replace(p, type);

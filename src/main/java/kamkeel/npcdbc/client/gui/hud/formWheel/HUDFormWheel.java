@@ -384,6 +384,7 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
 
         drawGradientRect(left, top, right, bottom, newStart, newEnd);
     }
+
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         if (!hasSubGui()) {

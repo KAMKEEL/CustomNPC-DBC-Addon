@@ -9,11 +9,11 @@ public final class ProgressFunctions {
 
     public static final class Premade {
         public static final Easing LINEAR = t -> t;
-        public static final Easing IN_SINE = t -> (1 - Math.cos(t*Math.PI * 0.5));
-        public static final Easing OUT_SINE = t -> Math.sin(t*Math.PI * 0.5);
+        public static final Easing IN_SINE = t -> (1 - Math.cos(t * Math.PI * 0.5));
+        public static final Easing OUT_SINE = t -> Math.sin(t * Math.PI * 0.5);
         public static final Easing IN_OUT_SINE = t -> (-(Math.cos(Math.PI * t) - 1) * 0.5);
-        public static final Easing IN_CUBIC = t -> t*t*t;
-        public static final Easing OUT_CUBIC = t -> (1 - Math.pow(1-t, 3));
+        public static final Easing IN_CUBIC = t -> t * t * t;
+        public static final Easing OUT_CUBIC = t -> (1 - Math.pow(1 - t, 3));
     }
 
     /**
@@ -97,22 +97,18 @@ public final class ProgressFunctions {
      * @return an {@linkplain Easing} instance: either {@linkplain Linear}, {@linkplain ConstantEasing}, or {@linkplain LinearPiecewise}
      * @throws IllegalArgumentException if paired stops are provided with an odd number of values
      *                                  or if x positions are invalid (out of [0,1] or not increasing)
-     *
      * @example Simple linear (default)
      * Easing easing = TimeFunctions.linear(); // 0 → 1 over time
-     *
      * @example Constant value
      * Easing constant = TimeFunctions.linear(42.0); // always returns 42.0
-     *
      * @example Custom linear range
      * Easing ramp = TimeFunctions.linear(10.0, 100.0); // from 10 → 100
-     *
      * @example CSS-style piecewise linear
      * Easing custom = TimeFunctions.linear(
-     *     0.0, 0.0,
-     *     0.25, 0.8,
-     *     0.75, 0.2,
-     *     1.0, 1.0
+     * 0.0, 0.0,
+     * 0.25, 0.8,
+     * 0.75, 0.2,
+     * 1.0, 1.0
      * );
      * // Fast acceleration, then deceleration — all with linear segments
      */
@@ -186,9 +182,9 @@ public final class ProgressFunctions {
      * <p>
      * If the input easing is already a {@linkplain ConstantEasing}, it is returned directly.
      *
-     * @param easing      the source easing function to bake
-     * @param xPositions  one or more time positions in [0.0, 1.0] where the curve should be sampled.
-     *                    Duplicates are ignored (due to sorting), and values outside [0,1] are clamped.
+     * @param easing     the source easing function to bake
+     * @param xPositions one or more time positions in [0.0, 1.0] where the curve should be sampled.
+     *                   Duplicates are ignored (due to sorting), and values outside [0,1] are clamped.
      * @return a {@linkplain LinearPiecewise} with stops at the requested x-positions
      * @throws IllegalArgumentException if no xPositions are provided
      */
@@ -204,7 +200,7 @@ public final class ProgressFunctions {
         double[] stops = new double[xPositions.length * 2];
         for (int i = 0; i < xPositions.length; i++) {
             double x = Math.max(0, Math.min(1, xPositions[i]));
-            stops[i * 2]     = x;
+            stops[i * 2] = x;
             stops[i * 2 + 1] = easing.ease(x);
         }
         return new LinearPiecewise(stops);

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-public class OverlayChain  {
+public class OverlayChain {
 
     public final ArrayList<Overlay> overlays = new ArrayList<>();
 
@@ -31,7 +31,6 @@ public class OverlayChain  {
     public OverlayChain(String name) {
         this.name = name;
     }
-
 
 
     public OverlayChain disable(FacePartData.Part... parts) {

@@ -17,12 +17,8 @@ public enum EnumMiscCapsules {
     PowerPoint("PowerPoint", PowerPointCooldown),
     Absorption("Absorption", AbsorptionCooldown),
     Strain("Strain", StrainCooldown),
-    NoFuse("NoFuse",NoFuseCooldown),
-    Exhausted("Exhausted",ExhaustedCooldown);
-
-
-
-
+    NoFuse("NoFuse", NoFuseCooldown),
+    Exhausted("Exhausted", ExhaustedCooldown);
 
 
     private final String name;

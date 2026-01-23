@@ -54,7 +54,7 @@ public class SubGuiFormFaceParts extends SubGuiInterface {
             int partId = FacePartData.Part.values()[i].ordinal();
             boolean isBerserk = (
                 partId == FacePartData.Part.LeftEye.ordinal() ||
-                partId == FacePartData.Part.RightEye.ordinal()
+                    partId == FacePartData.Part.RightEye.ordinal()
             ) && display.isBerserk;
             boolean isAllRemoved = faceData.disabled(6, partId);
             boolean isRemoved = faceData.disabled(faceType, partId);

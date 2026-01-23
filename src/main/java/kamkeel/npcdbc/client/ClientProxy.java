@@ -47,7 +47,7 @@ public class ClientProxy extends CommonProxy {
     public void preInit(FMLPreInitializationEvent ev) {
         super.preInit(ev);
         forceStencilEnable();
-        CustomNpcs.addClassesToClientClassFilter( filter -> {
+        CustomNpcs.addClassesToClientClassFilter(filter -> {
             filter.addRegexes("kamkeel\\.npcdbc\\.api\\..*");
         });
     }

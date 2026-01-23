@@ -298,12 +298,12 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     @Unique
     public void disableFace(String faceType, CallbackInfoReturnable<String> ci) {
         if (
-            faceType.contains("FACENOSE")  ||
-            faceType.contains("FACEMOUTH") ||
-            faceType.contains("EYEBROW") ||
-            (faceType.contains("EYEBASE") && !Utility.stackTraceContains("renderOozaru")) ||
-            faceType.contains("EYELEFT") ||
-            faceType.contains("EYERIGHT")
+            faceType.contains("FACENOSE") ||
+                faceType.contains("FACEMOUTH") ||
+                faceType.contains("EYEBROW") ||
+                (faceType.contains("EYEBASE") && !Utility.stackTraceContains("renderOozaru")) ||
+                faceType.contains("EYELEFT") ||
+                faceType.contains("EYERIGHT")
         ) ci.setReturnValue("");
     }
 
@@ -311,19 +311,19 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     public void disableFacePart(String faceType, String facePart, CallbackInfoReturnable<String> ci) {
         if (
             facePart.equals("EYES") &&
-            (faceType.contains(Part.RightEye.getPartId()) ||
-            faceType.contains(Part.LeftEye.getPartId()))
+                (faceType.contains(Part.RightEye.getPartId()) ||
+                    faceType.contains(Part.LeftEye.getPartId()))
         ) {
             ci.setReturnValue("");
         } else if (
             facePart.equals("FULLEYES") &&
-            (faceType.contains(Part.RightEye.getPartId()) ||
-            faceType.contains(Part.LeftEye.getPartId()) ||
-            faceType.contains(Part.Eyebrows.getPartId()) ||
-            faceType.contains(Part.EyeWhite.getPartId()))
+                (faceType.contains(Part.RightEye.getPartId()) ||
+                    faceType.contains(Part.LeftEye.getPartId()) ||
+                    faceType.contains(Part.Eyebrows.getPartId()) ||
+                    faceType.contains(Part.EyeWhite.getPartId()))
         ) {
             ci.setReturnValue("");
-        } else if (faceType.contains(facePart)){
+        } else if (faceType.contains(facePart)) {
             ci.setReturnValue("");
         }
     }

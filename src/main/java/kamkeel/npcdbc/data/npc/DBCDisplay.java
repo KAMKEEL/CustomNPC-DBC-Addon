@@ -452,7 +452,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     /// //////////////////////////////////////////
     // FacePartData
     public Set<FacePartData.Part> getDisabledFaceParts() {
-        return FacePartData.getDisabledParts(faceData,getForm(),cachedOverlays,eyeType);
+        return FacePartData.getDisabledParts(faceData, getForm(), cachedOverlays, eyeType);
     }
 
     /// //////////////////////////////////////////
@@ -467,8 +467,8 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         return chains;
     }
 
-    /////////////////////////////////////////////
-    /////////////////////////////////////////////
+    /// //////////////////////////////////////////
+    /// //////////////////////////////////////////
     // Auras
     @Override
     public boolean hasAura() {
@@ -554,10 +554,9 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         return (Aura) AuraController.getInstance().get(auraID);
     }
 
-    /////////////////////////////////////////////
-    /////////////////////////////////////////////
+    /// //////////////////////////////////////////
+    /// //////////////////////////////////////////
     // Forms
-
     @Override
     public void transform(int id) {
         if (FormController.Instance.has(id)) {

@@ -670,10 +670,10 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         dbcData.sprintSpeed = ValueUtil.clamp(speed, 1, 20);
         dbcData.saveNBTData(false);
     }
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
-    // Form stuff
 
+    /// ///////////////////////////////////////////
+    /// ///////////////////////////////////////////
+    // Form stuff
     @Override
     public boolean hasCustomForm(String formName) {
         Form form = FormController.getInstance().getFormFromName(formName);
@@ -737,7 +737,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public IForm getSelectedForm() {
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
-        if(c.selectedForm == -1)
+        if (c.selectedForm == -1)
             return null;
 
         return FormController.getInstance().get(c.selectedForm);
@@ -874,8 +874,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         setCustomForm(formName, false);
     }
 
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
+    /// ///////////////////////////////////////////
+    /// ///////////////////////////////////////////
     // Form Mastery stuff
     @Override
     public void setCustomMastery(int formID, float value) {
@@ -965,10 +965,9 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
 
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
+    /// ///////////////////////////////////////////
+    /// ///////////////////////////////////////////
     // Aura stuff
-
     @Override
     public boolean hasAura(String auraName) {
         Aura aura = AuraController.getInstance().getAuraFromName(auraName);
@@ -1160,8 +1159,9 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public boolean isInAura(int auraID) {
         return dbcData.simplifiedDBCData.isInAura(auraID);
     }
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
+
+    /// ///////////////////////////////////////////
+    /// ///////////////////////////////////////////
 
 
     @Override
@@ -1188,7 +1188,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setOutline(int outlineID) {
-        if(outlineID == -1){
+        if (outlineID == -1) {
             dbcData.setOutline(null);
             return;
         }
@@ -1359,16 +1359,16 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         String[] tech = new String[0];
         switch (slot) {
             case 1:
-                tech = this.nbt.getString("jrmcTech1").replace(";",",").split(",");
+                tech = this.nbt.getString("jrmcTech1").replace(";", ",").split(",");
                 break;
             case 2:
-                tech = this.nbt.getString("jrmcTech2").replace(";",",").split(",");
+                tech = this.nbt.getString("jrmcTech2").replace(";", ",").split(",");
                 break;
             case 3:
-                tech = this.nbt.getString("jrmcTech3").replace(";",",").split(",");
+                tech = this.nbt.getString("jrmcTech3").replace(";", ",").split(",");
                 break;
             case 4:
-                tech = this.nbt.getString("jrmcTech4").replace(";",",").split(",");
+                tech = this.nbt.getString("jrmcTech4").replace(";", ",").split(",");
                 break;
         }
 
@@ -1394,6 +1394,6 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setKo(int KoTime) {
-        nbt.setInteger("jrmcHar4va",KoTime);
+        nbt.setInteger("jrmcHar4va", KoTime);
     }
 }

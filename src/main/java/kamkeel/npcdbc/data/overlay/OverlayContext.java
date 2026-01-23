@@ -291,6 +291,7 @@ public class OverlayContext implements IOverlayContext {
 
     /**
      * Custom NPC+ does not support IPlayer instances on the client.
+     *
      * @return EntityLivingBase representing a player.
      */
     public IEntityLivingBase getPlayer() {

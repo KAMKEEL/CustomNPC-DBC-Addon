@@ -96,7 +96,7 @@ import static kamkeel.npcdbc.constants.DBCForm.UltimateForm;
 import static kamkeel.npcdbc.constants.DBCForm.UltraInstinct;
 import static kamkeel.npcdbc.controllers.DBCEffectController.DBC_EFFECT_INDEX;
 
-public class    DBCData extends DBCDataUniversal implements IAuraData {
+public class DBCData extends DBCDataUniversal implements IAuraData {
 
     public static String DBCPersisted = "PlayerPersisted";
     public final Side side;

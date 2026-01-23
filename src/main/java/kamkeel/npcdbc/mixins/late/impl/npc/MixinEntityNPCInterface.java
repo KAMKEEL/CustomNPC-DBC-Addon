@@ -70,7 +70,7 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
                 modifiedDamage = AttributeAttackUtil.calculateDamagePlayerToNPC(player, npcInterface, modifiedDamage);
 
                 // Apply Resistances
-                if(ConfigDBCGeneral.ALLOW_DBC_DAMAGE_RESISTANCE){
+                if (ConfigDBCGeneral.ALLOW_DBC_DAMAGE_RESISTANCE) {
                     modifiedDamage = npcInterface.stats.resistances.applyResistance(damagesource, modifiedDamage);
                 }
                 dam.set(modifiedDamage);
@@ -113,7 +113,7 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
             DBCUtils.npcLastSetDamage = null;
         }
         if (ConfigDBCGeneral.MODIFIED_DAMAGE_SPEED && npcdbc$shouldResetHurtTime && cir.getReturnValueZ()) {
-            if(this.hurtResistantTime > ConfigDBCGeneral.NPC_MAX_HURT_RESISTANCE){
+            if (this.hurtResistantTime > ConfigDBCGeneral.NPC_MAX_HURT_RESISTANCE) {
                 this.hurtResistantTime = ConfigDBCGeneral.NPC_MAX_HURT_RESISTANCE;
             }
         }

@@ -30,7 +30,9 @@ public class FormMagicData {
         compound.setTag(TAG_FORM_MAGIC, tag);
     }
 
-    /** Read them back in; must be called in Form.readFromNBT(...) */
+    /**
+     * Read them back in; must be called in Form.readFromNBT(...)
+     */
     public void readFromNBT(NBTTagCompound compound) {
         magics.clear();
         if (!compound.hasKey(TAG_FORM_MAGIC)) {

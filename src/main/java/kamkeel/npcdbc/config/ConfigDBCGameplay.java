@@ -126,8 +126,8 @@ public class ConfigDBCGameplay {
             PercentDamageRequired = config.get(HumanSpirit, "Percent Damage Required", 400).getInt(400);
             DamageRequiredSeconds = config.get(HumanSpirit, "Time Allotted", 20, "Amount of time to consider the Percent of Damage Required").getInt(50);
 
-            DodgeTeleport = config.get(Combat,"Teleport on UI Dodge",true,"True or false whether UI Dodge teleports to the target").getBoolean(true);
-            DodgeCameraLock = config.get(Combat,"camera Turn on UI dodge",true,"True or false whether UI Dodge Turns camera").getBoolean(true);
+            DodgeTeleport = config.get(Combat, "Teleport on UI Dodge", true, "True or false whether UI Dodge teleports to the target").getBoolean(true);
+            DodgeCameraLock = config.get(Combat, "camera Turn on UI dodge", true, "True or false whether UI Dodge Turns camera").getBoolean(true);
 
 
         } catch (Exception e) {

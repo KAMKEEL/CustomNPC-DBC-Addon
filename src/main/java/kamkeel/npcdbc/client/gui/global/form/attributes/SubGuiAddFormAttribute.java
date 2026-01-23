@@ -15,16 +15,17 @@ import java.util.stream.Collectors;
 
 public class SubGuiAddFormAttribute extends SubGuiInterface implements ICustomScrollListener {
     private final SubGuiFormAttributes parent;
-    private final FormAttributes         attrs;
-    private GuiCustomScroll               scroll;
-    private List<AttributeDefinition>     choices;
-    private String                        selected;
+    private final FormAttributes attrs;
+    private GuiCustomScroll scroll;
+    private List<AttributeDefinition> choices;
+    private String selected;
 
     public SubGuiAddFormAttribute(SubGuiFormAttributes parent) {
         this.parent = parent;
-        this.attrs  = parent.form.customAttributes;
+        this.attrs = parent.form.customAttributes;
         setBackground("menubg.png");
-        xSize = 200;  ySize = 200;
+        xSize = 200;
+        ySize = 200;
         // build list of definitions not yet applied
         this.choices = AttributeController
             .getAllAttributes()
@@ -41,18 +42,18 @@ public class SubGuiAddFormAttribute extends SubGuiInterface implements ICustomSc
     public void initGui() {
         super.initGui();
         guiTop += 10;
-        if (scroll==null) {
-            scroll = new GuiCustomScroll(this,0);
-            scroll.setSize(180, ySize-60);
+        if (scroll == null) {
+            scroll = new GuiCustomScroll(this, 0);
+            scroll.setSize(180, ySize - 60);
         }
-        scroll.guiLeft = guiLeft+10;
-        scroll.guiTop  = guiTop+10;
+        scroll.guiLeft = guiLeft + 10;
+        scroll.guiTop = guiTop + 10;
         scroll.setUnsortedList(
             choices.stream().map(AttributeDefinition::getDisplayName).collect(Collectors.toList())
         );
         addScroll(scroll);
-        addButton(new GuiNpcButton(1, guiLeft+10, guiTop+ySize-40, 80, 20, "gui.add"));
-        addButton(new GuiNpcButton(2, guiLeft+100, guiTop+ySize-40, 80, 20, "gui.cancel"));
+        addButton(new GuiNpcButton(1, guiLeft + 10, guiTop + ySize - 40, 80, 20, "gui.add"));
+        addButton(new GuiNpcButton(2, guiLeft + 100, guiTop + ySize - 40, 80, 20, "gui.cancel"));
     }
 
     @Override
@@ -62,16 +63,16 @@ public class SubGuiAddFormAttribute extends SubGuiInterface implements ICustomSc
 
     @Override
     public void actionPerformed(GuiButton btn) {
-        if (btn.id==1 && selected!=null) {
+        if (btn.id == 1 && selected != null) {
             // lookup definition by displayName
             AttributeDefinition def = choices.stream()
-                .filter(d->d.getDisplayName().equals(selected))
+                .filter(d -> d.getDisplayName().equals(selected))
                 .findFirst().get();
             attrs.setAttribute(def.getKey(), 1.0f);
             parent.initGui();
             close();
         }
-        if (btn.id==2) {
+        if (btn.id == 2) {
             close();
         }
     }
