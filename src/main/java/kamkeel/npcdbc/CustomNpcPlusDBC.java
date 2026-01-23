@@ -11,6 +11,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.event.IDBCEvent;
 import kamkeel.npcdbc.config.LoadConfiguration;
+import kamkeel.npcdbc.constants.DBCScriptType;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.BonusController;
 import kamkeel.npcdbc.controllers.CapsuleController;
@@ -21,7 +22,6 @@ import kamkeel.npcdbc.data.DBCProfileData;
 import kamkeel.npcdbc.data.attribute.DBCItemAttributes;
 import kamkeel.npcdbc.items.ModItems;
 import kamkeel.npcdbc.network.DBCPacketHandler;
-import kamkeel.npcdbc.constants.DBCScriptType;
 import kamkeel.npcs.controllers.ProfileController;
 import noppes.npcs.constants.ScriptContext;
 import noppes.npcs.controllers.ScriptHookController;
@@ -70,20 +70,12 @@ public class CustomNpcPlusDBC {
 
         // Register DBC player hooks so handler-based GUIs include them
         if (ScriptHookController.Instance != null) {
-            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.FORMCHANGE.function,
-                    IDBCEvent.FormChangeEvent.class);
-            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.DAMAGED.function,
-                    IDBCEvent.DamagedEvent.class);
-            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.CAPSULEUSED.function,
-                    IDBCEvent.CapsuleUsedEvent.class);
-            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.KNOCKOUT.function,
-                    IDBCEvent.DBCKnockout.class);
-            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.REVIVED.function,
-                    IDBCEvent.DBCReviveEvent.class);
-            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.KNOCKOUT.function,
-                    IDBCEvent.DBCKnockout.class);
-            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.SENZUUSED.function,
-                    IDBCEvent.SenzuUsedEvent.class);
+            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.FORMCHANGE.function, IDBCEvent.FormChangeEvent.class);
+            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.DAMAGED.function, IDBCEvent.DamagedEvent.class);
+            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.CAPSULEUSED.function, IDBCEvent.CapsuleUsedEvent.class);
+            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.SENZUUSED.function, IDBCEvent.SenzuUsedEvent.class);
+            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.REVIVED.function, IDBCEvent.DBCReviveEvent.class);
+            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.KNOCKOUT.function, IDBCEvent.DBCKnockout.class);
         }
     }
 

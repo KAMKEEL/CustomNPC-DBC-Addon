@@ -39,7 +39,7 @@ public interface Easing {
      * Convenience method to ease using absolute time and duration.
      *
      * @param currentValue eg. current elapsed time
-     * @param maxValue eg. total duration of the animation
+     * @param maxValue     eg. total duration of the animation
      * @return eased value
      */
     default double ease(double currentValue, double maxValue) {
@@ -50,9 +50,9 @@ public interface Easing {
     /**
      * Convenience method using start time, current time, and duration.
      *
-     * @param startTime      time when animation began
-     * @param totalDuration  total duration of the animation
-     * @param currentTime    current time
+     * @param startTime     time when animation began
+     * @param totalDuration total duration of the animation
+     * @param currentTime   current time
      * @return eased value
      */
     default double ease(double startTime, double totalDuration, double currentTime) {
@@ -63,7 +63,7 @@ public interface Easing {
      * Long-variant for high-precision timing (e.g., milliseconds or nanoseconds).
      *
      * @param currentValue eg. current elapsed time
-     * @param maxValue  eg. total duration
+     * @param maxValue     eg. total duration
      * @return eased value
      */
     default double ease(long currentValue, long maxValue) {
@@ -74,9 +74,9 @@ public interface Easing {
     /**
      * Long-variant using start/current time.
      *
-     * @param startTime      animation start time
-     * @param totalDuration  total duration
-     * @param currentTime    current time
+     * @param startTime     animation start time
+     * @param totalDuration total duration
+     * @param currentTime   current time
      * @return eased value
      */
     default double ease(long startTime, long totalDuration, long currentTime) {

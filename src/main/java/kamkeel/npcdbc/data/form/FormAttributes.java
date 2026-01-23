@@ -74,14 +74,18 @@ public class FormAttributes {
         return Collections.unmodifiableMap(map);
     }
 
-    /** All magic tags → (magicId → value) */
+    /**
+     * All magic tags → (magicId → value)
+     */
     public Map<String, Map<Integer, Float>> getAllMagic() {
         return Collections.unmodifiableMap(magic);
     }
 
     // ─── NBT I/O ────────────────────────────────────────────────────────────────
 
-    /** Call in Form.readFromNBT(...) */
+    /**
+     * Call in Form.readFromNBT(...)
+     */
     public void readFromNBT(NBTTagCompound compound) {
         // --- attributes ---
         attrs.clear();
@@ -117,7 +121,9 @@ public class FormAttributes {
         }
     }
 
-    /** Call in Form.writeToNBT(...) */
+    /**
+     * Call in Form.writeToNBT(...)
+     */
     public void writeToNBT(NBTTagCompound compound) {
         // --- attributes ---
         NBTTagCompound at = new NBTTagCompound();

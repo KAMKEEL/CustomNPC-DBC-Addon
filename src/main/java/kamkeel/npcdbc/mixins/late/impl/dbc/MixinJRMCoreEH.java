@@ -52,9 +52,9 @@ public class MixinJRMCoreEH {
         // Check for Damage Source Type
         DamageSource source = damageSource.get();
         int dbcDamageSource = DBCDamageSource.UNKNOWN;
-        if(source.getEntity() instanceof EntityPlayer){
+        if (source.getEntity() instanceof EntityPlayer) {
             dbcDamageSource = DBCDamageSource.PLAYER;
-        } else if (source.getEntity() instanceof EntityEnergyAtt){
+        } else if (source.getEntity() instanceof EntityEnergyAtt) {
             dbcDamageSource = DBCDamageSource.KIATTACK;
         }
 
@@ -78,9 +78,9 @@ public class MixinJRMCoreEH {
         // Check for Damage Source Type
         DamageSource source = damageSource.get();
         int dbcDamageSource = DBCDamageSource.UNKNOWN;
-        if(source.getEntity() instanceof EntityPlayer){
+        if (source.getEntity() instanceof EntityPlayer) {
             dbcDamageSource = DBCDamageSource.PLAYER;
-        } else if (source.getEntity() instanceof EntityEnergyAtt){
+        } else if (source.getEntity() instanceof EntityEnergyAtt) {
             dbcDamageSource = DBCDamageSource.KIATTACK;
         }
 

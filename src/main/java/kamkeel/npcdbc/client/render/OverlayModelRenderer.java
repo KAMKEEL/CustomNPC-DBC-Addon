@@ -18,6 +18,7 @@ public final class OverlayModelRenderer {
     private static final Map<Type, RenderFunction> MODEL_MAP = new EnumMap<>(Type.class);
 
     public static final float SCALE = 0.0625f;
+
     /* ─────────────────────────────
      * HEAD
      * ───────────────────────────── */

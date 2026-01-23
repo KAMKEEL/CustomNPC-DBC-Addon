@@ -17,7 +17,8 @@ public class DBCDamageCalc {
     public DamageSource source;
     public boolean ko = false;
 
-    public DBCDamageCalc() {}
+    public DBCDamageCalc() {
+    }
 
     public DBCDamageCalc(float damage, int stamina, int ki) {
         this.damage = damage;
@@ -55,7 +56,7 @@ public class DBCDamageCalc {
         this.ki = ki;
     }
 
-    public void processExtras(){
+    public void processExtras() {
         if (entity != null && entity instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) entity;
 //            if(stamina > 0)

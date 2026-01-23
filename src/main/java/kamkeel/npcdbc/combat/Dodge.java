@@ -12,14 +12,14 @@ public class Dodge {
 
     public static boolean instantTransDodge(Entity p, Entity tar, double a, double lookinga, double distance, int r1,
                                             int r2, int type) {
-            if (InstantTransmission.instantTrans(p, tar, a, lookinga, distance, r1, r2, type)) {
-                int random1 = new Random().nextInt(3) + 1;
-                SoundSource soundSource = new SoundSource("jinryuudragonbc:DBC4.dodge" + random1,
-                    p);
-                DBCPacketHandler.Instance.sendTracking(new PlaySound(soundSource),
-                    soundSource.entity);
-                return true;
-            }
+        if (InstantTransmission.instantTrans(p, tar, a, lookinga, distance, r1, r2, type)) {
+            int random1 = new Random().nextInt(3) + 1;
+            SoundSource soundSource = new SoundSource("jinryuudragonbc:DBC4.dodge" + random1,
+                p);
+            DBCPacketHandler.Instance.sendTracking(new PlaySound(soundSource),
+                soundSource.entity);
+            return true;
+        }
 
         return false;
     }

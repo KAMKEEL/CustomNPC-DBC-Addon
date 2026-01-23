@@ -46,10 +46,9 @@ public class TransformController {
 
     public static int FULL_DESCEND = -10;
 
-    //////////////////////////////////////////////////
-    //////////////////////////////////////////////////
+    /// ///////////////////////////////////////////////
+    /// ///////////////////////////////////////////////
     // Client  side handling
-
     @SideOnly(Side.CLIENT)
     public static void Ascend(Form form) {
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
@@ -166,10 +165,9 @@ public class TransformController {
         return null;
     }
 
-    //////////////////////////////////////////////////
-    //////////////////////////////////////////////////
+    /// ///////////////////////////////////////////////
+    /// ///////////////////////////////////////////////
     // NPC transformation handling
-
     public static void npcAscend(EntityNPCInterface npc, Form form) {
         DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
 
@@ -222,10 +220,9 @@ public class TransformController {
     }
 
 
-    //////////////////////////////////////////////////
-    //////////////////////////////////////////////////
+    /// ///////////////////////////////////////////////
+    /// ///////////////////////////////////////////////
     // Server side handling
-
     public static void handleFormAscend(EntityPlayer player, int formID) {
         Form form = (Form) FormController.getInstance().get(formID);
         if (form == null)
@@ -297,7 +294,7 @@ public class TransformController {
             NetworkUtility.sendInfoMessage(player, "§a", "npcdbc.transform", "§r ", form.getMenuName());
             dbcData.saveNBTData(true);
 
-            if(ConfigMain.AttributesEnabled){
+            if (ConfigMain.AttributesEnabled) {
                 PlayerAttributeTracker tracker = AttributeController.getTracker(player);
                 tracker.recalcAttributes(player);
             }
@@ -359,7 +356,7 @@ public class TransformController {
             JRMCoreH.setByte(0, player, "jrmcSaiRg");
             dbcData.saveNBTData(true);
 
-            if(ConfigMain.AttributesEnabled){
+            if (ConfigMain.AttributesEnabled) {
                 PlayerAttributeTracker tracker = AttributeController.getTracker(player);
                 tracker.recalcAttributes(player);
             }

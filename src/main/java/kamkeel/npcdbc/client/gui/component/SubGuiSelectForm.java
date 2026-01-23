@@ -59,7 +59,7 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
         super.initGui();
         guiTop += 10;
         if (showDBCForms)
-            addButton(new GuiNpcButton(3, guiLeft + 183, guiTop + 57, 79, 20, new String[]{"DBC", "Custom"}, page));
+            addButton(new GuiNpcButton(3, guiLeft + 183, guiTop + 57, 79, 20, new String[]{"DBC", "display.custom"}, page));
 
         if (scrollForms == null) {
             scrollForms = new GuiCustomScroll(this, 0, 0);

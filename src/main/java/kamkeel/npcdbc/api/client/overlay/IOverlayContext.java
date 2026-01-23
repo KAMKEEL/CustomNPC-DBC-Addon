@@ -15,29 +15,51 @@ public interface IOverlayContext {
     boolean typeDisabled(IOverlay.Type type);
 
     int gender();
+
     boolean female();
+
     float age();
+
     float inverseAge();
+
     int pregnant();
+
     String genderDir();
+
     int eyeType();
+
     boolean eyebrows();
+
     int furType();
+
     boolean hairType(String type);
+
     int color(String type);
+
     Color color(IOverlay.ColorType type);
+
     Color color(IOverlay.ColorType type, IOverlay overlay);
+
     boolean furGT();
+
     boolean furDaima();
+
     boolean furSavior();
+
     String furDir();
+
     boolean hasFur();
+
     boolean pupils();
+
     boolean berserk();
 
     boolean isNPC();
+
     IEntityLivingBase getPlayer();
+
     ICustomNpc getNPC();
+
     IEntity getEntity();
 
     ISimpleDBCData getDBCData();

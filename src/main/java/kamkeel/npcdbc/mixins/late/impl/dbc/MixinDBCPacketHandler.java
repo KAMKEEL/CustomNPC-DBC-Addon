@@ -396,7 +396,7 @@ public class MixinDBCPacketHandler {
 
         instance.setByte(key, value);
 
-        if(ConfigMain.AttributesEnabled){
+        if (ConfigMain.AttributesEnabled) {
             PlayerAttributeTracker tracker = AttributeController.getTracker(player);
             tracker.recalcAttributes(player);
         }

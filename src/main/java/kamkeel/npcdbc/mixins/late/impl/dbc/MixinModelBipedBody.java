@@ -60,10 +60,10 @@ public abstract class MixinModelBipedBody extends ModelBiped {
      * @author
      * @reason
      */
-  //  @Overwrite
+    //  @Overwrite
     public void render2Body(float par7) {
-        int g =1;
-        float f =1;
+        int g = 1;
+        float f = 1;
         int p = 0;
 
         if (g <= 1) {

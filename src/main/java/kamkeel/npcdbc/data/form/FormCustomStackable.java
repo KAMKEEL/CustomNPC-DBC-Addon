@@ -37,7 +37,7 @@ public class FormCustomStackable {
         this.customStackable = stackCompound.getBoolean("customStackable");
 
         int i = 0;
-        while(stackCompound.hasKey("stack" + i)) {
+        while (stackCompound.hasKey("stack" + i)) {
             FormStack stack = new FormStack(parent);
             stack.readFromNBT(stackCompound.getCompoundTag("stack" + i));
             this.formStacks.put(i, stack);

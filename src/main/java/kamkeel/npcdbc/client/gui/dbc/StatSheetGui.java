@@ -533,7 +533,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             (bonusOutput > 0 ? numSep(bonusOutput) : null),
             0,
             (int) (100.0F - weightPerc(1) * 100.0F)
-        ) +  getFormAdvancedStat(DBCStatistics.Defense);
+        ) + getFormAdvancedStat(DBCStatistics.Defense);
         dynamicLabels.get("defense")
             .updateDisplay(formStatColor + numSep(longValue))
             .setTooltip(defDesc);
@@ -572,7 +572,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                     null,
                     (isReductionWorthDisplaying ? dmgReduction : 0),
                     0
-                ) +  getFormAdvancedStat(DBCStatistics.Body)
+                ) + getFormAdvancedStat(DBCStatistics.Body)
             );
 
         stat = stat(mc.thePlayer, 2, 1, 3, statVals[2], dbcClient.Race, dbcClient.Class, 0);
@@ -685,7 +685,8 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         //Button to adjust GUI
 
         if (ConfigDBCClient.EnableDebugStatSheetSwitching) {
-            String s = (!ConfigDBCClient.EnhancedGui ? "Old" : "§aModern") + " GUI";
+            String guiType = StatCollector.translateToLocal(!ConfigDBCClient.EnhancedGui ? "statsheet.old" : "statsheet.modern");
+            String s = (!ConfigDBCClient.EnhancedGui ? guiType : "§a" + guiType) + " GUI";
             int button1Width = this.fontRendererObj.getStringWidth(s) + 10;
             this.buttonList.add(new JRMCoreGuiButtons00(303030303, guiWidthOffset + 260, height / 2 - 10, button1Width + 8, 20, s, 0));
         }
@@ -914,12 +915,12 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
 
 
         if (JRMCoreEH.dt) {
-            String name = "Update vanity";
+            String name = StatCollector.translateToLocal("statsheet.updateVanity");
             int width = this.fontRendererObj.getStringWidth(name);
             UPDATE_VANITY_BUTTON = new JRMCoreGuiButtons00(100, guiWidthOffset - 78, guiHeightOffset, width + 8, 20, name, 0);
             buttonList.add(UPDATE_VANITY_BUTTON);
 
-            name = (JRMCoreEH.gk ? "Hide" : "Show") + " own vanity";
+            name = StatCollector.translateToLocal(JRMCoreEH.gk ? "statsheet.hideVanity" : "statsheet.showVanity");
             width = this.fontRendererObj.getStringWidth(name);
             buttonList.add(new JRMCoreGuiButtons00(101, guiWidthOffset - 88, guiHeightOffset + 21, width + 8, 20, name, 0));
         }
@@ -1031,7 +1032,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
 
     public String getAttributeBonusDescription(int attributeID) {
         if (JRMCoreConfig.JRMCABonusOn) {
-            String description = "\nBonus Attributes:";
+            String description = "\n" + StatCollector.translateToLocal("statsheet.bonusAttributes");
             String[] bonuses = getBonusAttributes(attributeID).split("\\|");
             String[] var5 = bonuses;
             int var6 = bonuses.length;
@@ -1054,9 +1055,9 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
     public String getFormAdvancedStat(int statID) {
         DBCData dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
         Form form = dbcData.getForm();
-        if(form != null && form.advanced.isStatEnabled(statID)){
+        if (form != null && form.advanced.isStatEnabled(statID)) {
             String description = "";
-            if(ConfigDBCClient.AdvancedGui){
+            if (ConfigDBCClient.AdvancedGui) {
                 description += "\n§8" + Utility.removeColorCodes(form.getMenuName()) + ":";
                 description += "§8\n> ";
                 int bonus = form.advanced.getStat(statID).getBonus();
@@ -1067,7 +1068,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                 float multi = form.advanced.getStat(statID).getMultiplier();
                 String multiplier = String.format("%.2f", multi);
 
-                if(multi > 1.0f)
+                if (multi > 1.0f)
                     description += "§2";
                 else
                     description += "§4";
@@ -1082,7 +1083,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         String description = "";
         DBCData dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
         if (!dbcData.bonus.getCurrentBonuses().isEmpty()) {
-            description += "\nBonus Stats:";
+            description += "\n" + StatCollector.translateToLocal("statsheet.bonusStats");
             for (PlayerBonus playerBonus : dbcData.bonus.getCurrentBonuses().values()) {
                 float value = getBonusValue(playerBonus, attributeID);
                 if (value == 0)

@@ -5,6 +5,7 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormCustomStackable;
 import kamkeel.npcdbc.data.form.FormStack;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.util.GuiNpcButton;
 import noppes.npcs.client.gui.util.GuiNpcLabel;
 import noppes.npcs.client.gui.util.ISubGuiListener;
@@ -37,7 +38,7 @@ public class SubGuiFormCustomStackable extends SubGuiInterface implements ISubGu
 
         int y = guiTop + 5;
 
-        addLabel(new GuiNpcLabel(1, "Stack 1: ", guiLeft + 8, y + 5));
+        addLabel(new GuiNpcLabel(1, StatCollector.translateToLocalFormatted("stackable.stack", 1), guiLeft + 8, y + 5));
 
         addButton(new GuiNpcButton(3, guiLeft + 145, y, 20, 20, "X"));
         addButton(new GuiNpcButton(30, guiLeft + 265, y, 20, 20, "X"));
@@ -48,7 +49,7 @@ public class SubGuiFormCustomStackable extends SubGuiInterface implements ISubGu
         addButtonToFormText(stack1, 20);
 
         y += 23;
-        addLabel(new GuiNpcLabel(11, "Stack 2:", guiLeft + 8, y + 5));
+        addLabel(new GuiNpcLabel(11, StatCollector.translateToLocalFormatted("stackable.stack", 2), guiLeft + 8, y + 5));
 
         addButton(new GuiNpcButton(31, guiLeft + 145, y, 20, 20, "X"));
         addButton(new GuiNpcButton(32, guiLeft + 265, y, 20, 20, "X"));
@@ -59,7 +60,7 @@ public class SubGuiFormCustomStackable extends SubGuiInterface implements ISubGu
         addButtonToFormText(stack2, 22);
 
         y += 23;
-        addLabel(new GuiNpcLabel(13, "Stack 3:", guiLeft + 8, y + 5));
+        addLabel(new GuiNpcLabel(13, StatCollector.translateToLocalFormatted("stackable.stack", 3), guiLeft + 8, y + 5));
 
         addButton(new GuiNpcButton(33, guiLeft + 145, y, 20, 20, "X"));
         addButton(new GuiNpcButton(34, guiLeft + 265, y, 20, 20, "X"));
@@ -70,7 +71,7 @@ public class SubGuiFormCustomStackable extends SubGuiInterface implements ISubGu
         addButtonToFormText(stack3, 24);
 
         y += 23;
-        addLabel(new GuiNpcLabel(14, "Stack 4:", guiLeft + 8, y + 5));
+        addLabel(new GuiNpcLabel(14, StatCollector.translateToLocalFormatted("stackable.stack", 4), guiLeft + 8, y + 5));
 
         addButton(new GuiNpcButton(35, guiLeft + 145, y, 20, 20, "X"));
         addButton(new GuiNpcButton(36, guiLeft + 265, y, 20, 20, "X"));

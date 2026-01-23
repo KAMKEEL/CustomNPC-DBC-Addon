@@ -742,6 +742,7 @@ public interface IDBCAddon extends IDBCPlayer {
 
     /**
      * Sets dbcPlayer to a Koed state
+     *
      * @param KoTime integer for player Ko time, 1=5 sec
      */
     void setKo(int KoTime);

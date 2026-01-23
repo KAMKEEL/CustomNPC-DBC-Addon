@@ -100,7 +100,7 @@ public class SubGuiFormAdvanced extends SubGuiInterface implements ISubGuiListen
             if (statId != DBCStatistics.MaxSkills) {
                 FormAdvanced.AdvancedFormStat stat = advanced.getStat(statId);
                 if (stat != null) {
-                    boolean newVal = ((noppes.npcs.client.gui.util.GuiNpcButtonYesNo)guibutton).getValue() == 1;
+                    boolean newVal = ((noppes.npcs.client.gui.util.GuiNpcButtonYesNo) guibutton).getValue() == 1;
                     advanced.setStatEnabled(statId, newVal);
                 }
             }
@@ -123,7 +123,8 @@ public class SubGuiFormAdvanced extends SubGuiInterface implements ISubGuiListen
                 try {
                     int bonus = textField.getInteger();
                     advanced.setStatBonus(statId, bonus);
-                } catch (NumberFormatException ignored) { }
+                } catch (NumberFormatException ignored) {
+                }
             }
         }
         // Multiplier fields: 300 + statIndex
@@ -133,7 +134,8 @@ public class SubGuiFormAdvanced extends SubGuiInterface implements ISubGuiListen
                 try {
                     float multi = textField.getFloat();
                     advanced.setStatMulti(statId, multi);
-                } catch (NumberFormatException ignored) { }
+                } catch (NumberFormatException ignored) {
+                }
             }
         }
     }
@@ -156,7 +158,9 @@ public class SubGuiFormAdvanced extends SubGuiInterface implements ISubGuiListen
         menu.drawElements(fontRendererObj, mouseX, mouseY, mc, partialTicks);
     }
 
-    /** no‑op save; changes are written immediately */
+    /**
+     * no‑op save; changes are written immediately
+     */
     public void save() {
         menu.save();
     }

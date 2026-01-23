@@ -186,7 +186,7 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         @Override
         public void setDamage(float damage) {
             this.damage = damage;
-            if(player != null && player.getMCEntity() instanceof EntityPlayer && damageSource != null && damageSource.getMCDamageSource() != null) {
+            if (player != null && player.getMCEntity() instanceof EntityPlayer && damageSource != null && damageSource.getMCDamageSource() != null) {
                 this.ko = DBCUtils.checkKnockout((EntityPlayer) player.getMCEntity(), damageSource.getMCDamageSource(), this.damage);
             }
         }

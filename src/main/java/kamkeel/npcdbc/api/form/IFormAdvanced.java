@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.api.form;
 
 public interface IFormAdvanced {
-    
+
     IAdvancedFormStat getStat(int id);
 
     void setStatEnabled(int id, boolean enabled);

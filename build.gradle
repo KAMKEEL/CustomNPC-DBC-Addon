@@ -10,9 +10,6 @@ if (BUILD_USING_CNPC_SOURCE)
     apply from: 'gradle.handleCNPCSubmoduleInjection.groovy'
 
 group= "kamkeel.npcdbc"
-
-tasks.runServer { setWorkingDir(file("run/server")) }
-
 version = "1.1.5"
 group= "kamkeel.npcdbc"
 archivesBaseName = "npcdbc"
@@ -26,6 +23,8 @@ def findJarBySubstring = { part ->
 
     return matches.first() // valid in old Gradle
 }
+
+tasks.runServer { setWorkingDir(file("run/server")) }
 
 tasks.named("runClient").configure {
     def agent = findJarBySubstring("unimixins")

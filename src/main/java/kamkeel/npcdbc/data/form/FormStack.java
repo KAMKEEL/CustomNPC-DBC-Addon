@@ -197,7 +197,7 @@ public class FormStack {
         if (isEmpty())
             return new IForm[0];
 
-        return new IForm[] { fromForm, toForm };
+        return new IForm[]{fromForm, toForm};
     }
 
     public boolean isEmpty() {

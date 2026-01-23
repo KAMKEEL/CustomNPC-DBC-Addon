@@ -41,19 +41,19 @@ public class SubGuiSetParents extends SubGuiInterface implements ICustomScrollLi
         allForms.put(DBCRace.ARCOSIAN, DBCForm.getFormsMap(DBCRace.ARCOSIAN));
         allForms.put(DBCRace.MAJIN, DBCForm.getFormsMap(DBCRace.MAJIN));
 
-        races.add("Human");
-        races.add("Saiyan");
-        races.add("Half-Saiyan");
-        races.add("Namekian");
-        races.add("Arcosian");
-        races.add("Majin");
+        races.add(StatCollector.translateToLocal("display.human"));
+        races.add(StatCollector.translateToLocal("display.saiyan"));
+        races.add(StatCollector.translateToLocal("display.halfsaiyan"));
+        races.add(StatCollector.translateToLocal("display.namekian"));
+        races.add(StatCollector.translateToLocal("display.arcosian"));
+        races.add(StatCollector.translateToLocal("display.majin"));
     }
 
     @Override
     public void initGui() {
         super.initGui();
 
-        addLabel(new GuiNpcLabel(1, StatCollector.translateToLocal("Races"), guiLeft + 22, guiTop + 11));
+        addLabel(new GuiNpcLabel(1, "formparents.races", guiLeft + 22, guiTop + 11));
         if (dbcRaces == null) {
             dbcRaces = new GuiCustomScroll(this, 0);
             dbcRaces.setSize(150, 180);
@@ -64,7 +64,7 @@ public class SubGuiSetParents extends SubGuiInterface implements ICustomScrollLi
         dbcRaces.selected = selectedRace;
         this.addScroll(dbcRaces);
 
-        addLabel(new GuiNpcLabel(2, StatCollector.translateToLocal("Forms"), guiLeft + 192, guiTop + 11));
+        addLabel(new GuiNpcLabel(2, "formparents.forms", guiLeft + 192, guiTop + 11));
         if (dbcForms == null) {
             dbcForms = new GuiCustomScroll(this, 1);
             dbcForms.setSize(150, 155);
@@ -79,7 +79,7 @@ public class SubGuiSetParents extends SubGuiInterface implements ICustomScrollLi
         this.addScroll(dbcForms);
 
         addButton(new GuiNpcButton(10, guiLeft + 190, guiTop + 184, 72, 20, "gui.remove"));
-        addButton(new GuiNpcButton(11, guiLeft + 268, guiTop + 184, 72, 20, "Remove All")); //#TODO: add localisation
+        addButton(new GuiNpcButton(11, guiLeft + 268, guiTop + 184, 72, 20, "formparents.removeAll"));
 
         addButton(new GuiNpcButton(1, guiLeft + xSize - 25, guiTop + 3, 20, 20, "X"));
     }
