@@ -43,6 +43,7 @@ tasks.named("generateTypeScriptDefinitions").configure {
     outputDirectory = "src/main/resources/assets/${project.property("modId")}/api"
     apiPackages = ['kamkeel.npcdbc.api'] as Set
     cleanOutputFirst = true  // Clean old generated files before regenerating
+    patchesDirectory = "dts-patches"
 }
 
 
