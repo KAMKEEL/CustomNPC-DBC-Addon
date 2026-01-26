@@ -18,18 +18,16 @@ import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.api.outline.IOutlineHandler;
+import kamkeel.npcdbc.api.util.IDBCSettingsHandler;
 import kamkeel.npcdbc.combat.Dodge;
-import kamkeel.npcdbc.controllers.AuraController;
-import kamkeel.npcdbc.controllers.BonusController;
-import kamkeel.npcdbc.controllers.DBCEffectController;
-import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.controllers.OutlineController;
+import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.DBCDamageCalc;
 import kamkeel.npcdbc.data.KiAttack;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.npc.DBCStats;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCStats;
+import kamkeel.npcdbc.util.DBCSettingsUtil;
 import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
@@ -78,6 +76,11 @@ public class DBCAPI extends AbstractDBCAPI {
     @Override
     public IDBCEffectHandler getDBCEffectHandler() {
         return DBCEffectController.Instance;
+    }
+
+    @Override
+    public IDBCSettingsHandler getDBCSettingsHandler() {
+        return DBCSettingsController.Instance;
     }
 
     @Override

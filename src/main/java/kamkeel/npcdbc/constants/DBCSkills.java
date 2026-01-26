@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.constants;
 
 import kamkeel.npcdbc.util.DBCUtils;
+import net.minecraft.nbt.NBTTagCompound;
 
 public enum DBCSkills {
     Fusion("FZ"),
@@ -31,6 +32,14 @@ public enum DBCSkills {
 
     public int index() {
         return DBCUtils.getDBCSkillIndex(name());
+    }
+
+    public static DBCSkills byIndex(int index) {
+        for (DBCSkills skill : values())
+            if (index == skill.index())
+                return skill;
+
+        return null;
     }
 
     public String id() {
@@ -67,5 +76,13 @@ public enum DBCSkills {
 
     public int mindCostRecursive() {
         return mindCostRecursive(1);
+    }
+
+    public NBTTagCompound writeToNBT() {
+        NBTTagCompound comp = new NBTTagCompound();
+        comp.setString("name", name());
+        comp.setInteger("id", ordinal());
+
+        return comp;
     }
 }

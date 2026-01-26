@@ -12,12 +12,7 @@ import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.event.IDBCEvent;
 import kamkeel.npcdbc.config.LoadConfiguration;
 import kamkeel.npcdbc.constants.DBCScriptType;
-import kamkeel.npcdbc.controllers.AuraController;
-import kamkeel.npcdbc.controllers.BonusController;
-import kamkeel.npcdbc.controllers.CapsuleController;
-import kamkeel.npcdbc.controllers.DBCEffectController;
-import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.controllers.OutlineController;
+import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.DBCProfileData;
 import kamkeel.npcdbc.data.attribute.DBCItemAttributes;
 import kamkeel.npcdbc.items.ModItems;
@@ -65,6 +60,7 @@ public class CustomNpcPlusDBC {
         CapsuleController.getInstance().load();
         BonusController.getInstance().load();
         DBCEffectController.getInstance().load();
+        DBCAnimationController.getInstance().load();
 
         new DBCItemAttributes();
 

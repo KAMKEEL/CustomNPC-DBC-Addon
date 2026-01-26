@@ -11,6 +11,8 @@ import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.api.outline.IOutlineHandler;
+import kamkeel.npcdbc.api.util.IDBCSettingsHandler;
+import kamkeel.npcdbc.util.DBCSettingsUtil;
 import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.api.entity.IEntity;
 import noppes.npcs.api.entity.IPlayer;
@@ -54,6 +56,8 @@ public abstract class AbstractDBCAPI {
      * @return DBC Effect Handler
      */
     public abstract IDBCEffectHandler getDBCEffectHandler();
+
+    public abstract IDBCSettingsHandler getDBCSettingsHandler();
 
     public abstract IForm createForm(String name);
 
