@@ -28,7 +28,6 @@ import java.util.Set;
 
 import static kamkeel.npcdbc.api.client.overlay.IOverlay.ColorType.Custom;
 
-@SideOnly(Side.CLIENT)
 public class OverlayContext implements IOverlayContext {
     public Overlay overlay;
     public OverlayChain chain;
