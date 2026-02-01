@@ -18,7 +18,7 @@ public class AbilityKamehameha extends AbilityEnergyBeam {
         this.maxRange = 20.0f;
         this.minRange = 5.0f;
         this.cooldownTicks = 0;
-        this.windUpTicks = 40;
+        this.windUpTicks = 60;
         this.lockMovement = LockMovementType.WINDUP_AND_ACTIVE;
         this.telegraphType = TelegraphType.CIRCLE;
         this.showTelegraph = false;
@@ -26,13 +26,15 @@ public class AbilityKamehameha extends AbilityEnergyBeam {
         this.windUpAnimationName = "Ability_Beam_Windup";
         this.activeAnimationName = "Ability_Beam_Active";
 
-        setBeamWidth(1.5f);
-        setHeadSize(2.0f);
+        setBeamWidth(2.0f);
+        setHeadSize(2.5f);
         setSpeed(1.5f);
         setRotationSpeed(30f);
         setOuterColorAlpha(1.0f);
         setOuterColor(0x00FFFF);
         setHoming(false);
+        setWindUpSound("DBC4.cbeam4s");
+        setActiveSound("DBC4.fbeam4s");
     }
 
     @Override

@@ -19,6 +19,7 @@ public class DBCAbilities {
 
     // BEAMS
     public static final Ability KI_WAVE = ABILITIES.register("ki_wave", AbilityKiWave::new);
+    public static final Ability DOUBLE_SUNDAY = ABILITIES.register("double_sunday", AbilityDoubleSunday::new);
     public static final Ability KAMEHAMEHA = ABILITIES.register("kamehameha", AbilityKamehameha::new);
     public static final Ability MASENKO = ABILITIES.register("masenko", AbilityMasenko::new);
     public static final Ability GALICK_HO = ABILITIES.register("galick_ho", AbilityGalickHo::new);

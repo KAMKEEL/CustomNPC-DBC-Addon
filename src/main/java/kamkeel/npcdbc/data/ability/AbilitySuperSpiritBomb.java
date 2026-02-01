@@ -13,7 +13,7 @@ public class AbilitySuperSpiritBomb extends AbilityGenkiDama {
 
         setAnchorPointEnum(AnchorPoint.ABOVE_HEAD);
         setAnchorOffsetY(30f);
-        setOrbSize(20f);
+        setOrbSize(30f);
         setRotationSpeed(7.5f);
     }
 }

@@ -26,8 +26,8 @@ public class AbilityMasenko extends AbilityEnergyBeam {
         this.windUpAnimationName = "Ability_Beam_Windup";
         this.activeAnimationName = "Ability_Beam_Active";
 
-        this.setBeamWidth(1.5f);
-        this.setHeadSize(2.0f);
+        this.setBeamWidth(1.75f);
+        this.setHeadSize(2.25f);
         this.setSpeed(1.5f);
         this.setRotationSpeed(30f);
         this.setOuterColorAlpha(1.0f);

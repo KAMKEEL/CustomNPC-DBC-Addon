@@ -18,7 +18,7 @@ public class AbilityLargeGenkiDama extends AbilityGenkiDama{
 
         setAnchorPointEnum(AnchorPoint.ABOVE_HEAD);
         setAnchorOffsetY(15f);
-        setOrbSize(10f);
+        setOrbSize(20f);
         setRotationSpeed(7.5f);
     }
 

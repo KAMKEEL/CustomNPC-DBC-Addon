@@ -4,13 +4,13 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcs.controllers.data.ability.LockMovementType;
 import kamkeel.npcs.controllers.data.ability.TargetingMode;
-import kamkeel.npcs.controllers.data.ability.type.AbilityDualDisc;
+import kamkeel.npcs.controllers.data.ability.type.AbilityDiscDual;
 import kamkeel.npcs.controllers.data.telegraph.TelegraphType;
 import noppes.npcs.client.gui.advanced.SubGuiAbilityConfig;
-import noppes.npcs.client.gui.advanced.ability.SubGuiAbilityDualDisc;
+import noppes.npcs.client.gui.advanced.ability.SubGuiAbilityDiscDual;
 import noppes.npcs.client.gui.util.IAbilityConfigCallback;
 
-public class AbilityDeathSaucer extends AbilityDualDisc {
+public class AbilityDeathSaucer extends AbilityDiscDual {
     public AbilityDeathSaucer() {
         this.typeId = "ability.npcdbc.death_saucer";
         this.name = "Death Saucer";
@@ -54,6 +54,6 @@ public class AbilityDeathSaucer extends AbilityDualDisc {
     @Override
     @SideOnly(Side.CLIENT)
     public SubGuiAbilityConfig createConfigGui(IAbilityConfigCallback callback) {
-        return new SubGuiAbilityDualDisc(this, callback);
+        return new SubGuiAbilityDiscDual(this, callback);
     }
 }

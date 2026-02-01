@@ -14,7 +14,7 @@ import noppes.npcs.client.gui.util.IAbilityConfigCallback;
 public class AbilitySupernova extends AbilityOrb {
     public AbilitySupernova() {
         this.typeId = "ability.npcdbc.supernova";
-        this.name = "Spirit Bomb";
+        this.name = "Supernova";
         this.targetingMode = TargetingMode.AGGRO_TARGET;
         this.maxRange = 100.0f;
         this.minRange = 5.0f;
@@ -29,13 +29,13 @@ public class AbilitySupernova extends AbilityOrb {
 
 
         setAnchorPointEnum(AnchorPoint.ABOVE_HEAD);
-        setAnchorOffsetY(12f);
+        setAnchorOffsetY(10f);
         setHoming(false);
         setMaxDistance(150f);
         setMaxLifetime(300);
 
         setOrbSpeed(1.0f);
-        setOrbSize(8.5f);
+        setOrbSize(20f);
         setRotationSpeed(7.5f);
 
         setInnerColor(0xFFB410);

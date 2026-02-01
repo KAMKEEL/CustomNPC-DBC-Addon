@@ -4,13 +4,13 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcs.controllers.data.ability.LockMovementType;
 import kamkeel.npcs.controllers.data.ability.TargetingMode;
-import kamkeel.npcs.controllers.data.ability.type.AbilityDualBeam;
+import kamkeel.npcs.controllers.data.ability.type.AbilityBeamDual;
 import kamkeel.npcs.controllers.data.telegraph.TelegraphType;
 import noppes.npcs.client.gui.advanced.SubGuiAbilityConfig;
-import noppes.npcs.client.gui.advanced.ability.SubGuiAbilityDualBeam;
+import noppes.npcs.client.gui.advanced.ability.SubGuiAbilityBeamDual;
 import noppes.npcs.client.gui.util.IAbilityConfigCallback;
 
-public class AbilityFinalFlash extends AbilityDualBeam {
+public class AbilityFinalFlash extends AbilityBeamDual {
     public AbilityFinalFlash() {
         this.typeId = "ability.npcdbc.final_flash";
         this.name = "Final Flash";
@@ -23,11 +23,11 @@ public class AbilityFinalFlash extends AbilityDualBeam {
         this.telegraphType = TelegraphType.CIRCLE;
         this.showTelegraph = false;
         // Default built-in animations
-        this.windUpAnimationName = "Ability_DualBeam_Windup";
-        this.activeAnimationName = "Ability_DualBeam_Active";
+        this.windUpAnimationName = "Ability_BeamDual_Windup";
+        this.activeAnimationName = "Ability_BeamDual_Active";
 
-        this.setBeamWidth(1.5f);
-        this.setHeadSize(2.0f);
+        this.setBeamWidth(3.0f);
+        this.setHeadSize(3.25f);
         this.setSpeed(1.5f);
 
         this.setRotationSpeed(0, 30f);
@@ -51,6 +51,6 @@ public class AbilityFinalFlash extends AbilityDualBeam {
     @Override
     @SideOnly(Side.CLIENT)
     public SubGuiAbilityConfig createConfigGui(IAbilityConfigCallback callback) {
-        return new SubGuiAbilityDualBeam(this, callback);
+        return new SubGuiAbilityBeamDual(this, callback);
     }
 }
