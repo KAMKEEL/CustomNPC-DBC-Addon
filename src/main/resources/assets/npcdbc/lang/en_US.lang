@@ -459,6 +459,24 @@ item.npcdbc:one_potara.name=Potara Earring
 item.npcdbc:two_potara.name=Grand Potara Earring
 item.npcdbc:three_potara.name=Supreme Potara Earring
 
+ability.npcdbc.kamehameha=Kamehameha
+ability.npcdbc.kienzan=Destructo Disc
+ability.npcdbc.makankosappo=Special Beam Cannon
+ability.npcdbc.galick_ho=Galick Gun
+ability.npcdbc.final_flash=Final Flash
+ability.npcdbc.bigbang_attack=Big Bang Attack
+ability.npcdbc.burning_attack=Burning Attack
+ability.npcdbc.death_ball=Death Ball
+ability.npcdbc.genki_dama=Spirit Bomb
+ability.npcdbc.large_genki_dama=Large Spirit Bomb
+ability.npcdbc.super_genki_dama=Super Spirit Bomb
+ability.npcdbc.supernova=Supernova
+ability.npcdbc.masenko=Masenko
+ability.npcdbc.death_saucer=Death Saucer
+ability.npcdbc.hakai=Destruction
+ability.npcdbc.ki_blast=Energy Blast
+ability.npcdbc.ki_wave=Energy Wave
+
 effect.healthregeneration=Health Regeneration
 effect.exhausted=Exhausted
 effect.darkness=Darkness

@@ -11,6 +11,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.event.IDBCEvent;
 import kamkeel.npcdbc.config.LoadConfiguration;
+import kamkeel.npcdbc.constants.DBCAbilities;
 import kamkeel.npcdbc.constants.DBCScriptType;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.DBCProfileData;
@@ -82,6 +83,7 @@ public class CustomNpcPlusDBC {
         CapsuleController.getInstance().load();
         BonusController.getInstance().load();
         OutlineController.getInstance().load();
+        DBCAbilities.register();
     }
 
     @Mod.EventHandler
