@@ -36,8 +36,6 @@
 
 var BUILD_USING_CNPC_SOURCE = !(project.hasProperty("useCNPCJar") && project.useCNPCJar == 'true')
 
-var customNpcJar = file("../CustomNPC-Plus/build/libs/CustomNPC-Plus-1.10.2-dev-preshadow.jar")
-
 dependencies {
     runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.5.4-GTNH:dev")
     runtimeOnlyNonPublishable("curse.maven:Nashorn-374413:2924946")
