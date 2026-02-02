@@ -1,17 +1,15 @@
 package kamkeel.npcdbc.constants;
 
-public enum DBCAnimations {
-    NAMEKREGEN("Namek_Regen"),
-    FUSIONLEFT("Fusion_Left"),
-    FUSIONRIGHT("Fusion_Right");
+import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcs.util.Register;
+import noppes.npcs.controllers.data.Animation;
 
-    public final String fileName;
+public class DBCAnimations {
+    public static Register.Animations ANIMATIONS = new Register.Animations(CustomNpcPlusDBC.class, "animations","npcdbc");
 
-    DBCAnimations(String fileName) {
-        this.fileName = fileName;
-    }
+    public static final Animation NAMEK_REGEN = ANIMATIONS.register("Namek_Regen", Animation::new);
 
-    public String getFileName() {
-        return fileName;
+    public static void register() {
+        ANIMATIONS.register();
     }
 }

@@ -23,8 +23,8 @@ public class AbilityDeathSaucer extends AbilityDiscDual {
         this.telegraphType = TelegraphType.CIRCLE;
         this.showTelegraph = false;
         // Default built-in animations
-        this.windUpAnimationName = "Ability_Disc_Windup";
-        this.activeAnimationName = "Ability_Disc_Active";
+        this.windUpAnimationName = "Ability_DiscDual_Windup";
+        this.activeAnimationName = "Ability_DiscDual_Active";
 
         setSpeed(1.6f);
         setDiscRadius(1.5f);
