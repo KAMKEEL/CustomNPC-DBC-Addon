@@ -217,7 +217,7 @@ public class OutlineRenderer {
         //Left
         if (npc.modelData.hideArms != 1) {
             glPushMatrix();
-            glTranslatef(-.0375f, -0.0275f, 0);
+            glTranslatef(0, -0.0275f, 0);
             glScaled(1.05, 1.03, 1.05);
             model.renderArms(npc, 0.0625f, false);
             glPopMatrix();
