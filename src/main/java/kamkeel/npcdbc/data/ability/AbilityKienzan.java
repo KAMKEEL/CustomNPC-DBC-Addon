@@ -1,15 +1,9 @@
 package kamkeel.npcdbc.data.ability;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcs.controllers.data.ability.LockMovementType;
 import kamkeel.npcs.controllers.data.ability.TargetingMode;
 import kamkeel.npcs.controllers.data.ability.type.AbilityDisc;
 import kamkeel.npcs.controllers.data.telegraph.TelegraphType;
-import noppes.npcs.client.gui.advanced.SubGuiAbilityConfig;
-import noppes.npcs.client.gui.advanced.ability.SubGuiAbilityDisc;
-import noppes.npcs.client.gui.advanced.ability.SubGuiAbilityOrb;
-import noppes.npcs.client.gui.util.IAbilityConfigCallback;
 
 public class AbilityKienzan extends AbilityDisc {
     public AbilityKienzan() {
@@ -38,11 +32,5 @@ public class AbilityKienzan extends AbilityDisc {
         setDiscRadius(1.5f);
         setLockMovement(LockMovementType.WINDUP_AND_ACTIVE);
         setAnchorOffsetY(0.25f);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public SubGuiAbilityConfig createConfigGui(IAbilityConfigCallback callback) {
-        return new SubGuiAbilityDisc(this, callback);
     }
 }

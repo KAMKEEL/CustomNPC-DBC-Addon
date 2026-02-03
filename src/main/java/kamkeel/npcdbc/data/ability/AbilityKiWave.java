@@ -1,14 +1,9 @@
 package kamkeel.npcdbc.data.ability;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcs.controllers.data.ability.LockMovementType;
 import kamkeel.npcs.controllers.data.ability.TargetingMode;
 import kamkeel.npcs.controllers.data.ability.type.AbilityEnergyBeam;
 import kamkeel.npcs.controllers.data.telegraph.TelegraphType;
-import noppes.npcs.client.gui.advanced.SubGuiAbilityConfig;
-import noppes.npcs.client.gui.advanced.ability.SubGuiAbilityEnergyBeam;
-import noppes.npcs.client.gui.util.IAbilityConfigCallback;
 
 public class AbilityKiWave extends AbilityEnergyBeam {
     public AbilityKiWave() {
@@ -33,11 +28,5 @@ public class AbilityKiWave extends AbilityEnergyBeam {
         setOuterColorAlpha(1.0f);
         setOuterColor(0xFFFF00);
         setHoming(false);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public SubGuiAbilityConfig createConfigGui(IAbilityConfigCallback callback) {
-        return new SubGuiAbilityEnergyBeam(this, callback);
     }
 }

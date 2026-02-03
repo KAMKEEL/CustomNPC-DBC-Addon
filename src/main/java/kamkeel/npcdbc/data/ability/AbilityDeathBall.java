@@ -1,15 +1,10 @@
 package kamkeel.npcdbc.data.ability;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcs.controllers.data.ability.AnchorPoint;
 import kamkeel.npcs.controllers.data.ability.LockMovementType;
 import kamkeel.npcs.controllers.data.ability.TargetingMode;
 import kamkeel.npcs.controllers.data.ability.type.AbilityOrb;
 import kamkeel.npcs.controllers.data.telegraph.TelegraphType;
-import noppes.npcs.client.gui.advanced.SubGuiAbilityConfig;
-import noppes.npcs.client.gui.advanced.ability.SubGuiAbilityOrb;
-import noppes.npcs.client.gui.util.IAbilityConfigCallback;
 
 public class AbilityDeathBall extends AbilityOrb {
     public AbilityDeathBall() {
@@ -39,11 +34,5 @@ public class AbilityDeathBall extends AbilityOrb {
         setLightningDensity(1.5f);
         setLightningRadius(2.5f);
         setAnchorPointEnum(AnchorPoint.ABOVE_HEAD);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public SubGuiAbilityConfig createConfigGui(IAbilityConfigCallback callback) {
-        return new SubGuiAbilityOrb(this, callback);
     }
 }
