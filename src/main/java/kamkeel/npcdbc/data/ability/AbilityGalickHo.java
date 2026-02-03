@@ -2,10 +2,10 @@ package kamkeel.npcdbc.data.ability;
 
 import kamkeel.npcs.controllers.data.ability.LockMovementType;
 import kamkeel.npcs.controllers.data.ability.TargetingMode;
-import kamkeel.npcs.controllers.data.ability.type.AbilityEnergyBeam;
+import kamkeel.npcs.controllers.data.ability.type.AbilityBeam;
 import kamkeel.npcs.controllers.data.telegraph.TelegraphType;
 
-public class AbilityGalickHo extends AbilityEnergyBeam {
+public class AbilityGalickHo extends AbilityBeam {
     public AbilityGalickHo() {
         this.typeId = "ability.npcdbc.galick_ho";
         this.name = "Galick Gun";

@@ -2,10 +2,10 @@ package kamkeel.npcdbc.data.ability;
 
 import kamkeel.npcs.controllers.data.ability.LockMovementType;
 import kamkeel.npcs.controllers.data.ability.TargetingMode;
-import kamkeel.npcs.controllers.data.ability.type.AbilityEnergyBeam;
+import kamkeel.npcs.controllers.data.ability.type.AbilityBeam;
 import kamkeel.npcs.controllers.data.telegraph.TelegraphType;
 
-public class AbilityKiWave extends AbilityEnergyBeam {
+public class AbilityKiWave extends AbilityBeam {
     public AbilityKiWave() {
         this.typeId = "ability.npcdbc.ki_wave";
         this.name = "Energy Wave";

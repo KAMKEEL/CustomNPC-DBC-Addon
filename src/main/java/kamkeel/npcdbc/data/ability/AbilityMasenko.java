@@ -2,10 +2,10 @@ package kamkeel.npcdbc.data.ability;
 
 import kamkeel.npcs.controllers.data.ability.LockMovementType;
 import kamkeel.npcs.controllers.data.ability.TargetingMode;
-import kamkeel.npcs.controllers.data.ability.type.AbilityEnergyBeam;
+import kamkeel.npcs.controllers.data.ability.type.AbilityBeam;
 import kamkeel.npcs.controllers.data.telegraph.TelegraphType;
 
-public class AbilityMasenko extends AbilityEnergyBeam {
+public class AbilityMasenko extends AbilityBeam {
     public AbilityMasenko() {
         this.typeId = "ability.npcdbc.masenko";
         this.name = "Masenko";
