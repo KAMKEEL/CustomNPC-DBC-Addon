@@ -21,12 +21,16 @@ gui.clone=Clone
 
 stats.dbc=DBC Settings
 stats.lockOnState=Can NPC be locked onto?
+stats.dbcEnabled=DBC Damage Enabled
 stats.friendlyFist=Friendly Fist
+stats.friendlyFistTime=Friendly Fist Duration (s)
+stats.section.damageModifiers=Damage Modifiers
 stats.ignoreDex=Ignore Dex
 stats.ignoreBlock=Ignore Block
 stats.ignoreEndurance=Ignore Endurance
 stats.ignoreKiDamage=Ignore Ki Protection
 stats.ignoreFormDefense=Ignore Form Defense
+stats.section.defensePenetration=Defense Penetration
 stats.hasDefensePenetration=Has Defense Penetration
 stats.defensePenetration=Defense Penetration
 

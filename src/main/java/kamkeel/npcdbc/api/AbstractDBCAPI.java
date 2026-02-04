@@ -13,6 +13,7 @@ import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.api.outline.IOutlineHandler;
 import kamkeel.npcdbc.api.util.IDBCSettingsHandler;
 import kamkeel.npcdbc.util.DBCSettingsUtil;
+import noppes.npcs.api.ability.IAbility;
 import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.api.entity.IEntity;
 import noppes.npcs.api.entity.IPlayer;
@@ -97,6 +98,17 @@ public abstract class AbstractDBCAPI {
     public abstract IDBCStats getDBCData(ICustomNpc npc);
 
     public abstract IDBCDisplay getDBCDisplay(ICustomNpc npc);
+
+    /**
+     * Gets the DBC Stats attached to an Ability.
+     * These stats control how the ability's damage is processed
+     * through the DBC damage system (e.g., ignore dex, ignore block,
+     * defense penetration, friendly fist, etc.).
+     *
+     * @param ability The ability to get DBC stats for
+     * @return DBC Stats attached to the ability, or null if the ability is invalid
+     */
+    public abstract IDBCStats getAbilityDBCStats(IAbility ability);
 
     /**
      * Performs DBC Damage based on the DBC Stats
