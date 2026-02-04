@@ -5,9 +5,9 @@ import kamkeel.npcs.controllers.data.ability.TargetingMode;
 import kamkeel.npcs.controllers.data.ability.type.AbilityDisc;
 import kamkeel.npcs.controllers.data.telegraph.TelegraphType;
 
-public class AbilityKienzan extends AbilityDisc {
-    public AbilityKienzan() {
-        this.typeId = "ability.npcdbc.kienzan";
+public class AbilityDestructoDisc extends AbilityDisc {
+    public AbilityDestructoDisc() {
+        this.typeId = "ability.npcdbc.destructo_disc";
         this.name = "Destructo Disc";
         this.targetingMode = TargetingMode.AGGRO_TARGET;
         this.maxRange = 30.0f;

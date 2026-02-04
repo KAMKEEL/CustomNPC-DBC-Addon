@@ -5,9 +5,9 @@ import kamkeel.npcs.controllers.data.ability.TargetingMode;
 import kamkeel.npcs.controllers.data.ability.type.AbilityLaserShot;
 import kamkeel.npcs.controllers.data.telegraph.TelegraphType;
 
-public class AbilityMakankosappo extends AbilityLaserShot {
-    public AbilityMakankosappo() {
-        this.typeId = "ability.npcdbc.makankosappo";
+public class AbilitySpecialBeamCannon extends AbilityLaserShot {
+    public AbilitySpecialBeamCannon() {
+        this.typeId = "ability.npcdbc.special_beam_cannon";
         this.name = "Special Beam Cannon";
         this.targetingMode = TargetingMode.AGGRO_TARGET;
         this.maxRange = 35.0f;

@@ -5,9 +5,9 @@ import kamkeel.npcs.controllers.data.ability.TargetingMode;
 import kamkeel.npcs.controllers.data.ability.type.AbilityBeam;
 import kamkeel.npcs.controllers.data.telegraph.TelegraphType;
 
-public class AbilityGalickHo extends AbilityBeam {
-    public AbilityGalickHo() {
-        this.typeId = "ability.npcdbc.galick_ho";
+public class AbilityGalickGun extends AbilityBeam {
+    public AbilityGalickGun() {
+        this.typeId = "ability.npcdbc.galick_gun";
         this.name = "Galick Gun";
         this.targetingMode = TargetingMode.AGGRO_TARGET;
         this.maxRange = 20.0f;

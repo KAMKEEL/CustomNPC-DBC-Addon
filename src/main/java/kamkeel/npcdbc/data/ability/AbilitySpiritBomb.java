@@ -5,9 +5,9 @@ import kamkeel.npcs.controllers.data.ability.TargetingMode;
 import kamkeel.npcs.controllers.data.ability.type.AbilityOrb;
 import kamkeel.npcs.controllers.data.telegraph.TelegraphType;
 
-public class AbilityGenkiDama extends AbilityOrb {
-    public AbilityGenkiDama() {
-        this.typeId = "ability.npcdbc.genki_dama";
+public class AbilitySpiritBomb extends AbilityOrb {
+    public AbilitySpiritBomb() {
+        this.typeId = "ability.npcdbc.spirit_bomb";
         this.name = "Spirit Bomb";
         this.targetingMode = TargetingMode.AGGRO_TARGET;
         this.maxRange = 25.0f;
