@@ -46,5 +46,6 @@ tasks.named("generateTypeScriptDefinitions").configure {
     patchesDirectory = "dts-patches"
 }
 processResources.dependsOn generateTypeScriptDefinitions
+sourcesJar.dependsOn generateTypeScriptDefinitions
 
 
