@@ -5,7 +5,7 @@ import kamkeel.npcs.util.Register;
 import kamkeel.npcs.controllers.data.ability.Ability;
 
 public class DBCAbilities {
-    public static Register.Abilities ABILITIES = new Register.Abilities("npcdbc");
+    public static Register.Abilities ABILITIES = Register.Abilities.create("npcdbc");
 
     // BLASTS
     public static final Ability KI_BLAST = ABILITIES.register("ki_blast", AbilityKiBlast::new);
