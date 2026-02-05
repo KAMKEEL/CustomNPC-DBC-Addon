@@ -100,10 +100,14 @@ public class OverlayContext implements IOverlayContext {
     }
 
     public int gender() {
+        if (isNPC)
+            return display.isFemaleInternal() ? 2 : 1;
         return ModelBipedDBC.g;
     }
 
     public boolean female() {
+        if (isNPC)
+            return display.isFemaleInternal();
         return gender() > 1;
     }
 

@@ -1,6 +1,8 @@
 package kamkeel.npcdbc.mixins.late.impl.npc.client;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import kamkeel.npcdbc.client.ClientConstants;
+import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.client.render.OutlineRenderer;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
@@ -16,12 +18,16 @@ import net.minecraft.entity.Entity;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.client.model.ModelNPCMale;
 import noppes.npcs.client.model.part.ModelLegs;
+import noppes.npcs.client.model.util.ModelScaleRenderer;
 import noppes.npcs.entity.EntityCustomNpc;
+import noppes.npcs.entity.data.ModelScalePart;
+import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static kamkeel.npcdbc.client.shader.PostProcessing.endBlooming;
@@ -30,6 +36,10 @@ import static kamkeel.npcdbc.client.shader.PostProcessing.startBlooming;
 import static org.lwjgl.opengl.GL11.GL_GREATER;
 import static org.lwjgl.opengl.GL11.glStencilFunc;
 import static org.lwjgl.opengl.GL11.glStencilMask;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glTranslatef;
+import static org.lwjgl.opengl.GL11.glRotatef;
 
 @Mixin(value = ModelMPM.class, remap = false)
 public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
@@ -42,6 +52,8 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
     @Shadow
     private ModelLegs legs;
 
+    @Unique
+    private DBCDisplay display;
 
     public MixinModelMPM(float f) {
         super(f);
@@ -110,54 +122,96 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
 
     }
 
-    @Unique
-    private DBCDisplay display;
-
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/ModelMPM;renderCloak(Lnoppes/npcs/entity/EntityCustomNpc;F)V", shift = At.Shift.AFTER), remap = true)
     private void renderDBCOverlays(Entity entity, float par2, float par3, float par4, float par5, float par6, float par7, CallbackInfo ci) {
-        if (!isArmor && display.enabled) {
+        if (!isArmor && display != null && display.enabled) {
             OverlayContext ctx = OverlayContext.from(display);
             ctx.modelNpc = NPCDBCModel;
             NPCDBCModel.renderOverlays(ctx);
         }
     }
 
-    @Inject(method = "renderHead", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 2, shift = At.Shift.BEFORE, remap = true), cancellable = true)
-    private void renderDBCHead(EntityCustomNpc entity, float f, CallbackInfo ci) {
+    @Redirect(method = "renderHead", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 2, remap = true))
+    private void renderDBCHead(ModelScaleRenderer instance, float v, @Local(argsOnly = true) EntityCustomNpc entity) {
         display = ((INPCDisplay) entity.display).getDBCDisplay();
+        ClientProxy.currentlyDrawnNPC = entity;
+        glPushMatrix();
         if (!isArmor && display.enabled) {
+            if (display.isFemaleInternal()) {
+                GL11.glScalef(0.85F, 1, 0.85F);
+            }
             NPCDBCModel.renderFace(entity, display, bipedHead);
             NPCDBCModel.renderBodySkin(display, bipedHead);
         }
+        instance.render(v);
+        glPopMatrix();
     }
 
-    @Inject(method = "renderBody", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", shift = At.Shift.BEFORE, remap = true), cancellable = true)
-    private void renderDBCBody(EntityCustomNpc entity, float f, CallbackInfo ci) {
+    @Redirect(method = "renderBody", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", remap = true))
+    private void renderDBCBody(ModelScaleRenderer instance, float v, @Local(argsOnly = true) EntityCustomNpc entity, @Local(argsOnly = false) ModelScalePart part) {
+        if (instance.isHidden || !instance.showModel)
+            return;
         display = ((INPCDisplay) entity.display).getDBCDisplay();
-        if (!isArmor && display.enabled) {
-            NPCDBCModel.renderBodySkin(display, bipedBody);
+        glPushMatrix();
+
+        if (!display.isFemaleInternal()) {
+            if (!isArmor && display.enabled) {
+                NPCDBCModel.renderBodySkin(display, bipedBody);
+            }
+            instance.render(v);
+        } else if (!display.enabled) {
+            instance.render(v);
+        } else {
+            NPCDBCModel.renderFemaleBodySkin(display, instance, isArmor, part, v);
         }
+
+        glPopMatrix();
     }
 
-    @Inject(method = "renderLegs", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/part/ModelLegs;render(F)V", shift = At.Shift.BEFORE, remap = true), cancellable = true)
-    private void renderDBCLegs(EntityCustomNpc entity, float f, CallbackInfo ci) {
+    @Redirect(method = "renderLegs", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/part/ModelLegs;render(F)V", remap = true))
+    private void renderDBCLegs(ModelLegs instance, float green, @Local(argsOnly = true) EntityCustomNpc entity) {
         display = ((INPCDisplay) entity.display).getDBCDisplay();
-        if (!isArmor && display.enabled)
+        glPushMatrix();
+        if (!isArmor && display.enabled) {
+            if (display.isFemaleInternal()) {
+//                GL11.glScalef(0.7F, 1F, 0.7F);
+            }
             NPCDBCModel.renderBodySkin(display, legs);
+        }
+        instance.render(green);
+        glPopMatrix();
     }
 
-    @Inject(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 0, shift = At.Shift.BEFORE, remap = true), cancellable = true)
-    private void renderDBCLeftArm(EntityCustomNpc entity, float f, boolean bo, CallbackInfo ci) {
+    @Redirect(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 0, remap = true))
+    private void renderDBCLeftArm(ModelScaleRenderer instance, float v, @Local(argsOnly = true) EntityCustomNpc entity) {
         display = ((INPCDisplay) entity.display).getDBCDisplay();
+        glPushMatrix();
+        if (display.isFemaleInternal()) {
+            GL11.glScalef(0.7F, 1F, 0.7F);
+            glTranslatef(-0.0125f, 0.035f, 0);
+            glRotatef(-7, 0, 0, 0.1f);
+        }
         if (!isArmor && display.enabled)
             NPCDBCModel.renderBodySkin(display, bipedLeftArm);
+        instance.render(v);
+        glPopMatrix();
     }
 
-    @Inject(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 1, shift = At.Shift.BEFORE, remap = true), cancellable = true)
-    private void renderDBCRightArm(EntityCustomNpc entity, float f, boolean bo, CallbackInfo ci) {
+    @Redirect(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 1, remap = true))
+    private void renderDBCRightArm(ModelScaleRenderer instance, float v, @Local(argsOnly = true) EntityCustomNpc entity) {
         display = ((INPCDisplay) entity.display).getDBCDisplay();
+        GL11.glPushMatrix();
+        if (display.isFemaleInternal()) {
+            GL11.glScalef(0.7F, 1F, 0.7F);
+            glTranslatef(0.0125f, 0.035f, 0);
+            glRotatef(7, 0, 0, 0.1f);
+        }
         if (!isArmor && display.enabled)
             NPCDBCModel.renderBodySkin(display, bipedRightArm);
+
+
+        instance.render(v);
+        GL11.glPopMatrix();
     }
 
     @Inject(method = "setRotationAngles", at = @At("TAIL"))
@@ -179,6 +233,7 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
         }
 
         NPCDBCModel.renderEnabledKiWeapons(par7);
+        ClientProxy.currentlyDrawnNPC = null;
     }
 
     @Unique

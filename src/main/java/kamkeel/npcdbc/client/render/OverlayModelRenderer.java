@@ -32,6 +32,9 @@ public final class OverlayModelRenderer {
         GL11.glTranslatef(0, 0.00001f, 0); //Must be this precise
 
         if (ctx.isNPC) {
+            if (ctx.female()) {
+                GL11.glScalef(0.85F, 1, 0.85F);
+            }
             ctx.mpm().renderHead(ctx.npc, SCALE);
         } else {
             float a = ctx.age();
@@ -72,6 +75,17 @@ public final class OverlayModelRenderer {
             if (ctx.npc.currentAnimation == EnumAnimation.DANCING) {
                 float dancing = (float) ctx.npc.ticksExisted / 4.0F;
                 GL11.glTranslatef((float) Math.sin(dancing) * 0.025F, (float) Math.abs(Math.cos(dancing)) * 0.125F - 0.02F, 0.0F);
+            }
+
+            if (ctx.female()) {
+                GL11.glScalef(0.7F, 1F, 0.7F);
+                if (right) {
+                    GL11.glTranslatef(0.0125f, 0.035f, 0);
+                    GL11.glRotatef(7, 0, 0, 0.1f);
+                } else {
+                    GL11.glTranslatef(-0.0125f, 0.035f, 0);
+                    GL11.glRotatef(-7, 0, 0, 0.1f);
+                }
             }
 
             if (right)
@@ -142,13 +156,64 @@ public final class OverlayModelRenderer {
      * ───────────────────────────── */
     private static void renderBody(OverlayContext ctx) {
         if (ctx.isNPC) {
-            ctx.mpm().renderBody(ctx.npc, SCALE);
+            if (ctx.female()) {
+                // For female NPCs, render the DBCFemaleBody directly so overlays apply correctly
+                renderNPCFemaleBody(ctx);
+            } else {
+                ctx.mpm().renderBody(ctx.npc, SCALE);
+            }
         } else {
             if (!ctx.female())
                 renderMaleBody(ctx);
             else
                 renderFemaleBody(ctx);
         }
+    }
+
+    private static void renderNPCFemaleBody(OverlayContext ctx) {
+        // Render the female body model with the same scaling as DBCFemaleBody uses
+        GL11.glPushMatrix();
+
+        // Body (0.7F scale)
+        GL11.glPushMatrix();
+        GL11.glScalef(0.7F, 1.0F, 0.7F);
+        ctx.modelNpc.DBCFemaleBody.body.render(SCALE);
+        GL11.glPopMatrix();
+
+        // Waist (0.65F scale)
+        GL11.glPushMatrix();
+        GL11.glScalef(0.65F, 1.0F, 0.65F);
+        GL11.glTranslatef(0.0F, 0.0F, -0.04F);
+        ctx.modelNpc.DBCFemaleBody.waist.render(SCALE);
+        GL11.glPopMatrix();
+
+        // Hip (0.75F scale)
+        GL11.glPushMatrix();
+        GL11.glScalef(0.75F, 1.0F, 0.75F);
+        GL11.glTranslatef(0.0F, 0.0F, -0.02F);
+        ctx.modelNpc.DBCFemaleBody.hip.render(SCALE);
+        GL11.glPopMatrix();
+
+        // Bottom (0.85F scale)
+        GL11.glPushMatrix();
+        GL11.glScalef(0.85F, 1.0F, 0.85F);
+        ctx.modelNpc.DBCFemaleBody.bottom.render(SCALE);
+        GL11.glPopMatrix();
+
+        // Breast areas (0.675F x 1.0F x 0.8F)
+        GL11.glPushMatrix();
+        GL11.glScalef(0.675F, 1.0F, 0.8F);
+        GL11.glTranslatef(0.0F, 0.0F, 0.015F);
+        ctx.modelNpc.DBCFemaleBody.Bbreast.render(SCALE);
+        GL11.glPopMatrix();
+
+        GL11.glPushMatrix();
+        GL11.glScalef(0.674F, 1.0F, 0.799F);
+        GL11.glTranslatef(0.0F, 0.001F, 0.015F);
+        ctx.modelNpc.DBCFemaleBody.Bbreast2.render(SCALE);
+        GL11.glPopMatrix();
+
+        GL11.glPopMatrix();
     }
 
     private static void renderMaleBody(OverlayContext ctx) {

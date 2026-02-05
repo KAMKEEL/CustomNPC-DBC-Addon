@@ -76,6 +76,25 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public int formID = -1, selectedForm = -1, rage;
     public float formLevel = 0;
     public boolean isTransforming, isKaioken;
+    private boolean isFemale = false;
+    public int breastSize = 1;
+
+
+    public boolean isFemale() {
+        return isFemale;
+    }
+    public boolean isFemaleInternal() {
+        boolean isFormOozaru = false;
+        Form form = getForm();
+        if (form != null) {
+            isFormOozaru = form.display.hairType.equals("oozaru");
+        }
+        isFormOozaru = isFormOozaru && DBCRace.isSaiyan(race);
+        return isFemale && !isFormOozaru;
+    }
+    public void setFemale(boolean isFemale) {
+        this.isFemale = isFemale;
+    }
 
     // Outline
     public int outlineID;
@@ -112,7 +131,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         comp.setBoolean("DBCDisplayEnabled", enabled);
         if (enabled) {
             NBTTagCompound dbcDisplay = new NBTTagCompound();
-
+            dbcDisplay.setBoolean("DBCFemale", isFemale);
             dbcDisplay.setString("DBCHair", hairCode);
             dbcDisplay.setInteger("DBCHairColor", hairColor);
             dbcDisplay.setInteger("DBCEyeColor", eyeColor);
@@ -151,6 +170,8 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
             dbcDisplay.setInteger("DBCOutlineID", outlineID);
 
+            dbcDisplay.setInteger("DBCFemaleBreastSize", breastSize);
+
 
             kiWeaponLeft.saveToNBT(dbcDisplay, "kiWeaponLeft");
             kiWeaponRight.saveToNBT(dbcDisplay, "kiWeaponRight");
@@ -170,7 +191,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         enabled = comp.getBoolean("DBCDisplayEnabled");
         if (enabled) {
             NBTTagCompound dbcDisplay = comp.getCompoundTag("DBCDisplay");
-
+            isFemale = dbcDisplay.getBoolean("DBCFemale");
 
             race = dbcDisplay.getByte("DBCRace");
             auraID = dbcDisplay.getInteger("DBCAuraID");
@@ -210,6 +231,9 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             isKaioken = dbcDisplay.getBoolean("DBCIsKaioken");
             formID = dbcDisplay.getInteger("DBCFormID");
             selectedForm = dbcDisplay.getInteger("DBCSelectedForm");
+
+            if (dbcDisplay.hasKey("DBCFemaleBreastSize"))
+                breastSize = dbcDisplay.getInteger("DBCFemaleBreastSize");
 
             if (dbcDisplay.hasKey("kiWeaponLeft"))
                 kiWeaponLeft.readFromNBT(dbcDisplay, "kiWeaponLeft");

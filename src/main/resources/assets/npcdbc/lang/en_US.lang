@@ -95,6 +95,8 @@ mastery.destroyerSettings=Destroyer Settings
 mastery.destroyerKiDamage=Ki Damage Multi
 mastery.linkedMastery=Linked Mastery
 
+display.femaleModel=Female
+display.breastSize=Breast Size
 display.attri=Attri
 display.adv=Adv
 display.human=Human
