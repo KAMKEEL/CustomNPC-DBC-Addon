@@ -1,0 +1,34 @@
+package kamkeel.npcdbc.data.ability;
+
+import kamkeel.npcs.controllers.data.ability.LockMovementType;
+import kamkeel.npcs.controllers.data.ability.TargetingMode;
+import kamkeel.npcs.controllers.data.ability.type.AbilityBeam;
+import kamkeel.npcs.controllers.data.telegraph.TelegraphType;
+
+public class AbilityKamehameha extends AbilityBeam {
+    public AbilityKamehameha() {
+        this.typeId = "ability.npcdbc.kamehameha";
+        this.name = "Kamehameha";
+        this.targetingMode = TargetingMode.AGGRO_TARGET;
+        this.maxRange = 20.0f;
+        this.minRange = 5.0f;
+        this.cooldownTicks = 0;
+        this.windUpTicks = 60;
+        this.lockMovement = LockMovementType.WINDUP_AND_ACTIVE;
+        this.telegraphType = TelegraphType.CIRCLE;
+        this.showTelegraph = false;
+        // Default built-in animations
+        this.windUpAnimationName = "Ability_Beam_Windup";
+        this.activeAnimationName = "Ability_Beam_Active";
+
+        setBeamWidth(2.0f);
+        setHeadSize(2.5f);
+        setSpeed(1.5f);
+        setRotationSpeed(30f);
+        setOuterColorAlpha(1.0f);
+        setOuterColor(0x00FFFF);
+        setHoming(false);
+        setWindUpSound("DBC4.cbeam4s");
+        setActiveSound("DBC4.fbeam4s");
+    }
+}

@@ -709,6 +709,11 @@ public interface IDBCAddon extends IDBCPlayer {
     void fireKiAttack(IKiAttack kiAttack);
 
     /**
+     * @return True if player is transforming
+     */
+    boolean isTransforming();
+
+    /**
      * @return True if player is releasing ki
      */
     boolean isReleasing();
@@ -748,4 +753,11 @@ public interface IDBCAddon extends IDBCPlayer {
      * @return Data of the custom skill progression or <code>null</code> if player doesn't have it
      */
     ISkillContainer getCustomSkillData(ICustomSkill skill);
+
+    /**
+     * Sets dbcPlayer to a Koed state
+     *
+     * @param KoTime integer for player Ko time, 1=5 sec
+     */
+    void setKo(int KoTime);
 }

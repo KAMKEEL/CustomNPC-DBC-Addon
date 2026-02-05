@@ -28,6 +28,7 @@ import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.mixins.late.INPCStats;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
+import kamkeel.npcs.util.AttributeAttackUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IProjectile;
@@ -36,13 +37,39 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import noppes.npcs.config.ConfigMain;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.scripted.CustomNPCsException;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static JinRyuu.JRMCore.JRMCoreH.*;
+import static JinRyuu.JRMCore.JRMCoreH.DBCRacialSkillMindCost;
+import static JinRyuu.JRMCore.JRMCoreH.DBCRacialSkillTPCost;
+import static JinRyuu.JRMCore.JRMCoreH.DBCSkillMindCost;
+import static JinRyuu.JRMCore.JRMCoreH.DBCSkillNames;
+import static JinRyuu.JRMCore.JRMCoreH.DBCSkillTPCost;
+import static JinRyuu.JRMCore.JRMCoreH.PlyrAttrbts;
+import static JinRyuu.JRMCore.JRMCoreH.PlyrSettingsB;
+import static JinRyuu.JRMCore.JRMCoreH.PlyrSkills;
+import static JinRyuu.JRMCore.JRMCoreH.SklLvl;
+import static JinRyuu.JRMCore.JRMCoreH.SklLvlY;
+import static JinRyuu.JRMCore.JRMCoreH.SklLvl_KiBs;
+import static JinRyuu.JRMCore.JRMCoreH.StusEfcts;
+import static JinRyuu.JRMCore.JRMCoreH.difp;
+import static JinRyuu.JRMCore.JRMCoreH.getByte;
+import static JinRyuu.JRMCore.JRMCoreH.getInt;
+import static JinRyuu.JRMCore.JRMCoreH.getPlayerAttribute;
+import static JinRyuu.JRMCore.JRMCoreH.getString;
+import static JinRyuu.JRMCore.JRMCoreH.isInCreativeMode;
+import static JinRyuu.JRMCore.JRMCoreH.nbt;
+import static JinRyuu.JRMCore.JRMCoreH.pwr_cha;
+import static JinRyuu.JRMCore.JRMCoreH.pwr_ki;
+import static JinRyuu.JRMCore.JRMCoreH.pwr_sa;
+import static JinRyuu.JRMCore.JRMCoreH.setByte;
+import static JinRyuu.JRMCore.JRMCoreH.setInt;
+import static JinRyuu.JRMCore.JRMCoreH.stat;
+import static JinRyuu.JRMCore.JRMCoreH.weightPerc;
 
 // Created by Goatee
 public class DBCUtils {
@@ -320,6 +347,15 @@ public class DBCUtils {
                 }
 
                 dbcA = calculateDamageNegation(player, dbcA);
+
+                if (ConfigMain.AttributesEnabled) {
+                    if (dse) {
+                        EntityPlayer attackingPlayer = (EntityPlayer) s.getEntity();
+                        EntityPlayer defendingPlayer = (EntityPlayer) Player;
+                        dbcA = AttributeAttackUtil.calculateDamagePlayerToPlayer(attackingPlayer, defendingPlayer, dbcA);
+                    }
+                }
+
                 float hpRemaining = currentHP - dbcA;
                 float newHP;
                 if (dse) {
@@ -554,7 +590,7 @@ public class DBCUtils {
                 int ko = getInt(player, "jrmcHar4va");
                 newHP = Math.max(reducedHP, 20);
                 if (ko <= 0 && newHP == 20) {
-                    if(!DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer(player), source))){
+                    if (!DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer(player), source))) {
                         setInt((int) dbcStats.getFriendlyFistAmount(), player, "jrmcHar4va");
                         setByte(race == 4 ? (state < 4 ? state : 4) : 0, player, "jrmcState");
                         setByte((int) 0, player, "jrmcState2");
@@ -620,7 +656,7 @@ public class DBCUtils {
 
             int STR = PlyrAttrbts[DBCAttribute.Strength];
             int ml = JRMCoreH.stat(0, attacker, 0, STR, 0.0f);
-            int staminaCost = (int)(ml * 0.1f);
+            int staminaCost = (int) (ml * 0.1f);
 
             STR = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, DBCAttribute.Strength, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
             if (Melee) {
@@ -657,27 +693,39 @@ public class DBCUtils {
                     int dmg1 = (int) ((float) JRMCoreH.stat(attacker, 3, powerType, 4, WIL, race, classID, 0.0F) * 0.01F);
                     float data1 = (float) ((int) (0.005 * (double) dmg1 * release * 0.01 * (sklkfe3 ? DBCConfig.cnfKCsd : DBCConfig.cnfKBld) * JRMCoreConfig.dat5699));
                     float data2 = (float) ((int) (0.005 * (double) dmg1 * release * 0.01 * (sklkfe3 ? DBCConfig.cnfKCsc : DBCConfig.cnfKBlc)));
-                    kiWeaponCost += (int)(data2 / ((sklkf > 1) ? (sklkf * 0.3f + 1.0f) : 1.0f));
-                    kiWeaponDamage += (int)(sklkf * data1);
+                    kiWeaponCost += (int) (data2 / ((sklkf > 1) ? (sklkf * 0.3f + 1.0f) : 1.0f));
+                    kiWeaponDamage += (int) (sklkf * data1);
 
-                    dmg1 = (int)(JRMCoreH.stat((Entity)attacker, 3, powerType, 4, WIL, race, classID, 0.0f) * 0.01f);
+                    dmg1 = (int) (JRMCoreH.stat((Entity) attacker, 3, powerType, 4, WIL, race, classID, 0.0f) * 0.01f);
                     data1 = (float) (dmg1 * release * 0.01F * JRMCoreH.weightPerc(1, attacker) * (sklkfe3 ? DBCConfig.cnfKCsd : DBCConfig.cnfKBld) * JRMCoreConfig.dat5700);
                     data2 = (float) (dmg1 * release * 0.01F * JRMCoreH.weightPerc(1, attacker) * (sklkfe3 ? DBCConfig.cnfKCsc : DBCConfig.cnfKBlc));
-                    kiWeaponCost += (int)(data2 / ((skf > 1) ? (skf * 0.3f + 1.0f) : 1.0f));
-                    kiWeaponDamage += (int)(skf * data1);
+                    kiWeaponCost += (int) (data2 / ((skf > 1) ? (skf * 0.3f + 1.0f) : 1.0f));
+                    kiWeaponDamage += (int) (skf * data1);
 
                     if (kiWeaponCost > 0 && currentEnergy >= kiWeaponCost) {
                         dam += kiWeaponDamage;
                     }
                 }
 
-                dam += (float)(curAtr + sklks);
+                dam += (float) (curAtr + sklks);
             } else if (Projectile) {
                 staminaCost = 1;
                 int WIL = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 3, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
                 int dmg3 = (int) ((float) JRMCoreH.stat(attacker, 3, powerType, 4, WIL, race, classID, 0.0F) * 0.01F);
                 int skf = JRMCoreH.SklLvl(15, PlyrSkills);
-                dam += (float)(dmg3 * release * 0.005F * skf * JRMCoreH.weightPerc(1, attacker));
+
+                // Calculate base projectile damage with Ki Infuse bonus
+                float kiInfuseBonus = (float) (dmg3 * release * 0.005F * skf * JRMCoreH.weightPerc(1, attacker));
+                dam += kiInfuseBonus;
+                if (skf > 0) {
+                    int kiCost = (int) (dam * 0.005 * skf * DBCConfig.cnfKIc);
+                    if (currentEnergy >= kiCost) {
+                        dam = (float) (dam * DBCConfig.cnfKId);
+                    } else {
+                        // Not enough Ki - remove the Ki Infuse bonus
+                        dam -= kiInfuseBonus;
+                    }
+                }
             }
 
             if (ultraInstinctCounter) {
@@ -687,11 +735,11 @@ public class DBCUtils {
             dam = ((dam <= 0.0f) ? 1.0f : dam);
             int UI_cost = 0;
             if (Melee && ultraInstinctCounter) {
-                UI_cost = (int)getUltraInstinctCounterStaminaCost(attacker, (byte)JRMCoreH.state2UltraInstinct(!mn, (byte)state2));
+                UI_cost = (int) getUltraInstinctCounterStaminaCost(attacker, (byte) JRMCoreH.state2UltraInstinct(!mn, (byte) state2));
             }
 
-            staminaCost = (int)(staminaCost * JRMCoreConfig.cnfPnchc + UI_cost);
-            if(currentStamina <= staminaCost || dam == 1.0f) {
+            staminaCost = (int) (staminaCost * JRMCoreConfig.cnfPnchc + UI_cost);
+            if (currentStamina <= staminaCost || dam == 1.0f) {
                 dam = eventDamage;
             }
         }
@@ -699,8 +747,9 @@ public class DBCUtils {
     }
 
     private static float getUltraInstinctCounterStaminaCost(final EntityPlayer targetPlayer, final byte targetState2) {
-        return getUltraInstinctStaminaCost(targetPlayer, targetState2, (float)JGConfigUltraInstinct.CONFIG_UI_DODGE_STAMINA_COST[targetState2]);
+        return getUltraInstinctStaminaCost(targetPlayer, targetState2, (float) JGConfigUltraInstinct.CONFIG_UI_DODGE_STAMINA_COST[targetState2]);
     }
+
     private static float getUltraInstinctStaminaCost(EntityPlayer targetPlayer, byte targetState2, float staminaCost) {
         if (JGConfigUltraInstinct.CONFIG_UI_PERCENTAGE_STAMINA_COST) {
             byte pwr = JRMCoreH.getByte(targetPlayer, "jrmcPwrtyp");
@@ -709,11 +758,11 @@ public class DBCUtils {
             int[] PlyrAttrbts = JRMCoreH.PlyrAttrbts(targetPlayer);
             int maxStamina = JRMCoreH.stat(targetPlayer, 2, pwr, 3, PlyrAttrbts[2], rce, cls, 0.0F);
             if (staminaCost > 100.0F) {
-                staminaCost = (float)maxStamina;
+                staminaCost = (float) maxStamina;
             } else if (staminaCost == 0.0F) {
                 staminaCost = 0.0F;
             } else {
-                staminaCost *= (float)maxStamina / 100.0F;
+                staminaCost *= (float) maxStamina / 100.0F;
             }
         }
 
@@ -900,9 +949,9 @@ public class DBCUtils {
     /**
      * Determines if incoming damage will knock the player out using Friendly Fist logic.
      *
-     * @param player  Player receiving damage
-     * @param source  Source of the damage
-     * @param damage  Final damage that will be applied to the player
+     * @param player Player receiving damage
+     * @param source Source of the damage
+     * @param damage Final damage that will be applied to the player
      * @return {@code true} if the damage should result in a knock out
      */
     public static boolean checkKnockout(EntityPlayer player, DamageSource source, float damage) {

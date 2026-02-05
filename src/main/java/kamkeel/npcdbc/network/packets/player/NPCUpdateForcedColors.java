@@ -1,22 +1,16 @@
 package kamkeel.npcdbc.network.packets.player;
 
-import JinRyuu.JRMCore.entity.EntityNPC;
 import io.netty.buffer.ByteBuf;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.PacketChannel;
 import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
-import kamkeel.npcdbc.scripted.DBCAPI;
 import kamkeel.npcs.util.ByteBufUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import noppes.npcs.api.entity.ICustomNpc;
-import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 
 import java.io.IOException;

@@ -211,7 +211,7 @@ public class ServerEventHandler {
         }
 
         if (form.mastery.hasKiDrain() && isInSurvival) {
-            if (player.ticksExisted % 10 == 0) {
+            if (player.ticksExisted % form.mastery.kiDrainTimer == 0) { // i changed the timer
                 double might = DBCUtils.calculateKiDrainMight(dbcData, player);
 
                 double cost = might * form.mastery.getKiDrain();
@@ -220,7 +220,7 @@ public class ServerEventHandler {
                     cost *= form.mastery.calculateMulti("kiDrain", formData.getCurrentLevel());
                 }
 
-                int actualCost = (int) Math.floor((-cost / form.mastery.kiDrainTimer) * 10);
+                int actualCost = (int) Math.floor(-cost);
 
                 dbcData.stats.restoreKiFlat(actualCost);
             }
@@ -234,14 +234,14 @@ public class ServerEventHandler {
                 int painTime = (int) (form.mastery.painTime * 60f / 5f * form.mastery.calculateMulti("pain", formData.getCurrentLevel()));
                 dbcData.getRawCompound().setInteger("jrmcGyJ7dp", painTime);
                 newHeat = 0;
-                TransformController.handleFormDescend(player, -10);
+                TransformController.handleFormDescend(player, TransformController.FULL_DESCEND);
             }
 
             dbcData.getRawCompound().setFloat("addonCurrentHeat", newHeat);
         }
 
         if ((form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")) && DBCRace.isSaiyan(dbcData.Race) && !dbcData.hasTail()) {
-            TransformController.handleFormDescend(player, -10);
+            TransformController.handleFormDescend(player, TransformController.FULL_DESCEND);
         }
     }
 

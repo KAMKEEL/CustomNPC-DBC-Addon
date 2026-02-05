@@ -17,10 +17,12 @@ import net.minecraft.entity.boss.IBossDisplayData;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+import noppes.npcs.DataInventory;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.scripted.event.NpcEvent;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -31,8 +33,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(value = EntityNPCInterface.class)
 public abstract class MixinEntityNPCInterface extends EntityCreature implements IEntityAdditionalSpawnData, ICommandSender, IRangedAttackMob, IBossDisplayData {
 
+    @Shadow
+    public DataInventory inventory;
     @Unique
     private boolean dbcAltered; //if DamagedEvent's damage was altered by a DBC player
+
+    @Unique
+    private boolean npcdbc$shouldResetHurtTime;
 
     private MixinEntityNPCInterface(World p_i1602_1_) {
         super(p_i1602_1_);
@@ -63,7 +70,7 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
                 modifiedDamage = AttributeAttackUtil.calculateDamagePlayerToNPC(player, npcInterface, modifiedDamage);
 
                 // Apply Resistances
-                if(ConfigDBCGeneral.ALLOW_DBC_DAMAGE_RESISTANCE){
+                if (ConfigDBCGeneral.ALLOW_DBC_DAMAGE_RESISTANCE) {
                     modifiedDamage = npcInterface.stats.resistances.applyResistance(damagesource, modifiedDamage);
                 }
                 dam.set(modifiedDamage);
@@ -92,6 +99,11 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
 
     @Inject(method = "attackEntityFrom", at = @At("HEAD"))
     public void resetDamageEntityCalled(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        npcdbc$shouldResetHurtTime = false;
+        Entity attackerEntity = NoppesUtilServer.GetDamageSource(source);
+        if (attackerEntity instanceof EntityPlayer) {
+            npcdbc$shouldResetHurtTime = true;
+        }
         DBCUtils.damageEntityCalled = false;
     }
 
@@ -100,5 +112,11 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
         if (!DBCUtils.damageEntityCalled) {
             DBCUtils.npcLastSetDamage = null;
         }
+        if (ConfigDBCGeneral.MODIFIED_DAMAGE_SPEED && npcdbc$shouldResetHurtTime && cir.getReturnValueZ()) {
+            if (this.hurtResistantTime > ConfigDBCGeneral.NPC_MAX_HURT_RESISTANCE) {
+                this.hurtResistantTime = ConfigDBCGeneral.NPC_MAX_HURT_RESISTANCE;
+            }
+        }
+        npcdbc$shouldResetHurtTime = false;
     }
 }

@@ -7,6 +7,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import kamkeel.npcdbc.CommonProxy;
+import kamkeel.npcdbc.data.ability.DBCAbilityFieldProvider;
 import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.client.render.PotaraItemRenderer;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
@@ -24,6 +25,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
+import kamkeel.npcs.controllers.data.ability.AbilityController;
+import noppes.npcs.CustomNpcs;
+import noppes.npcs.entity.EntityCustomNpc;
 
 import java.lang.reflect.Field;
 import java.time.Duration;
@@ -33,6 +37,7 @@ import java.util.Collection;
 
 public class ClientProxy extends CommonProxy {
     public static int lastRendererGUIPlayerID = -1;
+    public static EntityCustomNpc currentlyDrawnNPC = null;
 
     public static void eventsInit() {
         FMLCommonHandler.instance().bus().register(new ClientEventHandler());
@@ -46,12 +51,18 @@ public class ClientProxy extends CommonProxy {
     public void preInit(FMLPreInitializationEvent ev) {
         super.preInit(ev);
         forceStencilEnable();
+        CustomNpcs.addClassesToClientClassFilter(filter -> {
+            filter.addRegexes("kamkeel\\.npcdbc\\.api\\..*");
+        });
     }
 
     public void init(FMLInitializationEvent ev) {
         super.init(ev);
         eventsInit();
         KeyHandler.registerKeys();
+
+        // Register DBC ability field provider for GUI tab injection
+        AbilityController.Instance.registerFieldProvider(new DBCAbilityFieldProvider());
         RenderingRegistry.registerEntityRenderingHandler(EntityAura.class, new AuraRenderer());
         MinecraftForgeClient.registerItemRenderer(ModItems.Potaras, new PotaraItemRenderer());
         ShaderHelper.loadShaders(false);

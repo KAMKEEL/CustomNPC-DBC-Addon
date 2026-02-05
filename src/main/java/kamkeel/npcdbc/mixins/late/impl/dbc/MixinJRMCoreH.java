@@ -24,6 +24,7 @@ import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.dbcdata.DBCDataBonus;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormKaiokenStackableData;
 import kamkeel.npcdbc.data.form.FormMastery;
@@ -48,13 +49,46 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.text.DecimalFormat;
 
-import static JinRyuu.JRMCore.JRMCoreH.*;
+import static JinRyuu.JRMCore.JRMCoreH.DBC;
+import static JinRyuu.JRMCore.JRMCoreH.DBCSkillNames;
+import static JinRyuu.JRMCore.JRMCoreH.DBCSkillsIDs;
+import static JinRyuu.JRMCore.JRMCoreH.KaiKFBal;
+import static JinRyuu.JRMCore.JRMCoreH.NC;
+import static JinRyuu.JRMCore.JRMCoreH.PlyrAttrbts;
+import static JinRyuu.JRMCore.JRMCoreH.Races;
+import static JinRyuu.JRMCore.JRMCoreH.SklLvl;
+import static JinRyuu.JRMCore.JRMCoreH.SklLvlX;
+import static JinRyuu.JRMCore.JRMCoreH.StusEfcts;
+import static JinRyuu.JRMCore.JRMCoreH.TransFrStBnP;
+import static JinRyuu.JRMCore.JRMCoreH.TransHalfSaiStBnP;
+import static JinRyuu.JRMCore.JRMCoreH.TransHmStBnP;
+import static JinRyuu.JRMCore.JRMCoreH.TransKaiDrainLevel;
+import static JinRyuu.JRMCore.JRMCoreH.TransKaiDrainRace;
+import static JinRyuu.JRMCore.JRMCoreH.getArcosianReserveMaxPointPercentage;
+import static JinRyuu.JRMCore.JRMCoreH.getByte;
+import static JinRyuu.JRMCore.JRMCoreH.getCurrentFormName;
+import static JinRyuu.JRMCore.JRMCoreH.getFormID;
+import static JinRyuu.JRMCore.JRMCoreH.getFormMasteryData;
+import static JinRyuu.JRMCore.JRMCoreH.getFormMasteryValue;
+import static JinRyuu.JRMCore.JRMCoreH.getInt;
+import static JinRyuu.JRMCore.JRMCoreH.getMajinAbsorptionValueS;
+import static JinRyuu.JRMCore.JRMCoreH.getNBTFormMasteryRacialKey;
+import static JinRyuu.JRMCore.JRMCoreH.getStatBonus;
+import static JinRyuu.JRMCore.JRMCoreH.getString;
+import static JinRyuu.JRMCore.JRMCoreH.isFused;
+import static JinRyuu.JRMCore.JRMCoreH.jrmcDam;
+import static JinRyuu.JRMCore.JRMCoreH.nbt;
+import static JinRyuu.JRMCore.JRMCoreH.round;
+import static JinRyuu.JRMCore.JRMCoreH.setByte;
+import static JinRyuu.JRMCore.JRMCoreH.setInt;
+import static JinRyuu.JRMCore.JRMCoreH.vlblSklsUps;
 import static kamkeel.npcdbc.util.DBCUtils.lastSetDamage;
 
 @Mixin(value = JRMCoreH.class, remap = false)
@@ -70,51 +104,64 @@ public abstract class MixinJRMCoreH {
     @Unique
     private static int currentResult;
 
+    @Unique
+    private static int applyAddonBonuses(DBCData dbcData, DBCDataBonus.BonusTotals totals, int attributeID, int baseAttribute, int currentValue) {
+        if (totals == null)
+            totals = dbcData.bonus.calculateTotals();
+
+        float multiBonus = totals.getMultiplier(attributeID);
+        if (multiBonus != 0.0F) {
+            currentValue += Math.round(baseAttribute * multiBonus);
+        }
+
+        float flatBonus = totals.getFlat(attributeID);
+        if (flatBonus != 0.0F) {
+            currentValue += Math.round(flatBonus);
+        }
+
+        return currentValue;
+    }
+
+    // Correct
+    @ModifyVariable(
+        method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I",
+        at = @At("HEAD"),
+        argsOnly = true,
+        ordinal = 3,             // attributeID=0, powerType=1, stat=2, attribute=3
+        remap = false
+    )
+    private static int mutateAttribute(int attribute, Entity player, int attributeID, int powerType, int stat, int _attribute, int race, int classID, float skillBonus) {
+        if (DBCUtils.calculatingCost || DBCUtils.calculatingKiDrain || DBCUtils.noBonusEffects)
+            return attribute;
+
+        if (!(player instanceof EntityPlayer) || powerType != 1)
+            return attribute;
+
+        if (attributeID != DBCAttribute.Constitution && attributeID != DBCAttribute.Spirit)
+            return attribute;
+
+        DBCData dbcData = DBCData.get((EntityPlayer) player);
+        DBCDataBonus.BonusTotals totals = dbcData.bonus.calculateTotals();
+        return applyAddonBonuses(dbcData, totals, attributeID, attribute, attribute);
+    }
+
     @Inject(method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;JRMCABonusOn:Z", shift = At.Shift.BEFORE))
     private static void applyPlayerBonusToStat(Entity player, int attributeID, int powerType, int stat, int attribute, int race, int classID, float skillBonus, CallbackInfoReturnable<Integer> cir, @Local(name = "value") LocalIntRef value, @Local(name = "bs") double bs) {
-        if(DBCUtils.calculatingCost || DBCUtils.calculatingKiDrain)
+        if (DBCUtils.calculatingCost || DBCUtils.calculatingKiDrain)
             return;
 
-        if(player instanceof EntityPlayer && powerType == 1){
+        if (player instanceof EntityPlayer && powerType == 1) {
             DBCData dbcData = DBCData.get((EntityPlayer) player);
             int modifiedValue = value.get();
-
             Form form = dbcData.getForm();
-            if(form != null && form.advanced.isStatEnabled(stat)){
+            if (form != null && form.advanced.isStatEnabled(stat)) {
                 // Multi
                 double bsValue = bs;
                 bsValue *= form.advanced.getStatMulti(stat);
 
                 // Bonus
-                modifiedValue = (int)round(bsValue + (double)getStatBonus(powerType, race, classID, stat, false) * 0.01 * bsValue + (double)getStatBonus(powerType, race, classID, stat, true) * 0.01 * bsValue + bsValue * (double)skillBonus, 0, 0);
+                modifiedValue = (int) round(bsValue + (double) getStatBonus(powerType, race, classID, stat, false) * 0.01 * bsValue + (double) getStatBonus(powerType, race, classID, stat, true) * 0.01 * bsValue + bsValue * (double) skillBonus, 0, 0);
                 modifiedValue += form.advanced.getStatBonus(stat);
-            }
-
-            if(attributeID > -1 && attributeID <= 5){
-                float[] bonus = dbcData.bonus.getMultiBonus();
-                if (attributeID == DBCAttribute.Strength && bonus[0] != 0) //str
-                    modifiedValue *= (bonus[0] + 1);
-                else if (attributeID == DBCAttribute.Dexterity && bonus[1] != 0) //dex
-                    modifiedValue *= (bonus[1] + 1);
-                else if (attributeID == DBCAttribute.Willpower && bonus[2] != 0) //will
-                    modifiedValue *= (bonus[2] + 1);
-                else if (attributeID == DBCAttribute.Constitution && bonus[3] != 0) //con
-                    modifiedValue *= (bonus[3] + 1);
-                else if (attributeID == DBCAttribute.Spirit && bonus[4] != 0) //spi
-                    modifiedValue *= (bonus[4] + 1);
-
-                float[] flatBonus = dbcData.bonus.getFlatBonus();
-                // Add Bonus Flat to Base Attributes at the end
-                if (attributeID == DBCAttribute.Strength) // STR
-                    modifiedValue += flatBonus[0];
-                else if (attributeID == DBCAttribute.Dexterity) // DEX
-                    modifiedValue += flatBonus[1];
-                else if (attributeID == DBCAttribute.Willpower) // WIL
-                    modifiedValue += flatBonus[2];
-                else if (attributeID == DBCAttribute.Constitution) // CON
-                    modifiedValue += flatBonus[3];
-                else if (attributeID == DBCAttribute.Spirit) // SPI
-                    modifiedValue += flatBonus[4];
             }
             value.set(modifiedValue);
         }
@@ -290,7 +337,41 @@ public abstract class MixinJRMCoreH {
             result = (int) (result * (averageMulti * statusMulti));
         }
 
+        // Apply player bonuses for custom forms (since applyBonusToDBC won't run)
+        if (!DBCUtils.noBonusEffects && !DBCUtils.calculatingKiDrain && !DBCUtils.calculatingCost) {
+            float[] bonus = dbcData.bonus.getMultiBonus();
+            if (attribute == DBCAttribute.Strength && bonus[0] != 0)
+                result += (currAttributes[DBCAttribute.Strength] * bonus[0]);
+            else if (attribute == DBCAttribute.Dexterity && bonus[1] != 0)
+                result += (currAttributes[DBCAttribute.Dexterity] * bonus[1]);
+            else if (attribute == DBCAttribute.Willpower && bonus[2] != 0)
+                result += (currAttributes[DBCAttribute.Willpower] * bonus[2]);
+            else if (attribute == DBCAttribute.Constitution && bonus[3] != 0)
+                result += (currAttributes[DBCAttribute.Constitution] * bonus[3]);
+            else if (attribute == DBCAttribute.Spirit && bonus[4] != 0)
+                result += (currAttributes[DBCAttribute.Spirit] * bonus[4]);
+
+            float[] flatBonus = dbcData.bonus.getFlatBonus();
+            if (attribute == DBCAttribute.Strength)
+                result += flatBonus[0];
+            else if (attribute == DBCAttribute.Dexterity)
+                result += flatBonus[1];
+            else if (attribute == DBCAttribute.Willpower)
+                result += flatBonus[2];
+            else if (attribute == DBCAttribute.Constitution)
+                result += flatBonus[3];
+            else if (attribute == DBCAttribute.Spirit)
+                result += flatBonus[4];
+        }
+
         result = ValueUtil.clamp(result, 0, Integer.MAX_VALUE);
+
+        if (!DBCUtils.noBonusEffects && !DBCUtils.calculatingKiDrain && !DBCUtils.calculatingCost) {
+            int baseAttribute = attribute >= 0 && attribute < currAttributes.length ? currAttributes[attribute] : 0;
+            DBCDataBonus.BonusTotals totals = dbcData.bonus.calculateTotals();
+            result = applyAddonBonuses(dbcData, totals, attribute, baseAttribute, result);
+        }
+
         info.setReturnValue(result);
     }
 
@@ -354,30 +435,9 @@ public abstract class MixinJRMCoreH {
         int resultOriginal = result.get();
 
         if (!DBCUtils.noBonusEffects && !DBCUtils.calculatingKiDrain && !DBCUtils.calculatingCost) {
-            float[] bonus = dbcData.bonus.getMultiBonus();
-            if (attribute == DBCAttribute.Strength && bonus[0] != 0) //str
-                resultOriginal += (currAttributes[DBCAttribute.Strength] * bonus[0]);
-            else if (attribute == DBCAttribute.Dexterity && bonus[1] != 0) //dex
-                resultOriginal += (currAttributes[DBCAttribute.Dexterity] * bonus[1]);
-            else if (attribute == DBCAttribute.Willpower && bonus[2] != 0) //will
-                resultOriginal += (currAttributes[DBCAttribute.Willpower] * bonus[2]);
-            else if (attribute == DBCAttribute.Constitution && bonus[3] != 0) //con
-                resultOriginal += (currAttributes[DBCAttribute.Constitution] * bonus[3]);
-            else if (attribute == DBCAttribute.Spirit && bonus[4] != 0) //spi
-                resultOriginal += (currAttributes[DBCAttribute.Spirit] * bonus[4]);
-
-            float[] flatBonus = dbcData.bonus.getFlatBonus();
-            // Add Bonus Flat to Base Attributes at the end
-            if (attribute == DBCAttribute.Strength) // STR
-                resultOriginal += flatBonus[0];
-            else if (attribute == DBCAttribute.Dexterity) // DEX
-                resultOriginal += flatBonus[1];
-            else if (attribute == DBCAttribute.Willpower) // WIL
-                resultOriginal += flatBonus[2];
-            else if (attribute == DBCAttribute.Constitution) // CON
-                resultOriginal += flatBonus[3];
-            else if (attribute == DBCAttribute.Spirit) // SPI
-                resultOriginal += flatBonus[4];
+            int baseAttribute = attribute >= 0 && attribute < currAttributes.length ? currAttributes[attribute] : 0;
+            DBCDataBonus.BonusTotals totals = dbcData.bonus.calculateTotals();
+            resultOriginal = applyAddonBonuses(dbcData, totals, attribute, baseAttribute, resultOriginal);
         }
 
         result.set(resultOriginal);
@@ -467,26 +527,26 @@ public abstract class MixinJRMCoreH {
                 float newHealth = curBody - damage;
 
                 // Perform KO
-                if(lastSetDamage.ko){
+                if (lastSetDamage.ko) {
                     String ste = getString(player, "jrmcStatusEff");
                     NBTTagCompound nbt = nbt(player, "pres");
                     byte state = nbt.getByte("jrmcState");
                     byte race = nbt.getByte("jrmcRace");
-                    if(!DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer(player), lastSetDamage.source))){
+                    if (!DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer(player), lastSetDamage.source))) {
                         newHealth = 20;
                         int koAmount = 6;
-                        if(lastSetDamage.source != null && lastSetDamage.source.getSourceOfDamage() instanceof EntityNPCInterface){
+                        if (lastSetDamage.source != null && lastSetDamage.source.getSourceOfDamage() instanceof EntityNPCInterface) {
                             DBCStats inpcStats = ((INPCStats) ((EntityNPCInterface) lastSetDamage.source.getSourceOfDamage()).stats).getDBCStats();
-                            if(inpcStats.enabled && inpcStats.isFriendlyFist()){
+                            if (inpcStats.enabled && inpcStats.isFriendlyFist()) {
                                 koAmount = inpcStats.getFriendlyFistAmount();
                             }
                         }
                         setInt(koAmount, player, "jrmcHar4va");
                         setByte(race == 4 ? (state < 4 ? state : 4) : 0, player, "jrmcState");
-                        setByte((int)0, player, "jrmcState2");
-                        setByte((int)0, player, "jrmcRelease");
-                        setInt((int)0, player, "jrmcStamina");
-                        StusEfcts(19, ste, (EntityPlayer)player, false);
+                        setByte((int) 0, player, "jrmcState2");
+                        setByte((int) 0, player, "jrmcRelease");
+                        setInt((int) 0, player, "jrmcStamina");
+                        StusEfcts(19, ste, (EntityPlayer) player, false);
                     }
                 }
 

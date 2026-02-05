@@ -15,12 +15,23 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import noppes.npcs.client.gui.model.GuiCreationScreen;
 import noppes.npcs.client.gui.model.GuiModelColor;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiButtonBiDirectional;
+import noppes.npcs.client.gui.util.GuiModelInterface;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcButtonYesNo;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.GuiScrollWindow;
+import noppes.npcs.client.gui.util.ISubGuiListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.data.ModelPartData;
 
-import java.awt.*;
-import java.awt.datatransfer.*;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 
 import static JinRyuu.JRMCore.JRMCoreH.dnsHairG1toG2;
 
@@ -36,6 +47,8 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
     private DBCDisplay display;
     private int tab = 1;
     private int raceTab = 0;
+
+    private final String[] breastSizes = new String[]{"1","2","3","4","5","6","7","8","9","10"};
 
     public GuiScrollWindow cosmeticsScrollWindow;
 
@@ -169,6 +182,13 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             cosmeticsScrollWindow.maxScrollY = maxScroll;
         } else {
             //  addButton(new GuiNpcButton(1, guiLeft + 64, y += 22, 60, 20, arrRace, display.race+1));
+            addButton(new GuiNpcButtonYesNo(-100, guiLeft + 64, y+=22, 60, 20, display.isFemale()));
+            addLabel(new GuiNpcLabel(-100, "display.femaleModel", guiLeft, y + 5, 0xFFFFFF));
+            if (display.isFemale()) {
+                addButton(new GuiButtonBiDirectional(-101, guiLeft + 69, y += 22, 50, 20, breastSizes, display.breastSize - 1));
+                addLabel(new GuiNpcLabel(-101, "display.breastSize", guiLeft, y + 5, 0xFFFFFF));
+                y += 10;
+            }
             addButton(new GuiButtonBiDirectional(1, guiLeft + 46, y += 22, 94, 20, arrRace, display.race + 1));
             addLabel(new GuiNpcLabel(1, "display.race", guiLeft, y + 5, 0xFFFFFF));
             if (display.race > -1) {
@@ -249,6 +269,10 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
                             addLabel(new GuiNpcLabel(208, "display.tail", guiLeft, y + 5, 0xFFFFFF));
 
                             addButton(new GuiNpcButton(207, guiLeft + 2, y += 22, 90, 20, new String[]{"display.furOff", "display.furOn"}, display.hasFur ? 1 : 0));
+
+                            if (display.hasFur) {
+                                addButton(new GuiNpcButton(2071, guiLeft + 2, y += 22, 90, 20, new String[]{"GT", "Daima", "Absalon"}, display.furType));
+                            }
                         }
                     }
                 }
@@ -260,6 +284,15 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
     protected void actionPerformed(GuiButton btn) {
         super.actionPerformed(btn);
         GuiNpcButton button = (GuiNpcButton) btn;
+        if (button.id == -100) {
+            display.setFemale(button.getValue() == 1);
+            initGui();
+        }
+        if (button.id == -101) {
+            int value = button.getValue();
+            display.breastSize = value + 1;
+            initGui();
+        }
         if (button.id == 50) {
             tab = 0;
             initGui();
@@ -437,6 +470,9 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
         }
         if (button.id == 207) {
             display.hasFur = button.getValue() == 1;
+        }
+        if (button.id == 2071) {
+            display.furType = (display.furType + 1) % 3;
         }
         if (btn.id == 1100) {
             setSubGui(new SubGuiKiWeapon(this, display));

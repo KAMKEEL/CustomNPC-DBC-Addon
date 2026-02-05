@@ -14,7 +14,12 @@ import noppes.npcs.CustomNpcs;
 import noppes.npcs.LogWriter;
 import noppes.npcs.util.NBTJsonUtil;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -271,11 +276,10 @@ public class FormController implements IFormHandler {
         return dir;
     }
 
-    ////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////
     // CUSTOM FORM MAP
     // Used to keep load order of Forms
-
     public void readCustomFormMap() {
         bootOrder.clear();
 

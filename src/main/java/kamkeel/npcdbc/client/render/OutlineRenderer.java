@@ -23,8 +23,24 @@ import noppes.npcs.entity.EntityCustomNpc;
 import org.lwjgl.opengl.GL11;
 
 import static kamkeel.npcdbc.client.render.RenderEventHandler.disableStencilWriting;
-import static kamkeel.npcdbc.client.shader.ShaderHelper.*;
-import static org.lwjgl.opengl.GL11.*;
+import static kamkeel.npcdbc.client.shader.ShaderHelper.releaseShader;
+import static kamkeel.npcdbc.client.shader.ShaderHelper.uniform1f;
+import static kamkeel.npcdbc.client.shader.ShaderHelper.uniformTexture;
+import static kamkeel.npcdbc.client.shader.ShaderHelper.useShader;
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_LIGHTING;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glDepthMask;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glScaled;
+import static org.lwjgl.opengl.GL11.glScalef;
+import static org.lwjgl.opengl.GL11.glTranslatef;
 
 public class OutlineRenderer {
     public static void renderOutline(RenderPlayerJBRA render, Outline outline, EntityPlayer player, float partialTicks, boolean isArm) {
@@ -199,27 +215,12 @@ public class OutlineRenderer {
         glPopMatrix();
 
         //Left
-        byte hideArms = npc.modelData.hideArms;
-
-        if (hideArms != 1 && hideArms != 3) {
+        if (npc.modelData.hideArms != 1) {
             glPushMatrix();
-            glTranslatef(-.0375f, -0.0275f, 0);
+            glTranslatef(0, -0.0275f, 0);
             glScaled(1.05, 1.03, 1.05);
-            npc.modelData.hideArms = 2;
             model.renderArms(npc, 0.0625f, false);
             glPopMatrix();
-            npc.modelData.hideArms = hideArms;
-        }
-
-        //Right
-        if (hideArms != 1 && hideArms != 2) {
-            glPushMatrix();
-            glTranslatef(.0375f, -0.025f, 0);
-            glScaled(1.05, 1.02, 1.02);
-            npc.modelData.hideArms = 3;
-            model.renderArms(npc, 0.0625f, false);
-            glPopMatrix();
-            npc.modelData.hideArms = hideArms;
         }
 
         boolean hideHeadWear = model.bipedHeadwear.isHidden;

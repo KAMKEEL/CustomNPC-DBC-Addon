@@ -19,18 +19,22 @@ import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.api.outline.IOutlineHandler;
 import kamkeel.npcdbc.api.skill.ISkillHandler;
+import kamkeel.npcdbc.api.util.IDBCSettingsHandler;
 import kamkeel.npcdbc.combat.Dodge;
 import kamkeel.npcdbc.controllers.*;
+import kamkeel.npcdbc.data.ability.DBCAbilityStats;
+import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcdbc.data.DBCDamageCalc;
 import kamkeel.npcdbc.data.KiAttack;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.npc.DBCStats;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCStats;
+import kamkeel.npcdbc.util.DBCSettingsUtil;
 import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
-import noppes.npcs.NpcDamageSource;
+import noppes.npcs.api.ability.IAbility;
 import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.api.entity.IEntity;
 import noppes.npcs.api.entity.IPlayer;
@@ -81,6 +85,11 @@ public class DBCAPI extends AbstractDBCAPI {
     @Override
     public IDBCEffectHandler getDBCEffectHandler() {
         return DBCEffectController.Instance;
+    }
+
+    @Override
+    public IDBCSettingsHandler getDBCSettingsHandler() {
+        return DBCSettingsController.Instance;
     }
 
     @Override
@@ -141,6 +150,13 @@ public class DBCAPI extends AbstractDBCAPI {
     public IDBCDisplay getDBCDisplay(ICustomNpc npc) {
         if (npc.getMCEntity() instanceof EntityNPCInterface)
             return ((INPCDisplay) ((EntityNPCInterface) npc.getMCEntity()).display).getDBCDisplay();
+        return null;
+    }
+
+    @Override
+    public IDBCStats getAbilityDBCStats(IAbility ability) {
+        if (ability instanceof Ability)
+            return DBCAbilityStats.fromAbility((Ability) ability);
         return null;
     }
 

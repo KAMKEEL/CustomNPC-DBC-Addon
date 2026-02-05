@@ -1,21 +1,27 @@
 {
-	"modListVersion": 2,
-	"modList": [{
-		"modid": "${modId}",
-		"name": "${modName}",
-		"description": "A mod that is made for integrating DBC and CNPC+",
-		"version": "${modVersion}",
-		"mcversion": "${minecraftVersion}",
-		"url": "TODO",
-		"updateUrl": "",
-		"authorList": ["Kam", "Goatee","Hussar"],
-		"credits": "@PopsicleNate - textures, @mtbarr - bug fixes, kla_xi - Chinese language file",
-		"logoFile": "",
-		"screenshots": [],
-		"parent": "",
-		"requiredMods": [],
-		"dependencies": [],
-		"dependants": [],
-		"useDependencyInformation": false
-	}]
+  "modListVersion": 2,
+  "modList": [
+    {
+      "modid": "${modId}",
+      "name": "${modName}",
+      "description": "A mod that is made for integrating DBC and CNPC+",
+      "version": "${modVersion}",
+      "mcversion": "${minecraftVersion}",
+      "url": "TODO",
+      "updateUrl": "",
+      "authorList": [
+        "Kam",
+        "Goatee",
+        "Hussar"
+      ],
+      "credits": "@PopsicleNate - textures, @mtbarr - bug fixes, kla_xi - Chinese language file",
+      "logoFile": "",
+      "screenshots": [],
+      "parent": "",
+      "requiredMods": [],
+      "dependencies": [],
+      "dependants": [],
+      "useDependencyInformation": false
+    }
+  ]
 }

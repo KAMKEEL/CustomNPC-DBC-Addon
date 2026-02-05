@@ -1,0 +1,33 @@
+package kamkeel.npcdbc.data.ability;
+
+import kamkeel.npcs.controllers.data.ability.LockMovementType;
+import kamkeel.npcs.controllers.data.ability.TargetingMode;
+import kamkeel.npcs.controllers.data.ability.type.AbilityBeam;
+import kamkeel.npcs.controllers.data.telegraph.TelegraphType;
+
+public class AbilityGalickGun extends AbilityBeam {
+    public AbilityGalickGun() {
+        this.typeId = "ability.npcdbc.galick_gun";
+        this.name = "Galick Gun";
+        this.targetingMode = TargetingMode.AGGRO_TARGET;
+        this.maxRange = 20.0f;
+        this.minRange = 5.0f;
+        this.cooldownTicks = 0;
+        this.windUpTicks = 40;
+        this.lockMovement = LockMovementType.WINDUP_AND_ACTIVE;
+        this.telegraphType = TelegraphType.CIRCLE;
+        this.showTelegraph = false;
+        // Default built-in animations
+        this.windUpAnimationName = "Ability_Beam_Windup";
+        this.activeAnimationName = "Ability_Beam_Active";
+
+        this.setBeamWidth(2.0f);
+        this.setHeadSize(2.5f);
+        this.setSpeed(1.5f);
+        this.setRotationSpeed(30f);
+        this.setInnerColor(0xDBC2EC);
+        this.setOuterColorAlpha(1.0f);
+        this.setOuterColor(0xC580E5);
+        this.setHoming(false);
+    }
+}

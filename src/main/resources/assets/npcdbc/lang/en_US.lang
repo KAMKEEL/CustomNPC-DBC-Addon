@@ -21,12 +21,16 @@ gui.clone=Clone
 
 stats.dbc=DBC Settings
 stats.lockOnState=Can NPC be locked onto?
+stats.dbcEnabled=DBC Damage Enabled
 stats.friendlyFist=Friendly Fist
+stats.friendlyFistTime=Friendly Fist Duration (s)
+stats.section.damageModifiers=Damage Modifiers
 stats.ignoreDex=Ignore Dex
 stats.ignoreBlock=Ignore Block
 stats.ignoreEndurance=Ignore Endurance
 stats.ignoreKiDamage=Ignore Ki Protection
 stats.ignoreFormDefense=Ignore Form Defense
+stats.section.defensePenetration=Defense Penetration
 stats.hasDefensePenetration=Has Defense Penetration
 stats.defensePenetration=Defense Penetration
 
@@ -91,6 +95,8 @@ mastery.destroyerSettings=Destroyer Settings
 mastery.destroyerKiDamage=Ki Damage Multi
 mastery.linkedMastery=Linked Mastery
 
+display.femaleModel=Female
+display.breastSize=Breast Size
 display.attri=Attri
 display.adv=Adv
 display.human=Human
@@ -152,6 +158,7 @@ display.eye=Eye
 display.isBerserk=Berserk
 display.normalEye=Normal
 display.hasEyebrows=Eyebrows
+display.hasPupils=Pupils
 display.mouth=Mouth
 display.nose=Nose
 display.formCanFormbeCustomized=Player customization
@@ -171,10 +178,15 @@ display.form=Form
 display.mastery=Mastery
 display.stackable=Stackable
 display.general=General
+display.custom=Custom
+display.overlays=Overlays
+display.body=Body
 display.bodyc1=Body C1
 display.bodyc2=Body C2
 display.bodyc3=Body C3
 display.vanillaStackable=Vanilla Stackable
+display.customStackable=Custom Stackable
+display.formStacks=Form Stacks
 display.kkStackable=Kaioken Stackable
 display.kaiokenMulti=KK Multiplier
 display.kaiokenDrain=KK Drain Config
@@ -444,11 +456,33 @@ item.npcdbc:revive_misccapsule.name=Revive Capsule
 item.npcdbc:heat_misccapsule.name=Heat Capsule
 item.npcdbc:powerpoint_misccapsule.name=Power Point Capsule
 item.npcdbc:absorption_misccapsule.name=Absorption Capsule
+item.npcdbc:strain_misccapsule.name=Strain Capsule
+item.npcdbc:nofuse_misccapsule.name=NoFuse Capsule
+item.npcdbc:exhausted_misccapsule.name=Exhausted Capsule
 
 item.npcdbc:fruitofmight.name=Fruit of Might
 item.npcdbc:one_potara.name=Potara Earring
 item.npcdbc:two_potara.name=Grand Potara Earring
 item.npcdbc:three_potara.name=Supreme Potara Earring
+
+ability.npcdbc.kamehameha=Kamehameha
+ability.npcdbc.destructo_disc=Destructo Disc
+ability.npcdbc.special_beam_cannon=Special Beam Cannon
+ability.npcdbc.double_sunday=Double Sunday
+ability.npcdbc.galick_gun=Galick Gun
+ability.npcdbc.final_flash=Final Flash
+ability.npcdbc.bigbang_attack=Big Bang Attack
+ability.npcdbc.burning_attack=Burning Attack
+ability.npcdbc.death_ball=Death Ball
+ability.npcdbc.spirit_bomb=Spirit Bomb
+ability.npcdbc.large_spirit_bomb=Large Spirit Bomb
+ability.npcdbc.super_spirit_bomb=Super Spirit Bomb
+ability.npcdbc.supernova=Supernova
+ability.npcdbc.masenko=Masenko
+ability.npcdbc.death_saucer=Death Saucer
+ability.npcdbc.hakai=Destruction
+ability.npcdbc.ki_blast=Energy Blast
+ability.npcdbc.ki_wave=Energy Wave
 
 effect.healthregeneration=Health Regeneration
 effect.exhausted=Exhausted
@@ -466,3 +500,52 @@ effect.staminaregeneration=Stamina Regeneration
 effect.zenkai=Zenkai
 
 stats.ki=Ki
+
+############################
+## GUI LABELS
+############################
+
+# Overlay GUI
+overlay.title=Overlay %s:
+overlay.glow=Glow:
+overlay.alpha=Alpha:
+overlay.warning=WARNING: Too many overlays may cause lag or file deletion!
+overlay.disableOther=Disable Other Overlays
+overlay.selectTypes=Select Types
+overlay.allTypes=All Types
+overlay.selectedTypes=Selected Types
+
+# Kaioken Settings
+kaioken.drainMultiScaling=Drain multi scaling:
+kaioken.multiplyCurrentDrain=Multiply current form drain:
+kaioken.strainedMultis=Strained Kaioken Multis:
+kaioken.drainMulti=%s Drain Multi:
+kaioken.multiScaling=Multi scaling:
+kaioken.useGlobalMulti=Use Global Multi:
+kaioken.multi=%s Multi:
+
+# Custom Stackable
+stackable.stack=Stack %s:
+stackable.configMulti=Config Multi
+
+# Form Parents
+formparents.races=Races
+formparents.forms=Forms
+formparents.removeAll=Remove All
+
+# Face Parts
+facepart.eyebrows=Eyebrows
+facepart.eyeWhite=Eye White
+facepart.eyeLeft=Eye Left
+facepart.eyeRight=Eye Right
+facepart.nose=Nose
+facepart.mouth=Mouth
+facepart.faceType=Face Type
+facepart.all=All
+
+# StatSheet
+statsheet.updateVanity=Update vanity
+statsheet.hideVanity=Hide own vanity
+statsheet.showVanity=Show own vanity
+statsheet.bonusAttributes=Bonus Attributes:
+statsheet.bonusStats=Bonus Stats:

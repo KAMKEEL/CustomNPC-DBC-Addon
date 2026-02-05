@@ -9,6 +9,7 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.api.skill.ICustomSkill;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.gui.dbc.StatSheetGui;
+import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.SkillController;
@@ -371,8 +372,12 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
 
     @Inject(method = "initGui", at = @At("RETURN"), remap = true)
     private void onInitGui(CallbackInfo ci) {
-        if (ignoreInit)
+        if (ignoreInit) {
             this.guiID = newGuiID;
+            if (guiID == GuiInfo.ReferenceIDs.SERVER_SHOP.getGuiID()) {
+                JRMCoreH.jrmcDataFC(80, "q");
+            }
+        }
 
         if (ConfigDBCClient.EnhancedGui || !ConfigDBCClient.EnableDebugStatSheetSwitching) {
             if (ConfigDBCClient.DarkMode) {

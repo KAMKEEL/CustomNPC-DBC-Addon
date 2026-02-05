@@ -38,7 +38,7 @@ public abstract class MixinResistances implements IKiResistance {
     @Inject(method = "applyResistance", at = @At("HEAD"), cancellable = true)
     public void applyKiRes(DamageSource source, float damage, CallbackInfoReturnable<Float> cir) {
         if (!disableDamage) {
-            if (source.damageType.equals("EnergyAttack")) {
+            if (source.damageType.equals("EnergyAttack") || source.damageType.equals("causeEnExplosion")) {
                 damage *= (2 - ki);
                 cir.setReturnValue(damage);
                 cir.cancel();
