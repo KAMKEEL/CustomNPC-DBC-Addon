@@ -3,8 +3,11 @@ package kamkeel.npcdbc.network;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
+import kamkeel.npcdbc.data.AbilityWheelData;
 import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcs.controllers.data.ability.Ability;
+import kamkeel.npcs.controllers.data.ability.AbilityController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.outline.Outline;
@@ -70,6 +73,26 @@ public class NetworkUtility {
                 FormWheelData wheelData = data.formWheel[i];
                 if (wheelData.formID != -1 && !wheelData.isDBC && !FormController.getInstance().has(wheelData.formID))
                     wheelData.formID = -1;
+                wheelData.writeToNBT(compound);
+            }
+        }
+        GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);
+    }
+
+    public static void sendPlayerAbilityWheel(EntityPlayer player) {
+        PlayerDBCInfo data = ((IPlayerDBCInfo) PlayerDataController.Instance.getPlayerData(player)).getPlayerDBCInfo();
+        NBTTagCompound compound = new NBTTagCompound();
+        if (data != null) {
+            for (int i = 0; i < 6; i++) {
+                AbilityWheelData wheelData = data.abilityWheel[i];
+                // Validate ability still exists
+                if (!wheelData.isEmpty()) {
+                    Ability ability = AbilityController.Instance != null ?
+                        AbilityController.Instance.resolveAbility(wheelData.abilityKey) : null;
+                    if (ability == null) {
+                        wheelData.reset();
+                    }
+                }
                 wheelData.writeToNBT(compound);
             }
         }

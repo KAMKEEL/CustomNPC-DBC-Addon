@@ -1,0 +1,143 @@
+package kamkeel.npcdbc.client.gui.component;
+
+import kamkeel.npcs.controllers.data.ability.Ability;
+import kamkeel.npcs.controllers.data.ability.AbilityController;
+import net.minecraft.client.gui.GuiButton;
+import noppes.npcs.client.ClientCacheHandler;
+import noppes.npcs.client.gui.util.*;
+import noppes.npcs.controllers.data.PlayerData;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+/**
+ * SubGui for selecting abilities from the player's unlocked abilities list.
+ * Used by the Ability Wheel configure mode.
+ */
+public class SubGuiSelectAbility extends SubGuiInterface implements ICustomScrollListener, ITextfieldListener {
+    private HashMap<String, String> displayToKey = new HashMap<>();
+    private GuiCustomScroll scrollAbilities;
+    private String selected = null;
+    private String search = "";
+
+    public boolean confirmed = false;
+    public String selectedAbilityKey = null;
+    public int buttonID = -1;
+    public boolean removeAbility = false;
+
+    public SubGuiSelectAbility(int buttonID) {
+        this.buttonID = buttonID;
+        this.closeOnEsc = true;
+        this.drawDefaultBackground = true;
+        guiLeft -= 10;
+        xSize = 256 + 10;
+        this.setBackground("menubg.png");
+    }
+
+    @Override
+    public void initGui() {
+        super.initGui();
+        guiTop += 10;
+
+        if (scrollAbilities == null) {
+            scrollAbilities = new GuiCustomScroll(this, 0, 0);
+            scrollAbilities.setSize(177, 185);
+        }
+
+        scrollAbilities.guiLeft = guiLeft + 4;
+        scrollAbilities.guiTop = guiTop + 4;
+        addScroll(scrollAbilities);
+
+        // Load abilities from client cache
+        loadAbilities();
+        scrollAbilities.setList(getSearchList());
+
+        addTextField(new GuiNpcTextField(55, this, fontRendererObj, guiLeft + 4, guiTop + 192, 177, 20, search));
+
+        addButton(new GuiNpcButton(0, guiLeft + 183, guiTop + 4, 79, 20, "gui.add"));
+        addButton(new GuiNpcButton(1, guiLeft + 183, guiTop + 26, 79, 20, "gui.cancel"));
+        addButton(new GuiNpcButton(2, guiLeft + 183, guiTop + 88, 79, 20, "gui.remove"));
+    }
+
+    private void loadAbilities() {
+        displayToKey.clear();
+        PlayerData playerData = ClientCacheHandler.playerData;
+        if (playerData == null || playerData.abilityData == null) {
+            return;
+        }
+
+        List<String> abilities = playerData.abilityData.getUnlockedAbilityList();
+        for (String key : abilities) {
+            Ability ability = AbilityController.Instance != null ?
+                AbilityController.Instance.resolveAbility(key) : null;
+            String displayName = ability != null && ability.getName() != null ?
+                ability.getName() : key;
+            displayToKey.put(displayName, key);
+        }
+    }
+
+    @Override
+    public void actionPerformed(GuiButton button) {
+        int id = button.id;
+
+        if (id == 0 && selected != null) {
+            confirmed = true;
+            selectedAbilityKey = displayToKey.get(selected);
+            this.close();
+        }
+        if (id == 1) {
+            this.close();
+        }
+        if (id == 2) {
+            this.removeAbility = true;
+            this.close();
+        }
+    }
+
+    @Override
+    public void customScrollClicked(int i, int i1, int i2, GuiCustomScroll guiCustomScroll) {
+        if (guiCustomScroll == scrollAbilities)
+            selected = scrollAbilities.getSelected();
+    }
+
+    @Override
+    public void customScrollDoubleClicked(String selection, GuiCustomScroll guiCustomScroll) {
+        if (guiCustomScroll == scrollAbilities && selection != null) {
+            confirmed = true;
+            selectedAbilityKey = displayToKey.get(selection);
+            this.close();
+        }
+    }
+
+    @Override
+    public void unFocused(GuiNpcTextField guiNpcTextField) {
+    }
+
+    @Override
+    public void keyTyped(char c, int i) {
+        super.keyTyped(c, i);
+        if (getTextField(55) != null) {
+            if (getTextField(55).isFocused()) {
+                if (search.equals(getTextField(55).getText()))
+                    return;
+                search = getTextField(55).getText().toLowerCase();
+                scrollAbilities.resetScroll();
+                scrollAbilities.setList(getSearchList());
+            }
+        }
+    }
+
+    private List<String> getSearchList() {
+        if (search.isEmpty()) {
+            return new ArrayList<>(displayToKey.keySet());
+        }
+
+        List<String> list = new ArrayList<>();
+        for (String name : displayToKey.keySet()) {
+            if (name.toLowerCase().contains(search))
+                list.add(name);
+        }
+        return list;
+    }
+}

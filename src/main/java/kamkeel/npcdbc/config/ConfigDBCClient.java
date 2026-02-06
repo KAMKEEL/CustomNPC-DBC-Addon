@@ -47,6 +47,9 @@ public class ConfigDBCClient {
     public static Property AlternateSelectionWheelTextureProperty;
     public static boolean AlteranteSelectionWheelTexture = true;
 
+    public static Property EnableAbilityHotbarProperty;
+    public static boolean EnableAbilityHotbar = false;
+
     public static void init(File configFile) {
         config = new Configuration(configFile);
 
@@ -75,6 +78,8 @@ public class ConfigDBCClient {
             AdvancedGui = AdvancedGuiModeProperty.getBoolean(false);
             AlternateSelectionWheelTextureProperty = config.get(GUI, "Use Alternate Wheel GUI Texture", false, "Uses alternate texture for Wheel GUIs");
             AlteranteSelectionWheelTexture = AlternateSelectionWheelTextureProperty.getBoolean(false);
+            EnableAbilityHotbarProperty = config.get(GUI, "Enable Ability Hotbar", false, "Shows a vertical ability hotbar on the left side of the screen with cooldown indicators");
+            EnableAbilityHotbar = EnableAbilityHotbarProperty.getBoolean(false);
 
             // Rendering
             RevampAuraProperty = config.get(RENDERING, "Revamp Aura", false, "Renders with the new DBC Addon style of auras");
