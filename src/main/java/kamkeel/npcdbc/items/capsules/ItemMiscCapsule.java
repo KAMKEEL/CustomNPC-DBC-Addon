@@ -161,7 +161,7 @@ public class ItemMiscCapsule extends Item {
             }
 
         } else if (meta == EnumMiscCapsules.NoFuse.getMeta()) {
-            if (getInt(player, "jrmcFuzion") <= 0) {
+            if (player.getEntityData().getCompoundTag("PlayerPersisted").getString("jrmcFuzion") == null || player.getEntityData().getCompoundTag("PlayerPersisted").getString("jrmcFuzion").matches(" ")) {
                 player.addChatComponentMessage(new ChatComponentText("§cYou do not have no fuse"));
                 return itemStack;
             } else {
