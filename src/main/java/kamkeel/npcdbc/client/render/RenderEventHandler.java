@@ -15,6 +15,7 @@ import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import noppes.npcs.controllers.PlayerDataController;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.entity.EntityAura;
@@ -80,6 +81,9 @@ public class RenderEventHandler {
         if (event.slot != 3 || event.stack != null)
             return;
 
+
+        if (PlayerDataController.Instance == null)
+            return;
 
         DBCData dbcData = DBCData.get(event.entityPlayer);
 
