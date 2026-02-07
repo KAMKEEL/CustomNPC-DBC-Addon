@@ -161,13 +161,13 @@ public class ItemMiscCapsule extends Item {
             }
 
         } else if (meta == EnumMiscCapsules.NoFuse.getMeta()) {
-            if (player.getEntityData().getCompoundTag("PlayerPersisted").getString("jrmcFuzion") == null || player.getEntityData().getCompoundTag("PlayerPersisted").getString("jrmcFuzion").matches(" ") ){
+            if (getInt(player, "jrmcFuzion") <= 0) {
                 player.addChatComponentMessage(new ChatComponentText("§cYou do not have no fuse"));
                 return itemStack;
+            } else {
+                setInt(0, player, "jrmcFuzion");
+                player.addChatComponentMessage(new ChatComponentText("§aYou no longer have no fuse!"));
             }
-            setInt(0, player, "jrmcFuzion");
-            player.addChatComponentMessage(new ChatComponentText("§aYou no longer have no fuse!"));
-
 
         } else if (meta == EnumMiscCapsules.Exhausted.getMeta()) {
             if (!DBCEffectController.getInstance().hasEffect(player, Effects.EXHAUSTED)) {

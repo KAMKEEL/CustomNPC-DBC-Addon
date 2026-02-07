@@ -54,6 +54,7 @@ public class PlayerDBCInfo {
     public HashMap<Integer, Integer> formTimers = new HashMap<>();
     public HashMap<Integer, FormDisplay.BodyColor> configuredFormColors = new HashMap<>();
     public FormWheelData[] formWheel = new FormWheelData[6];
+    public AbilityWheelData[] abilityWheel = new AbilityWheelData[6];
 
     public OverlayManager overlayManager = new OverlayManager();
 
@@ -62,6 +63,9 @@ public class PlayerDBCInfo {
 
         for (int i = 0; i < formWheel.length; i++)
             formWheel[i] = new FormWheelData(i);
+
+        for (int i = 0; i < abilityWheel.length; i++)
+            abilityWheel[i] = new AbilityWheelData(i);
     }
 
     public void addForm(Form form) {
@@ -108,6 +112,17 @@ public class PlayerDBCInfo {
     public void removeFormWheel(int wheelSlot) {
         if (wheelSlot <= 5 && wheelSlot >= 0)
             formWheel[wheelSlot].reset();
+    }
+
+    public void addAbilityWheel(int wheelSlot, AbilityWheelData data) {
+        if (wheelSlot > 5 || wheelSlot < 0)
+            return;
+        abilityWheel[wheelSlot].readFromNBT(data.writeToNBT(new NBTTagCompound()));
+    }
+
+    public void removeAbilityWheel(int wheelSlot) {
+        if (wheelSlot <= 5 && wheelSlot >= 0)
+            abilityWheel[wheelSlot].reset();
     }
 
 
@@ -439,6 +454,9 @@ public class PlayerDBCInfo {
         for (int i = 0; i < formWheel.length; i++)
             formWheel[i].writeToNBT(dbcCompound);
 
+        for (int i = 0; i < abilityWheel.length; i++)
+            abilityWheel[i].writeToNBT(dbcCompound);
+
         dbcCompound.setInteger("CurrentAura", currentAura);
         dbcCompound.setInteger("SelectedAura", selectedAura);
         dbcCompound.setTag("UnlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
@@ -461,6 +479,9 @@ public class PlayerDBCInfo {
 
         for (int i = 0; i < formWheel.length; i++)
             formWheel[i].readFromNBT(dbcCompound.getCompoundTag("FormWheel" + i));
+
+        for (int i = 0; i < abilityWheel.length; i++)
+            abilityWheel[i].readFromNBT(dbcCompound.getCompoundTag("AbilityWheel" + i));
 
         currentAura = dbcCompound.getInteger("CurrentAura");
         selectedAura = dbcCompound.getInteger("SelectedAura");

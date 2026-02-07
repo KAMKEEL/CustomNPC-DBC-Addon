@@ -363,8 +363,6 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
     private class GuiOverlaySelection extends GuiTextureSelection {
         public GuiOverlaySelection(EntityNPCInterface npc, String texture) {
             super(npc, texture);
-            if (selectedResource == null)
-                setLocation("npcdbc", "textures/");
             originalTexture = get(overlayID).texture;
 
             yOffsetNpc += 15;
