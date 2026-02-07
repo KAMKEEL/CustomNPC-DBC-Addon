@@ -746,4 +746,11 @@ public interface IDBCAddon extends IDBCPlayer {
      * @param KoTime integer for player Ko time, 1=5 sec
      */
     void setKo(int KoTime);
+
+    /**
+     *
+     * @return Integer representing player DBC level
+     */
+    int getLevel();
+
 }

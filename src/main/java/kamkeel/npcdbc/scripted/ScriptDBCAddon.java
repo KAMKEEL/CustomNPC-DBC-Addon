@@ -1396,4 +1396,11 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public void setKo(int KoTime) {
         nbt.setInteger("jrmcHar4va", KoTime);
     }
+
+    @Override
+    public int getLevel() {
+        int stats = Arrays.stream(dbcData.stats.getAllAttributes()).sum();
+
+        return  (int)Math.floor((stats-60) /5) + 1;
+    }
 }
