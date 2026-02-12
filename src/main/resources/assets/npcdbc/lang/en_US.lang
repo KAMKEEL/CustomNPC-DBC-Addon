@@ -483,6 +483,11 @@ ability.npcdbc.death_saucer=Death Saucer
 ability.npcdbc.hakai=Destruction
 ability.npcdbc.ki_blast=Energy Blast
 ability.npcdbc.ki_wave=Energy Wave
+ability.npcdbc.ki_fist=Ki Fist
+ability.npcdbc.swoop=Swoop
+ability.npcdbc.ki_protection=Ki Protection
+ability.npcdbc.friendly_fist=Friendly Fist
+ability.npcdbc.ki_weapon=Ki Weapon
 
 effect.healthregeneration=Health Regeneration
 effect.exhausted=Exhausted

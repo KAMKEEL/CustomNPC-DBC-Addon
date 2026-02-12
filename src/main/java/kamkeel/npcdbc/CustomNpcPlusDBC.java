@@ -13,7 +13,6 @@ import kamkeel.npcdbc.api.event.IDBCEvent;
 import kamkeel.npcdbc.config.LoadConfiguration;
 import kamkeel.npcdbc.constants.DBCAbilities;
 import kamkeel.npcdbc.constants.DBCAnimations;
-import kamkeel.npcdbc.constants.DBCToggleAbilities;
 import kamkeel.npcdbc.constants.DBCScriptType;
 import kamkeel.npcdbc.data.ability.DBCAbilityDamageHandler;
 import kamkeel.npcdbc.controllers.*;
@@ -80,6 +79,9 @@ public class CustomNpcPlusDBC {
             ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.REVIVED.function, IDBCEvent.DBCReviveEvent.class);
             ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.KNOCKOUT.function, IDBCEvent.DBCKnockout.class);
         }
+
+        DBCAbilities.register();
+        DBCAnimations.register();
     }
 
     @Mod.EventHandler
@@ -89,9 +91,6 @@ public class CustomNpcPlusDBC {
         CapsuleController.getInstance().load();
         BonusController.getInstance().load();
         OutlineController.getInstance().load();
-        DBCAbilities.register();
-        DBCToggleAbilities.register();
-        DBCAnimations.register();
     }
 
     @Mod.EventHandler
