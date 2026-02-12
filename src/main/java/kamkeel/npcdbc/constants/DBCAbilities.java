@@ -1,5 +1,7 @@
 package kamkeel.npcdbc.constants;
 
+import kamkeel.npcdbc.data.ability.toggle.*;
+import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.controllers.data.ability.AbilityController;
 import kamkeel.npcs.controllers.data.ability.AbilityVariant;
 import kamkeel.npcs.controllers.data.ability.AnchorPoint;
@@ -8,8 +10,19 @@ import kamkeel.npcs.controllers.data.ability.type.AbilityBeam;
 import kamkeel.npcs.controllers.data.ability.type.AbilityDisc;
 import kamkeel.npcs.controllers.data.ability.type.AbilityLaserShot;
 import kamkeel.npcs.controllers.data.ability.type.AbilityOrb;
+import kamkeel.npcs.util.Register;
 
 public class DBCAbilities {
+
+    public static Register.Abilities ABILITIES = Register.Abilities.create("npcdbc", "DBC Addon");
+
+    // Toggle Abilities
+    public static final Ability KI_FIST = ABILITIES.register("ki_fist", AbilityKiFist::new);
+    public static final Ability SWOOP = ABILITIES.register("swoop", AbilitySwoop::new);
+    public static final Ability KI_PROTECTION = ABILITIES.register("ki_protection", AbilityKiProtection::new);
+    public static final Ability FRIENDLY_FIST = ABILITIES.register("friendly_fist", AbilityFriendlyFist::new);
+    public static final Ability KI_WEAPON = ABILITIES.register("ki_weapon", AbilityKiWeapon::new);
+
     private static final String GROUP = "DBC Addon";
 
     private static final String ORB = "ability.cnpc.orb";
@@ -18,6 +31,7 @@ public class DBCAbilities {
     private static final String DISC = "ability.cnpc.disc";
 
     public static void register() {
+        ABILITIES.register();
         registerOrbVariants();
         registerBeamVariants();
         registerLaserVariants();
