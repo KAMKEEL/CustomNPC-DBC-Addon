@@ -335,6 +335,7 @@ public class DBCAbilities {
             a.setWindUpAnimationName("Ability_DiscDual_Windup");
             a.setActiveAnimationName("Ability_DiscDual_Active");
             disc.setProjectileCount(2);
+            disc.setFireDelay(5);
             disc.setSpeed(1.6f);
             disc.setDiscRadius(1.5f);
             disc.setMaxDistance(70);
