@@ -20,8 +20,10 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
 
     @Override
     public void addFieldDefinitions(Ability ability, List<FieldDef> defs) {
-        // Icon tab for ALL abilities
-        addIconFields(ability, defs);
+        // Icon tab - skip for NPC inline abilities (only relevant for parent/preset abilities)
+        if (!ability.isNpcInlineEdit()) {
+            addIconFields(ability, defs);
+        }
 
         // DBC tab for damaging abilities
         if (ability.hasDamage()) {
