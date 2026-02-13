@@ -23,7 +23,7 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
         // Icon tab for ALL abilities
         addIconFields(ability, defs);
 
-        // DBC tab only for damaging abilities
+        // DBC tab for damaging abilities
         if (ability.hasDamage()) {
             addDBCFields(ability, defs);
         }
