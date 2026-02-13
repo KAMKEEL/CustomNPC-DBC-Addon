@@ -310,7 +310,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             initGui();
         }
         if (button.id == 0) {
-            display.enabled = button.getValue() == 1;
+            display.setEnabled(button.getValue() == 1);
             display.setRacialExtras();
             initGui();
         }
