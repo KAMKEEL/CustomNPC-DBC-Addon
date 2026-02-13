@@ -62,6 +62,7 @@ public class ModelDBC extends ModelBase {
 
     public final ModelMPM parent;
     public static boolean isHurt = false;
+    public static boolean isTintPass = false;
     public float rot1;
     public float rot2;
     public float rot3;

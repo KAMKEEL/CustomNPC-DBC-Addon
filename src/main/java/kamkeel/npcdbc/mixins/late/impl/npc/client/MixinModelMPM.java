@@ -85,6 +85,7 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
 
     @Inject(method = "render", at = @At(value = "HEAD"), remap = true)
     private void rotationKeep(Entity par1Entity, float p1, float p2, float p3, float p4, float p5, float p6, CallbackInfo ci) {
+        ModelDBC.isTintPass = npcdbc$isTintPass();
         NPCDBCModel.rot1 = p1;
         NPCDBCModel.rot2 = p2;
         NPCDBCModel.rot3 = p3;
@@ -146,10 +147,10 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
         ClientProxy.currentlyDrawnNPC = entity;
         boolean tintPass = npcdbc$isTintPass();
         glPushMatrix();
+        if (display.enabled && display.isFemaleInternal()) {
+            GL11.glScalef(0.85F, 1, 0.85F);
+        }
         if (!tintPass && !isArmor && display.enabled) {
-            if (display.isFemaleInternal()) {
-                GL11.glScalef(0.85F, 1, 0.85F);
-            }
             NPCDBCModel.renderFace(entity, display, bipedHead);
             NPCDBCModel.renderBodySkin(display, bipedHead);
         }
@@ -165,15 +166,13 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
         boolean tintPass = npcdbc$isTintPass();
         glPushMatrix();
 
-        if (tintPass || !display.isFemaleInternal()) {
+        if (!display.isFemaleInternal() || !display.enabled) {
             if (!tintPass && !isArmor && display.enabled) {
                 NPCDBCModel.renderBodySkin(display, bipedBody);
             }
             instance.render(v);
-        } else if (!display.enabled) {
-            instance.render(v);
         } else {
-            NPCDBCModel.renderFemaleBodySkin(display, instance, isArmor, part, v);
+            NPCDBCModel.renderFemaleBodySkin(display, instance, isArmor || tintPass, part, v);
         }
 
         glPopMatrix();

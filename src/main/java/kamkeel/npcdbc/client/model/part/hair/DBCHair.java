@@ -404,6 +404,12 @@ public class DBCHair extends ModelHairRenderer {
         if (!display.enabled)
             return;
 
+        if (ModelDBC.isTintPass) {
+            this.renderHairs(display);
+            this.base.currentlyPlayerTexture = false;
+            return;
+        }
+
         GL11.glPushAttrib(GL11.GL_CURRENT_BIT);
         ClientProxy.bindTexture(hairResource);
         TintData tintData = this.entity.display.tintData;
@@ -590,10 +596,12 @@ public class DBCHair extends ModelHairRenderer {
         }
         //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////
-        ColorMode.applyModelColor(hairColor, this.base.alpha, ModelDBC.isHurt);
         String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
         boolean HD = ConfigDBCClient.EnableHDTextures;
-        ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:gui/") + "normall.png"));
+        if (!ModelDBC.isTintPass) {
+            ColorMode.applyModelColor(hairColor, this.base.alpha, ModelDBC.isHurt);
+            ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:gui/") + "normall.png"));
+        }
         if ((isRaditz || isSSJ3) && effectMajinHair) {
             renderSSJ3Hair(isSSJ3);
             return;
