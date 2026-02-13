@@ -44,6 +44,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
     private final String[] arrRaceEars = new String[]{"gui.no", "display.part.arcoEars"};
     private final String[] arrBody = new String[]{"gui.no", "display.part.backSpike"};
     private final String[] arrArm = new String[]{"gui.no", "display.part.armSpikes", "display.part.shoulder"};
+    private final String[] arrTail = new String[]{"gui.no", "display.normalTail", "display.wrappedTail", "display.arcoTail"};
     private DBCDisplay display;
     private int tab = 1;
     private int raceTab = 0;
@@ -150,7 +151,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             cosmeticsScrollWindow.addButton(new GuiButtonBiDirectional(2, guiLeft + 47, y += 22, 100, 20, arrHorns, dbcHorn == null ? 0 : dbcHorn.type));
             cosmeticsScrollWindow.addLabel(new GuiNpcLabel(2, "part.horns", guiLeft, y + 5, 0xFFFFFF));
             if (dbcHorn != null && !display.useSkin) {
-                cosmeticsScrollWindow.addButton(new GuiNpcButton(12, guiLeft + 151, y, 35, 20, dbcHorn.getColor()));
+                cosmeticsScrollWindow.addButton(new GuiNpcButton(12, guiLeft + 47, y += 22, 100, 20, dbcHorn.getColor()));
                 cosmeticsScrollWindow.getButton(12).packedFGColour = dbcHorn.color != 0 ? dbcHorn.color : 1;
             }
 
@@ -158,7 +159,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             cosmeticsScrollWindow.addButton(new GuiButtonBiDirectional(3, guiLeft + 47, y += 22, 100, 20, arrRaceEars, dbcEars == null ? 0 : dbcEars.type));
             cosmeticsScrollWindow.addLabel(new GuiNpcLabel(3, "part.ears", guiLeft, y + 5, 0xFFFFFF));
             if (dbcEars != null && !display.useSkin) {
-                cosmeticsScrollWindow.addButton(new GuiNpcButton(13, guiLeft + 151, y, 35, 20, dbcEars.getColor()));
+                cosmeticsScrollWindow.addButton(new GuiNpcButton(13, guiLeft + 47, y += 22, 100, 20, dbcEars.getColor()));
                 cosmeticsScrollWindow.getButton(13).packedFGColour = dbcEars.color != 0 ? dbcEars.color : 1;
             }
 
@@ -166,7 +167,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             cosmeticsScrollWindow.addButton(new GuiButtonBiDirectional(4, guiLeft + 47, y += 22, 100, 20, arrBody, dbcBody == null ? 0 : dbcBody.type));
             cosmeticsScrollWindow.addLabel(new GuiNpcLabel(4, "model.body", guiLeft, y + 5, 0xFFFFFF));
             if (dbcBody != null && !display.useSkin) {
-                cosmeticsScrollWindow.addButton(new GuiNpcButton(14, guiLeft + 151, y, 35, 20, dbcBody.getColor()));
+                cosmeticsScrollWindow.addButton(new GuiNpcButton(14, guiLeft + 47, y += 22, 100, 20, dbcBody.getColor()));
                 cosmeticsScrollWindow.getButton(14).packedFGColour = dbcBody.color != 0 ? dbcBody.color : 1;
             }
 
@@ -174,11 +175,24 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             cosmeticsScrollWindow.addButton(new GuiButtonBiDirectional(5, guiLeft + 47, y += 22, 100, 20, arrArm, dbcArms == null ? 0 : dbcArms.type));
             cosmeticsScrollWindow.addLabel(new GuiNpcLabel(5, "model.arms", guiLeft, y + 5, 0xFFFFFF));
             if (dbcArms != null && !display.useSkin) {
-                cosmeticsScrollWindow.addButton(new GuiNpcButton(15, guiLeft + 151, y, 35, 20, dbcArms.getColor()));
+                cosmeticsScrollWindow.addButton(new GuiNpcButton(15, guiLeft + 47, y += 22, 100, 20, dbcArms.getColor()));
                 cosmeticsScrollWindow.getButton(15).packedFGColour = dbcArms.color != 0 ? dbcArms.color : 1;
             }
-            maxScroll += 40;
-            maxScroll += 22 * 4;
+
+            ModelPartData tail = playerdata.getPartData("tail");
+            int tailIndex = 0;
+            if (tail != null && tail.type == 8) {
+                tailIndex = tail.pattern + 1;
+                if (tailIndex > 3) tailIndex = 0;
+            }
+            cosmeticsScrollWindow.addButton(new GuiButtonBiDirectional(6, guiLeft + 47, y += 22, 100, 20, arrTail, tailIndex));
+            cosmeticsScrollWindow.addLabel(new GuiNpcLabel(6, "display.tail", guiLeft, y + 5, 0xFFFFFF));
+            if (tail != null && !display.useSkin) {
+                cosmeticsScrollWindow.addButton(new GuiNpcButton(16, guiLeft + 47, y += 22, 100, 20, tail.getColor()));
+                cosmeticsScrollWindow.getButton(16).packedFGColour = tail.color != 0 ? tail.color : 1;
+            }
+
+            maxScroll = Math.max(0, (y + 20) - cosmeticsScrollWindow.clipHeight);
             cosmeticsScrollWindow.maxScrollY = maxScroll;
         } else {
             //  addButton(new GuiNpcButton(1, guiLeft + 64, y += 22, 60, 20, arrRace, display.race+1));
@@ -310,7 +324,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             initGui();
         }
         if (button.id == 0) {
-            display.enabled = button.getValue() == 1;
+            display.setEnabled(button.getValue() == 1);
             display.setRacialExtras();
             initGui();
         }
@@ -411,6 +425,20 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
         }
         if (button.id == 15) {
             this.mc.displayGuiScreen(new GuiModelColor(this, playerdata.getPartData("dbcArms"), npc));
+        }
+        if (button.id == 6) {
+            int value = button.getValue();
+            if (value == 0)
+                playerdata.removePart("tail");
+            else {
+                ModelPartData data = playerdata.getOrCreatePart("tail");
+                data.setTexture("tail/monkey1", 8);
+                data.pattern = (byte) (value - 1);
+            }
+            initGui();
+        }
+        if (button.id == 16) {
+            this.mc.displayGuiScreen(new GuiModelColor(this, playerdata.getPartData("tail"), npc));
         }
         if (button.id == 300) {
             setSubGui(new GuiDBCDisplayColor(this, playerdata, display, npc, 0, button.id));

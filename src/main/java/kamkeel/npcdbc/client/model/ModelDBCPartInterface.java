@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.model;
 
+import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
@@ -49,6 +50,11 @@ public abstract class ModelDBCPartInterface extends ModelRenderer {
     }
 
     public void render(float par1) {
+        if (ModelDBC.isTintPass) {
+            super.render(par1);
+            return;
+        }
+
         if (!this.base.isArmor) {
             if (this.location != null) {
                 ClientProxy.bindTexture(this.location);

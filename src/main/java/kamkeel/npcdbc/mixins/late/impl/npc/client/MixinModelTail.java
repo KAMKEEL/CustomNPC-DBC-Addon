@@ -4,6 +4,7 @@ package kamkeel.npcdbc.mixins.late.impl.npc.client;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.client.ClientConstants;
+import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -61,6 +62,12 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
         if (!this.isHidden && !monkey.isHidden) {
             DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
             if (display == null || !display.enabled)
+                return;
+
+            if (!display.useSkin)
+                return;
+
+            if (ModelDBC.isTintPass)
                 return;
 
             if (!ClientConstants.renderingOutline && display.outlineID != -1)
@@ -194,6 +201,9 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", shift = At.Shift.AFTER, remap = true), remap = true)
     private void after(float par1, CallbackInfo ci) {
+        if (ModelDBC.isTintPass)
+            return;
+
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
 
         if (!ClientConstants.renderingOutline && display.outlineID != -1)

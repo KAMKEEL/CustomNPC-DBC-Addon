@@ -145,6 +145,7 @@ display.furOff=Fur Off
 display.tail=Tail
 display.normalTail=Normal
 display.wrappedTail=Wrapped
+display.arcoTail=Arcosian
 display.noTail=No Tail
 display.base=Base
 display.ssj=SSJ
@@ -464,6 +465,15 @@ item.npcdbc:fruitofmight.name=Fruit of Might
 item.npcdbc:one_potara.name=Potara Earring
 item.npcdbc:two_potara.name=Grand Potara Earring
 item.npcdbc:three_potara.name=Supreme Potara Earring
+
+ability.icon.texture=Texture
+ability.icon.section.uv=UV Coordinates
+ability.icon.x=Icon X
+ability.icon.y=Icon Y
+ability.icon.section.size=Size
+ability.icon.width=Width
+ability.icon.height=Height
+ability.icon.scale=Scale
 
 ability.npcdbc.kamehameha=Kamehameha
 ability.npcdbc.destructo_disc=Destructo Disc

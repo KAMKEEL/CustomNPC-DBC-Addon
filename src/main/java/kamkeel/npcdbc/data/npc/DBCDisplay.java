@@ -370,6 +370,9 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+        if (!enabled) {
+            isFemale = false;
+        }
     }
 
     @Override

@@ -10,6 +10,7 @@ public class AbilityFriendlyFist extends DBCToggleAbility {
 
     public AbilityFriendlyFist() {
         super("npcdbc:friendly_fist");
+        this.name = "Friendly Fist";
     }
 
     @Override
