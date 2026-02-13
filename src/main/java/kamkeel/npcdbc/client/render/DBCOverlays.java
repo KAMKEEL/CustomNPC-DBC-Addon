@@ -34,7 +34,7 @@ public class DBCOverlays {
     public static final OverlayChain PUPILS = OverlayChain.create("Pupils");
 
     static {
-        NO_EYEBROWS.add(Eyebrows, Hair, ctx -> format("jinryuumodscore:cc/ssj3eyebrow/%shumw%s.png", ctx.female() ? "f" : "", ctx.eyeType()));
+        NO_EYEBROWS.add(Eyebrows, Hair, ctx -> "jinryuumodscore:cc/ssj3eyebrow/" + (ctx.female() ? "f" : "") + "humw" + ctx.eyeType() + ".png");
         NO_EYEBROWS.disable(Part.Eyebrows);
 
 

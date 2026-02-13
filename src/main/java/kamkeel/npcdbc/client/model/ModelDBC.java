@@ -519,13 +519,13 @@ public class ModelDBC extends ModelBase {
                     chains.add(PUPILS);
             }
 
-            if (ssj3) {
+            if (ssj3 || (!eyebrows && pupils)) {
                 chains.add(SSJ3_FACE); // SSJ3 unique face
             }
-        }
-
-        if (!eyebrows || (ssj3 && !HD())) {
-            chains.add(NO_EYEBROWS);
+        } else {
+            if (!eyebrows || ssj3) {
+                chains.add(NO_EYEBROWS);
+            }
         }
 
         /* ───────── Main Entity Overlays ───────── */
