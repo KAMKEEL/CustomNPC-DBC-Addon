@@ -543,7 +543,7 @@ public class DBCUtils {
                 }
 
                 // Damage after Reduction
-                damageAmount = (float) ((damageAmount - rawDefense - defensePenetrated) * enduranceReduction);
+                damageAmount = (float) ((damageAmount - (rawDefense - defensePenetrated)) * enduranceReduction);
 
                 // Prevents Negative Damages
                 damageAmount = Math.max(damageAmount, 1);
