@@ -35,7 +35,7 @@ public class DBCOverlays {
 
     static {
         NO_EYEBROWS.add(Eyebrows, Hair, ctx -> "jinryuumodscore:cc/ssj3eyebrow/" + (ctx.female() ? "f" : "") + "humw" + ctx.eyeType() + ".png");
-        NO_EYEBROWS.disable(Part.Eyebrows);
+//        NO_EYEBROWS.disable(Part.Eyebrows);
 
 
         SSJ4_FUR.add(ALL, Fur, ctx -> path("ssj4/ss4b" + ctx.furType() + ".png"));
