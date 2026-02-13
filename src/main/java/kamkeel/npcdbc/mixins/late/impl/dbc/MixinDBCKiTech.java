@@ -9,6 +9,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientCache;
+import kamkeel.npcdbc.client.KnockbackTracker;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -24,11 +25,17 @@ import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.DBCSetValPacket;
 import kamkeel.npcdbc.network.packets.player.TransformPacket;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.input.Keyboard;
+
+import java.util.UUID;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -82,6 +89,7 @@ public abstract class MixinDBCKiTech {
     @Redirect(method = "DashKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
     private static void changeSprintSpeed(float f4, float f5, EntityPlayer pitch, float speedY) {
         speedY *= DBCData.getClient().getSprintSpeed();
+        speedY *= getSpeedModifier(pitch);
         mv(f4, f5, pitch, speedY);
     }
 
@@ -94,6 +102,7 @@ public abstract class MixinDBCKiTech {
     @Redirect(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
     private static void changeBaseSpeed(float f4, float f5, EntityPlayer pitch, float speedY) {
         speedY *= DBCData.getClient().getBaseFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100f;
+        speedY *= getSpeedModifier(pitch);
         mv(f4, f5, pitch, speedY);
     }
 
@@ -107,7 +116,89 @@ public abstract class MixinDBCKiTech {
     @Redirect(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;setThrowableHeading(Lnet/minecraft/entity/Entity;DDDFF)V"))
     private static void changeDynamic(Entity e, double par1, double par3, double par5, float par7, float par8) {
         par7 *= DBCData.getClient().getDynamicFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100f;
+        if (e instanceof EntityPlayer) {
+            par7 *= getSpeedModifier((EntityPlayer) e);
+        }
         setThrowableHeading(e, par1, par3, par5, par7, par8);
+    }
+
+    /**
+     * Preserve external velocity (knockback, explosions, etc.) across DBC's DashKi.
+     * HEAD captures pre-DBC motion state, TAIL restores external velocity after DBC sets its own.
+     */
+    @Inject(method = "DashKi", at = @At("HEAD"))
+    private static void npcdbc$beforeDashKi(boolean sprint, CallbackInfo ci) {
+        if (sprint && !DBCKiTech.floating) {
+            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+            if (player != null) {
+                KnockbackTracker.beforeDBCMovement(player);
+            }
+        }
+    }
+
+    @Inject(method = "DashKi", at = @At("TAIL"))
+    private static void npcdbc$afterDashKi(boolean sprint, CallbackInfo ci) {
+        if (sprint && !DBCKiTech.floating) {
+            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+            if (player != null) {
+                KnockbackTracker.afterDBCMovement(player);
+            }
+        }
+    }
+
+    /**
+     * Preserve external velocity across DBC's FloatKi.
+     * HEAD is conditional on floating; if flight toggles on mid-method,
+     * afterDBCMovement detects the unpaired call and handles it as a first tick.
+     */
+    @Inject(method = "FloatKi", at = @At("HEAD"))
+    private static void npcdbc$beforeFloatKi(KeyBinding kiFlight, KeyBinding keyBindJump, KeyBinding keyBindSneak, CallbackInfo ci) {
+        if (DBCKiTech.floating) {
+            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+            if (player != null) {
+                KnockbackTracker.beforeDBCMovement(player);
+            }
+        }
+    }
+
+    @Inject(method = "FloatKi", at = @At("TAIL"))
+    private static void npcdbc$afterFloatKi(KeyBinding kiFlight, KeyBinding keyBindJump, KeyBinding keyBindSneak, CallbackInfo ci) {
+        if (DBCKiTech.floating) {
+            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+            if (player != null) {
+                KnockbackTracker.afterDBCMovement(player);
+            }
+        }
+    }
+
+    /** Vanilla sprint modifier UUID — excluded since DBC handles sprint speed separately */
+    private static final UUID SPRINT_MODIFIER_UUID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
+
+    /**
+     * Speed modifier from the entity's movementSpeed attribute.
+     * Captures all sources: Speed/Slowness potions, equipment, custom modifiers.
+     * Excludes the vanilla sprint modifier to avoid double-counting with DBC's own sprint speed.
+     */
+    private static float getSpeedModifier(EntityPlayer player) {
+        if (!ClientCache.turboSpeedFix) return 1.0F;
+
+        IAttributeInstance attr = player.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
+        double base = attr.getBaseValue();
+        if (base <= 0) return 1.0F;
+
+        double value = attr.getAttributeValue();
+
+        // Exclude sprint modifier — DBC already handles sprint speed via getSprintSpeed()
+        AttributeModifier sprintMod = attr.getModifier(SPRINT_MODIFIER_UUID);
+        if (sprintMod != null) {
+            value /= (1.0 + sprintMod.getAmount());
+        }
+
+        float ratio = (float) (value / base);
+        // Apply multiplier: scales how much the deviation from normal speed affects turbo
+        // e.g. ratio=1.4, multiplier=0.5 → 1.0 + 0.4*0.5 = 1.2
+        ratio = 1.0F + (ratio - 1.0F) * ClientCache.turboSpeedMultiplier;
+        return Math.max(ratio, 0.0F);
     }
 
     @Inject(method = "FloatKi", at = @At(value = "FIELD", target = "LJinRyuu/DragonBC/common/DBCKiTech;floating:Z", ordinal = 7, shift = At.Shift.AFTER))
@@ -117,8 +208,6 @@ public abstract class MixinDBCKiTech {
             DBCData.getClient().isFlying = DBCKiTech.floating;
             DBCPacketHandler.Instance.sendToServer(new DBCSetValPacket(DBCData.getClient().player, EnumNBTType.BOOLEAN, "DBCisFlying", DBCKiTech.floating));
         }
-
-
     }
 
     @Redirect(method = "FloatKi", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;PlayerFlyingDragDownOn:Z"))
