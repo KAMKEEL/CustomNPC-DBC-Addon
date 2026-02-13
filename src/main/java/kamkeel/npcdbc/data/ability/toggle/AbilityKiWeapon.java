@@ -10,6 +10,7 @@ public class AbilityKiWeapon extends DBCToggleAbility {
 
     public AbilityKiWeapon() {
         super("npcdbc:ki_weapon");
+        this.name = "Ki Weapon";
     }
 
     @Override

@@ -93,8 +93,15 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
         NPCDBCModel.rot6 = p6;
     }
 
+    @Unique
+    private static boolean npcdbc$isTintPass() {
+        return !GL11.glIsEnabled(GL11.GL_TEXTURE_2D);
+    }
+
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/ModelMPM;renderCloak(Lnoppes/npcs/entity/EntityCustomNpc;F)V", shift = At.Shift.AFTER), remap = true)
     private void outline(Entity entity, float p1, float p2, float p3, float p4, float p5, float p6, CallbackInfo ci) {
+        if (npcdbc$isTintPass())
+            return;
 
         EntityCustomNpc npc = (EntityCustomNpc) entity;
         DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
@@ -124,6 +131,8 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/ModelMPM;renderCloak(Lnoppes/npcs/entity/EntityCustomNpc;F)V", shift = At.Shift.AFTER), remap = true)
     private void renderDBCOverlays(Entity entity, float par2, float par3, float par4, float par5, float par6, float par7, CallbackInfo ci) {
+        if (npcdbc$isTintPass())
+            return;
         if (!isArmor && display != null && display.enabled) {
             OverlayContext ctx = OverlayContext.from(display);
             ctx.modelNpc = NPCDBCModel;
@@ -135,8 +144,9 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
     private void renderDBCHead(ModelScaleRenderer instance, float v, @Local(argsOnly = true) EntityCustomNpc entity) {
         display = ((INPCDisplay) entity.display).getDBCDisplay();
         ClientProxy.currentlyDrawnNPC = entity;
+        boolean tintPass = npcdbc$isTintPass();
         glPushMatrix();
-        if (!isArmor && display.enabled) {
+        if (!tintPass && !isArmor && display.enabled) {
             if (display.isFemaleInternal()) {
                 GL11.glScalef(0.85F, 1, 0.85F);
             }
@@ -152,10 +162,11 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
         if (instance.isHidden || !instance.showModel)
             return;
         display = ((INPCDisplay) entity.display).getDBCDisplay();
+        boolean tintPass = npcdbc$isTintPass();
         glPushMatrix();
 
-        if (!display.isFemaleInternal()) {
-            if (!isArmor && display.enabled) {
+        if (tintPass || !display.isFemaleInternal()) {
+            if (!tintPass && !isArmor && display.enabled) {
                 NPCDBCModel.renderBodySkin(display, bipedBody);
             }
             instance.render(v);
@@ -171,8 +182,9 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
     @Redirect(method = "renderLegs", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/part/ModelLegs;render(F)V", remap = true))
     private void renderDBCLegs(ModelLegs instance, float green, @Local(argsOnly = true) EntityCustomNpc entity) {
         display = ((INPCDisplay) entity.display).getDBCDisplay();
+        boolean tintPass = npcdbc$isTintPass();
         glPushMatrix();
-        if (!isArmor && display.enabled) {
+        if (!tintPass && !isArmor && display.enabled) {
             if (display.isFemaleInternal()) {
 //                GL11.glScalef(0.7F, 1F, 0.7F);
             }
@@ -185,13 +197,14 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
     @Redirect(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 0, remap = true))
     private void renderDBCLeftArm(ModelScaleRenderer instance, float v, @Local(argsOnly = true) EntityCustomNpc entity) {
         display = ((INPCDisplay) entity.display).getDBCDisplay();
+        boolean tintPass = npcdbc$isTintPass();
         glPushMatrix();
         if (display.isFemaleInternal()) {
             GL11.glScalef(0.7F, 1F, 0.7F);
             glTranslatef(-0.0125f, 0.035f, 0);
             glRotatef(-7, 0, 0, 0.1f);
         }
-        if (!isArmor && display.enabled)
+        if (!tintPass && !isArmor && display.enabled)
             NPCDBCModel.renderBodySkin(display, bipedLeftArm);
         instance.render(v);
         glPopMatrix();
@@ -200,15 +213,15 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
     @Redirect(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 1, remap = true))
     private void renderDBCRightArm(ModelScaleRenderer instance, float v, @Local(argsOnly = true) EntityCustomNpc entity) {
         display = ((INPCDisplay) entity.display).getDBCDisplay();
+        boolean tintPass = npcdbc$isTintPass();
         GL11.glPushMatrix();
         if (display.isFemaleInternal()) {
             GL11.glScalef(0.7F, 1F, 0.7F);
             glTranslatef(0.0125f, 0.035f, 0);
             glRotatef(7, 0, 0, 0.1f);
         }
-        if (!isArmor && display.enabled)
+        if (!tintPass && !isArmor && display.enabled)
             NPCDBCModel.renderBodySkin(display, bipedRightArm);
-
 
         instance.render(v);
         GL11.glPopMatrix();
@@ -223,6 +236,8 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/ModelMPM;renderCloak(Lnoppes/npcs/entity/EntityCustomNpc;F)V", shift = At.Shift.AFTER, remap = true))
     public void renderKiWeapon(Entity par1Entity, float par2, float par3, float par4, float par5, float par6, float par7, CallbackInfo ci) {
+        if (npcdbc$isTintPass())
+            return;
         if (this.isArmor) {
             return;
         }

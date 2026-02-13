@@ -10,6 +10,7 @@ public class AbilityKiProtection extends DBCToggleAbility {
 
     public AbilityKiProtection() {
         super("npcdbc:ki_protection");
+        this.name = "Ki Protection";
     }
 
     @Override
