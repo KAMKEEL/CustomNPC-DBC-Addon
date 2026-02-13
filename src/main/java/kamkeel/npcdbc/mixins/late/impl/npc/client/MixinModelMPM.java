@@ -153,6 +153,8 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
         if (!tintPass && !isArmor && display.enabled) {
             NPCDBCModel.renderFace(entity, display, bipedHead);
             NPCDBCModel.renderBodySkin(display, bipedHead);
+        } else if (tintPass && display.enabled) {
+            NPCDBCModel.renderFaceGeometry(entity);
         }
         instance.render(v);
         glPopMatrix();

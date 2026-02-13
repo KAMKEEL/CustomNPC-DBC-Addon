@@ -52,6 +52,15 @@ public class DBCFemaleBody extends ModelDBCPartInterface {
         this.rot4 = par4;
         this.rot5 = par5;
         this.rot6 = par6;
+
+        // Reset sub-part X rotations; parent (bipedBody) handles sneak & animation via postRender
+        this.Bbreast.rotateAngleX = 0.0F;
+        this.body.rotateAngleX = 0.0F;
+        this.hip.rotateAngleX = 0.0F;
+        this.waist.rotateAngleX = 0.0F;
+        this.bottom.rotateAngleX = 0.0F;
+        this.Bbreast2.rotateAngleX = 0.0F;
+
         if (base.onGround > -9990.0F) {
             float f = base.onGround;
 
@@ -67,32 +76,14 @@ public class DBCFemaleBody extends ModelDBCPartInterface {
             f2 *= f2 * f2;
             f2 = 1.0F - f2;
 
-            // small forward lean
-            this.Bbreast.rotateAngleX -= MathHelper.sin(f2 * 3.1415927F) * 0.1F;
+            // small forward lean during hand swing
+            float lean = MathHelper.sin(f2 * 3.1415927F) * 0.1F;
+            this.Bbreast.rotateAngleX -= lean;
             this.body.rotateAngleX = this.Bbreast.rotateAngleX;
             this.hip.rotateAngleX = this.Bbreast.rotateAngleX;
             this.waist.rotateAngleX = this.Bbreast.rotateAngleX;
             this.bottom.rotateAngleX = this.Bbreast.rotateAngleX;
             this.Bbreast2.rotateAngleX = this.Bbreast.rotateAngleX;
-        }
-
-        if (base.isSneak) {
-
-            this.Bbreast.rotateAngleX = 0.5F;
-            this.body.rotateAngleX = 0.5F;
-            this.hip.rotateAngleX = 0.5F;
-            this.waist.rotateAngleX = 0.5F;
-            this.bottom.rotateAngleX = 0.5F;
-            this.Bbreast2.rotateAngleX = 0.5F;
-
-        } else {
-
-            this.Bbreast.rotateAngleX = 0.0F;
-            this.body.rotateAngleX = 0.0F;
-            this.hip.rotateAngleX = 0.0F;
-            this.waist.rotateAngleX = 0.0F;
-            this.bottom.rotateAngleX = 0.0F;
-            this.Bbreast2.rotateAngleX = 0.0F;
         }
     }
 

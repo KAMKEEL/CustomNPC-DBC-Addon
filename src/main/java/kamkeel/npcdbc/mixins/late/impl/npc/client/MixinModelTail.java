@@ -64,6 +64,9 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
             if (display == null || !display.enabled)
                 return;
 
+            if (!display.useSkin)
+                return;
+
             if (ModelDBC.isTintPass)
                 return;
 

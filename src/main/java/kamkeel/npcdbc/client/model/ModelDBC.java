@@ -301,6 +301,21 @@ public class ModelDBC extends ModelBase {
         }
     }
 
+    /**
+     * Renders face plane geometry without textures/colors.
+     * Used during the tint pass so the depth buffer matches the normal pass
+     * and GL_EQUAL doesn't skip face pixels.
+     */
+    public void renderFaceGeometry(EntityCustomNpc entity) {
+        if (display == null || !display.useSkin)
+            return;
+
+        float y = entity.modelData.getBodyY();
+        for (ModelRenderer face : new ModelRenderer[]{nose, mouth, eyebase, eyeleft, eyeright, eyebrow}) {
+            renderOnHead(face, y);
+        }
+    }
+
     public void renderOnHead(ModelRenderer model) {
         renderOnHead(model, parent.npc.modelData.getBodyY());
     }
@@ -828,17 +843,10 @@ public class ModelDBC extends ModelBase {
     }
 
     public void renderFemaleBodySkin(DBCDisplay display, ModelRenderer bipedBody, boolean isArmor, ModelScalePart config, float v) {
-        DBCFemaleBody.rotateAngleX = bipedBody.rotateAngleX - (parent.isSneak ? 0.5f : 0f);
-        DBCFemaleBody.rotateAngleY = bipedBody.rotateAngleY;
-        DBCFemaleBody.rotateAngleZ = bipedBody.rotateAngleZ;
-        DBCFemaleBody.rotationPointX = bipedBody.rotationPointX;
-        DBCFemaleBody.rotationPointY = bipedBody.rotationPointY;
-        DBCFemaleBody.rotationPointZ = bipedBody.rotationPointZ;
-
         ModelScaleRenderer scaleRenderer = (ModelScaleRenderer) bipedBody;
 
         GL11.glTranslatef(scaleRenderer.x, scaleRenderer.y, scaleRenderer.z);
-        transRot(1, DBCFemaleBody);
+        bipedBody.postRender(v);
         if (config != null) {
             GL11.glScalef(config.scaleX, config.scaleY, config.scaleZ);
         }
