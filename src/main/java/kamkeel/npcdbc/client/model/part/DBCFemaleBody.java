@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.model.part;
 
 import kamkeel.npcdbc.client.ClientConstants;
+import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -51,6 +52,15 @@ public class DBCFemaleBody extends ModelDBCPartInterface {
         this.rot4 = par4;
         this.rot5 = par5;
         this.rot6 = par6;
+
+        // Reset sub-part X rotations; parent (bipedBody) handles sneak & animation via postRender
+        this.Bbreast.rotateAngleX = 0.0F;
+        this.body.rotateAngleX = 0.0F;
+        this.hip.rotateAngleX = 0.0F;
+        this.waist.rotateAngleX = 0.0F;
+        this.bottom.rotateAngleX = 0.0F;
+        this.Bbreast2.rotateAngleX = 0.0F;
+
         if (base.onGround > -9990.0F) {
             float f = base.onGround;
 
@@ -66,32 +76,14 @@ public class DBCFemaleBody extends ModelDBCPartInterface {
             f2 *= f2 * f2;
             f2 = 1.0F - f2;
 
-            // small forward lean
-            this.Bbreast.rotateAngleX -= MathHelper.sin(f2 * 3.1415927F) * 0.1F;
+            // small forward lean during hand swing
+            float lean = MathHelper.sin(f2 * 3.1415927F) * 0.1F;
+            this.Bbreast.rotateAngleX -= lean;
             this.body.rotateAngleX = this.Bbreast.rotateAngleX;
             this.hip.rotateAngleX = this.Bbreast.rotateAngleX;
             this.waist.rotateAngleX = this.Bbreast.rotateAngleX;
             this.bottom.rotateAngleX = this.Bbreast.rotateAngleX;
             this.Bbreast2.rotateAngleX = this.Bbreast.rotateAngleX;
-        }
-
-        if (base.isSneak) {
-
-            this.Bbreast.rotateAngleX = 0.5F;
-            this.body.rotateAngleX = 0.5F;
-            this.hip.rotateAngleX = 0.5F;
-            this.waist.rotateAngleX = 0.5F;
-            this.bottom.rotateAngleX = 0.5F;
-            this.Bbreast2.rotateAngleX = 0.5F;
-
-        } else {
-
-            this.Bbreast.rotateAngleX = 0.0F;
-            this.body.rotateAngleX = 0.0F;
-            this.hip.rotateAngleX = 0.0F;
-            this.waist.rotateAngleX = 0.0F;
-            this.bottom.rotateAngleX = 0.0F;
-            this.Bbreast2.rotateAngleX = 0.0F;
         }
     }
 
@@ -158,18 +150,18 @@ public class DBCFemaleBody extends ModelDBCPartInterface {
         if (!display.enabled)
             return;
 
-
+        boolean tintPass = ModelDBC.isTintPass;
 
 // -----------------------------
 // Outline / stencil setup
 // -----------------------------
-        if (!ClientConstants.renderingOutline && display.outlineID != -1)
+        if (!tintPass && !ClientConstants.renderingOutline && display.outlineID != -1)
             RenderEventHandler.enableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256);
 
         GL11.glPushMatrix();  // Pushing matrix to start transformations
 
         float spike1RotX = 0;
-        if (ClientConstants.renderingOutline) {
+        if (!tintPass && ClientConstants.renderingOutline) {
             spike1RotX = backSpike1.rotationPointX;
             GL11.glTranslatef(0.015f, -0.02f, 0);
             GL11.glScaled(1.02, 1.02, 0.95);
@@ -180,7 +172,7 @@ public class DBCFemaleBody extends ModelDBCPartInterface {
 // -----------------------------
 // Skin / color / form color logic
 // -----------------------------
-        if (display.useSkin) {
+        if (!tintPass && display.useSkin) {
             this.useColor = 0;
             bodyCM = display.bodyCM;
 
@@ -321,10 +313,10 @@ public class DBCFemaleBody extends ModelDBCPartInterface {
 // ------------------------------------------------
 // Outline cleanup
 // ------------------------------------------------
-        if (!ClientConstants.renderingOutline && display.outlineID != -1)
+        if (!tintPass && !ClientConstants.renderingOutline && display.outlineID != -1)
             RenderEventHandler.enableStencilWriting(entity.getEntityId() % 256);
 
-        if (ClientConstants.renderingOutline) {
+        if (!tintPass && ClientConstants.renderingOutline) {
             disableStencilWriting((entity.getEntityId()) % 256, false);
             backSpike1.rotationPointX = spike1RotX;
         }

@@ -77,12 +77,10 @@ public class RenderEventHandler {
 
     @SubscribeEvent
     public void renderPotaraWhenFused(RenderPlayerEvent.SetArmorModel event) {
-        if (event.slot != 3 || event.stack != null)
+        if (Minecraft.getMinecraft().theWorld == null || event.slot != 3 || event.stack != null)
             return;
 
-
         DBCData dbcData = DBCData.get(event.entityPlayer);
-
         if (!dbcData.stats.isFused()) {
             return;
         }

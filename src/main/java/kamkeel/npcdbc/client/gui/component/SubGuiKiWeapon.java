@@ -157,7 +157,7 @@ public class SubGuiKiWeapon extends SubGuiInterface implements ITextfieldListene
         }
 
 
-        //    addButton(new GuiNpcButton(66, guiLeft + xSize - 24, guiTop + 3, 20, 20, "X"));
+        addButton(new GuiNpcButton(66, guiLeft + xSize - 24, guiTop + 3, 20, 20, "X"));
     }
 
 
@@ -256,6 +256,18 @@ public class SubGuiKiWeapon extends SubGuiInterface implements ITextfieldListene
             right.offsetZ = textfield.getFloat();
             getButton(15).enabled = right.offsetX != 0 || right.offsetY != 0 || right.offsetZ != 0;
         }
+    }
+
+    @Override
+    public void keyTyped(char c, int i) {
+        if (i == 1) {
+            if (hasSubGui())
+                getSubGui().close();
+            else
+                close();
+            return;
+        }
+        super.keyTyped(c, i);
     }
 
     public void drawScreen(int i, int j, float f) {

@@ -145,6 +145,7 @@ display.furOff=Fur Off
 display.tail=Tail
 display.normalTail=Normal
 display.wrappedTail=Wrapped
+display.arcoTail=Arcosian
 display.noTail=No Tail
 display.base=Base
 display.ssj=SSJ
@@ -465,6 +466,15 @@ item.npcdbc:one_potara.name=Potara Earring
 item.npcdbc:two_potara.name=Grand Potara Earring
 item.npcdbc:three_potara.name=Supreme Potara Earring
 
+ability.icon.texture=Texture
+ability.icon.section.uv=UV Coordinates
+ability.icon.x=Icon X
+ability.icon.y=Icon Y
+ability.icon.section.size=Size
+ability.icon.width=Width
+ability.icon.height=Height
+ability.icon.scale=Scale
+
 ability.npcdbc.kamehameha=Kamehameha
 ability.npcdbc.destructo_disc=Destructo Disc
 ability.npcdbc.special_beam_cannon=Special Beam Cannon
@@ -483,6 +493,11 @@ ability.npcdbc.death_saucer=Death Saucer
 ability.npcdbc.hakai=Destruction
 ability.npcdbc.ki_blast=Energy Blast
 ability.npcdbc.ki_wave=Energy Wave
+ability.npcdbc.ki_fist=Ki Fist
+ability.npcdbc.swoop=Swoop
+ability.npcdbc.ki_protection=Ki Protection
+ability.npcdbc.friendly_fist=Friendly Fist
+ability.npcdbc.ki_weapon=Ki Weapon
 
 effect.healthregeneration=Health Regeneration
 effect.exhausted=Exhausted

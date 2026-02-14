@@ -37,7 +37,7 @@ public class CustomNpcPlusDBC {
 
     public static final String name = "CustomNPC+ DBC Addon";
     public static final String ID = "npcdbc";
-    public static final String version = "1.2-beta1";
+    public static final String version = "1.2-beta2";
 
     @SidedProxy(clientSide = "kamkeel.npcdbc.client.ClientProxy", serverSide = "kamkeel.npcdbc.CommonProxy")
     public static CommonProxy proxy;
@@ -80,6 +80,9 @@ public class CustomNpcPlusDBC {
             ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.KNOCKOUT.function, IDBCEvent.DBCKnockout.class);
             ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.SKILL_EVENT.function, IDBCEvent.SkillEvent.class);
         }
+
+        DBCAbilities.register();
+        DBCAnimations.register();
     }
 
     @Mod.EventHandler
@@ -90,8 +93,6 @@ public class CustomNpcPlusDBC {
         BonusController.getInstance().load();
         OutlineController.getInstance().load();
         SkillController.Instance.load();
-        DBCAbilities.register();
-        DBCAnimations.register();
     }
 
     @Mod.EventHandler

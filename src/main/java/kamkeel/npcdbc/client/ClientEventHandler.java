@@ -9,7 +9,9 @@ import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
+import kamkeel.npcdbc.client.gui.hud.abilityHotbar.HUDAbilityHotbar;
 import kamkeel.npcdbc.client.gui.global.auras.SubGuiAuraDisplay;
+import kamkeel.npcdbc.client.gui.hud.abilityWheel.HUDAbilityWheel;
 import kamkeel.npcdbc.client.gui.hud.formWheel.HUDFormWheel;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.client.sound.SoundHandler;
@@ -35,6 +37,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.StatCollector;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
@@ -138,6 +141,9 @@ public class ClientEventHandler {
             if (PlayerDataUtil.getClientDBCInfo() != null)
                 mc.displayGuiScreen(new HUDFormWheel());
         }
+        if (KeyHandler.AbilityWheelKey.isPressed()) {
+            mc.displayGuiScreen(new HUDAbilityWheel());
+        }
     }
 
     @SubscribeEvent
@@ -148,6 +154,10 @@ public class ClientEventHandler {
             if (formData != null) {
                 if (KeyHandler.FormWheelKey.isPressed()) {
                     mc.displayGuiScreen(new HUDFormWheel());
+                    return;
+                }
+                if (KeyHandler.AbilityWheelKey.isPressed()) {
+                    mc.displayGuiScreen(new HUDAbilityWheel());
                     return;
                 }
 
@@ -229,6 +239,7 @@ public class ClientEventHandler {
     @SubscribeEvent
     public void logoutEvent(FMLNetworkEvent.ClientDisconnectionFromServerEvent event) {
         ClientCache.clientDataCache.clear();
+        KnockbackTracker.clear();
     }
 
     @SubscribeEvent
@@ -239,6 +250,13 @@ public class ClientEventHandler {
             }
 
             ticks++;
+        }
+    }
+
+    @SubscribeEvent
+    public void onHudRender(RenderGameOverlayEvent.Post event) {
+        if (event.type == RenderGameOverlayEvent.ElementType.ALL) {
+            HUDAbilityHotbar.getInstance().onRender();
         }
     }
 

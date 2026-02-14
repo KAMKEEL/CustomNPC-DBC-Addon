@@ -45,8 +45,13 @@ public class DBCAbilityDamageHandler implements IAbilityDamageHandler {
         }
 
         if (target instanceof EntityPlayer) {
-            // Player target: full DBC damage pipeline (same as MixinDBCAddon.doDBCDamage)
-            applyDBCDamageToPlayer((EntityPlayer) target, damage, stats, source);
+            // Apply base MC damage first for knockback/hurt animation/invulnerability frames
+            // (same pattern as NPC melee in EntityNPCInterface: attackEntityFrom with tiny damage, then DBC damage)
+            boolean attacked = target.attackEntityFrom(source, 1.0f);
+            if (attacked) {
+                // Player target: full DBC damage pipeline (same as MixinDBCAddon.doDBCDamage)
+                applyDBCDamageToPlayer((EntityPlayer) target, damage, stats, source);
+            }
         } else if (target instanceof EntityNPCInterface) {
             // NPC target: set npcLastSetDamage for the Mixin to pick up
             DBCUtils.npcLastSetDamage = damage;

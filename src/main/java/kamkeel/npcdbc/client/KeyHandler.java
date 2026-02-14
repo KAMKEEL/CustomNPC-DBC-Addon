@@ -6,8 +6,10 @@ import org.lwjgl.input.Keyboard;
 
 public class KeyHandler {
     public static KeyBinding FormWheelKey = new KeyBinding("Form Wheel", Keyboard.KEY_Y, "key.categories.customnpc");
+    public static KeyBinding AbilityWheelKey = new KeyBinding("Ability Wheel", Keyboard.KEY_U, "key.categories.customnpc");
 
     public static void registerKeys() {
         ClientRegistry.registerKeyBinding(FormWheelKey);
+        ClientRegistry.registerKeyBinding(AbilityWheelKey);
     }
 }
