@@ -24,7 +24,6 @@ public enum EnumPacketPlayer {
     NPCPingForm,
     CustomSkill,
     Turbo,
-    NPCPingForm,
     AbilitySelect,
     AbilityWheel,
     AbilityWheelSave
