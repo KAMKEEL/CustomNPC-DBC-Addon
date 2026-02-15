@@ -2,6 +2,7 @@ package kamkeel.npcdbc.data.ability;
 
 import kamkeel.npcdbc.constants.DBCDamageSource;
 import kamkeel.npcdbc.data.DBCDamageCalc;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.DBCUtils;
@@ -20,6 +21,21 @@ import noppes.npcs.entity.EntityNPCInterface;
  * - Lifecycle hooks for resource costs (ki, stamina) — implement as needed
  */
 public class DBCAbilityExtender implements IAbilityExtender {
+
+    @Override
+    public boolean onAbilityStart(Ability ability, EntityLivingBase caster, EntityLivingBase target) {
+        if (!(caster instanceof EntityPlayer))
+            return true;
+
+        DBCData data = DBCData.get((EntityPlayer) caster);
+        int ki = data.Ki;
+
+        if (ki < ability.getKiCost())
+            return false;
+
+        data.stats.restoreKiFlat(-ability.getKiCost());
+        return true;
+    }
 
     @Override
     public boolean onAbilityDamage(Ability ability, EntityLivingBase caster, EntityLivingBase target,
