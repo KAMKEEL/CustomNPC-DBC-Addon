@@ -27,13 +27,27 @@ public class DBCAbilityExtender implements IAbilityExtender {
         if (!(caster instanceof EntityPlayer))
             return true;
 
-        DBCData data = DBCData.get((EntityPlayer) caster);
-        int ki = data.Ki;
+        DBCAbilityStats stats = DBCAbilityStats.fromAbility(ability);
+        int kiCost = stats.getKiCost();
+        int staminaCost = stats.getStaminaCost();
 
-        if (ki < ability.getKiCost())
+        if (kiCost <= 0 && staminaCost <= 0)
+            return true;
+
+        DBCData data = DBCData.get((EntityPlayer) caster);
+
+        if (kiCost > 0 && data.Ki < kiCost)
             return false;
 
-        data.stats.restoreKiFlat(-ability.getKiCost());
+        if (staminaCost > 0 && data.Stamina < staminaCost)
+            return false;
+
+        if (kiCost > 0)
+            data.stats.restoreKiFlat(-kiCost);
+
+        if (staminaCost > 0)
+            data.stats.restoreStaminaFlat(-staminaCost);
+
         return true;
     }
 

@@ -208,6 +208,12 @@ public class DBCDataStats {
         data.getRawCompound().setInteger("jrmcBdy", data.Body);
     }
 
+    public void restoreStaminaFlat(int amountToRestore) {
+        int maxSta = isFused() ? getMaxFusionStamina() : getMaxStamina();
+        data.Stamina = ValueUtil.clamp(data.Stamina + amountToRestore, 0, maxSta);
+        data.getRawCompound().setInteger("jrmcStamina", data.Stamina);
+    }
+
     public void restoreStaminaPercent(float percToRestore) {
         int maxSta = isFused() ? getMaxFusionStamina() : getMaxStamina();
         int toAdd = (int) (maxSta * (percToRestore / 100));

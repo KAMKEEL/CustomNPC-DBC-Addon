@@ -1,12 +1,12 @@
 package kamkeel.npcdbc.data.ability;
 
-import kamkeel.npcdbc.api.npc.IDBCStats;
+import kamkeel.npcdbc.api.ability.IDBCAbility;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.util.ValueUtil;
 
 /**
- * DBC combat stats for abilities, implementing {@link IDBCStats} so the
+ * DBC combat stats for abilities, implementing {@link IDBCAbility} so the
  * existing {@code calculateDBCStatDamage} and {@code doDBCDamage} methods
  * can be used directly.
  * <p>
@@ -14,7 +14,7 @@ import noppes.npcs.util.ValueUtil;
  * Fields like release, dodgeChance, and canBeLockedOn are kept at defaults
  * (not exposed in the GUI) since they are NPC-level concerns, not ability-level.
  */
-public class DBCAbilityStats implements IDBCStats {
+public class DBCAbilityStats implements IDBCAbility {
     private static final String NBT_KEY = "DBCAbilityStats";
 
     private final NBTTagCompound customData;
@@ -29,6 +29,11 @@ public class DBCAbilityStats implements IDBCStats {
     public boolean ignoreFormReduction = false;
     public boolean hasDefensePenetration = false;
     public int defensePenetration = 10;
+    // Player settings
+    public int kiCost = 0;
+    public int kiDrain = 0;
+    public int staminaCost = 0;
+    public int staminaDrain = 0;
 
     // Not exposed in GUI - kept at defaults for IDBCStats compatibility
     private byte release = 100;
@@ -72,6 +77,10 @@ public class DBCAbilityStats implements IDBCStats {
         nbt.setBoolean("IgnoreFormReduction", ignoreFormReduction);
         nbt.setBoolean("HasDefensePen", hasDefensePenetration);
         nbt.setInteger("DefensePen", defensePenetration);
+        nbt.setInteger("KiCost", kiCost);
+        nbt.setInteger("KiDrain", kiDrain);
+        nbt.setInteger("StaminaCost", staminaCost);
+        nbt.setInteger("StaminaDrain", staminaDrain);
     }
 
     public void readFromNBT(NBTTagCompound nbt) {
@@ -86,6 +95,10 @@ public class DBCAbilityStats implements IDBCStats {
         ignoreFormReduction = nbt.getBoolean("IgnoreFormReduction");
         hasDefensePenetration = nbt.getBoolean("HasDefensePen");
         defensePenetration = nbt.getInteger("DefensePen");
+        kiCost = nbt.getInteger("KiCost");
+        kiDrain = nbt.getInteger("KiDrain");
+        staminaCost = nbt.getInteger("StaminaCost");
+        staminaDrain = nbt.getInteger("StaminaDrain");
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -151,6 +164,30 @@ public class DBCAbilityStats implements IDBCStats {
 
     @Override
     public void setDefensePenetration(int pen) { this.defensePenetration = ValueUtil.clamp(pen, 0, 100); save(); }
+
+    @Override
+    public int getKiCost() { return kiCost; }
+
+    @Override
+    public void setKiCost(int kiCost) { this.kiCost = Math.max(0, kiCost); save(); }
+
+    @Override
+    public int getKiDrain() { return kiDrain; }
+
+    @Override
+    public void setKiDrain(int kiDrain) { this.kiDrain = Math.max(0, kiDrain); save(); }
+
+    @Override
+    public int getStaminaCost() { return staminaCost; }
+
+    @Override
+    public void setStaminaCost(int staminaCost) { this.staminaCost = Math.max(0, staminaCost); save(); }
+
+    @Override
+    public int getStaminaDrain() { return staminaDrain; }
+
+    @Override
+    public void setStaminaDrain(int staminaDrain) { this.staminaDrain = Math.max(0, staminaDrain); save(); }
 
     // Not exposed in GUI - defaults for IDBCStats compatibility
     @Override

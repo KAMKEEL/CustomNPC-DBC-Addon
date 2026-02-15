@@ -34,6 +34,15 @@ stats.section.defensePenetration=Defense Penetration
 stats.hasDefensePenetration=Has Defense Penetration
 stats.defensePenetration=Defense Penetration
 
+stats.section.playerSettings=Player Settings
+stats.kiCost=Ki Cost
+stats.kiDrain=Ki Drain
+stats.hover.kiDrain=Ki drained per tick (1 = 20/sec)
+stats.staminaCost=Stamina Cost
+stats.staminaDrain=Stamina Drain
+stats.hover.staminaDrain=Stamina drained per tick (1 = 20/sec)
+stats.section.npcSettings=NPC Settings
+
 effect.runsEveryX=Runs every X tick
 effect.defaultLength=Default length
 

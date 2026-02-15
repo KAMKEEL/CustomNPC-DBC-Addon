@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Injects DBC-specific tabs into ability configuration GUI:
  * - "Icon" tab for all abilities (icon texture and UV settings)
- * - "DBC" tab for damaging abilities (DBC combat stat modifiers)
+ * - "DBC" tab with Player Settings (ki/stamina cost & drain) and NPC Settings (DBC combat stats)
  */
 @SideOnly(Side.CLIENT)
 public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
@@ -25,9 +25,15 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
             addIconFields(ability, defs);
         }
 
-        // DBC tab for damaging abilities
+        // DBC tab - single stats instance shared across all fields
+        DBCAbilityStats stats = DBCAbilityStats.fromAbility(ability);
+
+        // Player Settings - always shown
+        addPlayerFields(stats, defs);
+
+        // NPC Settings - only for damaging abilities
         if (ability.hasDamage()) {
-            addDBCFields(ability, defs);
+            addNPCFields(stats, defs);
         }
     }
 
@@ -57,8 +63,23 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
             .tab(TAB_ICON).range(0.1f, 10.0f));
     }
 
-    private void addDBCFields(Ability ability, List<FieldDef> defs) {
-        DBCAbilityStats stats = DBCAbilityStats.fromAbility(ability);
+    private void addPlayerFields(DBCAbilityStats stats, List<FieldDef> defs) {
+        defs.add(FieldDef.section("stats.section.playerSettings")
+            .tab(TAB_DBC));
+        defs.add(FieldDef.intField("stats.kiCost", stats::getKiCost, stats::setKiCost)
+            .tab(TAB_DBC).range(0, Integer.MAX_VALUE));
+        defs.add(FieldDef.intField("stats.kiDrain", stats::getKiDrain, stats::setKiDrain)
+            .tab(TAB_DBC).range(0, Integer.MAX_VALUE).hover("stats.hover.kiDrain"));
+        defs.add(FieldDef.intField("stats.staminaCost", stats::getStaminaCost, stats::setStaminaCost)
+            .tab(TAB_DBC).range(0, Integer.MAX_VALUE));
+        defs.add(FieldDef.intField("stats.staminaDrain", stats::getStaminaDrain, stats::setStaminaDrain)
+            .tab(TAB_DBC).range(0, Integer.MAX_VALUE).hover("stats.hover.staminaDrain"));
+    }
+
+    private void addNPCFields(DBCAbilityStats stats, List<FieldDef> defs) {
+        // NPC Settings section header
+        defs.add(FieldDef.section("stats.section.npcSettings")
+            .tab(TAB_DBC));
 
         // Master toggle
         defs.add(FieldDef.boolField("stats.dbcEnabled", stats::isEnabled, stats::setEnabled)
