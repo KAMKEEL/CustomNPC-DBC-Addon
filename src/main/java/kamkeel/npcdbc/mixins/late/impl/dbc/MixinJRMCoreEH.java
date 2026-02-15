@@ -44,6 +44,11 @@ public class MixinJRMCoreEH {
                     dam.set(newDamage);
                 }
             }
+
+            // DBC bypasses EntityNPCInterface.damageEntity() by calling setHealth() directly,
+            // so the NPC's combat handler is never notified. Manually notify it here so that
+            // ability interrupts, aggressor tracking, and hit-count conditions work with DBC damage.
+            ((EntityNPCInterface) targetEntity).combatHandler.damage(source, dam.get());
         }
     }
 
