@@ -2,8 +2,13 @@ package kamkeel.npcdbc.data.ability;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.constants.enums.AbilityDamageType;
+import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.controllers.data.ability.IAbilityFieldProvider;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.builder.FieldDef;
 
 import java.util.List;
@@ -11,12 +16,15 @@ import java.util.List;
 /**
  * Injects DBC-specific tabs into ability configuration GUI:
  * - "Icon" tab for all abilities (icon texture and UV settings)
- * - "DBC" tab with Player Settings (ki/stamina cost & drain) and NPC Settings (DBC combat stats)
+ * - "DBC" tab with Player Settings (resource costs, damage config) and Universal Settings (DBC combat stats)
  */
 @SideOnly(Side.CLIENT)
 public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
     private static final String TAB_DBC = "DBC";
     private static final String TAB_ICON = "Icon";
+
+    private static final String[] ATTRIBUTE_NAMES = {"STR", "DEX", "CON", "WIL", "MND", "SPI"};
+    private static final String[] STAT_TYPE_NAMES = {"Melee", "Defense", "Body", "Stamina", "Ki Power", "Ki Pool"};
 
     @Override
     public void addFieldDefinitions(Ability ability, List<FieldDef> defs) {
@@ -31,9 +39,9 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
         // Player Settings - always shown
         addPlayerFields(stats, defs);
 
-        // NPC Settings - only for damaging abilities
+        // Universal Settings - only for damaging abilities
         if (ability.hasDamage()) {
-            addNPCFields(stats, defs);
+            addUniversalFields(stats, defs);
         }
     }
 
@@ -64,21 +72,200 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
     }
 
     private void addPlayerFields(DBCAbilityStats stats, List<FieldDef> defs) {
+        // Player resource costs — each paired with a percent toggle via row()
         defs.add(FieldDef.section("stats.section.playerSettings")
             .tab(TAB_DBC));
-        defs.add(FieldDef.intField("stats.kiCost", stats::getKiCost, stats::setKiCost)
-            .tab(TAB_DBC).range(0, Integer.MAX_VALUE));
-        defs.add(FieldDef.intField("stats.kiDrain", stats::getKiDrain, stats::setKiDrain)
-            .tab(TAB_DBC).range(0, Integer.MAX_VALUE).hover("stats.hover.kiDrain"));
-        defs.add(FieldDef.intField("stats.staminaCost", stats::getStaminaCost, stats::setStaminaCost)
-            .tab(TAB_DBC).range(0, Integer.MAX_VALUE));
-        defs.add(FieldDef.intField("stats.staminaDrain", stats::getStaminaDrain, stats::setStaminaDrain)
-            .tab(TAB_DBC).range(0, Integer.MAX_VALUE).hover("stats.hover.staminaDrain"));
+
+        defs.add(FieldDef.row(
+            FieldDef.intField("stats.kiCost", stats::getKiCost, stats::setKiCost)
+                .range(0, Integer.MAX_VALUE),
+            FieldDef.boolField("stats.kiCostPercent", stats::isKiCostPercent, stats::setKiCostPercent)
+        ).tab(TAB_DBC));
+
+        defs.add(FieldDef.row(
+            FieldDef.intField("stats.kiDrain", stats::getKiDrain, stats::setKiDrain)
+                .range(0, Integer.MAX_VALUE).hover("stats.hover.kiDrain"),
+            FieldDef.boolField("stats.kiDrainPercent", stats::isKiDrainPercent, stats::setKiDrainPercent)
+        ).tab(TAB_DBC));
+
+        defs.add(FieldDef.row(
+            FieldDef.intField("stats.staminaCost", stats::getStaminaCost, stats::setStaminaCost)
+                .range(0, Integer.MAX_VALUE),
+            FieldDef.boolField("stats.staminaCostPercent", stats::isStaminaCostPercent, stats::setStaminaCostPercent)
+        ).tab(TAB_DBC));
+
+        defs.add(FieldDef.row(
+            FieldDef.intField("stats.staminaDrain", stats::getStaminaDrain, stats::setStaminaDrain)
+                .range(0, Integer.MAX_VALUE).hover("stats.hover.staminaDrain"),
+            FieldDef.boolField("stats.staminaDrainPercent", stats::isStaminaDrainPercent, stats::setStaminaDrainPercent)
+        ).tab(TAB_DBC));
+
+        // Player damage configuration
+        defs.add(FieldDef.section("stats.section.playerDamage")
+            .tab(TAB_DBC));
+        defs.add(FieldDef.enumField("stats.playerDamageType", AbilityDamageType.class,
+            () -> AbilityDamageType.fromOrdinal(stats.getPlayerDamageType()),
+            (val) -> stats.setPlayerDamageType(val.ordinal()))
+            .tab(TAB_DBC));
+
+        // Dynamic description of the currently selected damage type
+        defs.add(FieldDef.labelField("stats.damageTypeInfo", () -> {
+            switch (stats.getPlayerDamageType()) {
+                case 1: return StatCollector.translateToLocal("stats.damageType.desc.flat");
+                case 2: return StatCollector.translateToLocal("stats.damageType.desc.melee");
+                case 3: return StatCollector.translateToLocal("stats.damageType.desc.ki");
+                case 4: return StatCollector.translateToLocal("stats.damageType.desc.cnpc");
+                default: return StatCollector.translateToLocal("stats.damageType.desc.default");
+            }
+        }).tab(TAB_DBC));
+
+        // Flat damage - visible only when FLAT selected
+        defs.add(FieldDef.intField("stats.flatDamage", stats::getFlatDamage, stats::setFlatDamage)
+            .tab(TAB_DBC).range(0, Integer.MAX_VALUE)
+            .visibleWhen(() -> stats.getPlayerDamageType() == 1));
+
+        // Scaling attribute - visible for MELEE and KI only (CNPC has per-set attributes)
+        defs.add(FieldDef.stringEnumField("stats.scalingAttribute", ATTRIBUTE_NAMES,
+            () -> ATTRIBUTE_NAMES[stats.getScalingAttribute()],
+            (val) -> {
+                for (int i = 0; i < ATTRIBUTE_NAMES.length; i++) {
+                    if (ATTRIBUTE_NAMES[i].equals(val)) {
+                        stats.setScalingAttribute(i);
+                        break;
+                    }
+                }
+            })
+            .tab(TAB_DBC)
+            .visibleWhen(() -> stats.getPlayerDamageType() == 2 || stats.getPlayerDamageType() == 3));
+
+        // Use Player Settings - visible for MELEE and KI (controls Ki Fist/Ki Weapon/Ki Infuse toggles)
+        defs.add(FieldDef.boolField("stats.usePlayerSettings", stats::getUsePlayerSettings, stats::setUsePlayerSettings)
+            .tab(TAB_DBC)
+            .hover("stats.hover.usePlayerSettings")
+            .visibleWhen(() -> stats.getPlayerDamageType() == 2 || stats.getPlayerDamageType() == 3));
+
+        // ═══ CNPC Multi-Set Configuration ═══
+        defs.add(FieldDef.intField("stats.cnpc.setCount", stats::getScalingSetCount, stats::setScalingSetCount)
+            .tab(TAB_DBC).range(1, 3)
+            .visibleWhen(() -> stats.getPlayerDamageType() == 4));
+
+        // Add fields for each CNPC set (0, 1, 2)
+        for (int s = 0; s < 3; s++) {
+            addCNPCSetFields(stats, defs, s);
+        }
+
+        // ═══ Damage Preview ═══
+        // FLAT / MELEE / KI — single preview line
+        defs.add(FieldDef.labelField("stats.damagePreview", () -> {
+            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+            if (player == null) return "";
+            float damage = DBCUtils.calculateAbilityAttackDamage(player, stats);
+            if (damage <= 0) return "N/A";
+            int dt = stats.getPlayerDamageType();
+            if (dt == 1) return String.format("FLAT = %,.0f", damage);
+            if (dt == 2) return String.format("MELEE [%s] = %,.0f", ATTRIBUTE_NAMES[stats.getScalingAttribute()], damage);
+            if (dt == 3) return String.format("KI [%s] = %,.0f", ATTRIBUTE_NAMES[stats.getScalingAttribute()], damage);
+            return "";
+        }).tab(TAB_DBC).visibleWhen(() -> {
+            int dt = stats.getPlayerDamageType();
+            return dt >= 1 && dt <= 3;
+        }));
+
+        // CNPC — per-set preview lines (one label per set)
+        for (int s = 0; s < 3; s++) {
+            final int set = s;
+            defs.add(FieldDef.labelField("stats.cnpc.previewLine", () -> {
+                EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+                if (player == null) return "";
+                String line = DBCUtils.getCNPCSetPreviewLine(player, stats, set, ATTRIBUTE_NAMES, STAT_TYPE_NAMES);
+                // Append " +" if not the last active set
+                if (set < stats.getScalingSetCount() - 1) line += " +";
+                return line;
+            }).tab(TAB_DBC).visibleWhen(() ->
+                stats.getPlayerDamageType() == 4 && stats.getScalingSetCount() > set));
+        }
+
+        // CNPC — total line
+        defs.add(FieldDef.labelField("stats.cnpc.previewTotal", () -> {
+            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+            if (player == null) return "";
+            float damage = DBCUtils.calculateAbilityAttackDamage(player, stats);
+            return damage > 0 ? String.format("= %,.0f", damage) : "N/A";
+        }).tab(TAB_DBC).visibleWhen(() -> stats.getPlayerDamageType() == 4));
     }
 
-    private void addNPCFields(DBCAbilityStats stats, List<FieldDef> defs) {
-        // NPC Settings section header
-        defs.add(FieldDef.section("stats.section.npcSettings")
+    private void addCNPCSetFields(DBCAbilityStats stats, List<FieldDef> defs, int set) {
+        // Visible when CNPC is selected and this set is active
+        java.util.function.BooleanSupplier visible = () ->
+            stats.getPlayerDamageType() == 4 && stats.getScalingSetCount() > set;
+
+        defs.add(FieldDef.section("stats.section.cnpcSet" + (set + 1))
+            .tab(TAB_DBC).visibleWhen(visible));
+
+        // Attribute selector
+        defs.add(FieldDef.stringEnumField("stats.cnpc.attribute", ATTRIBUTE_NAMES,
+            () -> ATTRIBUTE_NAMES[stats.getAttributeForSet(set)],
+            (val) -> {
+                for (int i = 0; i < ATTRIBUTE_NAMES.length; i++) {
+                    if (ATTRIBUTE_NAMES[i].equals(val)) {
+                        stats.setAttributeForSet(set, i);
+                        break;
+                    }
+                }
+            })
+            .tab(TAB_DBC).visibleWhen(visible));
+
+        // Use Stat toggle
+        defs.add(FieldDef.boolField("stats.cnpc.useStat",
+            () -> stats.isStatEnabledForSet(set),
+            (val) -> stats.setStatEnabledForSet(set, val))
+            .tab(TAB_DBC).visibleWhen(visible));
+
+        // Stat Type selector - hidden when Use Stat is disabled
+        defs.add(FieldDef.stringEnumField("stats.cnpc.statType", STAT_TYPE_NAMES,
+            () -> STAT_TYPE_NAMES[stats.getStatTypeForSet(set)],
+            (val) -> {
+                for (int i = 0; i < STAT_TYPE_NAMES.length; i++) {
+                    if (STAT_TYPE_NAMES[i].equals(val)) {
+                        stats.setStatTypeForSet(set, i);
+                        break;
+                    }
+                }
+            })
+            .tab(TAB_DBC)
+            .visibleWhen(() -> stats.getPlayerDamageType() == 4
+                && stats.getScalingSetCount() > set
+                && stats.isStatEnabledForSet(set)));
+
+        // Multiplier
+        defs.add(FieldDef.floatField("stats.cnpc.multiplier",
+            () -> stats.getMultiplierForSet(set),
+            (val) -> stats.setMultiplierForSet(set, val))
+            .tab(TAB_DBC).range(0.0f, 10.0f).visibleWhen(visible));
+
+        // Ki bonus toggles
+        defs.add(FieldDef.boolField("stats.cnpc.kiFist",
+            () -> stats.isKiFistForSet(set),
+            (val) -> stats.setKiFistForSet(set, val))
+            .tab(TAB_DBC).visibleWhen(visible)
+            .hover("stats.hover.cnpc.kiFist"));
+
+        defs.add(FieldDef.boolField("stats.cnpc.kiWeapon",
+            () -> stats.isKiWeaponForSet(set),
+            (val) -> stats.setKiWeaponForSet(set, val))
+            .tab(TAB_DBC).visibleWhen(visible)
+            .hover("stats.hover.cnpc.kiWeapon"));
+
+        defs.add(FieldDef.boolField("stats.cnpc.kiInfuse",
+            () -> stats.isKiInfuseForSet(set),
+            (val) -> stats.setKiInfuseForSet(set, val))
+            .tab(TAB_DBC).visibleWhen(visible)
+            .hover("stats.hover.cnpc.kiInfuse"));
+    }
+
+    private void addUniversalFields(DBCAbilityStats stats, List<FieldDef> defs) {
+        // Universal Settings section header
+        defs.add(FieldDef.section("stats.section.universalSettings")
             .tab(TAB_DBC));
 
         // Master toggle

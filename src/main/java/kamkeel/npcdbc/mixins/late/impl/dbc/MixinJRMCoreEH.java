@@ -49,6 +49,11 @@ public class MixinJRMCoreEH {
 
     @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;a1t3(Lnet/minecraft/entity/player/EntityPlayer;)V", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
     public void dbcAttackFromPlayer(LivingHurtEvent event, CallbackInfo ci, @Local(name = "dam") LocalFloatRef dam, @Local(name = "targetPlayer") LocalRef<EntityPlayer> targetPlayer, @Local(name = "source") LocalRef<DamageSource> damageSource) {
+        if (DBCUtils.abilityDamageHandled) {
+            ci.cancel();
+            return;
+        }
+
         // Check for Damage Source Type
         DamageSource source = damageSource.get();
         int dbcDamageSource = DBCDamageSource.UNKNOWN;
@@ -75,6 +80,11 @@ public class MixinJRMCoreEH {
 
     @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;a1t3(Lnet/minecraft/entity/player/EntityPlayer;)V", ordinal = 1, shift = At.Shift.BEFORE), cancellable = true)
     public void dbcAttackFromNonPlayer(LivingHurtEvent event, CallbackInfo ci, @Local(name = "amount") LocalFloatRef dam, @Local(name = "targetPlayer") LocalRef<EntityPlayer> targetPlayer, @Local(name = "source") LocalRef<DamageSource> damageSource) {
+        if (DBCUtils.abilityDamageHandled) {
+            ci.cancel();
+            return;
+        }
+
         // Check for Damage Source Type
         DamageSource source = damageSource.get();
         int dbcDamageSource = DBCDamageSource.UNKNOWN;

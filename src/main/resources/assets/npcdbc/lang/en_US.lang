@@ -36,12 +36,46 @@ stats.defensePenetration=Defense Penetration
 
 stats.section.playerSettings=Player Settings
 stats.kiCost=Ki Cost
+stats.kiCostPercent=Percent
 stats.kiDrain=Ki Drain
-stats.hover.kiDrain=Ki drained per tick (1 = 20/sec)
+stats.kiDrainPercent=Percent
+stats.hover.kiDrain=Ki drained per tick (1 = 20/sec). In percent mode, percentage of max Ki pool per tick.
 stats.staminaCost=Stamina Cost
+stats.staminaCostPercent=Percent
 stats.staminaDrain=Stamina Drain
-stats.hover.staminaDrain=Stamina drained per tick (1 = 20/sec)
-stats.section.npcSettings=NPC Settings
+stats.staminaDrainPercent=Percent
+stats.hover.staminaDrain=Stamina drained per tick (1 = 20/sec). In percent mode, percentage of max Stamina pool per tick.
+stats.section.playerDamage=Player Damage
+stats.playerDamageType=Damage Type
+stats.damageTypeInfo=Info
+stats.damageType.desc.default=Uses the ability's base damage value
+stats.damageType.desc.flat=Fixed DBC body damage value
+stats.damageType.desc.melee=DBC Melee formula + Ki Fist + Ki Weapon
+stats.damageType.desc.ki=DBC Ki formula + Ki Infuse bonus
+stats.damageType.desc.cnpc=Custom: Stat x Release x Weight x Multiplier
+stats.flatDamage=Flat Damage
+stats.scalingAttribute=Scaling Attribute
+stats.scalingMultiplier=Scaling Multiplier
+stats.usePlayerSettings=Use Player Settings
+stats.cnpc.setCount=Number of Sets
+stats.section.cnpcSet1=Set 1
+stats.section.cnpcSet2=Set 2
+stats.section.cnpcSet3=Set 3
+stats.cnpc.attribute=Attribute
+stats.cnpc.useStat=Use Stat
+stats.cnpc.statType=Stat Type
+stats.cnpc.multiplier=Multiplier
+stats.cnpc.kiFist=Ki Fist
+stats.cnpc.kiWeapon=Ki Weapon
+stats.cnpc.kiInfuse=Ki Infuse
+stats.hover.cnpc.kiFist=Adds Ki Fist bonus (SPI/Ki Pool) to this set. Requires Ki Fist skill.
+stats.hover.cnpc.kiWeapon=Adds Ki Weapon bonus (WIL/Ki Power) to this set. Requires Ki Weapon skill.
+stats.hover.cnpc.kiInfuse=Multiplies this set's damage by Ki Infuse multiplier. Requires Ki Weapon skill.
+stats.cnpc.previewLine=Set
+stats.cnpc.previewTotal=Total
+stats.hover.usePlayerSettings=When enabled, respects the player's DBC skill toggles (Ki Fist, Ki Weapon, Ki Infuse). When disabled, forces all bonuses on if the player has the skill.
+stats.damagePreview=Preview
+stats.section.universalSettings=Universal Settings
 
 effect.runsEveryX=Runs every X tick
 effect.defaultLength=Default length

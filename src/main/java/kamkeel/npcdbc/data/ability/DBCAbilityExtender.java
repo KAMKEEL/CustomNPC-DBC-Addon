@@ -17,8 +17,8 @@ import noppes.npcs.entity.EntityNPCInterface;
 
 /**
  * DBC Addon ability extender. Provides:
- * - DBC damage routing (replaces DBCAbilityDamageHandler)
- * - Lifecycle hooks for resource costs (ki, stamina) — implement as needed
+ * - DBC damage routing for all ability damage when DBC Addon is installed
+ * - Lifecycle hooks for player resource costs (ki, stamina)
  */
 public class DBCAbilityExtender implements IAbilityExtender {
 
@@ -28,13 +28,19 @@ public class DBCAbilityExtender implements IAbilityExtender {
             return true;
 
         DBCAbilityStats stats = DBCAbilityStats.fromAbility(ability);
+        DBCData data = DBCData.get((EntityPlayer) caster);
+
+        // Calculate actual costs (flat or percent of max pool)
         int kiCost = stats.getKiCost();
+        if (kiCost > 0 && stats.isKiCostPercent())
+            kiCost = (int) (kiCost / 100.0 * data.stats.getMaxKi());
+
         int staminaCost = stats.getStaminaCost();
+        if (staminaCost > 0 && stats.isStaminaCostPercent())
+            staminaCost = (int) (staminaCost / 100.0 * data.stats.getMaxStamina());
 
         if (kiCost <= 0 && staminaCost <= 0)
             return true;
-
-        DBCData data = DBCData.get((EntityPlayer) caster);
 
         if (kiCost > 0 && data.Ki < kiCost)
             return false;
@@ -52,13 +58,44 @@ public class DBCAbilityExtender implements IAbilityExtender {
     }
 
     @Override
+    public boolean onAbilityTick(Ability ability, EntityLivingBase caster, EntityLivingBase target,
+                                  AbilityPhase phase, int tick) {
+        if (!(caster instanceof EntityPlayer))
+            return true;
+
+        DBCAbilityStats stats = DBCAbilityStats.fromAbility(ability);
+        int kiDrain = stats.getKiDrain();
+        int staminaDrain = stats.getStaminaDrain();
+
+        if (kiDrain <= 0 && staminaDrain <= 0)
+            return true;
+
+        DBCData data = DBCData.get((EntityPlayer) caster);
+
+        if (kiDrain > 0) {
+            int actual = stats.isKiDrainPercent()
+                ? (int) (kiDrain / 100.0 * data.stats.getMaxKi()) : kiDrain;
+            if (data.Ki < actual)
+                return false; // interrupt — not enough ki
+            data.stats.restoreKiFlat(-actual);
+        }
+
+        if (staminaDrain > 0) {
+            int actual = stats.isStaminaDrainPercent()
+                ? (int) (staminaDrain / 100.0 * data.stats.getMaxStamina()) : staminaDrain;
+            if (data.Stamina < actual)
+                return false; // interrupt — not enough stamina
+            data.stats.restoreStaminaFlat(-actual);
+        }
+
+        return true;
+    }
+
+    @Override
     public boolean onAbilityDamage(Ability ability, EntityLivingBase caster, EntityLivingBase target,
                                    float damage, float knockback, float knockbackUp,
                                    double knockbackDirX, double knockbackDirZ) {
         DBCAbilityStats stats = DBCAbilityStats.fromAbility(ability);
-        if (!stats.isEnabled()) {
-            return false; // Not handled, fall through to default damage
-        }
 
         // Build the damage source based on caster type
         DamageSource source;
@@ -70,51 +107,91 @@ public class DBCAbilityExtender implements IAbilityExtender {
             source = DamageSource.causeMobDamage(caster);
         }
 
+        // Calculate outgoing damage
+        float outDamage = damage; // default: use ability's base damage
+        if (caster instanceof EntityPlayer) {
+            float calcDamage = DBCUtils.calculateAbilityAttackDamage((EntityPlayer) caster, stats);
+            if (calcDamage > 0) {
+                outDamage = calcDamage;
+            }
+        }
+
+        // Route damage to target
         if (target instanceof EntityPlayer) {
-            // Apply base MC damage first for knockback/hurt animation/invulnerability frames
-            boolean attacked = target.attackEntityFrom(source, 1.0f);
-            if (attacked) {
-                // Player target: full DBC damage pipeline
-                applyDBCDamageToPlayer((EntityPlayer) target, damage, stats, source);
+            // Player target: flag-guarded attackEntityFrom for knockback/animation only
+            DBCUtils.abilityDamageHandled = true;
+            try {
+                target.attackEntityFrom(source, 1.0f);
+            } finally {
+                DBCUtils.abilityDamageHandled = false;
+            }
+
+            if (stats.isEnabled()) {
+                // Universal settings enabled: use ability's ignore flags for defender reduction
+                applyDBCDamageToPlayer((EntityPlayer) target, outDamage, stats, source);
+            } else {
+                // Universal settings off: generic DBC defender reduction
+                applyDBCDamageToPlayerDefault((EntityPlayer) target, outDamage, stats, source);
             }
         } else if (target instanceof EntityNPCInterface) {
             // NPC target: set npcLastSetDamage for the Mixin to pick up
-            DBCUtils.npcLastSetDamage = damage;
-            target.attackEntityFrom(source, damage);
+            DBCUtils.npcLastSetDamage = outDamage;
+            target.attackEntityFrom(source, outDamage);
         } else {
             // Other entities: direct damage
-            target.attackEntityFrom(source, damage);
+            target.attackEntityFrom(source, outDamage);
         }
 
-        return true; // Handled
+        return true; // Always handled when DBC Addon is installed
     }
 
     /**
-     * Apply damage to a player through the DBC damage system.
+     * Apply damage to a player through the DBC damage system with ability's universal settings.
+     * Uses calculateDBCStatDamage which respects the ability's ignore flags.
      */
     private void applyDBCDamageToPlayer(EntityPlayer player, float damage, DBCAbilityStats stats, DamageSource source) {
-        // Step 1: Calculate DBC damage using the ability's stat overrides
         DBCDamageCalc damageCalc = DBCUtils.calculateDBCStatDamage(player, (int) damage, stats, source);
 
-        // Step 2: Fire DamagedEvent for script hooks
         DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(
             player, damageCalc, source, DBCDamageSource.NPC
         );
         if (DBCEventHooks.onDBCDamageEvent(damagedEvent)) {
-            return; // Event cancelled
+            return;
         }
 
-        // Step 3: Apply event modifications
         damageCalc.damage = damagedEvent.damage;
         damageCalc.stamina = damagedEvent.getStaminaReduced();
         damageCalc.ki = damagedEvent.getKiReduced();
         damageCalc.ko = damagedEvent.getFinalKO();
 
-        // Step 4: Store for doDBCDamage to retrieve and process extras
         DBCUtils.lastSetDamage = damageCalc;
         damageCalc.processExtras();
 
-        // Step 5: Apply final damage through DBC's HP system
+        DBCUtils.doDBCDamage(player, damageCalc.damage, stats, source);
+    }
+
+    /**
+     * Apply damage to a player through the DBC damage system with default defender reduction.
+     * Uses calculateDBCDamageFromSource which applies generic DEX/blocking/ki protection.
+     */
+    private void applyDBCDamageToPlayerDefault(EntityPlayer player, float damage, DBCAbilityStats stats, DamageSource source) {
+        DBCDamageCalc damageCalc = DBCUtils.calculateDBCDamageFromSource(player, damage, source);
+
+        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(
+            player, damageCalc, source, DBCDamageSource.PLAYER
+        );
+        if (DBCEventHooks.onDBCDamageEvent(damagedEvent)) {
+            return;
+        }
+
+        damageCalc.damage = damagedEvent.damage;
+        damageCalc.stamina = damagedEvent.getStaminaReduced();
+        damageCalc.ki = damagedEvent.getKiReduced();
+        damageCalc.ko = damagedEvent.getFinalKO();
+
+        DBCUtils.lastSetDamage = damageCalc;
+        damageCalc.processExtras();
+
         DBCUtils.doDBCDamage(player, damageCalc.damage, stats, source);
     }
 }
