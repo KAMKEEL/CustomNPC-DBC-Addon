@@ -33,7 +33,7 @@ public abstract class DBCToggleAbility extends BuiltInAbility {
     }
 
     @Override
-    public void onExecute(EntityLivingBase caster, EntityLivingBase target, World world) {
+    public void onExecute(EntityLivingBase caster, EntityLivingBase target) {
         if (caster instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) caster;
             onToggle(player);
@@ -43,7 +43,7 @@ public abstract class DBCToggleAbility extends BuiltInAbility {
     }
 
     @Override
-    public void onActiveTick(EntityLivingBase caster, EntityLivingBase target, World world, int tick) {
+    public void onActiveTick(EntityLivingBase caster, EntityLivingBase target, int tick) {
         // Nothing - toggle abilities complete instantly
     }
 
