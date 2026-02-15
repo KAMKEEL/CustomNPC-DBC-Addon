@@ -6,7 +6,8 @@ import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcs.controllers.data.ability.Ability;
-import kamkeel.npcs.controllers.data.ability.IAbilityDamageHandler;
+import kamkeel.npcs.controllers.data.ability.AbilityPhase;
+import kamkeel.npcs.controllers.data.ability.IAbilityExtender;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
@@ -14,21 +15,16 @@ import noppes.npcs.NpcDamageSource;
 import noppes.npcs.entity.EntityNPCInterface;
 
 /**
- * Routes ability damage through the DBC damage system when DBC stats
- * are enabled on the ability. Follows the same damage pipeline as
- * {@code MixinDBCAddon.doDBCDamage()} for NPC melee attacks:
- * <ol>
- *   <li>Calculate DBC damage via {@code DBCUtils.calculateDBCStatDamage()} using IDBCStats</li>
- *   <li>Fire {@code DBCPlayerEvent.DamagedEvent} for script hooks</li>
- *   <li>Apply damage via {@code DBCUtils.doDBCDamage()}</li>
- * </ol>
+ * DBC Addon ability extender. Provides:
+ * - DBC damage routing (replaces DBCAbilityDamageHandler)
+ * - Lifecycle hooks for resource costs (ki, stamina) — implement as needed
  */
-public class DBCAbilityDamageHandler implements IAbilityDamageHandler {
+public class DBCAbilityExtender implements IAbilityExtender {
 
     @Override
-    public boolean handleDamage(Ability ability, EntityLivingBase caster, EntityLivingBase target,
-                                float damage, float knockback, float knockbackUp,
-                                double knockbackDirX, double knockbackDirZ) {
+    public boolean onAbilityDamage(Ability ability, EntityLivingBase caster, EntityLivingBase target,
+                                   float damage, float knockback, float knockbackUp,
+                                   double knockbackDirX, double knockbackDirZ) {
         DBCAbilityStats stats = DBCAbilityStats.fromAbility(ability);
         if (!stats.isEnabled()) {
             return false; // Not handled, fall through to default damage
@@ -46,10 +42,9 @@ public class DBCAbilityDamageHandler implements IAbilityDamageHandler {
 
         if (target instanceof EntityPlayer) {
             // Apply base MC damage first for knockback/hurt animation/invulnerability frames
-            // (same pattern as NPC melee in EntityNPCInterface: attackEntityFrom with tiny damage, then DBC damage)
             boolean attacked = target.attackEntityFrom(source, 1.0f);
             if (attacked) {
-                // Player target: full DBC damage pipeline (same as MixinDBCAddon.doDBCDamage)
+                // Player target: full DBC damage pipeline
                 applyDBCDamageToPlayer((EntityPlayer) target, damage, stats, source);
             }
         } else if (target instanceof EntityNPCInterface) {
@@ -66,10 +61,6 @@ public class DBCAbilityDamageHandler implements IAbilityDamageHandler {
 
     /**
      * Apply damage to a player through the DBC damage system.
-     * Mirrors the exact flow of MixinDBCAddon.doDBCDamage():
-     * 1. calculateDBCStatDamage with IDBCStats overrides
-     * 2. Fire DamagedEvent for script hooks
-     * 3. Apply via doDBCDamage with friendly fist support
      */
     private void applyDBCDamageToPlayer(EntityPlayer player, float damage, DBCAbilityStats stats, DamageSource source) {
         // Step 1: Calculate DBC damage using the ability's stat overrides

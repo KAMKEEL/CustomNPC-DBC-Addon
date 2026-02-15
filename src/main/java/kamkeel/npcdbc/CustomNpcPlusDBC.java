@@ -14,7 +14,7 @@ import kamkeel.npcdbc.config.LoadConfiguration;
 import kamkeel.npcdbc.constants.DBCAbilities;
 import kamkeel.npcdbc.constants.DBCAnimations;
 import kamkeel.npcdbc.constants.DBCScriptType;
-import kamkeel.npcdbc.data.ability.DBCAbilityDamageHandler;
+import kamkeel.npcdbc.data.ability.DBCAbilityExtender;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.DBCProfileData;
 import kamkeel.npcdbc.data.attribute.DBCItemAttributes;
@@ -67,8 +67,8 @@ public class CustomNpcPlusDBC {
 
         new DBCItemAttributes();
 
-        // Register ability damage handler for DBC damage routing
-        AbilityController.Instance.registerDamageHandler(new DBCAbilityDamageHandler());
+        // Register ability extender for DBC damage routing and lifecycle hooks
+        AbilityController.Instance.registerExtender(new DBCAbilityExtender());
 
         // Register DBC player hooks so handler-based GUIs include them
         if (ScriptHookController.Instance != null) {
