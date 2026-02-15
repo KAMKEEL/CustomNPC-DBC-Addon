@@ -8,7 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
  * Used to render ability icons in the Ability Wheel and Hotbar.
  */
 public class AbilityIconData {
-    private static final String NBT_KEY = "AbilityIcon";
+    public static final String NBT_KEY = "AbilityIcon";
 
     private final NBTTagCompound customData;
 

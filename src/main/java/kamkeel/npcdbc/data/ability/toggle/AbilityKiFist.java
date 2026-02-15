@@ -11,6 +11,8 @@ public class AbilityKiFist extends DBCToggleAbility {
     public AbilityKiFist() {
         super("npcdbc:ki_fist");
         this.name = "Ki Fist";
+        this.setIconX(192);
+        this.setIconY(0);
     }
 
     @Override

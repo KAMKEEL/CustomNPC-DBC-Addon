@@ -501,6 +501,8 @@ ability.npcdbc.swoop=Swoop
 ability.npcdbc.ki_protection=Ki Protection
 ability.npcdbc.friendly_fist=Friendly Fist
 ability.npcdbc.ki_weapon=Ki Weapon
+ability.npcdbc.ki_blade=Ki Blade
+ability.npcdbc.ki_scythe=Ki Scythe
 
 effect.healthregeneration=Health Regeneration
 effect.exhausted=Exhausted

@@ -11,6 +11,8 @@ public class AbilitySwoop extends DBCToggleAbility {
     public AbilitySwoop() {
         super("npcdbc:swoop");
         this.name = "Swoop";
+        this.setIconX(48);
+        this.setIconY(0);
     }
 
     @Override

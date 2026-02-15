@@ -1,6 +1,8 @@
 package kamkeel.npcdbc.client.gui.hud.abilityWheel;
 
+import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.client.gui.hud.WheelSegment;
+import kamkeel.npcdbc.client.gui.hud.abilityWheel.icon.AbilityIcon;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.ability.DBCSelectAbility;
@@ -8,6 +10,7 @@ import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.controllers.data.ability.AbilityController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import org.lwjgl.opengl.GL11;
 
 import static org.lwjgl.opengl.GL11.glScaled;
 import static org.lwjgl.opengl.GL11.glTranslatef;
@@ -19,6 +22,7 @@ public class AbilityWheelSegment extends WheelSegment {
     public HUDAbilityWheel parent;
     public String abilityKey = null;
     public Ability ability = null;
+    private AbilityIcon icon = null;
 
     public AbilityWheelSegment(HUDAbilityWheel parent, int index) {
         this(parent, 0, 0, index);
@@ -46,6 +50,7 @@ public class AbilityWheelSegment extends WheelSegment {
         } else {
             this.ability = null;
         }
+        icon = ability != null ? new AbilityIcon(ability) : null;
     }
 
     public void clearAbility() {
@@ -55,43 +60,55 @@ public class AbilityWheelSegment extends WheelSegment {
             parent.selectSlot(-1);
         }
         parent.timeClosedSubGui = Minecraft.getSystemTime();
+        icon = null;
+    }
+
+    @Override
+    public void draw(FontRenderer fontRenderer) {
+        float hover = getSegmentScale();
+        float open = getOpenScale();
+
+        float finalScale = open * (0.85f + hover * 0.15f);
+
+        currentColor = Color.lerpRGBA(NOT_HOVERED, HOVERED, hover);
+        currentColor.glColor();
+
+        GL11.glPushMatrix();
+        GL11.glTranslatef(posX, posY, 0);
+        GL11.glScalef(finalScale, finalScale, 1);
+        GL11.glTranslatef(-posX, -posY, 0);
+
+        drawIndexedTexture();
+        drawWheelItem(fontRenderer);
+
+        GL11.glPopMatrix();
     }
 
     @Override
     protected void drawWheelItem(FontRenderer fontRenderer) {
-        if (abilityKey != null && !abilityKey.isEmpty()) {
-            if (index == 1 || index == 5) {
-                glTranslatef(0, 10, 0);
-            } else if (index == 2 || index == 4) {
-                glTranslatef(0, -10, 0);
-            }
-            if (ConfigDBCClient.AlteranteSelectionWheelTexture) {
-                glScaled(0.7, 0.7, 1);
-                switch (index) {
-                    case 0:
-                        glTranslatef(0, -15f, 0);
-                        break;
-                    case 1:
-                        glTranslatef(-12, -5, 0);
-                        break;
-                    case 2:
-                        glTranslatef(-11, 3, 0);
-                        break;
-                    case 3:
-                        glTranslatef(0, 12f, 0);
-                        break;
-                    case 4:
-                        glTranslatef(10, 3, 0);
-                        break;
-                    default:
-                        glTranslatef(13, -5, 0);
-                }
-            }
+        if (abilityKey == null || abilityKey.isEmpty())
+            return;
 
-            // Draw ability name
-            String displayName = getAbilityName();
-            drawCenteredString(fontRenderer, displayName, 0, 0, 0xFFFFFFFF);
+        GL11.glPushMatrix();
+
+        //        switch (index) {
+        //            case 0: glTranslatef(1, 0, 0); break;
+        //            case 1: glTranslatef(4, 0, 0); break;
+        //            case 2: glTranslatef(6, 0, 0); break;
+        //            case 3: glTranslatef(8, 0, 0); break;
+        //            case 4: glTranslatef(10, 0, 0); break;
+        //            case 5: glTranslatef(12, 0, 0); break;
+        //        }
+
+        if (icon != null) {
+            icon.draw();
         }
+
+        GL11.glTranslatef(0, 5, 0);
+
+        drawCenteredString(fontRenderer, getAbilityName(), 0, (icon != null ? icon.height / 2 + 5 : 0), 0xFFFFFFFF);
+
+        GL11.glPopMatrix();
     }
 
     public String getAbilityName() {

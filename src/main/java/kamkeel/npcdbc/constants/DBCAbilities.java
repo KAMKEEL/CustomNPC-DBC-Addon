@@ -21,7 +21,8 @@ public class DBCAbilities {
     public static final Ability SWOOP = ABILITIES.register("swoop", AbilitySwoop::new);
     public static final Ability KI_PROTECTION = ABILITIES.register("ki_protection", AbilityKiProtection::new);
     public static final Ability FRIENDLY_FIST = ABILITIES.register("friendly_fist", AbilityFriendlyFist::new);
-    public static final Ability KI_WEAPON = ABILITIES.register("ki_weapon", AbilityKiWeapon::new);
+    public static final Ability KI_BLADE = ABILITIES.register("ki_blade", AbilityKiBlade::new);
+    public static final Ability KI_SCYTHE = ABILITIES.register("ki_scythe", AbilityKiScythe::new);
 
     private static final String GROUP = "DBC Addon";
 

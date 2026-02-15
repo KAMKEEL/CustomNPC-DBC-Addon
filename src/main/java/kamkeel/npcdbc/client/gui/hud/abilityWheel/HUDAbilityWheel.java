@@ -136,10 +136,9 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
 
         scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
 
+
         int x = (this.width / 2) + 94;
         int y = this.height - 22;
-
-        // Configure/Done button
         addButton(new GuiNpcButton(6, x, y, 60, 20, new String[]{"Configure", "Done"}, !configureEnabled ? 0 : 1));
 
         float factor = scaledResolution.getScaleFactor();
@@ -178,10 +177,22 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
                 undoMCScaling = 0.99f;
         }
 
-        // Configure mode buttons
         if (configureEnabled) {
             addButton(new GuiNpcButton(8, x - 94 - 75, y - 25, 150, 20, "Edit"));
-            addButton(new GuiNpcButton(7, x + 62, y, 80, 20, "Switch Wheel"));
+            addButton(new GuiNpcButton(7, x += 62, y, 80, 20, "Switch Wheel"));
+
+
+            x = (int) ((this.width / 2) * undoMCScaling + 190);
+            y = (this.height / 2) - 100;
+            if (undoMCScaling < 1) {
+                x += 20;
+                y -= 25;
+            }
+        }
+
+        long now = Minecraft.getSystemTime();
+        for (AbilityWheelSegment seg : wheelSlot) {
+            seg.startOpenAnimation(now);
         }
     }
 
@@ -261,7 +272,7 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
         initGui();
     }
 
-    public void calculateHoveredSlot(float HALF_WIDTH, float HALF_HEIGHT, boolean ignoreConfigMode) {
+    public void calculateHoveredSlot(float HALF_WIDTH, float HALF_HEIGHT, boolean configureEnabled) {
         if (isClosing)
             return;
         final float deltaX = HALF_WIDTH - mouseX;
@@ -277,7 +288,7 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
                 tempHoveredSlot = 5;
 
             boolean justOpened = Minecraft.getSystemTime() - timeOpened < 50;
-            if (!justOpened && tempHoveredSlot != hoveredSlot && (!configureEnabled || ignoreConfigMode))
+            if (!justOpened && tempHoveredSlot != hoveredSlot && !configureEnabled)
                 selectSlot(tempHoveredSlot);
         }
     }
@@ -380,7 +391,9 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
         BLUR_INTENSITY = guiAnimationScale * MAX_BLUR;
 
         int gradientColor = ((int) (255 * 0.2f * guiAnimationScale) << 24);
-        this.drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
+        this.
+
+            drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
 
         if (!ShaderHelper.shadersEnabled())
             drawGradientRectWithFade(0, 0, width, height, 0x88000000, 0xfa000000, guiAnimationScale);
@@ -390,7 +403,7 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
         final float HALF_WIDTH = (float) this.width / 2;
         final float HALF_HEIGHT = (float) this.height / 2;
 
-        calculateHoveredSlot(HALF_WIDTH, HALF_HEIGHT, false);
+        calculateHoveredSlot(HALF_WIDTH, HALF_HEIGHT, configureEnabled);
 
         glPushMatrix();
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
@@ -413,13 +426,15 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
                 GL11.glTranslatef(0, -95f, 0);
             }
 
+
             GL11.glRotatef(i * 60, 0, 0, 1);
-            if (i == 1 || i == 2) {
-                GL11.glTranslatef(10, 0, 0);
-            } else if (i == 4 || i == 5) {
-                GL11.glTranslatef(-10, 0, 0);
+            if (i == 0) {
+                GL11.glTranslatef(3, -15, 0);
+            } else if (i == 3) {
+                GL11.glTranslatef(0, 15, 0);
             }
             wheelSlot[i].draw(fontRendererObj);
+
 
             glPopMatrix();
         }
@@ -427,25 +442,21 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
         glPopMatrix();
         GL11.glDisable(GL11.GL_BLEND);
 
-        // Draw title
         glPushMatrix();
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
         GL11.glScalef(undoMCScaling, undoMCScaling, undoMCScaling);
-        float titleScale = guiAnimationScale * (ConfigDBCClient.AlteranteSelectionWheelTexture ? 1.5f : 1);
-        GL11.glScalef(titleScale, titleScale, titleScale);
-        GL11.glTranslatef(-HALF_WIDTH, -HALF_HEIGHT, 0);
-
-        // Draw "Abilities" title in center
-        String title = "Abilities";
-        int titleWidth = fontRendererObj.getStringWidth(title);
-        fontRendererObj.drawStringWithShadow(title, (int)(HALF_WIDTH / titleScale) - titleWidth / 2,
-            (int)(HALF_HEIGHT / titleScale) - 4, 0xFFFFFF);
+        float guiVariantScale = (AbilityWheelSegment.variant == 0 ? 0.75f : 0.9f);
+        float playerScale = guiAnimationScale * guiVariantScale * (ConfigDBCClient.AlteranteSelectionWheelTexture ? 1.5f : 1);
+        GL11.glScalef(playerScale, playerScale, playerScale);
+        GL11.glTranslatef(-HALF_WIDTH, -HALF_HEIGHT + (ConfigDBCClient.AlteranteSelectionWheelTexture ? 8 : 0), 0);
 
         glPopMatrix();
 
         glPopMatrix();
 
         super.drawScreen(mouseX, mouseY, partialTicks);
+        //        String text = mouseX + "," + mouseY + ", " + hoveredSlot + "," + (keyDown ? "HOLDING KEY" : "NOT HOLDING");
+        //        drawCenteredString(fontRendererObj, text, mouseX, mouseY, 0xFFFFFFFF);
     }
 
     public void drawDefaultBackground() {
@@ -488,7 +499,7 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
         boolean enoughTimeSinceClose = Minecraft.getSystemTime() - timeClosedSubGui > 50;
         if (configureEnabled && !hasSubGui() && enoughTimeSinceClose) {
             // Allow clicking to select slot in configure mode
-            calculateHoveredSlot((float) this.width / 2, (float) this.height / 2, true);
+            calculateHoveredSlot((float) this.width / 2, (float) this.height / 2, false);
         }
     }
 
