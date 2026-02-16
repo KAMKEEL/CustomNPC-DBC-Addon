@@ -72,6 +72,8 @@ public class DBCAbilities {
             orb.setRotationSpeed(30f);
             orb.setOuterColorAlpha(1.0f);
             orb.setOuterColorWidth(0.1f);
+            orb.setAnchorOffsetX(0.05f);
+            orb.setAnchorOffsetY(0.15f);
         }));
 
         // Burning Attack
@@ -82,6 +84,7 @@ public class DBCAbilities {
             a.setShowTelegraph(false);
             a.setWindUpAnimationName("BurningAttack_Windup");
             a.setActiveAnimationName("BurningAttack_Active");
+            orb.setAnchorPointEnum(AnchorPoint.FRONT);
             orb.setHoming(false);
             orb.setInnerColor(0xFFEE00);
             orb.setOuterColor(0xFFEE00);
@@ -89,6 +92,8 @@ public class DBCAbilities {
             orb.setOrbSize(3.5f);
             orb.setOuterColorEnabled(false);
             orb.setRotationSpeed(30f);
+            orb.setAnchorOffsetX(0.05f);
+            orb.setAnchorOffsetZ(1.0f);
         }));
 
         // Death Ball
@@ -110,6 +115,8 @@ public class DBCAbilities {
             orb.setLightningEffect(true);
             orb.setLightningDensity(1.5f);
             orb.setLightningRadius(2.5f);
+            orb.setAnchorOffsetY(0.5f);
+            orb.setAnchorOffsetX(0.1f);
         }));
 
         // Spirit Bomb
@@ -131,6 +138,8 @@ public class DBCAbilities {
             orb.setRotationSpeed(10f);
             orb.setOuterColorAlpha(1.0f);
             orb.setOuterColorWidth(0.5f);
+            orb.setAnchorOffsetY(1.0f);
+            orb.setAnchorOffsetX(0.15f);
         }));
 
         // Large Spirit Bomb
