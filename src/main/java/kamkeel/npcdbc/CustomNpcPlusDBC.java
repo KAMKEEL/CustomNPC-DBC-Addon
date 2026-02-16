@@ -15,6 +15,7 @@ import kamkeel.npcdbc.constants.DBCAbilities;
 import kamkeel.npcdbc.constants.DBCAnimations;
 import kamkeel.npcdbc.constants.DBCScriptType;
 import kamkeel.npcdbc.data.ability.DBCAbilityExtender;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.DBCProfileData;
 import kamkeel.npcdbc.data.attribute.DBCItemAttributes;
@@ -69,6 +70,12 @@ public class CustomNpcPlusDBC {
 
         // Register ability extender for DBC damage routing and lifecycle hooks
         AbilityController.Instance.registerExtender(new DBCAbilityExtender());
+
+        // Register DBC flight checker so abilities don't pull flying players down
+        AbilityController.Instance.registerFlightChecker(player -> {
+            DBCData data = DBCData.get(player);
+            return data != null && data.isFlying;
+        });
 
         // Register DBC player hooks so handler-based GUIs include them
         if (ScriptHookController.Instance != null) {
