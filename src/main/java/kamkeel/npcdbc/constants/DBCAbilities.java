@@ -48,6 +48,8 @@ public class DBCAbilities {
             a.setName("Energy Blast");
             a.setWindUpTicks(15);
             a.setShowTelegraph(false);
+            a.setWindUpAnimationName("EnergyBlast_Windup");
+            a.setActiveAnimationName("EnergyBlast_Active");
             orb.setHoming(false);
             orb.setOuterColor(0xFFFF00);
             orb.setOrbSpeed(1.0f);
@@ -61,6 +63,8 @@ public class DBCAbilities {
             a.setName("Big Bang Attack");
             a.setWindUpTicks(50);
             a.setShowTelegraph(false);
+            a.setWindUpAnimationName("BigBangAttack_Windup");
+            a.setActiveAnimationName("BigBangAttack_Active");
             orb.setHoming(false);
             orb.setOuterColor(0x48BBF6);
             orb.setOrbSpeed(1.0f);
@@ -76,6 +80,8 @@ public class DBCAbilities {
             a.setName("Burning Attack");
             a.setWindUpTicks(50);
             a.setShowTelegraph(false);
+            a.setWindUpAnimationName("BurningAttack_Windup");
+            a.setActiveAnimationName("BurningAttack_Active");
             orb.setHoming(false);
             orb.setInnerColor(0xFFEE00);
             orb.setOuterColor(0xFFEE00);
@@ -91,6 +97,8 @@ public class DBCAbilities {
             a.setName("Death Ball");
             a.setWindUpTicks(50);
             a.setShowTelegraph(false);
+            a.setWindUpAnimationName("DeathBall_Windup");
+            a.setActiveAnimationName("DeathBall_Active");
             orb.setHoming(false);
             orb.setOrbSpeed(1.0f);
             orb.setOrbSize(1.0f);
@@ -102,7 +110,6 @@ public class DBCAbilities {
             orb.setLightningEffect(true);
             orb.setLightningDensity(1.5f);
             orb.setLightningRadius(2.5f);
-            orb.setAnchorPointEnum(AnchorPoint.ABOVE_HEAD);
         }));
 
         // Spirit Bomb
@@ -111,8 +118,10 @@ public class DBCAbilities {
             a.setName("Spirit Bomb");
             a.setWindUpTicks(100);
             a.setShowTelegraph(false);
+            a.setWindUpAnimationName("SpiritBomb_Windup");
+            a.setActiveAnimationName("SpiritBomb_Active");
             orb.setHoming(true);
-            orb.setHomingStrength(0.05f);
+            orb.setHomingStrength(0.5f);
             orb.setHomingRange(150f);
             orb.setMaxDistance(150f);
             orb.setMaxLifetime(300);
@@ -201,8 +210,8 @@ public class DBCAbilities {
             a.setName("Energy Wave");
             a.setWindUpTicks(30);
             a.setShowTelegraph(false);
-            a.setWindUpAnimationName("Ability_Orb_Windup");
-            a.setActiveAnimationName("Ability_Orb_Active");
+            a.setWindUpAnimationName("EnergyBlast_Windup");
+            a.setActiveAnimationName("EnergyBlast_Active");
             beam.setBeamWidth(1.0f);
             beam.setHeadSize(1.25f);
             beam.setSpeed(1.3f);
@@ -220,6 +229,8 @@ public class DBCAbilities {
             a.setShowTelegraph(false);
             a.setWindUpSound("DBC4.cbeam4s");
             a.setActiveSound("DBC4.fbeam4s");
+            a.setWindUpAnimationName("Kamehameha_Windup");
+            a.setActiveAnimationName("Kamehameha_Active");
             beam.setBeamWidth(2.0f);
             beam.setHeadSize(2.5f);
             beam.setSpeed(1.5f);
