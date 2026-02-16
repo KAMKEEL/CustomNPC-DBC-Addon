@@ -1,47 +1,19 @@
 {
-    "Loop": 0,
+    "Loop": -1,
     "Speed": 1.0f,
     "Frames": [
         {
             "ColorMarker": 16777215,
             "Comment": "",
-            "Speed": 1f,
             "FrameParts": [
                 {
                     "Pivot2": 0.0f,
-                    "Part": "RIGHT_LEG",
-                    "Rotation1": 6.0f,
-                    "Rotation0": 6.0f,
-                    "Pivot0": 0.0f,
-                    "Pivot1": 0.0f,
-                    "Rotation2": 12.0f
-                },
-                {
-                    "Pivot2": 0.0f,
-                    "Part": "LEFT_LEG",
-                    "Rotation1": -6.0f,
-                    "Rotation0": 6.0f,
-                    "Pivot0": 0.0f,
-                    "Pivot1": 0.0f,
-                    "Rotation2": -12.0f
-                },
-                {
-                    "Pivot2": 0.0f,
-                    "Part": "HEAD",
+                    "Part": "BODY",
                     "Rotation1": 0.0f,
                     "Rotation0": 0.0f,
                     "Pivot0": 0.0f,
                     "Pivot1": 0.0f,
                     "Rotation2": 0.0f
-                },
-                {
-                    "Pivot2": 0.0f,
-                    "Part": "RIGHT_ARM",
-                    "Rotation1": 0.0f,
-                    "Rotation0": -110.0f,
-                    "Pivot0": 0.0f,
-                    "Pivot1": 1.0f,
-                    "Rotation2": 90.0f
                 },
                 {
                     "Pivot2": 0.0f,
@@ -54,7 +26,34 @@
                 },
                 {
                     "Pivot2": 0.0f,
-                    "Part": "BODY",
+                    "Part": "LEFT_LEG",
+                    "Rotation1": -6.0f,
+                    "Rotation0": 6.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 0.0f,
+                    "Rotation2": -12.0f
+                },
+                {
+                    "Pivot2": 0.0f,
+                    "Part": "RIGHT_ARM",
+                    "Rotation1": 0.0f,
+                    "Rotation0": -110.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 1.0f,
+                    "Rotation2": 90.0f
+                },
+                {
+                    "Pivot2": 0.0f,
+                    "Part": "RIGHT_LEG",
+                    "Rotation1": 6.0f,
+                    "Rotation0": 6.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 0.0f,
+                    "Rotation2": 12.0f
+                },
+                {
+                    "Pivot2": 0.0f,
+                    "Part": "HEAD",
                     "Rotation1": 0.0f,
                     "Rotation0": 0.0f,
                     "Pivot0": 0.0f,
@@ -62,12 +61,11 @@
                     "Rotation2": 0.0f
                 }
             ],
-            "Smooth": 0b,
-            "Duration": 18
+            "Duration": 20
         }
     ],
     "CurrentFrameTime": 0,
-    "CurrentFrame": 1,
+    "CurrentFrame": 0,
     "Smooth": 0b,
     "ID": 9,
     "WhileAttacking": 1b,
