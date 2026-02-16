@@ -357,6 +357,7 @@ npcdbc.notEnoughMastery=Voce nao tem Maestria suficiente para transformacao inst
 npcdbc.cannotTransformDirect=Voce nao pode se transformar diretamente nessa forma
 npcdbc.clearedSelection=Selecao de Formas Limpas
 npcdbc.formSelect=Forma Selecionada:
+npcdbc.abilitySelect=Habilidade Selecionada:
 npcdbc.auraSelect=Aura Selecionada:
 npcdbc.transform=Voce se transformou em:
 npcdbc.descend=Voce se destransformou em:

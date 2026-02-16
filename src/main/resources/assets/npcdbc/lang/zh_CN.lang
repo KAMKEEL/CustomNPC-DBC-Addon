@@ -382,6 +382,7 @@ npcdbc.notEnoughMastery=您的形态等级不足以进行瞬间变身
 npcdbc.cannotTransformDirect=您无法直接变身为此形态
 npcdbc.clearedSelection=已清除选择
 npcdbc.formSelect=已选择形态：
+npcdbc.abilitySelect=已选择技能：
 npcdbc.auraSelect=已选择气焰：
 npcdbc.transform=变身为
 npcdbc.descend=降级至

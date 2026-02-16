@@ -357,6 +357,7 @@ npcdbc.notEnoughMastery=No tienes suficiente maestría como para transformarte i
 npcdbc.cannotTransformDirect=No puedes acceder a esta forma directamente
 npcdbc.clearedSelection=Selección limpiada
 npcdbc.formSelect=Forma seleccionada:
+npcdbc.abilitySelect=Habilidad seleccionada:
 npcdbc.auraSelect=Aura seleccionada:
 npcdbc.transform=Transformado en
 npcdbc.descend=Descendido a

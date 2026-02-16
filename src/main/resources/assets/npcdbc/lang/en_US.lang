@@ -437,6 +437,7 @@ npcdbc.notEnoughMastery=You do not have enough mastery to instant transform
 npcdbc.cannotTransformDirect=You cannot transform to this form directly
 npcdbc.clearedSelection=Cleared selection
 npcdbc.formSelect=Form Selected:
+npcdbc.abilitySelect=Ability Selected:
 npcdbc.auraSelect=Aura Selected:
 npcdbc.transform=Transformed to
 npcdbc.descend=Descended to

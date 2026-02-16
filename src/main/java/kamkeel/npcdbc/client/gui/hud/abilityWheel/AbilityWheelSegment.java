@@ -4,6 +4,7 @@ import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.client.gui.hud.WheelSegment;
 import kamkeel.npcdbc.client.gui.hud.abilityWheel.icon.AbilityIcon;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.data.ability.toggle.DBCToggleAbility;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.ability.DBCSelectAbility;
 import kamkeel.npcs.controllers.data.ability.Ability;
@@ -38,6 +39,10 @@ public class AbilityWheelSegment extends WheelSegment {
 
     public void selectAbility() {
         if (abilityKey != null && !abilityKey.isEmpty()) {
+            // Toggleable abilities cannot be selected - they are toggled directly
+            if (ability instanceof DBCToggleAbility) {
+                return;
+            }
             // Send packet to server to select this ability
             DBCPacketHandler.Instance.sendToServer(new DBCSelectAbility(index));
         }
@@ -106,7 +111,7 @@ public class AbilityWheelSegment extends WheelSegment {
 
         GL11.glTranslatef(0, 5, 0);
 
-        drawCenteredString(fontRenderer, getAbilityName(), 0, (icon != null ? icon.height / 2 + 5 : 0), 0xFFFFFFFF);
+        drawCenteredString(fontRenderer, getAbilityName(), 0, (icon != null ? icon.height / 2 + 5 : 0), getNameColor());
 
         GL11.glPopMatrix();
     }
@@ -116,5 +121,21 @@ public class AbilityWheelSegment extends WheelSegment {
             return ability.getName();
         }
         return abilityKey != null ? abilityKey : "";
+    }
+
+    /**
+     * Get the color for the ability name.
+     * Toggleable abilities show green if active, red if inactive.
+     * Regular abilities show white.
+     */
+    private int getNameColor() {
+        if (ability instanceof DBCToggleAbility) {
+            Minecraft mc = Minecraft.getMinecraft();
+            if (mc.thePlayer != null && ((DBCToggleAbility) ability).isActive(mc.thePlayer)) {
+                return 0xFF55FF55; // Green - active
+            }
+            return 0xFFFF5555; // Red - inactive
+        }
+        return 0xFFFFFFFF; // White - normal
     }
 }
