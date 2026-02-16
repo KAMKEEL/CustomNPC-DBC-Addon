@@ -62,6 +62,14 @@ public abstract class DBCToggleAbility extends BuiltInAbility {
     protected abstract void onToggle(EntityPlayer player);
 
     /**
+     * Public entry point for toggling from external callers (e.g. ability wheel).
+     * Directly toggles without going through the ability execution system.
+     */
+    public void toggle(EntityPlayer player) {
+        onToggle(player);
+    }
+
+    /**
      * Check if this toggle is currently active for the player.
      * @param player The player to check
      * @return true if the toggle is currently enabled

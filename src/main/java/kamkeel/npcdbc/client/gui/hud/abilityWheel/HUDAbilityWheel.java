@@ -4,28 +4,22 @@ import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectAbility;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.config.ConfigDBCClient;
-import kamkeel.npcdbc.data.AbilityWheelData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
-import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.ability.DBCRequestAbilityWheel;
-import kamkeel.npcdbc.network.packets.player.ability.DBCSaveAbilityWheel;
 import kamkeel.npcdbc.network.packets.player.ability.DBCSelectAbility;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.settings.KeyBinding;
-import noppes.npcs.client.ClientCacheHandler;
 import noppes.npcs.client.gui.util.GuiNPCInterface;
 import noppes.npcs.client.gui.util.GuiNpcButton;
 import noppes.npcs.client.gui.util.ISubGuiListener;
 import noppes.npcs.client.gui.util.SubGuiInterface;
-import noppes.npcs.controllers.data.PlayerData;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-
-import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -41,6 +35,7 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
 
     ScaledResolution scaledResolution;
     public AbilityWheelSegment[] wheelSlot = new AbilityWheelSegment[6];
+    public PlayerDBCInfo dbcInfo;
 
     float guiAnimationScale = 0, undoMCScaling = 1;
     long timeOpened, timeClosedSubGui, timeSinceM1, timeClosed;
@@ -60,15 +55,12 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
 
     public HUDAbilityWheel() {
         mc = Minecraft.getMinecraft();
+        dbcInfo = PlayerDataUtil.getClientDBCInfo();
 
         for (int i = 0; i < 6; i++) {
             wheelSlot[i] = new AbilityWheelSegment(this, i);
+            wheelSlot[i].setAbility(dbcInfo.abilityWheel[i], false);
         }
-
-        // Load abilities from wheel data (or fallback to cache)
-        loadAbilitiesFromWheelData();
-
-        // Request wheel data from server
         DBCPacketHandler.Instance.sendToServer(new DBCRequestAbilityWheel());
 
         // Stops the GUI from un-pressing all keys for you.
@@ -79,52 +71,14 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
     }
 
     /**
-     * Load abilities from wheel data, or fallback to first 6 unlocked abilities.
-     */
-    private void loadAbilitiesFromWheelData() {
-        PlayerData playerData = ClientCacheHandler.playerData;
-        if (playerData == null) {
-            return;
-        }
-
-        // Try to load from wheel data first
-        PlayerDBCInfo dbcInfo = ((IPlayerDBCInfo) playerData).getPlayerDBCInfo();
-        if (dbcInfo != null) {
-            boolean hasWheelConfig = false;
-            for (int i = 0; i < 6; i++) {
-                if (!dbcInfo.abilityWheel[i].isEmpty()) {
-                    hasWheelConfig = true;
-                    break;
-                }
-            }
-
-            if (hasWheelConfig) {
-                for (int i = 0; i < 6; i++) {
-                    AbilityWheelData wheelData = dbcInfo.abilityWheel[i];
-                    wheelSlot[i].setAbility(wheelData.isEmpty() ? null : wheelData.abilityKey);
-                }
-                return;
-            }
-        }
-
-        // Fallback: load first 6 unlocked abilities
-        if (playerData.abilityData != null) {
-            List<String> abilities = playerData.abilityData.getUnlockedAbilityList();
-            for (int i = 0; i < 6; i++) {
-                if (i < abilities.size()) {
-                    wheelSlot[i].setAbility(abilities.get(i));
-                } else {
-                    wheelSlot[i].setAbility(null);
-                }
-            }
-        }
-    }
-
-    /**
      * Reload wheel from server data (called when GUI data packet received).
      */
     public void reloadFromWheelData() {
-        loadAbilitiesFromWheelData();
+        if (dbcInfo != null) {
+            for (int i = 0; i < 6; i++) {
+                wheelSlot[i].setAbility(dbcInfo.abilityWheel[i], false);
+            }
+        }
     }
 
     @Override
@@ -190,9 +144,12 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
             }
         }
 
-        long now = Minecraft.getSystemTime();
-        for (AbilityWheelSegment seg : wheelSlot) {
-            seg.startOpenAnimation(now);
+        // Only start open animation once (first initGui call)
+        if (wheelSlot[0].startOpenTime < 0) {
+            long now = Minecraft.getSystemTime();
+            for (AbilityWheelSegment seg : wheelSlot) {
+                seg.startOpenAnimation(now);
+            }
         }
     }
 
@@ -213,9 +170,7 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
             timeClosedSubGui = Minecraft.getSystemTime();
         } else if (button.id == 8) {
             // Edit button - open ability selection for hovered slot
-            if (hoveredSlot != -1) {
-                this.setSubGui(new SubGuiSelectAbility(hoveredSlot));
-            }
+            this.setSubGui(new SubGuiSelectAbility(button.id));
         }
 
         initGui();
@@ -225,48 +180,25 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
     public void subGuiClosed(SubGuiInterface subgui) {
         if (subgui instanceof SubGuiSelectAbility) {
             SubGuiSelectAbility selectAbility = (SubGuiSelectAbility) subgui;
-            int slotID = selectAbility.buttonID;
-
-            if (slotID < 0 || slotID > 5) {
-                timeClosedSubGui = Minecraft.getSystemTime();
-                initGui();
-                return;
-            }
-
             if (selectAbility.confirmed && selectAbility.selectedAbilityKey != null) {
-                // Set the ability for this slot
+                int slotID = selectAbility.buttonID == 8 ? hoveredSlot : selectAbility.buttonID;
                 AbilityWheelSegment slot = wheelSlot[slotID];
-                slot.setAbility(selectAbility.selectedAbilityKey);
-
-                // Save to server
-                PlayerData playerData = ClientCacheHandler.playerData;
-                if (playerData != null) {
-                    PlayerDBCInfo dbcInfo = ((IPlayerDBCInfo) playerData).getPlayerDBCInfo();
-                    if (dbcInfo != null) {
-                        dbcInfo.abilityWheel[slotID].abilityKey = selectAbility.selectedAbilityKey;
-                        DBCPacketHandler.Instance.sendToServer(new DBCSaveAbilityWheel(slotID, dbcInfo.abilityWheel[slotID]));
-                    }
-                }
 
                 selectSlot(slotID);
+                timeClosedSubGui = Minecraft.getSystemTime();
+
+                // Don't reassign the same ability
+                if (slot.ability != null && selectAbility.selectedAbilityKey.equals(slot.data.abilityKey))
+                    return;
+
+                slot.setAbility(selectAbility.selectedAbilityKey, true);
             } else if (selectAbility.removeAbility) {
-                // Remove ability from slot
+                int slotID = selectAbility.buttonID == 8 ? hoveredSlot : selectAbility.buttonID;
                 AbilityWheelSegment slot = wheelSlot[slotID];
-                slot.clearAbility();
-
-                // Save to server
-                PlayerData playerData = ClientCacheHandler.playerData;
-                if (playerData != null) {
-                    PlayerDBCInfo dbcInfo = ((IPlayerDBCInfo) playerData).getPlayerDBCInfo();
-                    if (dbcInfo != null) {
-                        dbcInfo.abilityWheel[slotID].reset();
-                        DBCPacketHandler.Instance.sendToServer(new DBCSaveAbilityWheel(slotID, dbcInfo.abilityWheel[slotID]));
-                    }
-                }
 
                 selectSlot(slotID);
+                slot.removeAbility();
             }
-
             timeClosedSubGui = Minecraft.getSystemTime();
         }
         initGui();
@@ -325,7 +257,7 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
                 }
             } else {
                 // Right click to cancel selection
-                DBCPacketHandler.Instance.sendToServer(new DBCSelectAbility(-1));
+                DBCPacketHandler.Instance.sendToServer(new DBCSelectAbility(""));
                 close();
             }
         } else {
@@ -341,7 +273,7 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
         int code = KeyHandler.AbilityWheelKey.getKeyCode();
         keyDown = isMouseButton() ? Mouse.isButtonDown(code + 100) : Keyboard.isKeyDown(code);
         if (!keyDown && !hasSubGui() && !configureEnabled && !isClosing) {
-            if (hoveredSlot != -1 && wheelSlot[hoveredSlot].abilityKey != null)
+            if (hoveredSlot != -1 && !wheelSlot[hoveredSlot].data.isEmpty())
                 wheelSlot[hoveredSlot].selectAbility();
 
             mc.inGameHasFocus = true;

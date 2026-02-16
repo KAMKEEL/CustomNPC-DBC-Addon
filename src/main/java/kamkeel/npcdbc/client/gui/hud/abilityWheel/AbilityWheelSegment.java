@@ -3,25 +3,26 @@ package kamkeel.npcdbc.client.gui.hud.abilityWheel;
 import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.client.gui.hud.WheelSegment;
 import kamkeel.npcdbc.client.gui.hud.abilityWheel.icon.AbilityIcon;
-import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.data.AbilityWheelData;
 import kamkeel.npcdbc.data.ability.toggle.DBCToggleAbility;
 import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.player.ability.DBCSaveAbilityWheel;
 import kamkeel.npcdbc.network.packets.player.ability.DBCSelectAbility;
+import kamkeel.npcdbc.network.packets.player.ability.DBCToggleAbilityAction;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.controllers.data.ability.AbilityController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import org.lwjgl.opengl.GL11;
 
-import static org.lwjgl.opengl.GL11.glScaled;
-import static org.lwjgl.opengl.GL11.glTranslatef;
-
 /**
  * A segment in the Ability Wheel that represents a single ability slot.
+ * Owns its own AbilityWheelData and handles all state changes atomically
+ * (matching FormWheelSegment pattern).
  */
 public class AbilityWheelSegment extends WheelSegment {
     public HUDAbilityWheel parent;
-    public String abilityKey = null;
+    public AbilityWheelData data = new AbilityWheelData();
     public Ability ability = null;
     private AbilityIcon icon = null;
 
@@ -34,36 +35,43 @@ public class AbilityWheelSegment extends WheelSegment {
         this.parent = parent;
         this.posX = posX;
         this.posY = posY;
-        this.index = index;
+        this.index = data.slot = index;
     }
 
     public void selectAbility() {
-        if (abilityKey != null && !abilityKey.isEmpty()) {
-            // Toggleable abilities cannot be selected - they are toggled directly
-            if (ability instanceof DBCToggleAbility) {
-                return;
-            }
-            // Send packet to server to select this ability
-            DBCPacketHandler.Instance.sendToServer(new DBCSelectAbility(index));
+        if (data.isEmpty()) return;
+        if (ability instanceof DBCToggleAbility) {
+            // Toggle abilities perform their action directly - no cooldown, no events
+            DBCPacketHandler.Instance.sendToServer(new DBCToggleAbilityAction(data.abilityKey));
+            return;
         }
+        DBCPacketHandler.Instance.sendToServer(new DBCSelectAbility(data.abilityKey));
     }
 
-    public void setAbility(String key) {
-        this.abilityKey = key;
-        if (key != null && !key.isEmpty() && AbilityController.Instance != null) {
-            this.ability = AbilityController.Instance.resolveAbility(key);
-        } else {
-            this.ability = null;
-        }
+    public void setAbility(String abilityKey, boolean updateServer) {
+        data.abilityKey = (abilityKey != null) ? abilityKey : "";
+        ability = (!data.isEmpty() && AbilityController.Instance != null)
+            ? AbilityController.Instance.resolveAbility(data.abilityKey) : null;
+        if (updateServer)
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveAbilityWheel(index, data));
         icon = ability != null ? new AbilityIcon(ability) : null;
     }
 
-    public void clearAbility() {
-        this.abilityKey = null;
-        this.ability = null;
-        if (parent.hoveredSlot == index) {
+    public void setAbility(AbilityWheelData data, boolean updateServer) {
+        this.data = data;
+        ability = (!data.isEmpty() && AbilityController.Instance != null)
+            ? AbilityController.Instance.resolveAbility(data.abilityKey) : null;
+        if (updateServer)
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveAbilityWheel(index, data));
+        icon = ability != null ? new AbilityIcon(ability) : null;
+    }
+
+    public void removeAbility() {
+        data.reset();
+        ability = null;
+        DBCPacketHandler.Instance.sendToServer(new DBCSaveAbilityWheel(index, data));
+        if (parent.hoveredSlot == index)
             parent.selectSlot(-1);
-        }
         parent.timeClosedSubGui = Minecraft.getSystemTime();
         icon = null;
     }
@@ -91,19 +99,10 @@ public class AbilityWheelSegment extends WheelSegment {
 
     @Override
     protected void drawWheelItem(FontRenderer fontRenderer) {
-        if (abilityKey == null || abilityKey.isEmpty())
+        if (data.isEmpty())
             return;
 
         GL11.glPushMatrix();
-
-        //        switch (index) {
-        //            case 0: glTranslatef(1, 0, 0); break;
-        //            case 1: glTranslatef(4, 0, 0); break;
-        //            case 2: glTranslatef(6, 0, 0); break;
-        //            case 3: glTranslatef(8, 0, 0); break;
-        //            case 4: glTranslatef(10, 0, 0); break;
-        //            case 5: glTranslatef(12, 0, 0); break;
-        //        }
 
         if (icon != null) {
             icon.draw();
@@ -120,7 +119,7 @@ public class AbilityWheelSegment extends WheelSegment {
         if (ability != null) {
             return ability.getName();
         }
-        return abilityKey != null ? abilityKey : "";
+        return !data.isEmpty() ? data.abilityKey : "";
     }
 
     /**

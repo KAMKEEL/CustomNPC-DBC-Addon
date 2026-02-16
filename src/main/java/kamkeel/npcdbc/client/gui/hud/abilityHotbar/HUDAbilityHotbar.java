@@ -12,8 +12,6 @@ import net.minecraft.client.gui.ScaledResolution;
 import noppes.npcs.client.ClientCacheHandler;
 import noppes.npcs.controllers.data.PlayerData;
 
-import java.util.List;
-
 /**
  * HUD overlay that shows the player's 6 ability wheel slots as a vertical hotbar
  * on the left side of the screen. Shows cooldown indicators.
@@ -61,50 +59,30 @@ public class HUDAbilityHotbar extends Gui {
 
         // Get ability wheel data from PlayerDBCInfo
         PlayerDBCInfo dbcInfo = ((IPlayerDBCInfo) playerData).getPlayerDBCInfo();
-        if (dbcInfo != null) {
-            boolean hasWheelConfig = false;
-            for (int i = 0; i < 6; i++) {
-                if (!dbcInfo.abilityWheel[i].isEmpty()) {
-                    hasWheelConfig = true;
-                    break;
-                }
-            }
+        if (dbcInfo == null) return;
 
-            if (hasWheelConfig) {
-                for (int i = 0; i < 6; i++) {
-                    AbilityWheelData wheelData = dbcInfo.abilityWheel[i];
-                    String key = wheelData.isEmpty() ? null : wheelData.abilityKey;
-                    Ability ability = null;
-                    if (key != null && AbilityController.Instance != null) {
-                        ability = AbilityController.Instance.resolveAbility(key);
-                    }
-                    hotbarSlots[i].setAbility(key, ability);
-                }
-                return;
+        // Load from wheel data - no fallback, empty stays empty
+        for (int i = 0; i < 6; i++) {
+            AbilityWheelData wheelData = dbcInfo.abilityWheel[i];
+            String key = wheelData.isEmpty() ? null : wheelData.abilityKey;
+            Ability ability = null;
+            if (key != null && AbilityController.Instance != null) {
+                ability = AbilityController.Instance.resolveAbility(key);
             }
+            hotbarSlots[i].setAbility(key, ability);
         }
 
-        // Fallback: load from unlocked abilities
+        // Update selected slot by matching the selected ability key to a wheel slot
         if (playerData.abilityData != null) {
-            List<String> abilities = playerData.abilityData.getUnlockedAbilityList();
+            String selectedKey = playerData.abilityData.getSelectedAbilityKey();
+            selectedSlot = -1;
             for (int i = 0; i < 6; i++) {
-                if (i < abilities.size()) {
-                    String key = abilities.get(i);
-                    Ability ability = AbilityController.Instance != null ?
-                        AbilityController.Instance.resolveAbility(key) : null;
-                    hotbarSlots[i].setAbility(key, ability);
-                } else {
-                    hotbarSlots[i].setAbility(null, null);
-                }
-            }
-        }
-
-        // Update selected index
-        if (playerData.abilityData != null) {
-            selectedSlot = playerData.abilityData.getSelectedIndex();
-            if (selectedSlot >= 0 && selectedSlot < 6) {
-                for (int i = 0; i < 6; i++) {
-                    hotbarSlots[i].setSelectedState(i == selectedSlot);
+                AbilityWheelData wheelData = dbcInfo.abilityWheel[i];
+                boolean isSelected = selectedKey != null && !wheelData.isEmpty()
+                    && selectedKey.equals(wheelData.abilityKey);
+                hotbarSlots[i].setSelectedState(isSelected);
+                if (isSelected) {
+                    selectedSlot = i;
                 }
             }
         }
