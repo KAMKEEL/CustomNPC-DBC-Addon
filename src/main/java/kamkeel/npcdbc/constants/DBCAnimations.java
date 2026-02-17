@@ -12,6 +12,9 @@ public class DBCAnimations {
 
     public static final Animation NAMEK_REGEN = ANIMATIONS.register("NamekRegen", BuiltInAnimation::new);
 
+    public static final Animation[] FUSION = ANIMATIONS.registerBundle("Fusion", BuiltInAnimation::new,
+        "Left", "Right");
+
     public static final Animation[] BIG_BANG_ATTACK = ANIMATIONS.registerBundle("BigBangAttack", BuiltInAnimation::new,
         "Windup", "Active");
     public static final Animation[] BURNING_ATTACK = ANIMATIONS.registerBundle("BurningAttack", BuiltInAnimation::new,
