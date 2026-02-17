@@ -22,6 +22,8 @@ public class DBCAnimations {
         "Windup", "Active");
     public static final Animation[] SPIRIT_BOMB = ANIMATIONS.registerBundle("SpiritBomb", BuiltInAnimation::new,
         "Windup", "Active");
+    public static final Animation[] LARGE_SPIRIT_BOMB = ANIMATIONS.registerBundle("LargeSpiritBomb", BuiltInAnimation::new,
+        "Windup", "Active");
 
     public static final Animation[] KAMEHAMEHA = ANIMATIONS.registerBundle("Kamehameha", BuiltInAnimation::new,
         "Windup", "Active");

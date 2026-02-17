@@ -153,10 +153,12 @@ public class DBCAbilities {
             a.setMaxRange(100.0f);
             a.setLockMovement(LockMovementType.WINDUP_AND_ACTIVE);
             a.setShowTelegraph(false);
+            a.setWindUpAnimationName("LargeSpiritBomb_Windup");
+            a.setActiveAnimationName("LargeSpiritBomb_Active");
             orb.setHoming(true);
             orb.setHomingStrength(0.05f);
             orb.setHomingRange(150f);
-            orb.setMaxDistance(150f);
+            orb.setMaxDistance(300f);
             orb.setMaxLifetime(300);
             orb.setOuterColor(0x48BBF6);
             orb.setOrbSpeed(1.0f);
@@ -198,8 +200,9 @@ public class DBCAbilities {
             a.setWindUpTicks(100);
             a.setMaxRange(100.0f);
             a.setShowTelegraph(false);
+            a.setWindUpAnimationName("Supernova_Windup");
+            a.setActiveAnimationName("Supernova_Active");
             orb.setAnchorPointEnum(AnchorPoint.ABOVE_HEAD);
-            orb.setAnchorOffsetY(10f);
             orb.setHoming(false);
             orb.setMaxDistance(150f);
             orb.setMaxLifetime(300);
@@ -210,6 +213,8 @@ public class DBCAbilities {
             orb.setOuterColor(0xE86202);
             orb.setOuterColorAlpha(1.0f);
             orb.setOuterColorWidth(0.1f);
+            orb.setAnchorOffsetX(0.6f);
+            orb.setAnchorOffsetY(10.0f);
         }));
     }
 
