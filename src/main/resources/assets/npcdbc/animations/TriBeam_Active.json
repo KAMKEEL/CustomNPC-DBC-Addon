@@ -72,6 +72,6 @@
   "ID": 39,
   "WhileAttacking": 1b,
   "WhileWalking": 1b,
-  "Name": "Tribeam_Active",
+  "Name": "TriBeam_Active",
   "WhileStanding": 1b
 }

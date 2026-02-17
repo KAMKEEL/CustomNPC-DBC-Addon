@@ -72,6 +72,6 @@
     "ID": 38,
     "WhileAttacking": 1b,
     "WhileWalking": 1b,
-    "Name": "Tribeam_Charge",
+    "Name": "TriBeam_Charge",
     "WhileStanding": 1b
 }

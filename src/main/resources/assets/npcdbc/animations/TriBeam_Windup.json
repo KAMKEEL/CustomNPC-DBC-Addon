@@ -259,6 +259,6 @@
     "ID": 37,
     "WhileAttacking": 1b,
     "WhileWalking": 1b,
-    "Name": "Tribeam_Windup",
+    "Name": "TriBeam_Windup",
     "WhileStanding": 1b
 }

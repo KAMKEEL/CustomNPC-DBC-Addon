@@ -379,10 +379,10 @@ public class DBCAbilities {
 
         ctrl.registerVariant(LASER, new AbilityVariant("ability.npcdbc.tribeam", GROUP, a -> {
             AbilityLaserShot laser = (AbilityLaserShot) a;
-            a.setName("Tribeam");
+            a.setName("Tri-Beam");
             a.setWindUpTicks(50);
-            a.setWindUpAnimationName("Tribeam_Windup");
-            a.setActiveAnimationName("Tribeam_Active");
+            a.setWindUpAnimationName("TriBeam_Windup");
+            a.setActiveAnimationName("TriBeam_Active");
             laser.setLaserWidth(1.5f);
             laser.setExpansionSpeed(2.0f);
             laser.setLingerTicks(4);

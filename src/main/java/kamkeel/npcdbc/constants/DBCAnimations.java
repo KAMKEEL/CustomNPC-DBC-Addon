@@ -43,7 +43,7 @@ public class DBCAnimations {
 
     public static final Animation[] SPECIAL_BEAM_CANNON = ANIMATIONS.registerBundle("SpecialBeamCannon", BuiltInAnimation::new,
         "Windup", "Active");
-    public static final Animation[] TRIBEAM = ANIMATIONS.registerBundle("Tribeam", BuiltInAnimation::new,
+    public static final Animation[] TRIBEAM = ANIMATIONS.registerBundle("TriBeam", BuiltInAnimation::new,
         "Windup", "Active");
 
     public static void register() {
