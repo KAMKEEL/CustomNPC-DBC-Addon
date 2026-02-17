@@ -38,6 +38,9 @@ public class DBCAnimations {
     public static final Animation[] FINAL_FLASH = ANIMATIONS.registerBundle("FinalFlash", BuiltInAnimation::new,
         "Windup", "Active");
 
+    public static final Animation[] SPECIAL_BEAM_CANNON = ANIMATIONS.registerBundle("SpecialBeamCannon", BuiltInAnimation::new,
+        "Windup", "Active");
+
     public static void register() {
         AnimationController.Instance.addAnimationRegister(NAMESPACE, ANIMATIONS);
     }

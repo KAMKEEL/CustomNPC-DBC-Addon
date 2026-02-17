@@ -363,6 +363,8 @@ public class DBCAbilities {
             AbilityLaserShot laser = (AbilityLaserShot) a;
             a.setName("Special Beam Cannon");
             a.setWindUpTicks(80);
+            a.setWindUpAnimationName("SpecialBeamCannon_Windup");
+            a.setActiveAnimationName("SpecialBeamCannon_Active");
             laser.setLaserWidth(0.2f);
             laser.setInnerColor(0xFFFF00);
             laser.setOuterColor(0xFF00FF);
@@ -370,6 +372,8 @@ public class DBCAbilities {
             laser.setLightningEffect(true);
             laser.setLightningDensity(1.25f);
             laser.setLightningRadius(1.25f);
+            laser.setAnchorOffsetX(-0.1f);
+            laser.setAnchorOffsetY(0.2f);
         }));
     }
 
