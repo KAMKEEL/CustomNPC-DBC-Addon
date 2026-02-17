@@ -366,6 +366,7 @@ public class DBCAbilities {
             a.setWindUpAnimationName("SpecialBeamCannon_Windup");
             a.setActiveAnimationName("SpecialBeamCannon_Active");
             laser.setLaserWidth(0.2f);
+            laser.setMaxDistance(150.0f);
             laser.setInnerColor(0xFFFF00);
             laser.setOuterColor(0xFF00FF);
             laser.setOuterColorAlpha(1f);
@@ -374,6 +375,22 @@ public class DBCAbilities {
             laser.setLightningRadius(1.25f);
             laser.setAnchorOffsetX(-0.1f);
             laser.setAnchorOffsetY(0.2f);
+        }));
+
+        ctrl.registerVariant(LASER, new AbilityVariant("ability.npcdbc.tribeam", GROUP, a -> {
+            AbilityLaserShot laser = (AbilityLaserShot) a;
+            a.setName("Tribeam");
+            a.setWindUpTicks(50);
+            a.setWindUpAnimationName("Tribeam_Windup");
+            a.setActiveAnimationName("Tribeam_Active");
+            laser.setLaserWidth(1.5f);
+            laser.setExpansionSpeed(2.0f);
+            laser.setLingerTicks(4);
+            laser.setMaxDistance(150.0f);
+            laser.setInnerColor(0xFCAE47);
+            laser.setOuterColor(0xFF8800);
+            laser.setOuterColorAlpha(1.0f);
+            laser.setAnchorOffsetZ(0.5f);
         }));
     }
 
