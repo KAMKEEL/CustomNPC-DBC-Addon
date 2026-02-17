@@ -55,6 +55,8 @@ public class DBCAbilities {
             orb.setOrbSpeed(1.0f);
             orb.setRotationSpeed(30f);
             orb.setOuterColorAlpha(1.0f);
+            orb.setAnchorOffsetX(0.1f);
+            orb.setAnchorOffsetY(0.25f);
         }));
 
         // Big Bang Attack
@@ -72,8 +74,9 @@ public class DBCAbilities {
             orb.setRotationSpeed(30f);
             orb.setOuterColorAlpha(1.0f);
             orb.setOuterColorWidth(0.1f);
-            orb.setAnchorOffsetX(0.05f);
-            orb.setAnchorOffsetY(0.15f);
+            orb.setAnchorOffsetX(0.075f);
+            orb.setAnchorOffsetY(0.25f);
+            orb.setAnchorOffsetZ(1.5f);
         }));
 
         // Burning Attack
@@ -139,7 +142,7 @@ public class DBCAbilities {
             orb.setOuterColorAlpha(1.0f);
             orb.setOuterColorWidth(0.5f);
             orb.setAnchorOffsetY(1.0f);
-            orb.setAnchorOffsetX(0.15f);
+            orb.setAnchorOffsetX(0.25f);
         }));
 
         // Large Spirit Bomb
