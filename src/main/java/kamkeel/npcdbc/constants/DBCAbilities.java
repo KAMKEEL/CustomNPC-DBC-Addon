@@ -227,8 +227,8 @@ public class DBCAbilities {
             a.setName("Energy Wave");
             a.setWindUpTicks(30);
             a.setShowTelegraph(false);
-            a.setWindUpAnimationName("EnergyBlast_Windup");
-            a.setActiveAnimationName("EnergyBlast_Active");
+            a.setWindUpAnimationName("EnergyWave_Windup");
+            a.setActiveAnimationName("EnergyWave_Active");
             beam.setBeamWidth(1.0f);
             beam.setHeadSize(1.25f);
             beam.setSpeed(1.3f);
@@ -236,6 +236,8 @@ public class DBCAbilities {
             beam.setOuterColorAlpha(1.0f);
             beam.setOuterColor(0xFFFF00);
             beam.setHoming(false);
+            beam.setAnchorOffsetX(0.1f);
+            beam.setAnchorOffsetY(0.25f);
         }));
 
         // Kamehameha
@@ -263,13 +265,18 @@ public class DBCAbilities {
             a.setName("Masenko");
             a.setWindUpTicks(40);
             a.setShowTelegraph(false);
-            beam.setBeamWidth(1.75f);
-            beam.setHeadSize(2.25f);
+            a.setWindUpAnimationName("Masenko_Windup");
+            a.setActiveAnimationName("Masenko_Active");
+            beam.setBeamWidth(1.5f);
+            beam.setHeadSize(1.75f);
             beam.setSpeed(1.5f);
             beam.setRotationSpeed(30f);
             beam.setOuterColorAlpha(1.0f);
             beam.setOuterColor(0xFFFF00);
             beam.setHoming(false);
+            beam.setAnchorOffsetX(-0.06f);
+            beam.setAnchorOffsetY(-0.06f);
+            beam.setAnchorOffsetZ(0.5f);
         }));
 
         // Galick Gun
@@ -278,6 +285,8 @@ public class DBCAbilities {
             a.setName("Galick Gun");
             a.setWindUpTicks(40);
             a.setShowTelegraph(false);
+            a.setWindUpAnimationName("GalickGun_Windup");
+            a.setActiveAnimationName("GalickGun_Active");
             beam.setBeamWidth(2.0f);
             beam.setHeadSize(2.5f);
             beam.setSpeed(1.5f);
@@ -286,6 +295,8 @@ public class DBCAbilities {
             beam.setOuterColorAlpha(1.0f);
             beam.setOuterColor(0xC580E5);
             beam.setHoming(false);
+            beam.setAnchorOffsetX(-0.2f);
+            beam.setAnchorOffsetZ(0.05f);
         }));
 
         // Double Sunday (dual beam)
@@ -294,8 +305,8 @@ public class DBCAbilities {
             a.setName("Double Sunday");
             a.setWindUpTicks(30);
             a.setShowTelegraph(false);
-            a.setWindUpAnimationName("Ability_Orb_Windup");
-            a.setActiveAnimationName("Ability_Orb_Active");
+            a.setWindUpAnimationName("DoubleSunday_Windup");
+            a.setActiveAnimationName("DoubleSunday_Active");
             beam.setProjectileCount(2);
             beam.setFireDelay(0);
             beam.setBeamWidth(1.0f);
@@ -305,6 +316,14 @@ public class DBCAbilities {
             beam.setOuterColorAlpha(0.5f);
             beam.setOuterColor(0xFFBBFF);
             beam.setHoming(false);
+
+            beam.setAnchorOffsetX(0, 0.15f);
+            beam.setAnchorOffsetY(0, 0.3f);
+            beam.setAnchorOffsetZ(0, -0.1f);
+
+            beam.setAnchorOffsetX(1, -0.15f);
+            beam.setAnchorOffsetY(1, 0.3f);
+            beam.setAnchorOffsetZ(1, -0.1f);
         }));
 
         // Final Flash (dual beam)
@@ -313,8 +332,8 @@ public class DBCAbilities {
             a.setName("Final Flash");
             a.setWindUpTicks(80);
             a.setShowTelegraph(false);
-            a.setWindUpAnimationName("Ability_BeamDual_Windup");
-            a.setActiveAnimationName("Ability_BeamDual_Active");
+            a.setWindUpAnimationName("FinalFlash_Windup");
+            a.setActiveAnimationName("FinalFlash_Active");
             beam.setProjectileCount(2);
             beam.setFireDelay(0);
             beam.setBeamWidth(3.0f);
@@ -327,6 +346,12 @@ public class DBCAbilities {
             beam.setLightningDensity(2f);
             beam.setLightningRadius(3f);
             beam.setHoming(false);
+
+            beam.setAnchorOffsetX(0, 0.3f);
+            beam.setAnchorOffsetY(0, 0.225f);
+
+            beam.setAnchorOffsetX(1, -0.3f);
+            beam.setAnchorOffsetY(1, 0.225f);
         }));
     }
 

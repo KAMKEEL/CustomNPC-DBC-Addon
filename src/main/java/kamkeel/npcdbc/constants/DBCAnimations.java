@@ -15,17 +15,27 @@ public class DBCAnimations {
     public static final Animation[] BIG_BANG_ATTACK = ANIMATIONS.registerBundle("BigBangAttack", BuiltInAnimation::new,
         "Windup", "Active");
     public static final Animation[] BURNING_ATTACK = ANIMATIONS.registerBundle("BurningAttack", BuiltInAnimation::new,
-        "Windup", "Active", "Windup_Slower");
+        "Windup", "Windup_Slower", "Active");
     public static final Animation[] DEATH_BALL = ANIMATIONS.registerBundle("DeathBall", BuiltInAnimation::new,
         "Windup", "Active");
     public static final Animation[] ENERGY_BLAST = ANIMATIONS.registerBundle("EnergyBlast", BuiltInAnimation::new,
-        "Windup", "Active");
+        "Windup", "Windup_Looped", "Active", "Active_Looped");
     public static final Animation[] SPIRIT_BOMB = ANIMATIONS.registerBundle("SpiritBomb", BuiltInAnimation::new,
         "Windup", "Active");
     public static final Animation[] LARGE_SPIRIT_BOMB = ANIMATIONS.registerBundle("LargeSpiritBomb", BuiltInAnimation::new,
         "Windup", "Active");
 
+    public static final Animation[] ENERGY_WAVE = ANIMATIONS.registerBundle("EnergyWave", BuiltInAnimation::new,
+        "Windup", "Active");
     public static final Animation[] KAMEHAMEHA = ANIMATIONS.registerBundle("Kamehameha", BuiltInAnimation::new,
+        "Windup", "Active");
+    public static final Animation[] MASENKO = ANIMATIONS.registerBundle("Masenko", BuiltInAnimation::new,
+        "Windup", "Active");
+    public static final Animation[] GALICK_GUN = ANIMATIONS.registerBundle("GalickGun", BuiltInAnimation::new,
+        "Windup", "Active");
+    public static final Animation[] DOUBLE_SUNDAY = ANIMATIONS.registerBundle("DoubleSunday", BuiltInAnimation::new,
+        "Windup", "Active");
+    public static final Animation[] FINAL_FLASH = ANIMATIONS.registerBundle("FinalFlash", BuiltInAnimation::new,
         "Windup", "Active");
 
     public static void register() {
