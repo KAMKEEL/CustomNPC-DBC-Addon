@@ -509,6 +509,6 @@
     "ID": 2,
     "WhileAttacking": 1b,
     "WhileWalking": 1b,
-    "Name": "Namek_Regen",
+    "Name": "NamekRegen",
     "WhileStanding": 1b
 }
