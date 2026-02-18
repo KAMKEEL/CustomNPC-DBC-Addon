@@ -34,11 +34,26 @@ public class DBCSettingsUtil {
         JRMCoreH.PlyrSettingsRem(data(player).getRawCompound(), setting);
     }
 
-    private static boolean isEnabled(EntityPlayer player, int setting) {
+    public static boolean isSetting(int setting) {
+        if (setting < 0 || setting > 16)
+            return false;
+
+        if (setting == 3 || setting == 5 || setting == 7 || setting == 8)
+            return false;
+
+        return true;
+    }
+
+    public static boolean isEnabled(EntityPlayer player, int setting) {
+        if (!isSetting(setting)) return false;
+
         return JRMCoreH.PlyrSettingsB(data(player).getRawCompound(), setting);
     }
 
-    private static void setEnabled(EntityPlayer player, int setting, boolean enabled) {
+    public static void setEnabled(EntityPlayer player, int setting, boolean enabled) {
+        if (!isSetting(setting))
+            return;
+
         if (!isEnabled(player, setting) && enabled) {
             addSetting(player, setting);
         } else if (isEnabled(player, setting) && !enabled) {

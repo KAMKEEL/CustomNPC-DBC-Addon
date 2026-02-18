@@ -21,15 +21,15 @@ public class DBCAnimations {
         "Windup", "Windup_Slower", "Active");
     public static final Animation[] DEATH_BALL = ANIMATIONS.registerBundle("DeathBall", BuiltInAnimation::new,
         "Windup", "Active");
-    public static final Animation[] ENERGY_BLAST = ANIMATIONS.registerBundle("EnergyBlast", BuiltInAnimation::new,
-        "Windup", "Windup_Looped", "Active", "Active_Looped");
+    public static final Animation[] ENERGY_GENERIC = ANIMATIONS.registerBundle("EnergyGeneric", BuiltInAnimation::new,
+        "Windup", "Charge", "Active");
+    public static final Animation[] FINISH_BREAKER = ANIMATIONS.registerBundle("FinishBreaker", BuiltInAnimation::new,
+        "Windup", "Active");
     public static final Animation[] SPIRIT_BOMB = ANIMATIONS.registerBundle("SpiritBomb", BuiltInAnimation::new,
         "Windup", "Active");
     public static final Animation[] LARGE_SPIRIT_BOMB = ANIMATIONS.registerBundle("LargeSpiritBomb", BuiltInAnimation::new,
         "Windup", "Active");
 
-    public static final Animation[] ENERGY_WAVE = ANIMATIONS.registerBundle("EnergyWave", BuiltInAnimation::new,
-        "Windup", "Active");
     public static final Animation[] KAMEHAMEHA = ANIMATIONS.registerBundle("Kamehameha", BuiltInAnimation::new,
         "Windup", "Active");
     public static final Animation[] MASENKO = ANIMATIONS.registerBundle("Masenko", BuiltInAnimation::new,

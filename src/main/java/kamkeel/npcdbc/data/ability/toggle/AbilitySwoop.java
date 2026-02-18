@@ -6,10 +6,9 @@ import net.minecraft.entity.player.EntityPlayer;
 /**
  * Swoop toggle ability - enables dodge/swoop movement mode.
  */
-public class AbilitySwoop extends DBCToggleAbility {
+public class AbilitySwoop extends AbilityDBCToggle {
 
     public AbilitySwoop() {
-        super("npcdbc:swoop");
         this.name = "Swoop";
         this.setIconX(48);
         this.setIconY(0);
@@ -18,10 +17,5 @@ public class AbilitySwoop extends DBCToggleAbility {
     @Override
     protected void onToggle(EntityPlayer player, boolean newState) {
         DBCSettingsUtil.setSwoop(player, newState);
-    }
-
-    @Override
-    public boolean isActive(EntityPlayer player) {
-        return DBCSettingsUtil.isSwoop(player);
     }
 }

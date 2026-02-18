@@ -6,10 +6,9 @@ import net.minecraft.entity.player.EntityPlayer;
 /**
  * Friendly Fist toggle ability - enables non-hostile combat mode.
  */
-public class AbilityFriendlyFist extends DBCToggleAbility {
+public class AbilityFriendlyFist extends AbilityDBCToggle {
 
     public AbilityFriendlyFist() {
-        super("npcdbc:friendly_fist");
         this.name = "Friendly Fist";
         this.setIconX(0);
         this.setIconY(0);
@@ -18,10 +17,5 @@ public class AbilityFriendlyFist extends DBCToggleAbility {
     @Override
     protected void onToggle(EntityPlayer player, boolean newState) {
         DBCSettingsUtil.setFriendlyFist(player, newState);
-    }
-
-    @Override
-    public boolean isActive(EntityPlayer player) {
-        return DBCSettingsUtil.isFriendlyFist(player);
     }
 }

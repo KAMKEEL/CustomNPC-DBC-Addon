@@ -79,6 +79,6 @@
     "ID": 2,
     "WhileAttacking": 1b,
     "WhileWalking": 1b,
-    "Name": "EnergyBlast_Charge",
+    "Name": "EnergyGeneric_Charge",
     "WhileStanding": 1b
 }

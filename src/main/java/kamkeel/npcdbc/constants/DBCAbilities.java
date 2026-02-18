@@ -1,11 +1,6 @@
 package kamkeel.npcdbc.constants;
 
-import kamkeel.npcdbc.data.ability.toggle.AbilityFriendlyFist;
-import kamkeel.npcdbc.data.ability.toggle.AbilityKiBlade;
-import kamkeel.npcdbc.data.ability.toggle.AbilityKiFist;
-import kamkeel.npcdbc.data.ability.toggle.AbilityKiProtection;
-import kamkeel.npcdbc.data.ability.toggle.AbilityKiScythe;
-import kamkeel.npcdbc.data.ability.toggle.AbilitySwoop;
+import kamkeel.npcdbc.data.ability.toggle.*;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.controllers.data.ability.AbilityVariant;
 import kamkeel.npcs.controllers.data.ability.AnchorPoint;
@@ -30,22 +25,26 @@ public class DBCAbilities {
     private static final String DISC = "ability.cnpc.disc";
     private static final String DOME = "ability.cnpc.dome";
 
+    public static final Ability DBC_TOGGLE = ABILITIES.registerType("dbc_toggle", AbilityDBCToggle::new);
+
     // Toggle Abilities
-    public static final Ability KI_FIST = ABILITIES.register("ki_fist", AbilityKiFist::new);
-    public static final Ability SWOOP = ABILITIES.register("swoop", AbilitySwoop::new);
-    public static final Ability KI_PROTECTION = ABILITIES.register("ki_protection", AbilityKiProtection::new);
-    public static final Ability FRIENDLY_FIST = ABILITIES.register("friendly_fist", AbilityFriendlyFist::new);
-    public static final Ability KI_BLADE = ABILITIES.register("ki_blade", AbilityKiBlade::new);
-    public static final Ability KI_SCYTHE = ABILITIES.register("ki_scythe", AbilityKiScythe::new);
+//    public static final Ability KI_FIST = ABILITIES.register("ki_fist", AbilityKiFist::new);
+//    public static final Ability SWOOP = ABILITIES.register("swoop", AbilitySwoop::new);
+//    public static final Ability KI_PROTECTION = ABILITIES.register("ki_protection", AbilityKiProtection::new);
+//    public static final Ability FRIENDLY_FIST = ABILITIES.register("friendly_fist", AbilityFriendlyFist::new);
+//    public static final Ability KI_BLADE = ABILITIES.register("ki_blade", AbilityKiBlade::new);
+//    public static final Ability KI_SCYTHE = ABILITIES.register("ki_scythe", AbilityKiScythe::new);
 
     // Ability Variants
+
+    // Orb Variants
     public static final AbilityVariant KI_BLAST = ABILITIES.registerVariant(ORB, "ability.npcdbc.ki_blast", GROUP, a -> {
         AbilityOrb orb = (AbilityOrb) a;
         a.setName("Energy Blast");
         a.setWindUpTicks(15);
         a.setShowTelegraph(false);
-        a.setWindUpAnimationName("EnergyBlast_Windup");
-        a.setActiveAnimationName("EnergyBlast_Active");
+        a.setWindUpAnimationName("EnergyGeneric_Windup");
+        a.setActiveAnimationName("EnergyGeneric_Active");
         orb.setHoming(false);
         orb.setOuterColor(0xFFFF00);
         orb.setOrbSpeed(1.0f);
@@ -53,6 +52,66 @@ public class DBCAbilities {
         orb.setOuterColorAlpha(1.0f);
         orb.setAnchorOffsetX(0.1f);
         orb.setAnchorOffsetY(0.25f);
+    });
+
+    public static final AbilityVariant KI_BLAST_VOLLEY = ABILITIES.registerVariant(ORB, "ability.npcdbc.ki_blast_volley", GROUP, a -> {
+        AbilityOrb orb = (AbilityOrb) a;
+        a.setName("Energy Blast Volley");
+        a.setWindUpTicks(30);
+        a.setShowTelegraph(false);
+        a.setMaxRange(75.0f);
+        a.setBurstEnabled(true);
+        a.setBurstAmount(15);
+        a.setBurstDelay(5);
+        a.setBurstReplayAnimations(false);
+        a.setBurstOverlap(true);
+        a.setSyncWindupWithAnimation(false);
+        a.setWindUpAnimationName("EnergyGeneric_Windup");
+        a.setActiveAnimationName("EnergyGeneric_Charge");
+
+        orb.setOrbSpeed(2.0f);
+        orb.setRotationSpeed(30f);
+        orb.setOuterColorAlpha(1.0f);
+        orb.setOrbSize(0.5f);
+        orb.setDamage(4.0f);
+        orb.setKnockback(0.0f);
+        orb.setKnockbackUp(0.0f);
+        orb.setOuterColor(0xFFFF00);
+        orb.setAnchorOffsetX(0.1f);
+        orb.setAnchorOffsetY(0.25f);
+    });
+
+    public static final AbilityVariant FINISH_BREAKER = ABILITIES.registerVariant(ORB, "ability.npcdbc.finish_breaker", GROUP, a -> {
+        AbilityOrb orb = (AbilityOrb) a;
+        a.setName("Finish Breaker");
+        a.setWindUpTicks(30);
+        a.setShowTelegraph(false);
+        a.setMaxRange(75.0f);
+        a.setBurstEnabled(true);
+        a.setBurstAmount(5);
+        a.setBurstDelay(5);
+        a.setBurstReplayAnimations(false);
+        a.setBurstOverlap(true);
+        a.setWindUpAnimationName("FinishBreaker_Windup");
+        a.setActiveAnimationName("FinishBreaker_Active");
+
+        orb.setHoming(true);
+        orb.setHomingStrength(0.075f);
+        orb.setProjectileCount(2);
+        orb.setFireDelay(2);
+        orb.setOrbSpeed(1.0f);
+        orb.setRotationSpeed(30f);
+        orb.setOuterColorAlpha(1.0f);
+        orb.setOrbSize(1.25f);
+        orb.setDamage(4.0f);
+        orb.setKnockback(0.0f);
+        orb.setKnockbackUp(0.0f);
+        orb.setOuterColor(0xFFFF00);
+
+        orb.setAnchorOffsetX(0, 0.1f);
+        orb.setAnchorOffsetY(0, 0.25f);
+        orb.setAnchorOffsetX(1, -0.1f);
+        orb.setAnchorOffsetY(1, 0.25f);
     });
 
     public static final AbilityVariant BIG_BANG_ATTACK = ABILITIES.registerVariant(ORB, "ability.npcdbc.bigbang_attack", GROUP, a -> {
@@ -212,8 +271,8 @@ public class DBCAbilities {
         a.setName("Energy Wave");
         a.setWindUpTicks(30);
         a.setShowTelegraph(false);
-        a.setWindUpAnimationName("EnergyWave_Windup");
-        a.setActiveAnimationName("EnergyWave_Active");
+        a.setWindUpAnimationName("EnergyGeneric_Windup");
+        a.setActiveAnimationName("EnergyGeneric_Charge");
         beam.setBeamWidth(1.0f);
         beam.setHeadSize(1.25f);
         beam.setSpeed(1.3f);
@@ -334,6 +393,7 @@ public class DBCAbilities {
         beam.setAnchorOffsetY(1, 0.225f);
     });
 
+    // Laser Variants
     public static final AbilityVariant SPECIAL_BEAM_CANNON = ABILITIES.registerVariant(LASER, "ability.npcdbc.special_beam_cannon", GROUP, a -> {
         AbilityLaserShot laser = (AbilityLaserShot) a;
         a.setName("Special Beam Cannon");
@@ -368,6 +428,7 @@ public class DBCAbilities {
         laser.setAnchorOffsetZ(0.5f);
     });
 
+    // Disc Variants
     public static final AbilityVariant DESTRUCTO_DISC = ABILITIES.registerVariant(DISC, "ability.npcdbc.destructo_disc", GROUP, a -> {
         AbilityDisc disc = (AbilityDisc) a;
         a.setName("Destructo Disc");
@@ -409,6 +470,7 @@ public class DBCAbilities {
         disc.setAnchorOffsetY(1, 0.3f);
     });
 
+    // Dome Variants
     public static final AbilityVariant ANDROID_BARRIER = ABILITIES.registerVariant(DOME, "ability.npcdbc.android_barrier", GROUP, a -> {
         AbilityDome dome = (AbilityDome) a;
         a.setName("Android Barrier");

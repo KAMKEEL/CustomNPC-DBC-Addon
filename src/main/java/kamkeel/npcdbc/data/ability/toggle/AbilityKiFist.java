@@ -6,10 +6,9 @@ import net.minecraft.entity.player.EntityPlayer;
 /**
  * Ki Fist toggle ability - enables ki-enhanced melee attacks.
  */
-public class AbilityKiFist extends DBCToggleAbility {
+public class AbilityKiFist extends AbilityDBCToggle {
 
     public AbilityKiFist() {
-        super("npcdbc:ki_fist");
         this.name = "Ki Fist";
         this.setIconX(192);
         this.setIconY(0);
@@ -18,10 +17,5 @@ public class AbilityKiFist extends DBCToggleAbility {
     @Override
     protected void onToggle(EntityPlayer player, boolean newState) {
         DBCSettingsUtil.setKiFist(player, newState);
-    }
-
-    @Override
-    public boolean isActive(EntityPlayer player) {
-        return DBCSettingsUtil.isKiFist(player);
     }
 }

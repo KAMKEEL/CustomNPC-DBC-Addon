@@ -495,6 +495,7 @@ ability.icon.y=Icon Y
 
 ability.npcdbc.ki_blast=Energy Blast
 ability.npcdbc.ki_blast_volley=Energy Blast Volley
+ability.npcdbc.finish_breaker=Finish Breaker
 ability.npcdbc.bigbang_attack=Big Bang Attack
 ability.npcdbc.burning_attack=Burning Attack
 ability.npcdbc.death_ball=Death Ball
@@ -516,6 +517,8 @@ ability.npcdbc.special_beam_cannon=Special Beam Cannon
 ability.npcdbc.tribeam=Tri-Beam
 ability.npcdbc.android_barrier=Android Barrier
 ability.npcdbc.hakai=Destruction
+
+ability.npcdbc.dbc_toggle=DBC Toggle
 ability.npcdbc.ki_fist=Ki Fist
 ability.npcdbc.swoop=Swoop
 ability.npcdbc.ki_protection=Ki Protection

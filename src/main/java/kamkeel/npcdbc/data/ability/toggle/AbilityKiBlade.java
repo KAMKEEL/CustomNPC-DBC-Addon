@@ -6,10 +6,9 @@ import net.minecraft.entity.player.EntityPlayer;
 /**
  * Ki Blade toggle ability - enables ki-enhanced blade mode.
  */
-public class AbilityKiBlade extends DBCToggleAbility {
+public class AbilityKiBlade extends AbilityDBCToggle {
 
     public AbilityKiBlade() {
-        super("npcdbc:ki_blade");
         this.name = "Ki Blade";
         this.setIconX(288);
         this.setIconY(0);
@@ -18,10 +17,5 @@ public class AbilityKiBlade extends DBCToggleAbility {
     @Override
     protected void onToggle(EntityPlayer player, boolean newState) {
         DBCSettingsUtil.setKiWeapon(player, newState, 0);
-    }
-
-    @Override
-    public boolean isActive(EntityPlayer player) {
-        return DBCSettingsUtil.getKiWeapon(player) == 0;
     }
 }
