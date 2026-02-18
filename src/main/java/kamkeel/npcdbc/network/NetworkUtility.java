@@ -20,6 +20,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.constants.EnumScrollData;
 import noppes.npcs.controllers.PlayerDataController;
+import noppes.npcs.controllers.data.PlayerData;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -79,18 +80,22 @@ public class NetworkUtility {
     }
 
     public static void sendPlayerAbilityWheel(EntityPlayer player) {
-        PlayerDBCInfo data = ((IPlayerDBCInfo) PlayerDataController.Instance.getPlayerData(player)).getPlayerDBCInfo();
+        PlayerData pData = PlayerDataController.Instance.getPlayerData(player);
+        PlayerDBCInfo data = ((IPlayerDBCInfo) pData).getPlayerDBCInfo();
         NBTTagCompound compound = new NBTTagCompound();
         if (data != null) {
             for (int i = 0; i < data.abilityWheel.length; i++) {
                 AbilityWheelData wheelData = data.abilityWheel[i];
-                // Validate ability or chain still exists
+                // Validate ability or chain still exists AND player still has it unlocked
                 if (!wheelData.isEmpty() && AbilityController.Instance != null) {
                     boolean valid;
                     if (wheelData.isChainKey()) {
                         valid = AbilityController.Instance.canResolveChainedAbility(wheelData.getResolveKey());
                     } else {
                         valid = AbilityController.Instance.canResolveAbility(wheelData.abilityKey);
+                    }
+                    if (valid && pData.abilityData != null) {
+                        valid = pData.abilityData.hasUnlockedAbility(wheelData.abilityKey);
                     }
                     if (!valid) wheelData.reset();
                 }

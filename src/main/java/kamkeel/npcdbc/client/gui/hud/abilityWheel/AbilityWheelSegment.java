@@ -98,8 +98,6 @@ public class AbilityWheelSegment extends WheelSegment {
         action = null;
         icon = null;
         DBCPacketHandler.Instance.sendToServer(new DBCSaveAbilityWheel(index, data));
-        if (parent.hoveredSlot == index)
-            parent.selectSlot(-1);
         parent.timeClosedSubGui = Minecraft.getSystemTime();
     }
 

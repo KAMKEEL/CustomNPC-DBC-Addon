@@ -204,6 +204,11 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
             SubGuiSelectAbility selectAbility = (SubGuiSelectAbility) subgui;
             if (selectAbility.confirmed && selectAbility.selectedAbilityKey != null) {
                 int slotID = selectAbility.buttonID == 8 ? hoveredSlot : selectAbility.buttonID;
+                if (slotID < 0 || slotID >= SLOTS_PER_PAGE) {
+                    timeClosedSubGui = Minecraft.getSystemTime();
+                    initGui();
+                    return;
+                }
                 AbilityWheelSegment slot = wheelSlot[slotID];
 
                 selectSlot(slotID);
@@ -216,6 +221,11 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
                 slot.setAbility(selectAbility.selectedAbilityKey, true);
             } else if (selectAbility.removeAbility) {
                 int slotID = selectAbility.buttonID == 8 ? hoveredSlot : selectAbility.buttonID;
+                if (slotID < 0 || slotID >= SLOTS_PER_PAGE) {
+                    timeClosedSubGui = Minecraft.getSystemTime();
+                    initGui();
+                    return;
+                }
                 AbilityWheelSegment slot = wheelSlot[slotID];
 
                 selectSlot(slotID);
