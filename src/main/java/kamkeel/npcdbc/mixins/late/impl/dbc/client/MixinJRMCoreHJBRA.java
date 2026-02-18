@@ -1,13 +1,11 @@
 package kamkeel.npcdbc.mixins.late.impl.dbc.client;
 
 import JinRyuu.JRMCore.JRMCoreHJBRA;
-import JinRyuu.JRMCore.JRMCoreHSAC;
 import JinRyuu.JRMCore.entity.ModelBipedBody;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import noppes.npcs.entity.EntityCustomNpc;
 import org.spongepowered.asm.mixin.Mixin;

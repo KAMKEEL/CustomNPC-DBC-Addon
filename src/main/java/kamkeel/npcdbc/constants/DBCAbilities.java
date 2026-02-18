@@ -1,11 +1,20 @@
 package kamkeel.npcdbc.constants;
 
-import kamkeel.npcdbc.data.ability.toggle.*;
+import kamkeel.npcdbc.data.ability.toggle.AbilityFriendlyFist;
+import kamkeel.npcdbc.data.ability.toggle.AbilityKiBlade;
+import kamkeel.npcdbc.data.ability.toggle.AbilityKiFist;
+import kamkeel.npcdbc.data.ability.toggle.AbilityKiProtection;
+import kamkeel.npcdbc.data.ability.toggle.AbilityKiScythe;
+import kamkeel.npcdbc.data.ability.toggle.AbilitySwoop;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.controllers.data.ability.AbilityVariant;
 import kamkeel.npcs.controllers.data.ability.AnchorPoint;
 import kamkeel.npcs.controllers.data.ability.LockMovementType;
-import kamkeel.npcs.controllers.data.ability.type.energy.*;
+import kamkeel.npcs.controllers.data.ability.type.energy.AbilityBeam;
+import kamkeel.npcs.controllers.data.ability.type.energy.AbilityDisc;
+import kamkeel.npcs.controllers.data.ability.type.energy.AbilityDome;
+import kamkeel.npcs.controllers.data.ability.type.energy.AbilityLaserShot;
+import kamkeel.npcs.controllers.data.ability.type.energy.AbilityOrb;
 import kamkeel.npcs.util.Register;
 
 public class DBCAbilities {

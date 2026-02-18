@@ -3,8 +3,6 @@ package kamkeel.npcdbc.data.overlay;
 import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.ModelBipedBody;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.api.client.overlay.IOverlay;
 import kamkeel.npcdbc.api.client.overlay.IOverlayContext;

@@ -164,203 +164,373 @@ public class DBCAbilityStats implements IDBCAbility {
     // ═══════════════════════════════════════════════════════════════════
 
     @Override
-    public boolean isEnabled() { return enabled; }
+    public boolean isEnabled() {
+        return enabled;
+    }
 
     @Override
-    public void setEnabled(boolean enabled) { this.enabled = enabled; save(); }
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        save();
+    }
 
     @Override
-    public boolean isFriendlyFist() { return friendlyFist; }
+    public boolean isFriendlyFist() {
+        return friendlyFist;
+    }
 
     @Override
-    public void setFriendlyFist(boolean friendlyFist) { this.friendlyFist = friendlyFist; save(); }
+    public void setFriendlyFist(boolean friendlyFist) {
+        this.friendlyFist = friendlyFist;
+        save();
+    }
 
     @Override
-    public int getFriendlyFistAmount() { return friendlyFistTime; }
+    public int getFriendlyFistAmount() {
+        return friendlyFistTime;
+    }
 
     @Override
-    public void setFriendlyFistAmount(int seconds) { this.friendlyFistTime = ValueUtil.clamp(seconds, 1, 60); save(); }
+    public void setFriendlyFistAmount(int seconds) {
+        this.friendlyFistTime = ValueUtil.clamp(seconds, 1, 60);
+        save();
+    }
 
     @Override
-    public boolean isIgnoreDex() { return ignoreDex; }
+    public boolean isIgnoreDex() {
+        return ignoreDex;
+    }
 
     @Override
-    public void setIgnoreDex(boolean ignoreDex) { this.ignoreDex = ignoreDex; save(); }
+    public void setIgnoreDex(boolean ignoreDex) {
+        this.ignoreDex = ignoreDex;
+        save();
+    }
 
     @Override
-    public boolean isIgnoreBlock() { return ignoreBlock; }
+    public boolean isIgnoreBlock() {
+        return ignoreBlock;
+    }
 
     @Override
-    public void setIgnoreBlock(boolean ignoreBlock) { this.ignoreBlock = ignoreBlock; save(); }
+    public void setIgnoreBlock(boolean ignoreBlock) {
+        this.ignoreBlock = ignoreBlock;
+        save();
+    }
 
     @Override
-    public boolean isIgnoreEndurance() { return ignoreEndurance; }
+    public boolean isIgnoreEndurance() {
+        return ignoreEndurance;
+    }
 
     @Override
-    public void setIgnoreEndurance(boolean ignoreEndurance) { this.ignoreEndurance = ignoreEndurance; save(); }
+    public void setIgnoreEndurance(boolean ignoreEndurance) {
+        this.ignoreEndurance = ignoreEndurance;
+        save();
+    }
 
     @Override
-    public boolean isIgnoreKiProtection() { return ignoreKiProtection; }
+    public boolean isIgnoreKiProtection() {
+        return ignoreKiProtection;
+    }
 
     @Override
-    public void setIgnoreKiProtection(boolean ignoreKiProtection) { this.ignoreKiProtection = ignoreKiProtection; save(); }
+    public void setIgnoreKiProtection(boolean ignoreKiProtection) {
+        this.ignoreKiProtection = ignoreKiProtection;
+        save();
+    }
 
     @Override
-    public boolean isIgnoreFormReduction() { return ignoreFormReduction; }
+    public boolean isIgnoreFormReduction() {
+        return ignoreFormReduction;
+    }
 
     @Override
-    public void setIgnoreFormReduction(boolean ignoreFormReduction) { this.ignoreFormReduction = ignoreFormReduction; save(); }
+    public void setIgnoreFormReduction(boolean ignoreFormReduction) {
+        this.ignoreFormReduction = ignoreFormReduction;
+        save();
+    }
 
     @Override
-    public boolean hasDefensePenetration() { return hasDefensePenetration; }
+    public boolean hasDefensePenetration() {
+        return hasDefensePenetration;
+    }
 
     @Override
-    public void setHasDefensePenetration(boolean has) { this.hasDefensePenetration = has; save(); }
+    public void setHasDefensePenetration(boolean has) {
+        this.hasDefensePenetration = has;
+        save();
+    }
 
     @Override
-    public int getDefensePenetration() { return defensePenetration; }
+    public int getDefensePenetration() {
+        return defensePenetration;
+    }
 
     @Override
-    public void setDefensePenetration(int pen) { this.defensePenetration = ValueUtil.clamp(pen, 0, 100); save(); }
+    public void setDefensePenetration(int pen) {
+        this.defensePenetration = ValueUtil.clamp(pen, 0, 100);
+        save();
+    }
 
     @Override
-    public int getKiCost() { return kiCost; }
+    public int getKiCost() {
+        return kiCost;
+    }
 
     @Override
-    public void setKiCost(int kiCost) { this.kiCost = Math.max(0, kiCost); save(); }
+    public void setKiCost(int kiCost) {
+        this.kiCost = Math.max(0, kiCost);
+        save();
+    }
 
     @Override
-    public boolean isKiCostPercent() { return kiCostPercent; }
+    public boolean isKiCostPercent() {
+        return kiCostPercent;
+    }
 
     @Override
-    public void setKiCostPercent(boolean percent) { this.kiCostPercent = percent; save(); }
+    public void setKiCostPercent(boolean percent) {
+        this.kiCostPercent = percent;
+        save();
+    }
 
     @Override
-    public int getKiDrain() { return kiDrain; }
+    public int getKiDrain() {
+        return kiDrain;
+    }
 
     @Override
-    public void setKiDrain(int kiDrain) { this.kiDrain = Math.max(0, kiDrain); save(); }
+    public void setKiDrain(int kiDrain) {
+        this.kiDrain = Math.max(0, kiDrain);
+        save();
+    }
 
     @Override
-    public boolean isKiDrainPercent() { return kiDrainPercent; }
+    public boolean isKiDrainPercent() {
+        return kiDrainPercent;
+    }
 
     @Override
-    public void setKiDrainPercent(boolean percent) { this.kiDrainPercent = percent; save(); }
+    public void setKiDrainPercent(boolean percent) {
+        this.kiDrainPercent = percent;
+        save();
+    }
 
     @Override
-    public int getStaminaCost() { return staminaCost; }
+    public int getStaminaCost() {
+        return staminaCost;
+    }
 
     @Override
-    public void setStaminaCost(int staminaCost) { this.staminaCost = Math.max(0, staminaCost); save(); }
+    public void setStaminaCost(int staminaCost) {
+        this.staminaCost = Math.max(0, staminaCost);
+        save();
+    }
 
     @Override
-    public boolean isStaminaCostPercent() { return staminaCostPercent; }
+    public boolean isStaminaCostPercent() {
+        return staminaCostPercent;
+    }
 
     @Override
-    public void setStaminaCostPercent(boolean percent) { this.staminaCostPercent = percent; save(); }
+    public void setStaminaCostPercent(boolean percent) {
+        this.staminaCostPercent = percent;
+        save();
+    }
 
     @Override
-    public int getStaminaDrain() { return staminaDrain; }
+    public int getStaminaDrain() {
+        return staminaDrain;
+    }
 
     @Override
-    public void setStaminaDrain(int staminaDrain) { this.staminaDrain = Math.max(0, staminaDrain); save(); }
+    public void setStaminaDrain(int staminaDrain) {
+        this.staminaDrain = Math.max(0, staminaDrain);
+        save();
+    }
 
     @Override
-    public boolean isStaminaDrainPercent() { return staminaDrainPercent; }
+    public boolean isStaminaDrainPercent() {
+        return staminaDrainPercent;
+    }
 
     @Override
-    public void setStaminaDrainPercent(boolean percent) { this.staminaDrainPercent = percent; save(); }
+    public void setStaminaDrainPercent(boolean percent) {
+        this.staminaDrainPercent = percent;
+        save();
+    }
 
     // Player damage configuration
     @Override
-    public int getPlayerDamageType() { return playerDamageType; }
+    public int getPlayerDamageType() {
+        return playerDamageType;
+    }
 
     @Override
-    public void setPlayerDamageType(int type) { this.playerDamageType = ValueUtil.clamp(type, 0, 4); save(); }
+    public void setPlayerDamageType(int type) {
+        this.playerDamageType = ValueUtil.clamp(type, 0, 4);
+        save();
+    }
 
     @Override
-    public int getScalingAttribute() { return scalingAttribute; }
+    public int getScalingAttribute() {
+        return scalingAttribute;
+    }
 
     @Override
-    public void setScalingAttribute(int attr) { this.scalingAttribute = ValueUtil.clamp(attr, 0, 5); save(); }
+    public void setScalingAttribute(int attr) {
+        this.scalingAttribute = ValueUtil.clamp(attr, 0, 5);
+        save();
+    }
 
     @Override
-    public float getScalingMultiplier() { return scalingMultiplier; }
+    public float getScalingMultiplier() {
+        return scalingMultiplier;
+    }
 
     @Override
-    public void setScalingMultiplier(float mult) { this.scalingMultiplier = ValueUtil.clamp(mult, 0.0f, 10.0f); save(); }
+    public void setScalingMultiplier(float mult) {
+        this.scalingMultiplier = ValueUtil.clamp(mult, 0.0f, 10.0f);
+        save();
+    }
 
     @Override
-    public int getFlatDamage() { return flatDamage; }
+    public int getFlatDamage() {
+        return flatDamage;
+    }
 
     @Override
-    public void setFlatDamage(int dmg) { this.flatDamage = Math.max(0, dmg); save(); }
+    public void setFlatDamage(int dmg) {
+        this.flatDamage = Math.max(0, dmg);
+        save();
+    }
 
     @Override
-    public boolean getUsePlayerSettings() { return usePlayerSettings; }
+    public boolean getUsePlayerSettings() {
+        return usePlayerSettings;
+    }
 
     @Override
-    public void setUsePlayerSettings(boolean use) { this.usePlayerSettings = use; save(); }
+    public void setUsePlayerSettings(boolean use) {
+        this.usePlayerSettings = use;
+        save();
+    }
 
     @Override
-    public int getScalingSetCount() { return scalingSetCount; }
+    public int getScalingSetCount() {
+        return scalingSetCount;
+    }
 
     @Override
-    public void setScalingSetCount(int count) { this.scalingSetCount = ValueUtil.clamp(count, 1, 3); save(); }
+    public void setScalingSetCount(int count) {
+        this.scalingSetCount = ValueUtil.clamp(count, 1, 3);
+        save();
+    }
 
     // ═══════════════════════════════════════════════════════════════════
     // CNPC SET ACCESSORS (used by formula and GUI)
     // ═══════════════════════════════════════════════════════════════════
 
-    private int clampSet(int set) { return ValueUtil.clamp(set, 0, MAX_SETS - 1); }
+    private int clampSet(int set) {
+        return ValueUtil.clamp(set, 0, MAX_SETS - 1);
+    }
 
-    public CNPCScalingSet getSet(int set) { return cnpcSets[clampSet(set)]; }
+    public CNPCScalingSet getSet(int set) {
+        return cnpcSets[clampSet(set)];
+    }
 
-    public int getAttributeForSet(int set) { return cnpcSets[clampSet(set)].attribute; }
+    public int getAttributeForSet(int set) {
+        return cnpcSets[clampSet(set)].attribute;
+    }
+
     public void setAttributeForSet(int set, int attr) {
-        cnpcSets[clampSet(set)].attribute = ValueUtil.clamp(attr, 0, 5); save();
+        cnpcSets[clampSet(set)].attribute = ValueUtil.clamp(attr, 0, 5);
+        save();
     }
 
-    public int getStatTypeForSet(int set) { return cnpcSets[clampSet(set)].statType; }
+    public int getStatTypeForSet(int set) {
+        return cnpcSets[clampSet(set)].statType;
+    }
+
     public void setStatTypeForSet(int set, int type) {
-        cnpcSets[clampSet(set)].statType = ValueUtil.clamp(type, 0, 5); save();
+        cnpcSets[clampSet(set)].statType = ValueUtil.clamp(type, 0, 5);
+        save();
     }
 
-    public boolean isStatEnabledForSet(int set) { return cnpcSets[clampSet(set)].statEnabled; }
+    public boolean isStatEnabledForSet(int set) {
+        return cnpcSets[clampSet(set)].statEnabled;
+    }
+
     public void setStatEnabledForSet(int set, boolean enabled) {
-        cnpcSets[clampSet(set)].statEnabled = enabled; save();
+        cnpcSets[clampSet(set)].statEnabled = enabled;
+        save();
     }
 
-    public float getMultiplierForSet(int set) { return cnpcSets[clampSet(set)].multiplier; }
+    public float getMultiplierForSet(int set) {
+        return cnpcSets[clampSet(set)].multiplier;
+    }
+
     public void setMultiplierForSet(int set, float mult) {
-        cnpcSets[clampSet(set)].multiplier = ValueUtil.clamp(mult, 0.0f, 10.0f); save();
+        cnpcSets[clampSet(set)].multiplier = ValueUtil.clamp(mult, 0.0f, 10.0f);
+        save();
     }
 
-    public boolean isKiFistForSet(int set) { return cnpcSets[clampSet(set)].kiFist; }
-    public void setKiFistForSet(int set, boolean v) { cnpcSets[clampSet(set)].kiFist = v; save(); }
+    public boolean isKiFistForSet(int set) {
+        return cnpcSets[clampSet(set)].kiFist;
+    }
 
-    public boolean isKiWeaponForSet(int set) { return cnpcSets[clampSet(set)].kiWeapon; }
-    public void setKiWeaponForSet(int set, boolean v) { cnpcSets[clampSet(set)].kiWeapon = v; save(); }
+    public void setKiFistForSet(int set, boolean v) {
+        cnpcSets[clampSet(set)].kiFist = v;
+        save();
+    }
 
-    public boolean isKiInfuseForSet(int set) { return cnpcSets[clampSet(set)].kiInfuse; }
-    public void setKiInfuseForSet(int set, boolean v) { cnpcSets[clampSet(set)].kiInfuse = v; save(); }
+    public boolean isKiWeaponForSet(int set) {
+        return cnpcSets[clampSet(set)].kiWeapon;
+    }
+
+    public void setKiWeaponForSet(int set, boolean v) {
+        cnpcSets[clampSet(set)].kiWeapon = v;
+        save();
+    }
+
+    public boolean isKiInfuseForSet(int set) {
+        return cnpcSets[clampSet(set)].kiInfuse;
+    }
+
+    public void setKiInfuseForSet(int set, boolean v) {
+        cnpcSets[clampSet(set)].kiInfuse = v;
+        save();
+    }
 
     // Not exposed in GUI - defaults for IDBCStats compatibility
     @Override
-    public byte getRelease() { return release; }
+    public byte getRelease() {
+        return release;
+    }
 
     @Override
-    public void setRelease(byte release) { this.release = release; }
+    public void setRelease(byte release) {
+        this.release = release;
+    }
 
     @Override
-    public float getDodgeChance() { return dodgeChance; }
+    public float getDodgeChance() {
+        return dodgeChance;
+    }
 
     @Override
-    public void setDodgeChance(float dodge) { this.dodgeChance = dodge; }
+    public void setDodgeChance(float dodge) {
+        this.dodgeChance = dodge;
+    }
 
     @Override
-    public boolean canBeLockedOn() { return canBeLockedOn; }
+    public boolean canBeLockedOn() {
+        return canBeLockedOn;
+    }
 
     @Override
-    public void setLockOnState(boolean canBeLockedOn) { this.canBeLockedOn = canBeLockedOn; }
+    public void setLockOnState(boolean canBeLockedOn) {
+        this.canBeLockedOn = canBeLockedOn;
+    }
 }

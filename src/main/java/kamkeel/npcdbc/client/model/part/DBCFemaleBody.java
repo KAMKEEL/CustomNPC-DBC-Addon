@@ -204,7 +204,7 @@ public class DBCFemaleBody extends ModelDBCPartInterface {
         float bspeed = entity.isSprinting() ? 1.5F : (base.isSneak ? 0.5F : 1.0F);
 
         float bbY = bounce
-            ? MathHelper.sin(this.rot1 * 0.6662F * bspeed * 1.5F + (float)Math.PI)
+            ? MathHelper.sin(this.rot1 * 0.6662F * bspeed * 1.5F + (float) Math.PI)
             * this.rot2 * 0.03F * breastSize * 0.1119F
             : 0.0F;
 
@@ -219,17 +219,17 @@ public class DBCFemaleBody extends ModelDBCPartInterface {
         GL11.glScalef(1.0F, bsY, bs);
 
         this.setRotation(this.breast, -br, 0.0F, 0.0F);
-        this.setRotation(this.breast2,  br, (float)Math.PI, 0.0F);
+        this.setRotation(this.breast2, br, (float) Math.PI, 0.0F);
 
         if (bounce) {
             float xBounce = this.rot2 * 0.05F * breastSize * 0.1119F;
             float yBounce = this.rot2 * 0.02F * breastSize * 0.1119F;
-            float c = MathHelper.cos(this.rot1 * 0.6662F * bspeed + (float)Math.PI);
+            float c = MathHelper.cos(this.rot1 * 0.6662F * bspeed + (float) Math.PI);
 
-            this.breast.rotateAngleX  += -c * xBounce;
-            this.breast.rotateAngleY  +=  c * yBounce;
-            this.breast2.rotateAngleX +=  c * xBounce;
-            this.breast2.rotateAngleY +=  c * yBounce;
+            this.breast.rotateAngleX += -c * xBounce;
+            this.breast.rotateAngleY += c * yBounce;
+            this.breast2.rotateAngleX += c * xBounce;
+            this.breast2.rotateAngleY += c * yBounce;
         }
 
         this.Bbreast.render(par1);

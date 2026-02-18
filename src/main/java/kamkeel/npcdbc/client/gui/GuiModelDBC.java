@@ -49,7 +49,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
     private int tab = 1;
     private int raceTab = 0;
 
-    private final String[] breastSizes = new String[]{"1","2","3","4","5","6","7","8","9","10"};
+    private final String[] breastSizes = new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
 
     public GuiScrollWindow cosmeticsScrollWindow;
 
@@ -196,7 +196,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             cosmeticsScrollWindow.maxScrollY = maxScroll;
         } else {
             //  addButton(new GuiNpcButton(1, guiLeft + 64, y += 22, 60, 20, arrRace, display.race+1));
-            addButton(new GuiNpcButtonYesNo(-100, guiLeft + 64, y+=22, 60, 20, display.isFemale()));
+            addButton(new GuiNpcButtonYesNo(-100, guiLeft + 64, y += 22, 60, 20, display.isFemale()));
             addLabel(new GuiNpcLabel(-100, "display.femaleModel", guiLeft, y + 5, 0xFFFFFF));
             if (display.isFemale()) {
                 addButton(new GuiButtonBiDirectional(-101, guiLeft + 69, y += 22, 50, 20, breastSizes, display.breastSize - 1));

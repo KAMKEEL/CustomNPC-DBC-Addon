@@ -59,7 +59,7 @@ public class DBCAbilityExtender implements IAbilityExtender {
 
     @Override
     public boolean onAbilityTick(Ability ability, EntityLivingBase caster, EntityLivingBase target,
-                                  AbilityPhase phase, int tick) {
+                                 AbilityPhase phase, int tick) {
         // Drain only during ACTIVE phase — cost is handled on start, drain is per-tick while executing
         if (phase != AbilityPhase.ACTIVE)
             return true;

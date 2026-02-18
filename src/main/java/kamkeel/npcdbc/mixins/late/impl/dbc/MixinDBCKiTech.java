@@ -34,14 +34,14 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.input.Keyboard;
-
-import java.util.UUID;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.UUID;
 
 import static kamkeel.npcdbc.constants.DBCForm.UltraInstinct;
 
@@ -171,7 +171,9 @@ public abstract class MixinDBCKiTech {
         }
     }
 
-    /** Vanilla sprint modifier UUID — excluded since DBC handles sprint speed separately */
+    /**
+     * Vanilla sprint modifier UUID — excluded since DBC handles sprint speed separately
+     */
     private static final UUID SPRINT_MODIFIER_UUID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
 
     /**

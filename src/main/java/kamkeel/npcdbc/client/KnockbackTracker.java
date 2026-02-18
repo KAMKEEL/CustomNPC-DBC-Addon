@@ -8,30 +8,40 @@ import net.minecraft.util.MathHelper;
  * Preserves external velocity (knockback, explosions, fishing hooks, etc.)
  * through DBC's turbo (DashKi) and flight (FloatKi), which overwrite
  * motionX/Z every tick.
- *
+ * <p>
  * How it works:
  * 1. Before DBC runs: isolate external velocity by subtracting DBC's
- *    expected decayed output (lastDBCOutput * friction) from current motion.
+ * expected decayed output (lastDBCOutput * friction) from current motion.
  * 2. After DBC runs: save DBC's new output, then add external velocity back.
  * 3. Vanilla friction naturally decays the external velocity each tick.
- *
+ * <p>
  * No packet interception needed - handles ALL external velocity sources.
  */
 public class KnockbackTracker {
 
-    /** DBC's own output from last tick (before external was added back) */
+    /**
+     * DBC's own output from last tick (before external was added back)
+     */
     private static double dbcOutputX, dbcOutputZ;
 
-    /** Computed external velocity for this tick */
+    /**
+     * Computed external velocity for this tick
+     */
     private static double externalX, externalZ;
 
-    /** Motion saved at HEAD before DBC modifies it */
+    /**
+     * Motion saved at HEAD before DBC modifies it
+     */
     private static double savedMotionX, savedMotionZ;
 
-    /** Tick when DBC movement was last active (HEAD fired) — used for gap detection */
+    /**
+     * Tick when DBC movement was last active (HEAD fired) — used for gap detection
+     */
     private static long lastActiveTick = -2;
 
-    /** Tick when beforeDBCMovement last ran (to detect unpaired calls) */
+    /**
+     * Tick when beforeDBCMovement last ran (to detect unpaired calls)
+     */
     private static long beforeTick = -1;
 
     private static final double MIN_THRESHOLD = 0.001;

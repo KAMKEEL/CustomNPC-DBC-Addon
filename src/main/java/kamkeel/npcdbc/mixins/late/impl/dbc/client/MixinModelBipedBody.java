@@ -1,27 +1,10 @@
 package kamkeel.npcdbc.mixins.late.impl.dbc.client;
 
-import JinRyuu.JBRA.GiTurtleMdl;
-import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.ModelBipedBody;
-import kamkeel.npcdbc.mixins.late.INPCDisplay;
-import kamkeel.npcdbc.mixins.late.IScaleRenderer;
-import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.entity.RendererLivingEntity;
-import net.minecraft.util.MathHelper;
-import noppes.npcs.client.model.ModelMPM;
-import noppes.npcs.client.model.util.ModelScaleRenderer;
-import noppes.npcs.entity.EntityCustomNpc;
-import noppes.npcs.entity.data.ModelScalePart;
-import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-
-import static JinRyuu.JRMCore.entity.ModelBipedBody.*;
 
 @Mixin(value = ModelBipedBody.class, remap = false)
 public abstract class MixinModelBipedBody extends ModelBiped {
@@ -81,7 +64,8 @@ public abstract class MixinModelBipedBody extends ModelBiped {
     public net.minecraft.entity.Entity Entity;
 
     @Shadow
-    private void setRotation(ModelRenderer model, float x, float y, float z) {}
+    private void setRotation(ModelRenderer model, float x, float y, float z) {
+    }
 
 
     @Shadow

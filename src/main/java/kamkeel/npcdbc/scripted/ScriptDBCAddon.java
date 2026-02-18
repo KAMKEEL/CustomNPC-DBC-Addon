@@ -1416,6 +1416,6 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public int getLevel() {
         int stats = Arrays.stream(dbcData.stats.getAllAttributes()).sum();
 
-        return  (int)Math.floor((stats-60) /5) + 1;
+        return (int) Math.floor((stats - 60) / 5) + 1;
     }
 }

@@ -43,14 +43,14 @@ public class CustomSkill implements ICustomSkill {
 
         if (oldTP != null && oldTP.length != 0) {
             for (int i = 0; i < tpCosts.length; i++) {
-                int j = Math.max(Math.min(i, oldTP.length-1), 0);
+                int j = Math.max(Math.min(i, oldTP.length - 1), 0);
                 tpCosts[i] = oldTP[j];
             }
         }
 
         if (oldMind != null && oldMind.length != 0) {
             for (int i = 0; i < mindCosts.length; i++) {
-                int j = Math.max(Math.min(i, oldMind.length-1), 0);
+                int j = Math.max(Math.min(i, oldMind.length - 1), 0);
                 mindCosts[i] = oldMind[j];
             }
         }
@@ -91,13 +91,13 @@ public class CustomSkill implements ICustomSkill {
     @Override
     public int getTPCost(int level) {
         level = Math.min(Math.max(1, level), getMaxLevel());
-        return tpCosts[level-1];
+        return tpCosts[level - 1];
     }
 
     @Override
     public int getMindCost(int level) {
         level = Math.min(Math.max(1, level), getMaxLevel());
-        return mindCosts[level-1];
+        return mindCosts[level - 1];
     }
 
     @Override
@@ -219,7 +219,7 @@ public class CustomSkill implements ICustomSkill {
         comp.setString("s_id", stringLiteralId);
         if (displayName != null)
             comp.setString("name", displayName);
-        if(description != null)
+        if (description != null)
             comp.setString("description", description);
         comp.setInteger("maxLevel", maxLevel);
         comp.setIntArray("tpCosts", tpCosts);

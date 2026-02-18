@@ -1,15 +1,15 @@
 package kamkeel.npcdbc.network.packets.player.ability;
 
 import io.netty.buffer.ByteBuf;
+import kamkeel.npcdbc.data.AbilityWheelData;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.network.PacketChannel;
 import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
-import kamkeel.npcdbc.data.AbilityWheelData;
+import kamkeel.npcs.controllers.AbilityController;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.controllers.data.ability.ChainedAbility;
-import kamkeel.npcs.controllers.AbilityController;
 import kamkeel.npcs.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.controllers.PlayerDataController;
@@ -25,7 +25,8 @@ public final class DBCSelectAbility extends AbstractPacket {
     public static final String packetName = "NPC|SelectAbility";
     private String abilityKey;
 
-    public DBCSelectAbility() {}
+    public DBCSelectAbility() {
+    }
 
     public DBCSelectAbility(String abilityKey) {
         this.abilityKey = abilityKey;

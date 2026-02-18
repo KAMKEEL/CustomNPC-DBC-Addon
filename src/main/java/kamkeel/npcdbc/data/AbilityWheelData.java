@@ -8,7 +8,9 @@ import net.minecraft.nbt.NBTTagCompound;
  * or chained abilities (prefixed with {@link #CHAIN_PREFIX}).
  */
 public class AbilityWheelData {
-    /** Prefix for chained ability keys, matching PlayerAbilityData convention. */
+    /**
+     * Prefix for chained ability keys, matching PlayerAbilityData convention.
+     */
     public static final String CHAIN_PREFIX = "chain:";
 
     public int slot = -1;

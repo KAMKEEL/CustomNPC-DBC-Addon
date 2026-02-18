@@ -931,10 +931,10 @@ public class DBCUtils {
      * When forced=true, skips player toggle/cost checks (just requires skill level > 0).
      */
     static int computeKiFistBonus(EntityPlayer caster, int[] attrs, String[] skills,
-            int powerType, int race, int classID, double release, int currentEnergy,
-            boolean forced, int state, int state2, String sklx, int resrv,
-            boolean lg, boolean mj, boolean kk, boolean mc, boolean mn, boolean gd,
-            boolean fused, String absorption) {
+                                  int powerType, int race, int classID, double release, int currentEnergy,
+                                  boolean forced, int state, int state2, String sklx, int resrv,
+                                  boolean lg, boolean mj, boolean kk, boolean mc, boolean mn, boolean gd,
+                                  boolean fused, String absorption) {
         int kiFistSkillLvl = SklLvl(12, skills);
         boolean kiFistActive;
         if (forced) {
@@ -962,10 +962,10 @@ public class DBCUtils {
      * When forced=true, skips player toggle/cost checks and uses blade mode.
      */
     static int computeKiWeaponBonus(EntityPlayer caster, int[] attrs, String[] skills,
-            int powerType, int race, int classID, double release, int currentEnergy,
-            boolean forced, int state, int state2, String sklx, int resrv,
-            boolean lg, boolean mj, boolean kk, boolean mc, boolean mn, boolean gd,
-            boolean fused, String absorption) {
+                                    int powerType, int race, int classID, double release, int currentEnergy,
+                                    boolean forced, int state, int state2, String sklx, int resrv,
+                                    boolean lg, boolean mj, boolean kk, boolean mc, boolean mn, boolean gd,
+                                    boolean fused, String absorption) {
         int kiFistSkillLvl = SklLvl(12, skills);
         int kiWeaponSkillLvl = SklLvl(15, skills);
         boolean kiWeaponActive;
@@ -1015,10 +1015,10 @@ public class DBCUtils {
      * When forced=true, skips cost checks.
      */
     static float[] computeKiInfuseBonus(EntityPlayer caster, int[] attrs, String[] skills,
-            int powerType, int race, int classID, double release, int currentEnergy,
-            boolean forced, int state, int state2, String sklx, int resrv,
-            boolean lg, boolean mj, boolean kk, boolean mc, boolean mn, boolean gd,
-            boolean fused, String absorption) {
+                                        int powerType, int race, int classID, double release, int currentEnergy,
+                                        boolean forced, int state, int state2, String sklx, int resrv,
+                                        boolean lg, boolean mj, boolean kk, boolean mc, boolean mn, boolean gd,
+                                        boolean fused, String absorption) {
         int kiWeaponSkillLvl = SklLvl(15, skills);
         if (kiWeaponSkillLvl <= 0) return new float[]{0, 1.0f};
 
@@ -1048,7 +1048,7 @@ public class DBCUtils {
      * or "STR[150] * 1.0" when stat is disabled.
      */
     public static String getCNPCSetPreviewLine(EntityPlayer caster, IDBCStats stats,
-                                                int setIndex, String[] attrNames, String[] statNames) {
+                                               int setIndex, String[] attrNames, String[] statNames) {
         if (!(stats instanceof DBCAbilityStats))
             return "N/A";
 

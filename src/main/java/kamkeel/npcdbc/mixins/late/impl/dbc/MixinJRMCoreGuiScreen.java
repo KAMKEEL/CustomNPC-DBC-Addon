@@ -1,10 +1,16 @@
 package kamkeel.npcdbc.mixins.late.impl.dbc;
 
-import JinRyuu.JRMCore.*;
+import JinRyuu.JRMCore.JRMCoreClient;
+import JinRyuu.JRMCore.JRMCoreGuiButtons00;
+import JinRyuu.JRMCore.JRMCoreGuiButtonsA1;
+import JinRyuu.JRMCore.JRMCoreGuiButtonsA2;
+import JinRyuu.JRMCore.JRMCoreGuiButtonsA3;
+import JinRyuu.JRMCore.JRMCoreGuiScreen;
+import JinRyuu.JRMCore.JRMCoreGuiSliderX00;
+import JinRyuu.JRMCore.JRMCoreH;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import cpw.mods.fml.common.FMLCommonHandler;
-import org.objectweb.asm.Opcodes;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.api.skill.ICustomSkill;
 import kamkeel.npcdbc.client.ColorMode;
@@ -29,6 +35,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -157,13 +164,13 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
 
         DBCData data = DBCData.getClient();
         SkillContainer[] customSkills = data.customSkills.values().toArray(new SkillContainer[0]);
-        for(int i = 0; i < Math.min(customSkills.length, 10 - skillsDrawnAlready); ++i) {
+        for (int i = 0; i < Math.min(customSkills.length, 10 - skillsDrawnAlready); ++i) {
             SkillContainer skill = customSkills[i];
             skillsDrawnAlready++;
             int offset = skillsDrawnAlready + 1;
             String skillDescription = skill.getSkill().getDescription();
             int level = skill.getLevel();
-            String skillName =  "§0" + skill.getSkill().getDisplayName();
+            String skillName = "§0" + skill.getSkill().getDisplayName();
             int skillNameWidth = fontRendererObj.getStringWidth(skillName);
             skillName += " " + this.textLevel(level);
             FontRenderer fontRender = fontRendererObj;
@@ -173,8 +180,8 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
                 drawDetails(skillDescription, guiLeft + 5, guiTop + 20 + offset * 10 + 2, skillNameWidth, 6, x, y, fontRender);
             this.buttonList.add(new JRMCoreGuiButtonsA3(2000000 + skill.getSkillID(), guiLeft + 243, guiTop + 20 + offset * 10 - 2, 10, 3));
 
-            int tpReq = skill.getSkill().getTPCost(level+1);
-            int mindReq = skill.getSkill().getMindCost(level+1);
+            int tpReq = skill.getSkill().getTPCost(level + 1);
+            int mindReq = skill.getSkill().getMindCost(level + 1);
             boolean canAffordMind = data.getAvailableMind() >= mindReq;
             boolean canAffordTP = data.TP >= tpReq;
             if (level < skill.getSkill().getMaxLevel() && tpReq != -1) {
@@ -195,16 +202,16 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
         int wpy = 10;
         this.scrollMouseJump = 1;
         if (sw > wpy) {
-            if ((float)sw - cool < (float)this.scroll) {
-                this.scroll = (int)((float)sw - cool);
+            if ((float) sw - cool < (float) this.scroll) {
+                this.scroll = (int) ((float) sw - cool);
             } else if (this.scroll < 0) {
                 this.scroll = 0;
             }
 
             if (this.mousePressed && !JRMCoreGuiButtonsA1.clicked) {
-                this.scroll = (int)(((float)sw - cool) * scrollSide);
+                this.scroll = (int) (((float) sw - cool) * scrollSide);
             } else {
-                scrollSide = JRMCoreGuiSliderX00.sliderValue = (float)this.scroll / ((float)sw - cool);
+                scrollSide = JRMCoreGuiSliderX00.sliderValue = (float) this.scroll / ((float) sw - cool);
             }
         } else {
             this.scroll = 0;

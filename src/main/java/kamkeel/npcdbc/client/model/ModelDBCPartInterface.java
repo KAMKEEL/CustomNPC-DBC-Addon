@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.client.model;
 
-import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;

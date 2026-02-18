@@ -24,6 +24,7 @@ public interface ISkillContainer {
     /**
      * Upgrade a skill to a certain level for no TP. Doesn't post events. <br>
      * If level is set to 0, {@linkplain ISkillContainer#unlearnSkill unlearnSkill(true)} is called instead.
+     *
      * @param level Level to set.
      */
     void setLevel(int level);
@@ -35,6 +36,7 @@ public interface ISkillContainer {
 
     /**
      * Equivalent to {@linkplain ISkillContainer#tryToProgressLevel(boolean) tryToProgressLevel(false)}.
+     *
      * @return If upgrade attempt finished successfully.
      */
     boolean tryToProgressLevel();
@@ -42,6 +44,7 @@ public interface ISkillContainer {
     /**
      * Attempts to progress a level if TP & Mind are sufficient. <br>
      * It <bold>does</bold> take the TP.
+     *
      * @param postEvent Post the event to scripts to catch.
      * @return
      */
@@ -54,6 +57,7 @@ public interface ISkillContainer {
 
     /**
      * Unlearns a skill.
+     *
      * @param postEvent Post the event for scripts to catch.
      */
     void unlearnSkill(boolean postEvent);

@@ -8,8 +8,8 @@ import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.part.DBCBody;
 import kamkeel.npcdbc.client.model.part.DBCEars;
-import kamkeel.npcdbc.client.model.part.DBCHorns;
 import kamkeel.npcdbc.client.model.part.DBCFemaleBody;
+import kamkeel.npcdbc.client.model.part.DBCHorns;
 import kamkeel.npcdbc.client.model.part.DBCLeftArms;
 import kamkeel.npcdbc.client.model.part.DBCRightArms;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
@@ -656,13 +656,13 @@ public class ModelDBC extends ModelBase {
         int arcoState = display.getArco();
 
         if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN)
-            tex = "jinryuumodscore:cc/" + (display.isFemaleInternal() ? "f" : "")  + "hum" + t + ".png";
+            tex = "jinryuumodscore:cc/" + (display.isFemaleInternal() ? "f" : "") + "hum" + t + ".png";
         else if (race == DBCRace.NAMEKIAN)
             tex = "jinryuudragonbc:cc/nam/4nam" + t + ".png";
         else if (race == DBCRace.ARCOSIAN)
-            tex = "jinryuudragonbc:cc/arc/" + (display.isFemaleInternal() ? "f" : "m")  + "/4A" + JRMCoreH.TransFrSkn[arcoState] + display.bodyType + t + ".png";
+            tex = "jinryuudragonbc:cc/arc/" + (display.isFemaleInternal() ? "f" : "m") + "/4A" + JRMCoreH.TransFrSkn[arcoState] + display.bodyType + t + ".png";
         else if (race == DBCRace.MAJIN)
-            tex = "jinryuudragonbc:cc/majin/" + (display.isFemaleInternal() ? "f" : "")  + "majin" + t + ".png";
+            tex = "jinryuudragonbc:cc/majin/" + (display.isFemaleInternal() ? "f" : "") + "majin" + t + ".png";
         return tex;
     }
 
@@ -984,8 +984,8 @@ public class ModelDBC extends ModelBase {
 //        GL11.glCallList(scaleRenderer.displayListModel);
         GL11.glScalef(0.6f, 0.8f, 0.6f);
         if (scaleRenderer.childModels != null) {
-            for(int i = 0; i < scaleRenderer.childModels.size(); ++i) {
-                ((ModelRenderer)scaleRenderer.childModels.get(i)).render(v);
+            for (int i = 0; i < scaleRenderer.childModels.size(); ++i) {
+                ((ModelRenderer) scaleRenderer.childModels.get(i)).render(v);
             }
         }
     }

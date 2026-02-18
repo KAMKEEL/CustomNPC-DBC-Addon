@@ -288,6 +288,7 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
     public static class SkillEvent extends DBCPlayerEvent implements IDBCEvent.SkillEvent {
 
         public final int type, id;
+
         protected SkillEvent(IPlayer player, int type, int id) {
             super(player);
             this.type = type;
@@ -338,6 +339,7 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
                 this.cost = cost;
             }
         }
+
         @Cancelable
         public static class Unlearn extends DBCPlayerEvent.SkillEvent implements IDBCEvent.SkillEvent.Unlearn {
             public Unlearn(IPlayer player, int type, int id) {

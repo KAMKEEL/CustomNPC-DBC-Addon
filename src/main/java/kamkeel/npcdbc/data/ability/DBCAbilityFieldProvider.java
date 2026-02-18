@@ -104,18 +104,23 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
         defs.add(FieldDef.section("stats.section.playerDamage")
             .tab(TAB_DBC));
         defs.add(FieldDef.enumField("stats.playerDamageType", AbilityDamageType.class,
-            () -> AbilityDamageType.fromOrdinal(stats.getPlayerDamageType()),
-            (val) -> stats.setPlayerDamageType(val.ordinal()))
+                () -> AbilityDamageType.fromOrdinal(stats.getPlayerDamageType()),
+                (val) -> stats.setPlayerDamageType(val.ordinal()))
             .tab(TAB_DBC));
 
         // Dynamic description of the currently selected damage type
         defs.add(FieldDef.labelField("stats.damageTypeInfo", () -> {
             switch (stats.getPlayerDamageType()) {
-                case 1: return StatCollector.translateToLocal("stats.damageType.desc.flat");
-                case 2: return StatCollector.translateToLocal("stats.damageType.desc.melee");
-                case 3: return StatCollector.translateToLocal("stats.damageType.desc.ki");
-                case 4: return StatCollector.translateToLocal("stats.damageType.desc.cnpc");
-                default: return StatCollector.translateToLocal("stats.damageType.desc.default");
+                case 1:
+                    return StatCollector.translateToLocal("stats.damageType.desc.flat");
+                case 2:
+                    return StatCollector.translateToLocal("stats.damageType.desc.melee");
+                case 3:
+                    return StatCollector.translateToLocal("stats.damageType.desc.ki");
+                case 4:
+                    return StatCollector.translateToLocal("stats.damageType.desc.cnpc");
+                default:
+                    return StatCollector.translateToLocal("stats.damageType.desc.default");
             }
         }).tab(TAB_DBC));
 
@@ -126,15 +131,15 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
 
         // Scaling attribute - visible for MELEE and KI only (CNPC has per-set attributes)
         defs.add(FieldDef.stringEnumField("stats.scalingAttribute", ATTRIBUTE_NAMES,
-            () -> ATTRIBUTE_NAMES[stats.getScalingAttribute()],
-            (val) -> {
-                for (int i = 0; i < ATTRIBUTE_NAMES.length; i++) {
-                    if (ATTRIBUTE_NAMES[i].equals(val)) {
-                        stats.setScalingAttribute(i);
-                        break;
+                () -> ATTRIBUTE_NAMES[stats.getScalingAttribute()],
+                (val) -> {
+                    for (int i = 0; i < ATTRIBUTE_NAMES.length; i++) {
+                        if (ATTRIBUTE_NAMES[i].equals(val)) {
+                            stats.setScalingAttribute(i);
+                            break;
+                        }
                     }
-                }
-            })
+                })
             .tab(TAB_DBC)
             .visibleWhen(() -> stats.getPlayerDamageType() == 2 || stats.getPlayerDamageType() == 3));
 
@@ -163,7 +168,8 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
             if (damage <= 0) return "N/A";
             int dt = stats.getPlayerDamageType();
             if (dt == 1) return String.format("FLAT = %,.0f", damage);
-            if (dt == 2) return String.format("MELEE [%s] = %,.0f", ATTRIBUTE_NAMES[stats.getScalingAttribute()], damage);
+            if (dt == 2)
+                return String.format("MELEE [%s] = %,.0f", ATTRIBUTE_NAMES[stats.getScalingAttribute()], damage);
             if (dt == 3) return String.format("KI [%s] = %,.0f", ATTRIBUTE_NAMES[stats.getScalingAttribute()], damage);
             return "";
         }).tab(TAB_DBC).visibleWhen(() -> {
@@ -204,34 +210,34 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
 
         // Attribute selector
         defs.add(FieldDef.stringEnumField("stats.cnpc.attribute", ATTRIBUTE_NAMES,
-            () -> ATTRIBUTE_NAMES[stats.getAttributeForSet(set)],
-            (val) -> {
-                for (int i = 0; i < ATTRIBUTE_NAMES.length; i++) {
-                    if (ATTRIBUTE_NAMES[i].equals(val)) {
-                        stats.setAttributeForSet(set, i);
-                        break;
+                () -> ATTRIBUTE_NAMES[stats.getAttributeForSet(set)],
+                (val) -> {
+                    for (int i = 0; i < ATTRIBUTE_NAMES.length; i++) {
+                        if (ATTRIBUTE_NAMES[i].equals(val)) {
+                            stats.setAttributeForSet(set, i);
+                            break;
+                        }
                     }
-                }
-            })
+                })
             .tab(TAB_DBC).visibleWhen(visible));
 
         // Use Stat toggle
         defs.add(FieldDef.boolField("stats.cnpc.useStat",
-            () -> stats.isStatEnabledForSet(set),
-            (val) -> stats.setStatEnabledForSet(set, val))
+                () -> stats.isStatEnabledForSet(set),
+                (val) -> stats.setStatEnabledForSet(set, val))
             .tab(TAB_DBC).visibleWhen(visible));
 
         // Stat Type selector - hidden when Use Stat is disabled
         defs.add(FieldDef.stringEnumField("stats.cnpc.statType", STAT_TYPE_NAMES,
-            () -> STAT_TYPE_NAMES[stats.getStatTypeForSet(set)],
-            (val) -> {
-                for (int i = 0; i < STAT_TYPE_NAMES.length; i++) {
-                    if (STAT_TYPE_NAMES[i].equals(val)) {
-                        stats.setStatTypeForSet(set, i);
-                        break;
+                () -> STAT_TYPE_NAMES[stats.getStatTypeForSet(set)],
+                (val) -> {
+                    for (int i = 0; i < STAT_TYPE_NAMES.length; i++) {
+                        if (STAT_TYPE_NAMES[i].equals(val)) {
+                            stats.setStatTypeForSet(set, i);
+                            break;
+                        }
                     }
-                }
-            })
+                })
             .tab(TAB_DBC)
             .visibleWhen(() -> stats.getPlayerDamageType() == 4
                 && stats.getScalingSetCount() > set
@@ -239,26 +245,26 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
 
         // Multiplier
         defs.add(FieldDef.floatField("stats.cnpc.multiplier",
-            () -> stats.getMultiplierForSet(set),
-            (val) -> stats.setMultiplierForSet(set, val))
+                () -> stats.getMultiplierForSet(set),
+                (val) -> stats.setMultiplierForSet(set, val))
             .tab(TAB_DBC).range(0.0f, 10.0f).visibleWhen(visible));
 
         // Ki bonus toggles
         defs.add(FieldDef.boolField("stats.cnpc.kiFist",
-            () -> stats.isKiFistForSet(set),
-            (val) -> stats.setKiFistForSet(set, val))
+                () -> stats.isKiFistForSet(set),
+                (val) -> stats.setKiFistForSet(set, val))
             .tab(TAB_DBC).visibleWhen(visible)
             .hover("stats.hover.cnpc.kiFist"));
 
         defs.add(FieldDef.boolField("stats.cnpc.kiWeapon",
-            () -> stats.isKiWeaponForSet(set),
-            (val) -> stats.setKiWeaponForSet(set, val))
+                () -> stats.isKiWeaponForSet(set),
+                (val) -> stats.setKiWeaponForSet(set, val))
             .tab(TAB_DBC).visibleWhen(visible)
             .hover("stats.hover.cnpc.kiWeapon"));
 
         defs.add(FieldDef.boolField("stats.cnpc.kiInfuse",
-            () -> stats.isKiInfuseForSet(set),
-            (val) -> stats.setKiInfuseForSet(set, val))
+                () -> stats.isKiInfuseForSet(set),
+                (val) -> stats.setKiInfuseForSet(set, val))
             .tab(TAB_DBC).visibleWhen(visible)
             .hover("stats.hover.cnpc.kiInfuse"));
     }

@@ -55,19 +55,24 @@ public abstract class DBCToggleAbility extends Ability {
     // ═══════════════════════════════════════════════════════════════════
 
     @Override
-    public void start(EntityLivingBase target) {}
+    public void start(EntityLivingBase target) {
+    }
 
     @Override
-    public void onExecute(EntityLivingBase caster, EntityLivingBase target) {}
+    public void onExecute(EntityLivingBase caster, EntityLivingBase target) {
+    }
 
     @Override
-    public void onActiveTick(EntityLivingBase caster, EntityLivingBase target, int tick) {}
+    public void onActiveTick(EntityLivingBase caster, EntityLivingBase target, int tick) {
+    }
 
     @Override
-    public void writeTypeNBT(NBTTagCompound nbt) {}
+    public void writeTypeNBT(NBTTagCompound nbt) {
+    }
 
     @Override
-    public void readTypeNBT(NBTTagCompound nbt) {}
+    public void readTypeNBT(NBTTagCompound nbt) {
+    }
 
     // ═══════════════════════════════════════════════════════════════════
     // ICON HELPERS
@@ -79,21 +84,51 @@ public abstract class DBCToggleAbility extends Ability {
         return customData.getCompoundTag(AbilityIconData.NBT_KEY);
     }
 
-    public String getIconTexture()       { return iconComp().getString("Texture"); }
-    public void setIconTexture(String t)  { iconComp().setString("Texture", t); }
+    public String getIconTexture() {
+        return iconComp().getString("Texture");
+    }
 
-    public int getIconX()                 { return iconComp().getInteger("IconX"); }
-    public void setIconX(int x)           { iconComp().setInteger("IconX", x); }
+    public void setIconTexture(String t) {
+        iconComp().setString("Texture", t);
+    }
 
-    public int getIconY()                 { return iconComp().getInteger("IconY"); }
-    public void setIconY(int y)           { iconComp().setInteger("IconY", y); }
+    public int getIconX() {
+        return iconComp().getInteger("IconX");
+    }
 
-    public int getIconWidth()             { return iconComp().getInteger("Width"); }
-    public void setIconWidth(int w)       { iconComp().setInteger("Width", Math.max(32, w)); }
+    public void setIconX(int x) {
+        iconComp().setInteger("IconX", x);
+    }
 
-    public int getIconHeight()            { return iconComp().getInteger("Height"); }
-    public void setIconHeight(int h)      { iconComp().setInteger("Height", Math.max(32, h)); }
+    public int getIconY() {
+        return iconComp().getInteger("IconY");
+    }
 
-    public float getIconScale()           { return iconComp().getFloat("Scale"); }
-    public void setIconScale(float s)     { iconComp().setFloat("Scale", s <= 0 ? 1.0f : s); }
+    public void setIconY(int y) {
+        iconComp().setInteger("IconY", y);
+    }
+
+    public int getIconWidth() {
+        return iconComp().getInteger("Width");
+    }
+
+    public void setIconWidth(int w) {
+        iconComp().setInteger("Width", Math.max(32, w));
+    }
+
+    public int getIconHeight() {
+        return iconComp().getInteger("Height");
+    }
+
+    public void setIconHeight(int h) {
+        iconComp().setInteger("Height", Math.max(32, h));
+    }
+
+    public float getIconScale() {
+        return iconComp().getFloat("Scale");
+    }
+
+    public void setIconScale(float s) {
+        iconComp().setFloat("Scale", s <= 0 ? 1.0f : s);
+    }
 }

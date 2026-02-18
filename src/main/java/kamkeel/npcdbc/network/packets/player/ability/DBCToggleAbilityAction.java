@@ -6,8 +6,8 @@ import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.network.PacketChannel;
 import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
-import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.controllers.AbilityController;
+import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.controllers.data.PlayerData;
@@ -22,7 +22,8 @@ public final class DBCToggleAbilityAction extends AbstractPacket {
     public static final String packetName = "NPC|ToggleAbility";
     private String abilityKey;
 
-    public DBCToggleAbilityAction() {}
+    public DBCToggleAbilityAction() {
+    }
 
     public DBCToggleAbilityAction(String abilityKey) {
         this.abilityKey = abilityKey;

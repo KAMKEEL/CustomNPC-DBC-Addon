@@ -25,7 +25,7 @@ public abstract class MixinModelLegs extends ModelScaleRenderer {
         super(par1ModelBase);
     }
 
-    @Redirect(method="render", at=@At(value= "INVOKE", target="Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 0))
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 0))
     private void injectMatrixRightLeg(ModelScaleRenderer instance, float v) {
         EntityCustomNpc npc = ClientProxy.currentlyDrawnNPC;
         if (npc == null)
@@ -34,7 +34,7 @@ public abstract class MixinModelLegs extends ModelScaleRenderer {
         isFemale = display.isFemaleInternal();
 
         GL11.glPushMatrix();
-        if(isFemale) {
+        if (isFemale) {
             GL11.glScalef(0.85F, 1.0F, 0.775F);
             if (this.base.isSneak) {
                 GL11.glTranslatef(0, 0, -0.005f);
@@ -44,7 +44,8 @@ public abstract class MixinModelLegs extends ModelScaleRenderer {
         instance.render(v);
         GL11.glPopMatrix();
     }
-    @Redirect(method="render", at=@At(value= "INVOKE", target="Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 1))
+
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 1))
     private void injectMatrixLeftLeg(ModelScaleRenderer instance, float v) {
 
         GL11.glPushMatrix();

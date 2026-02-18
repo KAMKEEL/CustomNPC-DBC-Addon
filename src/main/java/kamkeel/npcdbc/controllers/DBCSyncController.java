@@ -5,7 +5,6 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.data.skill.CustomSkill;
-import kamkeel.npcdbc.data.skill.SkillContainer;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
 import kamkeel.npcdbc.util.NBTHelper;

@@ -3,7 +3,6 @@ package kamkeel.npcdbc.controllers;
 import kamkeel.npcdbc.api.skill.ICustomSkill;
 import kamkeel.npcdbc.api.skill.ISkillHandler;
 import kamkeel.npcdbc.constants.DBCSyncType;
-import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.skill.CustomSkill;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
@@ -15,7 +14,12 @@ import noppes.npcs.CustomNpcs;
 import noppes.npcs.LogWriter;
 import noppes.npcs.util.NBTJsonUtil;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
@@ -118,8 +122,8 @@ public class SkillController implements ISkillHandler {
         return skill;
     }
 
-    //////////////////////////////////////////
-    //////////////////////////////////////////
+    /// ///////////////////////////////////////
+    /// ///////////////////////////////////////
     //
     //
     public int getUnusedId() {
@@ -234,7 +238,8 @@ public class SkillController implements ISkillHandler {
                 if (file.exists()) {
                     loadCustomSkillMap(file);
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
     }
 
@@ -318,6 +323,7 @@ public class SkillController implements ISkillHandler {
             dir.mkdir();
         return dir;
     }
+
     private File getDir() {
         return new File(CustomNpcs.getWorldSaveDirectory(), "customskills");
     }

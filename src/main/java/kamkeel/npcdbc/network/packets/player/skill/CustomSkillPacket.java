@@ -1,38 +1,23 @@
 package kamkeel.npcdbc.network.packets.player.skill;
 
-import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.api.skill.ICustomSkill;
-import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcdbc.constants.DBCSettings;
-import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.SkillController;
-import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.data.skill.CustomSkill;
 import kamkeel.npcdbc.data.skill.SkillContainer;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
-import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.network.PacketChannel;
 import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
-import kamkeel.npcs.network.packets.data.large.GuiDataPacket;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.api.entity.IPlayer;
-import noppes.npcs.controllers.PlayerDataController;
-import noppes.npcs.controllers.data.PlayerData;
 
 import java.io.IOException;
-
-import static kamkeel.npcdbc.constants.DBCForm.*;
 
 public final class CustomSkillPacket extends AbstractPacket {
     public static final String packetName = "DBC|Skill";

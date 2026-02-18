@@ -34,12 +34,12 @@ import static kamkeel.npcdbc.client.shader.PostProcessing.endBlooming;
 import static kamkeel.npcdbc.client.shader.PostProcessing.mc;
 import static kamkeel.npcdbc.client.shader.PostProcessing.startBlooming;
 import static org.lwjgl.opengl.GL11.GL_GREATER;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glRotatef;
 import static org.lwjgl.opengl.GL11.glStencilFunc;
 import static org.lwjgl.opengl.GL11.glStencilMask;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glTranslatef;
-import static org.lwjgl.opengl.GL11.glRotatef;
 
 @Mixin(value = ModelMPM.class, remap = false)
 public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
@@ -99,7 +99,7 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
         return !GL11.glIsEnabled(GL11.GL_TEXTURE_2D);
     }
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/ModelMPM;renderCloak(Lnoppes/npcs/entity/EntityCustomNpc;F)V", shift = At.Shift.AFTER, remap=false), remap = true)
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/ModelMPM;renderCloak(Lnoppes/npcs/entity/EntityCustomNpc;F)V", shift = At.Shift.AFTER, remap = false), remap = true)
     private void outline(Entity entity, float p1, float p2, float p3, float p4, float p5, float p6, CallbackInfo ci) {
         if (npcdbc$isTintPass())
             return;
@@ -235,7 +235,7 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
         }
     }
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/ModelMPM;renderCloak(Lnoppes/npcs/entity/EntityCustomNpc;F)V", shift = At.Shift.AFTER, remap=false), remap = true)
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/ModelMPM;renderCloak(Lnoppes/npcs/entity/EntityCustomNpc;F)V", shift = At.Shift.AFTER, remap = false), remap = true)
     public void renderKiWeapon(Entity par1Entity, float par2, float par3, float par4, float par5, float par6, float par7, CallbackInfo ci) {
         if (npcdbc$isTintPass())
             return;
