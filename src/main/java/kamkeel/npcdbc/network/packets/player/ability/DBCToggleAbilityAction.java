@@ -55,7 +55,7 @@ public final class DBCToggleAbilityAction extends AbstractPacket {
 
         // Use the base toggle system on PlayerAbilityData
         PlayerData playerData = PlayerData.get(player);
-        if (playerData == null) return;
+        if (playerData == null || playerData.abilityData == null) return;
 
         boolean nowActive = playerData.abilityData.toggleAbility(key);
 

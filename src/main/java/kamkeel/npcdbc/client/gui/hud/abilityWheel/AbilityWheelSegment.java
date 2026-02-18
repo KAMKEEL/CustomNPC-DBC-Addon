@@ -147,7 +147,8 @@ public class AbilityWheelSegment extends WheelSegment {
             Minecraft mc = Minecraft.getMinecraft();
             if (mc.thePlayer != null) {
                 PlayerData playerData = PlayerData.get(mc.thePlayer);
-                if (playerData != null && playerData.abilityData.isAbilityToggled(data.abilityKey)) {
+                if (playerData != null && playerData.abilityData != null
+                    && playerData.abilityData.isAbilityToggled(data.abilityKey)) {
                     return 0xFF55FF55; // Green - active
                 }
             }

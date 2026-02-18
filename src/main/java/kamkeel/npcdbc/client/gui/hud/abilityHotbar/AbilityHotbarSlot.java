@@ -199,13 +199,14 @@ public class AbilityHotbarSlot extends Gui {
             Minecraft mc = Minecraft.getMinecraft();
             if (mc.thePlayer != null) {
                 PlayerData playerData = PlayerData.get(mc.thePlayer);
-                if (playerData != null && playerData.abilityData.isAbilityToggled(abilityKey)) {
-                    return 0x55FF55; // Green - active
+                if (playerData != null && playerData.abilityData != null
+                    && playerData.abilityData.isAbilityToggled(abilityKey)) {
+                    return 0xFF55FF55; // Green - active
                 }
             }
-            return 0xFF5555; // Red - inactive
+            return 0xFFFF5555; // Red - inactive
         }
-        return 0xFFFFFF; // White - normal
+        return 0xFFFFFFFF; // White - normal
     }
 
     public void setSelectedState(boolean newSelectState) {

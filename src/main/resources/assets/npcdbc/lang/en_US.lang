@@ -510,6 +510,11 @@ item.npcdbc:one_potara.name=Potara Earring
 item.npcdbc:two_potara.name=Grand Potara Earring
 item.npcdbc:three_potara.name=Supreme Potara Earring
 
+wheel.configure=Configure
+wheel.done=Done
+wheel.edit=Edit
+wheel.switchWheel=Switch Wheel
+
 ability.icon.texture=Texture
 ability.icon.section.uv=UV Coordinates
 ability.icon.x=Icon X

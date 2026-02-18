@@ -79,7 +79,7 @@ public class PlayerDBCInfo {
     }
 
     public void addFormWheel(int wheelSlot, FormWheelData data) {
-        if (wheelSlot > 5)
+        if (wheelSlot < 0 || wheelSlot > 5)
             return;
         formWheel[wheelSlot].readFromNBT(data.writeToNBT(new NBTTagCompound()));
     }
