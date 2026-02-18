@@ -46,6 +46,8 @@ public class DBCAnimations {
     public static final Animation[] TRIBEAM = ANIMATIONS.registerBundle("TriBeam", BuiltInAnimation::new,
         "Windup", "Active");
 
+    public static final Animation ANDROID_BARRIER = ANIMATIONS.register("AndroidBarrier", BuiltInAnimation::new);
+
     public static void register() {
         AnimationController.Instance.addAnimationRegister(NAMESPACE, ANIMATIONS);
     }
