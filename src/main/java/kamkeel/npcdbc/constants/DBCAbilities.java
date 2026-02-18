@@ -2,7 +2,6 @@ package kamkeel.npcdbc.constants;
 
 import kamkeel.npcdbc.data.ability.toggle.*;
 import kamkeel.npcs.controllers.data.ability.Ability;
-import kamkeel.npcs.controllers.data.ability.AbilityController;
 import kamkeel.npcs.controllers.data.ability.AbilityVariant;
 import kamkeel.npcs.controllers.data.ability.AnchorPoint;
 import kamkeel.npcs.controllers.data.ability.LockMovementType;
@@ -415,7 +414,6 @@ public class DBCAbilities {
         dome.setOuterColorAlpha(0.8f);
         dome.setOuterColorWidth(0.1f);
         dome.setDomeRadius(4.0f);
-        dome.setFollowCaster(true);
     });
 
     public static void register() {
