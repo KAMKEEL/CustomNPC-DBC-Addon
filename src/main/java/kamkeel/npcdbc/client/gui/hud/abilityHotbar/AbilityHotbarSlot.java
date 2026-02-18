@@ -52,7 +52,13 @@ public class AbilityHotbarSlot extends Gui {
         this.abilityKey = key;
         this.ability = ability;
         this.action = action;
-        this.icon = ability != null ? new AbilityIcon(ability) : null;
+        if (ability != null) {
+            this.icon = new AbilityIcon(ability);
+        } else if (action instanceof ChainedAbility) {
+            this.icon = new AbilityIcon((ChainedAbility) action);
+        } else {
+            this.icon = null;
+        }
     }
 
     /**

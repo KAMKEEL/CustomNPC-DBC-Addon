@@ -8,6 +8,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.data.ability.DBCAbilityFieldProvider;
+import kamkeel.npcdbc.data.ability.DBCChainedAbilityFieldProvider;
 import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.client.render.PotaraItemRenderer;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
@@ -61,8 +62,9 @@ public class ClientProxy extends CommonProxy {
         eventsInit();
         KeyHandler.registerKeys();
 
-        // Register DBC ability field provider for GUI tab injection
+        // Register DBC ability field providers for GUI tab injection
         AbilityController.Instance.registerFieldProvider(new DBCAbilityFieldProvider());
+        AbilityController.Instance.registerChainedFieldProvider(new DBCChainedAbilityFieldProvider());
         RenderingRegistry.registerEntityRenderingHandler(EntityAura.class, new AuraRenderer());
         MinecraftForgeClient.registerItemRenderer(ModItems.Potaras, new PotaraItemRenderer());
         ShaderHelper.loadShaders(false);

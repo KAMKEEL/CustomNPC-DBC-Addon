@@ -103,11 +103,11 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         guiScroll.guiLeft = guiLeft + 4;
         guiScroll.guiTop = guiTop + 26;
 
-        GuiNpcButton selectButton = new GuiNpcButton(1, guiLeft + 5, guiTop + ySize - 11, "form.select");
+        GuiNpcButton selectButton = new GuiNpcButton(1, guiLeft + 5, guiTop + ySize - 11, "gui.select");
         selectButton.width = 65;
         this.addButton(selectButton);
 
-        GuiNpcButton clearButton = new GuiNpcButton(2, guiLeft + 75, guiTop + ySize - 11, "form.clear");
+        GuiNpcButton clearButton = new GuiNpcButton(2, guiLeft + 75, guiTop + ySize - 11, "gui.clear");
         clearButton.width = 65;
         this.addButton(clearButton);
 

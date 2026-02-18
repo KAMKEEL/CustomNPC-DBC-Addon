@@ -78,7 +78,13 @@ public class AbilityWheelSegment extends WheelSegment {
             ability = resolved;
             action = resolved;
         }
-        icon = ability != null ? new AbilityIcon(ability) : null;
+        if (ability != null) {
+            icon = new AbilityIcon(ability);
+        } else if (action instanceof ChainedAbility) {
+            icon = new AbilityIcon((ChainedAbility) action);
+        } else {
+            icon = null;
+        }
     }
 
     public void removeAbility() {

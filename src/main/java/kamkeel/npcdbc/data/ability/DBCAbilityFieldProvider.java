@@ -49,7 +49,7 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
         AbilityIconData icon = AbilityIconData.fromAbility(ability);
 
         // Texture path (URL or resource location)
-        defs.add(FieldDef.stringField("ability.icon.texture", icon::getTexture, icon::setTexture)
+        defs.add(FieldDef.stringField("gui.texture", icon::getTexture, icon::setTexture)
             .tab(TAB_ICON));
 
         // UV coordinates section
@@ -61,13 +61,13 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
             .tab(TAB_ICON).range(0, 4096));
 
         // Dimensions section
-        defs.add(FieldDef.section("ability.icon.section.size")
+        defs.add(FieldDef.section("gui.size")
             .tab(TAB_ICON));
-        defs.add(FieldDef.intField("ability.icon.width", icon::getWidth, icon::setWidth)
+        defs.add(FieldDef.intField("gui.width", icon::getWidth, icon::setWidth)
             .tab(TAB_ICON).range(1, 256));
-        defs.add(FieldDef.intField("ability.icon.height", icon::getHeight, icon::setHeight)
+        defs.add(FieldDef.intField("gui.height", icon::getHeight, icon::setHeight)
             .tab(TAB_ICON).range(1, 256));
-        defs.add(FieldDef.floatField("ability.icon.scale", icon::getScale, icon::setScale)
+        defs.add(FieldDef.floatField("gui.scale", icon::getScale, icon::setScale)
             .tab(TAB_ICON).range(0.1f, 10.0f));
     }
 

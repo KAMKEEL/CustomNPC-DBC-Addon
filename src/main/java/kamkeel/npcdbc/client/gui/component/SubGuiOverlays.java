@@ -110,7 +110,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
             window.getTextField(id(1, i)).setText(currentOverlay.getTexture());
 
 
-            button = new GuiNpcButton(id(1, i), 240, y, 50, 20, "form.select");
+            button = new GuiNpcButton(id(1, i), 240, y, 50, 20, "gui.select");
             window.addButton(button);  // id 1
 
             if (currentOverlay.isEnabled()) {

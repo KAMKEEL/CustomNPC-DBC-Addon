@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data.ability;
 
 import kamkeel.npcs.controllers.data.ability.Ability;
+import kamkeel.npcs.controllers.data.ability.ChainedAbility;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
@@ -25,16 +26,29 @@ public class AbilityIconData {
     }
 
     /**
-     * Create an AbilityIconData instance from an ability's customData.
+     * Create an AbilityIconData instance from a raw customData compound.
      * Reads existing values if present, otherwise uses defaults.
      */
-    public static AbilityIconData fromAbility(Ability ability) {
-        NBTTagCompound customData = ability.getCustomData();
+    public static AbilityIconData fromCustomData(NBTTagCompound customData) {
         AbilityIconData icon = new AbilityIconData(customData);
         if (customData.hasKey(NBT_KEY)) {
             icon.readFromNBT(customData.getCompoundTag(NBT_KEY));
         }
         return icon;
+    }
+
+    /**
+     * Create an AbilityIconData instance from an ability's customData.
+     */
+    public static AbilityIconData fromAbility(Ability ability) {
+        return fromCustomData(ability.getCustomData());
+    }
+
+    /**
+     * Create an AbilityIconData instance from a chained ability's customData.
+     */
+    public static AbilityIconData fromChainedAbility(ChainedAbility chain) {
+        return fromCustomData(chain.getCustomData());
     }
 
     /**

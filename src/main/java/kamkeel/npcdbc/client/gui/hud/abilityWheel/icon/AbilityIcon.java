@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.data.ability.AbilityIconData;
 import kamkeel.npcs.controllers.data.ability.Ability;
+import kamkeel.npcs.controllers.data.ability.ChainedAbility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.Tessellator;
@@ -28,6 +29,12 @@ public class AbilityIcon extends Gui {
 
     public AbilityIcon(Ability ability) {
         this.iconData = AbilityIconData.fromAbility(ability);
+        this.width = iconData.getWidth();
+        this.height = iconData.getHeight();
+    }
+
+    public AbilityIcon(ChainedAbility chain) {
+        this.iconData = AbilityIconData.fromChainedAbility(chain);
         this.width = iconData.getWidth();
         this.height = iconData.getHeight();
     }

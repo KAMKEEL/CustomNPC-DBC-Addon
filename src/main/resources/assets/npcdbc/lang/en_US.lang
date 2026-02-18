@@ -12,14 +12,12 @@ dbc.clientsettings.aura.firstPersonOpacity=First person 3D Aura Opacity: %s%%
 global.customforms=Forms
 global.customauras=Auras
 global.customoutlines=Outlines
-global.customeffects=Effects
 
 stats.dbcsettings=DBC Settings
 inventory.extras=Extras
 
 gui.clone=Clone
 
-stats.dbc=DBC Settings
 stats.lockOnState=Can NPC be locked onto?
 stats.dbcEnabled=DBC Damage Enabled
 stats.friendlyFist=Friendly Fist
@@ -77,18 +75,6 @@ stats.hover.usePlayerSettings=When enabled, respects the player's DBC skill togg
 stats.damagePreview=Preview
 stats.section.universalSettings=Universal Settings
 
-effect.runsEveryX=Runs every X tick
-effect.defaultLength=Default length
-
-# These are supposed to be shorter
-effect.editor.runsEveryX=Every X tick
-effect.editor.defaultLength=Length
-effect.editor.height=Height
-effect.editor.width=Width
-effect.editor.xPos=X Pos
-effect.editor.yPos=Y Pos
-effect.editor.lossOnDeath=Loss on Death
-
 mastery.maxLevel=Max Level
 mastery.multiFlat=Multi Flat
 mastery.multiMinMax=Multi Min/Max
@@ -110,7 +96,7 @@ mastery.fireKiGainSettings=Fire Ki Gain Settings
 mastery.updateGain=Update Gain
 mastery.attackGain=Attack Gain
 mastery.damagedGain=Damaged Gain
-mastery.fireKiGain=Update Gain
+mastery.fireKiGain=Fire Ki Gain
 mastery.flatMind=Flat Mind
 mastery.perMind=Per Mind
 mastery.maxMind=Max Mind
@@ -147,8 +133,6 @@ display.saiyan=Saiyan
 display.halfsaiyan=Half-Saiyan
 display.namekian=Namekian
 display.arcosian=Arcosian
-display.majin=Majin
-display.raditz=Raditz
 display.arcofirst=First
 display.arcosecond=Second
 display.arcothird=Third
@@ -156,7 +140,6 @@ display.arcofinal=Final
 display.arcoultimatecooler=Ultimate
 display.arcogoldenform=Golden
 display.majin=Majin
-display.raditz=Raditz
 display.part.antenna=Antenna
 display.part.firstformspikes=First
 display.part.secondformspikes=Second
@@ -206,7 +189,6 @@ display.hasPupils=Pupils
 display.mouth=Mouth
 display.nose=Nose
 display.formCanFormbeCustomized=Player customization
-display.color=Color
 display.modify=Modify
 display.formWidth=Form Width
 display.formSize=Form Size
@@ -253,13 +235,11 @@ display.secondaryAura=Secondary Aura
 display.outline=Outline
 display.selectOutline=No Outline
 display.extra=Extra
-display.size=Size
 display.speed=Speed
 display.overrideDBC=Overrides DBC forms
 display.color1=Color 1
 display.color2=Color 2
 display.color3=Color 3
-display.alpha=Alpha
 display.3DType=3D Type
 display.2DType=2D Type
 display.aura.alwaysShowOutline=Outline always on
@@ -311,7 +291,6 @@ outline.colorSmoothness=Color Smoothness
 outline.colorInterpolation=Color Interpolation
 outline.pulsingSpeed=Pulsing Speed
 
-general.menuName=Menu Name
 general.strength=Strength
 general.dexterity=Dexterity
 general.willpower=Willpower
@@ -327,7 +306,7 @@ general.noForm=No Form
 general.ascendSound=Ascend Sound
 general.descendSound=Descend Sound
 general.allRaces=All Races
-general.allSaiyans= All Saiyans
+general.allSaiyans=All Saiyans
 
 general.auraSound=Sound
 general.kaiokenSound=Kaioken Sound
@@ -352,9 +331,6 @@ statsheet.attribute.SPI=SPI
 
 part.horns=Horns
 part.ears=Ears
-
-form.clear=Clear
-form.select=Select
 
 aura.shown=Shown
 aura.hidden=Hidden
@@ -511,18 +487,11 @@ item.npcdbc:two_potara.name=Grand Potara Earring
 item.npcdbc:three_potara.name=Supreme Potara Earring
 
 wheel.configure=Configure
-wheel.done=Done
-wheel.edit=Edit
 wheel.switchWheel=Switch Wheel
 
-ability.icon.texture=Texture
 ability.icon.section.uv=UV Coordinates
 ability.icon.x=Icon X
 ability.icon.y=Icon Y
-ability.icon.section.size=Size
-ability.icon.width=Width
-ability.icon.height=Height
-ability.icon.scale=Scale
 
 ability.npcdbc.ki_blast=Energy Blast
 ability.npcdbc.ki_blast_volley=Energy Blast Volley

@@ -93,7 +93,7 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
 
         int x = (this.width / 2) + 94;
         int y = this.height - 22;
-        addButton(new GuiNpcButton(6, x, y, 60, 20, new String[]{"wheel.configure", "wheel.done"}, !configureEnabled ? 0 : 1));
+        addButton(new GuiNpcButton(6, x, y, 60, 20, new String[]{"wheel.configure", "gui.done"}, !configureEnabled ? 0 : 1));
 
         float factor = scaledResolution.getScaleFactor();
         undoMCScaling = 1f / factor * 2f;
@@ -132,7 +132,7 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
         }
 
         if (configureEnabled) {
-            addButton(new GuiNpcButton(8, x - 94 - 75, y - 25, 150, 20, "wheel.edit"));
+            addButton(new GuiNpcButton(8, x - 94 - 75, y - 25, 150, 20, "gui.edit"));
             addButton(new GuiNpcButton(7, x += 62, y, 80, 20, "wheel.switchWheel"));
 
 
