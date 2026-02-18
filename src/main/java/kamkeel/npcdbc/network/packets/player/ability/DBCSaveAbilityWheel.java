@@ -54,7 +54,7 @@ public class DBCSaveAbilityWheel extends AbstractPacket {
         int wheelSlot = in.readInt();
         NBTTagCompound compound = ByteBufUtils.readNBT(in);
 
-        if (wheelSlot < 0 || wheelSlot >= 6) return;
+        if (wheelSlot < 0 || wheelSlot >= 12) return;
 
         PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
         if (playerData == null) return;

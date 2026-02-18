@@ -2,6 +2,7 @@ package kamkeel.npcdbc.client.gui.hud.abilityWheel;
 
 import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectAbility;
+import kamkeel.npcdbc.client.gui.hud.abilityHotbar.HUDAbilityHotbar;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -44,6 +45,10 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
     boolean keyDown, unpressedAllKeys = false;
     boolean configureEnabled;
 
+    public static final int SLOTS_PER_PAGE = 6;
+    public static final int TOTAL_PAGES = 2;
+    public static int currentPage = 0;
+
     public boolean isClosing;
 
     public static final int CLOSE_TIME = 600;
@@ -57,10 +62,12 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
         mc = Minecraft.getMinecraft();
         dbcInfo = PlayerDataUtil.getClientDBCInfo();
 
-        for (int i = 0; i < 6; i++) {
-            wheelSlot[i] = new AbilityWheelSegment(this, i);
-            wheelSlot[i].setAbility(dbcInfo.abilityWheel[i], false);
+        int offset = currentPage * SLOTS_PER_PAGE;
+        for (int i = 0; i < SLOTS_PER_PAGE; i++) {
+            wheelSlot[i] = new AbilityWheelSegment(this, offset + i);
+            wheelSlot[i].setAbility(dbcInfo.abilityWheel[offset + i], false);
         }
+        HUDAbilityHotbar.currentPage = currentPage;
         DBCPacketHandler.Instance.sendToServer(new DBCRequestAbilityWheel());
 
         // Stops the GUI from un-pressing all keys for you.
@@ -75,10 +82,23 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
      */
     public void reloadFromWheelData() {
         if (dbcInfo != null) {
-            for (int i = 0; i < 6; i++) {
-                wheelSlot[i].setAbility(dbcInfo.abilityWheel[i], false);
+            int offset = currentPage * SLOTS_PER_PAGE;
+            for (int i = 0; i < SLOTS_PER_PAGE; i++) {
+                wheelSlot[i].updateIndex(offset + i);
+                wheelSlot[i].setAbility(dbcInfo.abilityWheel[offset + i], false);
             }
         }
+    }
+
+    /**
+     * Switch to a different page of abilities.
+     */
+    public void switchPage(int page) {
+        if (page < 0 || page >= TOTAL_PAGES || page == currentPage) return;
+        currentPage = page;
+        HUDAbilityHotbar.currentPage = page;
+        selectSlot(-1);
+        reloadFromWheelData();
     }
 
     @Override
@@ -386,9 +406,15 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
 
         glPopMatrix();
 
+        // Draw page indicator
+        if (guiAnimationScale > 0.5f) {
+            int pageAlpha = (int) (255 * Math.min(1, (guiAnimationScale - 0.5f) * 2));
+            String pageText = (currentPage + 1) + " / " + TOTAL_PAGES;
+            int pageColor = (pageAlpha << 24) | 0xCCCCCC;
+            drawCenteredString(fontRendererObj, pageText, this.width / 2, this.height - 40, pageColor);
+        }
+
         super.drawScreen(mouseX, mouseY, partialTicks);
-        //        String text = mouseX + "," + mouseY + ", " + hoveredSlot + "," + (keyDown ? "HOLDING KEY" : "NOT HOLDING");
-        //        drawCenteredString(fontRendererObj, text, mouseX, mouseY, 0xFFFFFFFF);
     }
 
     public void drawDefaultBackground() {
@@ -422,6 +448,20 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
         }
         KeyBinding.setKeyBindState(Keyboard.getEventKey(), Keyboard.getEventKeyState());
         unpressedAllKeys = false;
+    }
+
+    @Override
+    public void handleMouseInput() {
+        super.handleMouseInput();
+
+        int scroll = Mouse.getEventDWheel();
+        if (scroll != 0 && !isClosing && !hasSubGui()) {
+            if (scroll > 0) {
+                switchPage(currentPage - 1);
+            } else {
+                switchPage(currentPage + 1);
+            }
+        }
     }
 
     @Override

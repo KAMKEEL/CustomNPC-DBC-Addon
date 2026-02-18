@@ -87,6 +87,11 @@ public class AbilityWheelSegment extends WheelSegment {
         }
     }
 
+    public void updateIndex(int newIndex) {
+        this.index = newIndex;
+        this.data.slot = newIndex;
+    }
+
     public void removeAbility() {
         data.reset();
         ability = null;

@@ -20,7 +20,10 @@ import noppes.npcs.controllers.data.PlayerData;
 public class HUDAbilityHotbar extends Gui {
     private static HUDAbilityHotbar instance;
 
-    public AbilityHotbarSlot[] hotbarSlots = new AbilityHotbarSlot[6];
+    public static final int SLOTS_PER_PAGE = 6;
+    public static int currentPage = 0;
+
+    public AbilityHotbarSlot[] hotbarSlots = new AbilityHotbarSlot[SLOTS_PER_PAGE];
     public int selectedSlot = -1;
 
     private Minecraft mc;
@@ -29,7 +32,7 @@ public class HUDAbilityHotbar extends Gui {
 
     private HUDAbilityHotbar() {
         mc = Minecraft.getMinecraft();
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < SLOTS_PER_PAGE; i++) {
             hotbarSlots[i] = new AbilityHotbarSlot(this, i);
         }
     }
@@ -62,9 +65,10 @@ public class HUDAbilityHotbar extends Gui {
         PlayerDBCInfo dbcInfo = ((IPlayerDBCInfo) playerData).getPlayerDBCInfo();
         if (dbcInfo == null) return;
 
-        // Load from wheel data - no fallback, empty stays empty
-        for (int i = 0; i < 6; i++) {
-            AbilityWheelData wheelData = dbcInfo.abilityWheel[i];
+        // Load from wheel data for current page - no fallback, empty stays empty
+        int offset = currentPage * SLOTS_PER_PAGE;
+        for (int i = 0; i < SLOTS_PER_PAGE; i++) {
+            AbilityWheelData wheelData = dbcInfo.abilityWheel[offset + i];
             String key = wheelData.isEmpty() ? null : wheelData.abilityKey;
             Ability ability = null;
             IAbilityAction action = null;
@@ -83,8 +87,8 @@ public class HUDAbilityHotbar extends Gui {
         if (playerData.abilityData != null) {
             String selectedKey = playerData.abilityData.getSelectedAbilityKey();
             selectedSlot = -1;
-            for (int i = 0; i < 6; i++) {
-                AbilityWheelData wheelData = dbcInfo.abilityWheel[i];
+            for (int i = 0; i < SLOTS_PER_PAGE; i++) {
+                AbilityWheelData wheelData = dbcInfo.abilityWheel[offset + i];
                 boolean isSelected = selectedKey != null && !wheelData.isEmpty()
                     && selectedKey.equals(wheelData.abilityKey);
                 hotbarSlots[i].setSelectedState(isSelected);
@@ -124,9 +128,16 @@ public class HUDAbilityHotbar extends Gui {
         }
 
         // Draw each slot
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < SLOTS_PER_PAGE; i++) {
             hotbarSlots[i].draw(mc, sr, cooldownProgress);
         }
+
+        // Draw page indicator above the hotbar
+        int screenH = sr.getScaledHeight();
+        int totalHeight = SLOTS_PER_PAGE * 40 + 5 * 4; // SLOT_SIZE=40, SLOT_GAP=4
+        int baseY = (screenH - totalHeight) / 2;
+        String pageText = (currentPage + 1) + "/" + 2;
+        mc.fontRenderer.drawStringWithShadow(pageText, 8, baseY - 12, 0xAAAAAA);
     }
 
     /**

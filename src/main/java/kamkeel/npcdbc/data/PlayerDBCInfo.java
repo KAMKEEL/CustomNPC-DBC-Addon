@@ -55,7 +55,7 @@ public class PlayerDBCInfo {
     public HashMap<Integer, Integer> formTimers = new HashMap<>();
     public HashMap<Integer, FormDisplay.BodyColor> configuredFormColors = new HashMap<>();
     public FormWheelData[] formWheel = new FormWheelData[6];
-    public AbilityWheelData[] abilityWheel = new AbilityWheelData[6];
+    public AbilityWheelData[] abilityWheel = new AbilityWheelData[12];
 
     public OverlayManager overlayManager = new OverlayManager();
 
@@ -116,13 +116,13 @@ public class PlayerDBCInfo {
     }
 
     public void addAbilityWheel(int wheelSlot, AbilityWheelData data) {
-        if (wheelSlot > 5 || wheelSlot < 0)
+        if (wheelSlot < 0 || wheelSlot >= abilityWheel.length)
             return;
         abilityWheel[wheelSlot].readFromNBT(data.writeToNBT(new NBTTagCompound()));
     }
 
     public void removeAbilityWheel(int wheelSlot) {
-        if (wheelSlot <= 5 && wheelSlot >= 0)
+        if (wheelSlot >= 0 && wheelSlot < abilityWheel.length)
             abilityWheel[wheelSlot].reset();
     }
 

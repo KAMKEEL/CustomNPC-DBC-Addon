@@ -82,7 +82,7 @@ public class NetworkUtility {
         PlayerDBCInfo data = ((IPlayerDBCInfo) PlayerDataController.Instance.getPlayerData(player)).getPlayerDBCInfo();
         NBTTagCompound compound = new NBTTagCompound();
         if (data != null) {
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < data.abilityWheel.length; i++) {
                 AbilityWheelData wheelData = data.abilityWheel[i];
                 // Validate ability or chain still exists
                 if (!wheelData.isEmpty() && AbilityController.Instance != null) {
