@@ -3,6 +3,8 @@ package kamkeel.npcdbc.client.gui.hud.abilityHotbar;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.gui.hud.abilityWheel.icon.AbilityIcon;
 import kamkeel.npcs.controllers.data.ability.Ability;
+import kamkeel.npcs.controllers.data.ability.ChainedAbility;
+import kamkeel.npcs.controllers.data.ability.IAbilityAction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -24,6 +26,7 @@ public class AbilityHotbarSlot extends Gui {
 
     public String abilityKey = null;
     public Ability ability = null;
+    public IAbilityAction action = null;
     private AbilityIcon icon = null;
 
     public boolean isSelected = false;
@@ -45,14 +48,11 @@ public class AbilityHotbarSlot extends Gui {
         this.index = index;
     }
 
-    public void setAbility(String key, Ability ability) {
+    public void setAbility(String key, Ability ability, IAbilityAction action) {
         this.abilityKey = key;
         this.ability = ability;
-        if (ability != null) {
-            this.icon = new AbilityIcon(ability);
-        } else {
-            this.icon = null;
-        }
+        this.action = action;
+        this.icon = ability != null ? new AbilityIcon(ability) : null;
     }
 
     /**
@@ -109,9 +109,10 @@ public class AbilityHotbarSlot extends Gui {
         GL11.glPopMatrix();
 
         // Draw ability name (outside the scaled matrix)
-        if (ability != null && isSelected) {
+        if (action != null && isSelected) {
             FontRenderer fr = mc.fontRenderer;
-            String name = ability.getDisplayName();
+            String name = ability != null ? ability.getDisplayName()
+                : (action instanceof ChainedAbility ? ((ChainedAbility) action).getDisplayName() : action.getName());
             if (name != null && !name.isEmpty()) {
                 int nameX = x + SLOT_SIZE + 4;
                 int nameY = y + (SLOT_SIZE - fr.FONT_HEIGHT) / 2;

@@ -5,7 +5,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcs.controllers.data.ability.AbilityController;
+import kamkeel.npcs.controllers.AbilityController;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.BonusController;
 import kamkeel.npcdbc.controllers.DBCEffectController;
@@ -511,9 +511,14 @@ public class PlayerDBCInfo {
     private void validateAbilityWheel() {
         if (AbilityController.Instance == null) return;
         for (AbilityWheelData data : abilityWheel) {
-            if (!data.isEmpty() && !AbilityController.Instance.canResolveAbility(data.abilityKey)) {
-                data.reset();
+            if (data.isEmpty()) continue;
+            boolean valid;
+            if (data.isChainKey()) {
+                valid = AbilityController.Instance.canResolveChainedAbility(data.getResolveKey());
+            } else {
+                valid = AbilityController.Instance.canResolveAbility(data.abilityKey);
             }
+            if (!valid) data.reset();
         }
     }
 

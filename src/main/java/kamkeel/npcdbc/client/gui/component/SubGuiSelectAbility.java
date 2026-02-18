@@ -1,7 +1,9 @@
 package kamkeel.npcdbc.client.gui.component;
 
+import kamkeel.npcdbc.data.AbilityWheelData;
 import kamkeel.npcs.controllers.data.ability.Ability;
-import kamkeel.npcs.controllers.data.ability.AbilityController;
+import kamkeel.npcs.controllers.data.ability.ChainedAbility;
+import kamkeel.npcs.controllers.AbilityController;
 import net.minecraft.client.gui.GuiButton;
 import noppes.npcs.client.ClientCacheHandler;
 import noppes.npcs.client.gui.util.*;
@@ -69,10 +71,17 @@ public class SubGuiSelectAbility extends SubGuiInterface implements ICustomScrol
 
         List<String> abilities = playerData.abilityData.getUnlockedAbilityList();
         for (String key : abilities) {
-            Ability ability = AbilityController.Instance != null ?
-                AbilityController.Instance.resolveAbility(key) : null;
-            String displayName = ability != null ?
-                ability.getDisplayName() : key;
+            String displayName;
+            if (key.startsWith(AbilityWheelData.CHAIN_PREFIX)) {
+                String chainKey = key.substring(AbilityWheelData.CHAIN_PREFIX.length());
+                ChainedAbility chain = AbilityController.Instance != null ?
+                    AbilityController.Instance.resolveChainedAbility(chainKey) : null;
+                displayName = chain != null ? "\u00A76\u2726 " + chain.getDisplayName() : key;
+            } else {
+                Ability ability = AbilityController.Instance != null ?
+                    AbilityController.Instance.resolveAbility(key) : null;
+                displayName = ability != null ? ability.getDisplayName() : key;
+            }
             displayToKey.put(displayName, key);
         }
     }

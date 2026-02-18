@@ -5,7 +5,8 @@ import kamkeel.npcdbc.data.AbilityWheelData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcs.controllers.data.ability.Ability;
-import kamkeel.npcs.controllers.data.ability.AbilityController;
+import kamkeel.npcs.controllers.data.ability.IAbilityAction;
+import kamkeel.npcs.controllers.AbilityController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
@@ -66,10 +67,16 @@ public class HUDAbilityHotbar extends Gui {
             AbilityWheelData wheelData = dbcInfo.abilityWheel[i];
             String key = wheelData.isEmpty() ? null : wheelData.abilityKey;
             Ability ability = null;
+            IAbilityAction action = null;
             if (key != null && AbilityController.Instance != null) {
-                ability = AbilityController.Instance.resolveAbility(key);
+                if (wheelData.isChainKey()) {
+                    action = AbilityController.Instance.resolveChainedAbility(wheelData.getResolveKey());
+                } else {
+                    ability = AbilityController.Instance.resolveAbility(key);
+                    action = ability;
+                }
             }
-            hotbarSlots[i].setAbility(key, ability);
+            hotbarSlots[i].setAbility(key, ability, action);
         }
 
         // Update selected slot by matching the selected ability key to a wheel slot

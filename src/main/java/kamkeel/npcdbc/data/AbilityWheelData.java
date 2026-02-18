@@ -4,11 +4,24 @@ import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * Data class for storing ability wheel slot configuration.
- * Uses string keys for abilities (built-in registry keys or custom ability UUIDs).
+ * Uses string keys for abilities (built-in registry keys or custom ability UUIDs)
+ * or chained abilities (prefixed with {@link #CHAIN_PREFIX}).
  */
 public class AbilityWheelData {
+    /** Prefix for chained ability keys, matching PlayerAbilityData convention. */
+    public static final String CHAIN_PREFIX = "chain:";
+
     public int slot = -1;
     public String abilityKey = "";
+
+    public boolean isChainKey() {
+        return abilityKey != null && abilityKey.startsWith(CHAIN_PREFIX);
+    }
+
+    public String getResolveKey() {
+        if (isChainKey()) return abilityKey.substring(CHAIN_PREFIX.length());
+        return abilityKey;
+    }
 
     public AbilityWheelData() {
     }

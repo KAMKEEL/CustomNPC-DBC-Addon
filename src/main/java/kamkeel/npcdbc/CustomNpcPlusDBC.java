@@ -22,7 +22,7 @@ import kamkeel.npcdbc.data.attribute.DBCItemAttributes;
 import kamkeel.npcdbc.items.ModItems;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcs.controllers.ProfileController;
-import kamkeel.npcs.controllers.data.ability.AbilityController;
+import kamkeel.npcs.controllers.AbilityController;
 import noppes.npcs.constants.ScriptContext;
 import noppes.npcs.controllers.ScriptHookController;
 

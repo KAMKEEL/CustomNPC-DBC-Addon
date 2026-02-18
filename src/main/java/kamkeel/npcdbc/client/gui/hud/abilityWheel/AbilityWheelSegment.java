@@ -9,7 +9,9 @@ import kamkeel.npcdbc.network.packets.player.ability.DBCSaveAbilityWheel;
 import kamkeel.npcdbc.network.packets.player.ability.DBCSelectAbility;
 import kamkeel.npcdbc.network.packets.player.ability.DBCToggleAbilityAction;
 import kamkeel.npcs.controllers.data.ability.Ability;
-import kamkeel.npcs.controllers.data.ability.AbilityController;
+import kamkeel.npcs.controllers.data.ability.ChainedAbility;
+import kamkeel.npcs.controllers.data.ability.IAbilityAction;
+import kamkeel.npcs.controllers.AbilityController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import noppes.npcs.controllers.data.PlayerData;
@@ -24,6 +26,7 @@ public class AbilityWheelSegment extends WheelSegment {
     public HUDAbilityWheel parent;
     public AbilityWheelData data = new AbilityWheelData();
     public Ability ability = null;
+    public IAbilityAction action = null;
     private AbilityIcon icon = null;
 
     public AbilityWheelSegment(HUDAbilityWheel parent, int index) {
@@ -50,30 +53,43 @@ public class AbilityWheelSegment extends WheelSegment {
 
     public void setAbility(String abilityKey, boolean updateServer) {
         data.abilityKey = (abilityKey != null) ? abilityKey : "";
-        ability = (!data.isEmpty() && AbilityController.Instance != null)
-            ? AbilityController.Instance.resolveAbility(data.abilityKey) : null;
+        resolveAction();
         if (updateServer)
             DBCPacketHandler.Instance.sendToServer(new DBCSaveAbilityWheel(index, data));
-        icon = ability != null ? new AbilityIcon(ability) : null;
     }
 
     public void setAbility(AbilityWheelData data, boolean updateServer) {
         this.data = data;
-        ability = (!data.isEmpty() && AbilityController.Instance != null)
-            ? AbilityController.Instance.resolveAbility(data.abilityKey) : null;
+        resolveAction();
         if (updateServer)
             DBCPacketHandler.Instance.sendToServer(new DBCSaveAbilityWheel(index, data));
+    }
+
+    private void resolveAction() {
+        ability = null;
+        action = null;
+        icon = null;
+        if (data.isEmpty() || AbilityController.Instance == null) return;
+
+        if (data.isChainKey()) {
+            action = AbilityController.Instance.resolveChainedAbility(data.getResolveKey());
+        } else {
+            Ability resolved = AbilityController.Instance.resolveAbility(data.abilityKey);
+            ability = resolved;
+            action = resolved;
+        }
         icon = ability != null ? new AbilityIcon(ability) : null;
     }
 
     public void removeAbility() {
         data.reset();
         ability = null;
+        action = null;
+        icon = null;
         DBCPacketHandler.Instance.sendToServer(new DBCSaveAbilityWheel(index, data));
         if (parent.hoveredSlot == index)
             parent.selectSlot(-1);
         parent.timeClosedSubGui = Minecraft.getSystemTime();
-        icon = null;
     }
 
     @Override
@@ -116,9 +132,8 @@ public class AbilityWheelSegment extends WheelSegment {
     }
 
     public String getAbilityName() {
-        if (ability != null) {
-            return ability.getDisplayName();
-        }
+        if (ability != null) return ability.getDisplayName();
+        if (action instanceof ChainedAbility) return ((ChainedAbility) action).getDisplayName();
         return !data.isEmpty() ? data.abilityKey : "";
     }
 

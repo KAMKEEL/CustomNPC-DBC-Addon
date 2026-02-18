@@ -188,7 +188,7 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
                 timeClosedSubGui = Minecraft.getSystemTime();
 
                 // Don't reassign the same ability
-                if (slot.ability != null && selectAbility.selectedAbilityKey.equals(slot.data.abilityKey))
+                if (slot.action != null && selectAbility.selectedAbilityKey.equals(slot.data.abilityKey))
                     return;
 
                 slot.setAbility(selectAbility.selectedAbilityKey, true);

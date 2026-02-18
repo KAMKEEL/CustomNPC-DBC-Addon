@@ -6,8 +6,7 @@ import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.AbilityWheelData;
 import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
-import kamkeel.npcs.controllers.data.ability.Ability;
-import kamkeel.npcs.controllers.data.ability.AbilityController;
+import kamkeel.npcs.controllers.AbilityController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.outline.Outline;
@@ -85,13 +84,15 @@ public class NetworkUtility {
         if (data != null) {
             for (int i = 0; i < 6; i++) {
                 AbilityWheelData wheelData = data.abilityWheel[i];
-                // Validate ability still exists
-                if (!wheelData.isEmpty()) {
-                    Ability ability = AbilityController.Instance != null ?
-                        AbilityController.Instance.resolveAbility(wheelData.abilityKey) : null;
-                    if (ability == null) {
-                        wheelData.reset();
+                // Validate ability or chain still exists
+                if (!wheelData.isEmpty() && AbilityController.Instance != null) {
+                    boolean valid;
+                    if (wheelData.isChainKey()) {
+                        valid = AbilityController.Instance.canResolveChainedAbility(wheelData.getResolveKey());
+                    } else {
+                        valid = AbilityController.Instance.canResolveAbility(wheelData.abilityKey);
                     }
+                    if (!valid) wheelData.reset();
                 }
                 wheelData.writeToNBT(compound);
             }

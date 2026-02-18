@@ -6,8 +6,10 @@ import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.network.PacketChannel;
 import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
+import kamkeel.npcdbc.data.AbilityWheelData;
 import kamkeel.npcs.controllers.data.ability.Ability;
-import kamkeel.npcs.controllers.data.ability.AbilityController;
+import kamkeel.npcs.controllers.data.ability.ChainedAbility;
+import kamkeel.npcs.controllers.AbilityController;
 import kamkeel.npcs.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.controllers.PlayerDataController;
@@ -59,10 +61,17 @@ public final class DBCSelectAbility extends AbstractPacket {
             }
 
             // Send selection message to the player
-            Ability ability = AbilityController.Instance != null
-                ? AbilityController.Instance.resolveAbility(key) : null;
-            String displayName = ability != null
-                ? ability.getDisplayName() : key;
+            String displayName = key;
+            if (AbilityController.Instance != null) {
+                if (key.startsWith(AbilityWheelData.CHAIN_PREFIX)) {
+                    ChainedAbility chain = AbilityController.Instance.resolveChainedAbility(
+                        key.substring(AbilityWheelData.CHAIN_PREFIX.length()));
+                    if (chain != null) displayName = chain.getDisplayName();
+                } else {
+                    Ability ability = AbilityController.Instance.resolveAbility(key);
+                    if (ability != null) displayName = ability.getDisplayName();
+                }
+            }
             NetworkUtility.sendServerMessage(player, "\u00A7a", "npcdbc.abilitySelect", " ", displayName);
         } else {
             // Clearing selection
