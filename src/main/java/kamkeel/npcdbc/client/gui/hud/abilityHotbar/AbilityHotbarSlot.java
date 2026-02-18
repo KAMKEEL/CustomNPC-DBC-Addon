@@ -8,6 +8,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
+import noppes.npcs.controllers.data.PlayerData;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -110,12 +111,12 @@ public class AbilityHotbarSlot extends Gui {
         // Draw ability name (outside the scaled matrix)
         if (ability != null && isSelected) {
             FontRenderer fr = mc.fontRenderer;
-            String name = ability.getName();
+            String name = ability.getDisplayName();
             if (name != null && !name.isEmpty()) {
                 int nameX = x + SLOT_SIZE + 4;
                 int nameY = y + (SLOT_SIZE - fr.FONT_HEIGHT) / 2;
-                // Draw with shadow for visibility
-                fr.drawStringWithShadow(name, nameX, nameY, 0xFFFFFF);
+                // Draw with shadow for visibility, toggle-aware coloring
+                fr.drawStringWithShadow(name, nameX, nameY, getNameColor());
             }
         }
     }
@@ -185,6 +186,25 @@ public class AbilityHotbarSlot extends Gui {
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glColor4f(1, 1, 1, 1);
+    }
+
+    /**
+     * Get the color for the ability name.
+     * Toggleable abilities show green if active, red if inactive.
+     * Regular abilities show white.
+     */
+    private int getNameColor() {
+        if (ability != null && ability.isToggleable()) {
+            Minecraft mc = Minecraft.getMinecraft();
+            if (mc.thePlayer != null) {
+                PlayerData playerData = PlayerData.get(mc.thePlayer);
+                if (playerData != null && playerData.abilityData.isAbilityToggled(abilityKey)) {
+                    return 0x55FF55; // Green - active
+                }
+            }
+            return 0xFF5555; // Red - inactive
+        }
+        return 0xFFFFFF; // White - normal
     }
 
     public void setSelectedState(boolean newSelectState) {

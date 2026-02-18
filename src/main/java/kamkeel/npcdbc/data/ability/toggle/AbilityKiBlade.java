@@ -16,8 +16,8 @@ public class AbilityKiBlade extends DBCToggleAbility {
     }
 
     @Override
-    protected void onToggle(EntityPlayer player) {
-        DBCSettingsUtil.setKiWeapon(player, DBCSettingsUtil.getKiWeapon(player) != 0, 0);
+    protected void onToggle(EntityPlayer player, boolean newState) {
+        DBCSettingsUtil.setKiWeapon(player, newState, 0);
     }
 
     @Override

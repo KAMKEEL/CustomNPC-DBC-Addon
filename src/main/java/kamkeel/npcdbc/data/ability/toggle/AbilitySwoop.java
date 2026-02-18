@@ -16,8 +16,8 @@ public class AbilitySwoop extends DBCToggleAbility {
     }
 
     @Override
-    protected void onToggle(EntityPlayer player) {
-        DBCSettingsUtil.setSwoop(player, !DBCSettingsUtil.isSwoop(player));
+    protected void onToggle(EntityPlayer player, boolean newState) {
+        DBCSettingsUtil.setSwoop(player, newState);
     }
 
     @Override

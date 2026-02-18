@@ -71,8 +71,8 @@ public class SubGuiSelectAbility extends SubGuiInterface implements ICustomScrol
         for (String key : abilities) {
             Ability ability = AbilityController.Instance != null ?
                 AbilityController.Instance.resolveAbility(key) : null;
-            String displayName = ability != null && ability.getName() != null ?
-                ability.getName() : key;
+            String displayName = ability != null ?
+                ability.getDisplayName() : key;
             displayToKey.put(displayName, key);
         }
     }

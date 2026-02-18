@@ -4,7 +4,6 @@ import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.client.gui.hud.WheelSegment;
 import kamkeel.npcdbc.client.gui.hud.abilityWheel.icon.AbilityIcon;
 import kamkeel.npcdbc.data.AbilityWheelData;
-import kamkeel.npcdbc.data.ability.toggle.DBCToggleAbility;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.ability.DBCSaveAbilityWheel;
 import kamkeel.npcdbc.network.packets.player.ability.DBCSelectAbility;
@@ -13,6 +12,7 @@ import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.controllers.data.ability.AbilityController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import noppes.npcs.controllers.data.PlayerData;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -40,7 +40,7 @@ public class AbilityWheelSegment extends WheelSegment {
 
     public void selectAbility() {
         if (data.isEmpty()) return;
-        if (ability instanceof DBCToggleAbility) {
+        if (ability != null && ability.isToggleable()) {
             // Toggle abilities perform their action directly - no cooldown, no events
             DBCPacketHandler.Instance.sendToServer(new DBCToggleAbilityAction(data.abilityKey));
             return;
@@ -117,7 +117,7 @@ public class AbilityWheelSegment extends WheelSegment {
 
     public String getAbilityName() {
         if (ability != null) {
-            return ability.getName();
+            return ability.getDisplayName();
         }
         return !data.isEmpty() ? data.abilityKey : "";
     }
@@ -128,10 +128,13 @@ public class AbilityWheelSegment extends WheelSegment {
      * Regular abilities show white.
      */
     private int getNameColor() {
-        if (ability instanceof DBCToggleAbility) {
+        if (ability != null && ability.isToggleable()) {
             Minecraft mc = Minecraft.getMinecraft();
-            if (mc.thePlayer != null && ((DBCToggleAbility) ability).isActive(mc.thePlayer)) {
-                return 0xFF55FF55; // Green - active
+            if (mc.thePlayer != null) {
+                PlayerData playerData = PlayerData.get(mc.thePlayer);
+                if (playerData != null && playerData.abilityData.isAbilityToggled(data.abilityKey)) {
+                    return 0xFF55FF55; // Green - active
+                }
             }
             return 0xFFFF5555; // Red - inactive
         }

@@ -16,8 +16,8 @@ public class AbilityKiProtection extends DBCToggleAbility {
     }
 
     @Override
-    protected void onToggle(EntityPlayer player) {
-        DBCSettingsUtil.setKiProtection(player, !DBCSettingsUtil.isKiProtection(player));
+    protected void onToggle(EntityPlayer player, boolean newState) {
+        DBCSettingsUtil.setKiProtection(player, newState);
     }
 
     @Override

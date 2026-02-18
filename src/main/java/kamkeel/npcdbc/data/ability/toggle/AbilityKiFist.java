@@ -16,8 +16,8 @@ public class AbilityKiFist extends DBCToggleAbility {
     }
 
     @Override
-    protected void onToggle(EntityPlayer player) {
-        DBCSettingsUtil.setKiFist(player, !DBCSettingsUtil.isKiFist(player));
+    protected void onToggle(EntityPlayer player, boolean newState) {
+        DBCSettingsUtil.setKiFist(player, newState);
     }
 
     @Override

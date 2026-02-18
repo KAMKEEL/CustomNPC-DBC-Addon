@@ -16,8 +16,8 @@ public class AbilityFriendlyFist extends DBCToggleAbility {
     }
 
     @Override
-    protected void onToggle(EntityPlayer player) {
-        DBCSettingsUtil.setFriendlyFist(player, !DBCSettingsUtil.isFriendlyFist(player));
+    protected void onToggle(EntityPlayer player, boolean newState) {
+        DBCSettingsUtil.setFriendlyFist(player, newState);
     }
 
     @Override

@@ -61,8 +61,8 @@ public final class DBCSelectAbility extends AbstractPacket {
             // Send selection message to the player
             Ability ability = AbilityController.Instance != null
                 ? AbilityController.Instance.resolveAbility(key) : null;
-            String displayName = (ability != null && ability.getName() != null)
-                ? ability.getName() : key;
+            String displayName = ability != null
+                ? ability.getDisplayName() : key;
             NetworkUtility.sendServerMessage(player, "\u00A7a", "npcdbc.abilitySelect", " ", displayName);
         } else {
             // Clearing selection

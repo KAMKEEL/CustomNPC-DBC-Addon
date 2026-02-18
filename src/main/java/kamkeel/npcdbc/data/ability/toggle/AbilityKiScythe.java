@@ -13,8 +13,8 @@ public class AbilityKiScythe extends DBCToggleAbility {
     }
 
     @Override
-    protected void onToggle(EntityPlayer player) {
-        DBCSettingsUtil.setKiWeapon(player, DBCSettingsUtil.getKiWeapon(player) != 1, 1);
+    protected void onToggle(EntityPlayer player, boolean newState) {
+        DBCSettingsUtil.setKiWeapon(player, newState, 1);
     }
 
     @Override

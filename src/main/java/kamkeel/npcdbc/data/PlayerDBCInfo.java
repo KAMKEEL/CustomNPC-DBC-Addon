@@ -5,6 +5,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcs.controllers.data.ability.AbilityController;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.BonusController;
 import kamkeel.npcdbc.controllers.DBCEffectController;
@@ -482,6 +483,7 @@ public class PlayerDBCInfo {
 
         for (int i = 0; i < abilityWheel.length; i++)
             abilityWheel[i].readFromNBT(dbcCompound.getCompoundTag("AbilityWheel" + i));
+        validateAbilityWheel();
 
         currentAura = dbcCompound.getInteger("CurrentAura");
         selectedAura = dbcCompound.getInteger("SelectedAura");
@@ -504,6 +506,15 @@ public class PlayerDBCInfo {
 
         if (dbcCompound.hasKey("OverlayManager"))
             overlayManager.readFromNBT(dbcCompound.getCompoundTag("OverlayManager"));
+    }
+
+    private void validateAbilityWheel() {
+        if (AbilityController.Instance == null) return;
+        for (AbilityWheelData data : abilityWheel) {
+            if (!data.isEmpty() && !AbilityController.Instance.canResolveAbility(data.abilityKey)) {
+                data.reset();
+            }
+        }
     }
 
     private void loadBonuses(NBTTagCompound dbcCompound) {
