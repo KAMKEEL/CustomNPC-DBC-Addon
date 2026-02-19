@@ -83,6 +83,7 @@ public class NetworkUtility {
         PlayerData pData = PlayerDataController.Instance.getPlayerData(player);
         PlayerDBCInfo data = ((IPlayerDBCInfo) pData).getPlayerDBCInfo();
         NBTTagCompound compound = new NBTTagCompound();
+        boolean anyCleared = false;
         if (data != null) {
             for (int i = 0; i < data.abilityWheel.length; i++) {
                 AbilityWheelData wheelData = data.abilityWheel[i];
@@ -97,9 +98,17 @@ public class NetworkUtility {
                     if (valid && pData.abilityData != null) {
                         valid = pData.abilityData.hasUnlockedAbility(wheelData.abilityKey);
                     }
-                    if (!valid) wheelData.reset();
+                    if (!valid) {
+                        wheelData.reset();
+                        anyCleared = true;
+                    }
                 }
                 wheelData.writeToNBT(compound);
+            }
+            // Trigger a full sync so the client receives the validated data
+            // even if GuiDataPacket is not handled by the current GUI
+            if (anyCleared) {
+                data.updateClient();
             }
         }
         GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);

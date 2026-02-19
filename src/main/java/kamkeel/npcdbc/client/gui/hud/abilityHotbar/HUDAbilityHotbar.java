@@ -87,6 +87,10 @@ public class HUDAbilityHotbar extends Gui {
                     ability = AbilityController.Instance.resolveAbility(key);
                     action = ability;
                 }
+                // Treat unresolvable keys as empty (e.g., deleted abilities)
+                if (ability == null && action == null) {
+                    key = null;
+                }
             }
             hotbarSlots[i].setAbility(key, ability, action);
         }

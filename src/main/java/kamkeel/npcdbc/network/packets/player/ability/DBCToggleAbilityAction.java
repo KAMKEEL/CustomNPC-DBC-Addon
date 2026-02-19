@@ -50,9 +50,9 @@ public final class DBCToggleAbilityAction extends AbstractPacket {
         if (key == null || key.isEmpty()) return;
         if (AbilityController.Instance == null) return;
 
-        // Validate ability exists and is toggleable
+        // Validate ability exists, is toggleable, and allows player usage
         Ability ability = AbilityController.Instance.resolveAbility(key);
-        if (ability == null || !ability.isToggleable()) return;
+        if (ability == null || !ability.isToggleable() || !ability.getAllowedBy().allowsPlayer()) return;
 
         // Use the base toggle system on PlayerAbilityData
         PlayerData playerData = PlayerData.get(player);

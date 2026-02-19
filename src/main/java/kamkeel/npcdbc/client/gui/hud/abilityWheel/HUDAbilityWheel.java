@@ -5,6 +5,7 @@ import kamkeel.npcdbc.client.gui.component.SubGuiSelectAbility;
 import kamkeel.npcdbc.client.gui.hud.abilityHotbar.HUDAbilityHotbar;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.data.AbilityWheelData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.ability.DBCRequestAbilityWheel;
@@ -13,9 +14,11 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.client.settings.KeyBinding;
 import noppes.npcs.client.gui.util.GuiNPCInterface;
 import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.IGuiData;
 import noppes.npcs.client.gui.util.ISubGuiListener;
 import noppes.npcs.client.gui.util.SubGuiInterface;
 import org.lwjgl.input.Keyboard;
@@ -30,7 +33,7 @@ import static org.lwjgl.opengl.GL11.glTranslatef;
  * HUD for the Ability Wheel - allows players to select from their unlocked abilities.
  * Similar to the Form Wheel, but works with CustomNPC+ PlayerAbilityData.
  */
-public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener {
+public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener, IGuiData {
 
     public static float BLUR_INTENSITY = 0;
     public static float MAX_BLUR = 4;
@@ -444,6 +447,17 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
             configureEnabled = false;
             initGui();
         }
+    }
+
+    @Override
+    public void setGuiData(NBTTagCompound compound) {
+        if (dbcInfo == null) return;
+        for (int i = 0; i < dbcInfo.abilityWheel.length; i++) {
+            AbilityWheelData wheelData = dbcInfo.abilityWheel[i];
+            NBTTagCompound slotNBT = compound.getCompoundTag("AbilityWheel" + i);
+            wheelData.readFromNBT(slotNBT);
+        }
+        reloadFromWheelData();
     }
 
     @Override

@@ -8,6 +8,7 @@ import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.PacketChannel;
 import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
+import kamkeel.npcs.controllers.AbilityController;
 import kamkeel.npcs.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -64,6 +65,22 @@ public class DBCSaveAbilityWheel extends AbstractPacket {
 
         NBTTagCompound slotData = compound.getCompoundTag("AbilityWheel" + wheelSlot);
         data.abilityWheel[wheelSlot].readFromNBT(slotData);
+
+        // Validate the ability key — reject stale/invalid/locked keys
+        AbilityWheelData wheelData = data.abilityWheel[wheelSlot];
+        if (!wheelData.isEmpty() && AbilityController.Instance != null) {
+            boolean valid;
+            if (wheelData.isChainKey()) {
+                valid = AbilityController.Instance.canResolveChainedAbility(wheelData.getResolveKey());
+            } else {
+                valid = AbilityController.Instance.canResolveAbility(wheelData.abilityKey);
+            }
+            if (valid && playerData.abilityData != null) {
+                valid = playerData.abilityData.hasUnlockedAbility(wheelData.abilityKey);
+            }
+            if (!valid) wheelData.reset();
+        }
+
         data.updateClient();
     }
 }
