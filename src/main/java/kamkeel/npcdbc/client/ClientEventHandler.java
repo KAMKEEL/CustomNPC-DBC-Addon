@@ -41,6 +41,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
+import org.lwjgl.input.Mouse;
 
 import static noppes.npcs.NoppesStringUtils.translate;
 
@@ -143,6 +144,11 @@ public class ClientEventHandler {
         }
         if (KeyHandler.AbilityWheelKey.isPressed()) {
             mc.displayGuiScreen(new HUDAbilityWheel());
+        }
+
+        int scroll = Mouse.getEventDWheel();
+        if (scroll != 0) {
+            HUDAbilityHotbar.getInstance().onScroll(scroll);
         }
     }
 

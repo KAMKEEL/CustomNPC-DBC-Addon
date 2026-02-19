@@ -48,7 +48,7 @@ public class ConfigDBCClient {
     public static boolean AlteranteSelectionWheelTexture = true;
 
     public static Property EnableAbilityHotbarProperty;
-    public static boolean EnableAbilityHotbar = false;
+    public static boolean EnableAbilityHotbar = true;
 
     public static void init(File configFile) {
         config = new Configuration(configFile);

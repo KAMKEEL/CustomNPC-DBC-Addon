@@ -69,7 +69,6 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
             wheelSlot[i] = new AbilityWheelSegment(this, offset + i);
             wheelSlot[i].setAbility(dbcInfo.abilityWheel[offset + i], false);
         }
-        HUDAbilityHotbar.currentPage = currentPage;
         DBCPacketHandler.Instance.sendToServer(new DBCRequestAbilityWheel());
 
         // Stops the GUI from un-pressing all keys for you.
@@ -98,7 +97,6 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener 
     public void switchPage(int page) {
         if (page < 0 || page >= TOTAL_PAGES || page == currentPage) return;
         currentPage = page;
-        HUDAbilityHotbar.currentPage = page;
         selectSlot(-1);
         reloadFromWheelData();
     }
