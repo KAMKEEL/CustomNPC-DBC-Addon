@@ -1,10 +1,17 @@
 package kamkeel.npcdbc.data.ability;
 
 import kamkeel.npcdbc.constants.DBCDamageSource;
+import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.DBCDamageCalc;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.network.packets.player.PlaySound;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
+import kamkeel.npcdbc.util.DBCSettingsUtil;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.controllers.data.ability.AbilityPhase;
@@ -67,14 +74,19 @@ public class DBCAbilityExtender implements IAbilityExtender {
         if (!(caster instanceof EntityPlayer))
             return true;
 
+        if (!handleDrainProcesses(ability, caster))
+            return false;
+
+        handleFormProcesses(ability, caster, tick);
+
+        return true;
+    }
+
+    private boolean handleDrainProcesses(Ability ability, EntityLivingBase caster) {
+        DBCData data = DBCData.get((EntityPlayer) caster);
         DBCAbilityStats stats = DBCAbilityStats.fromAbility(ability);
         int kiDrain = stats.getKiDrain();
         int staminaDrain = stats.getStaminaDrain();
-
-        if (kiDrain <= 0 && staminaDrain <= 0)
-            return true;
-
-        DBCData data = DBCData.get((EntityPlayer) caster);
 
         if (kiDrain > 0) {
             int actual = stats.isKiDrainPercent()
@@ -93,6 +105,89 @@ public class DBCAbilityExtender implements IAbilityExtender {
         }
 
         return true;
+    }
+
+    private void handleFormProcesses(Ability ability, EntityLivingBase caster, int tick) {
+        DBCData data = DBCData.get((EntityPlayer) caster);
+        AbilityFormData formData = AbilityFormData.fromAbility(ability);
+        PlayerDBCInfo info = data.getDBCInfo();
+        boolean formExists = formData.getFormID() != -1 && FormController.Instance != null && FormController.Instance.has(formData.formID);
+        boolean transformed = info.currentForm != -1 && info.currentForm == formData.formID;
+
+        if (!formExists) {
+            handleKaiokenProcesses(ability, caster, tick);
+            return;
+        }
+
+        Form form = (Form) FormController.Instance.get(formData.getFormID());
+
+        if (!transformed && tick == formData.getTransformTick()) {
+
+            if (!formData.needsFormUnlocked || info.unlockedForms.contains(form.getID())) {
+                info.currentForm = form.getID();
+
+                if (formData.isActivateTurbo()) {
+                    data.setTurboState(true);
+                }
+
+                info.updateClient();
+                PlaySound.play(new SoundSource(form.getAscendSound(), data.player));
+            }
+        }
+
+        if (transformed && formData.getDetransformTick() > 0 && tick == formData.getDetransformTick()) {
+            info.currentForm = -1;
+            info.updateClient();
+            PlaySound.play(new SoundSource(form.getDescendSound(), data.player));
+        }
+
+        handleKaiokenProcesses(ability, caster, tick);
+    }
+
+    private void handleKaiokenProcesses(Ability ability, EntityLivingBase caster, int tick) {
+        DBCData data = DBCData.get((EntityPlayer) caster);
+        AbilityFormData formData = AbilityFormData.fromAbility(ability);
+        PlayerDBCInfo info = data.getDBCInfo();
+        boolean transformed = info.currentForm != -1 && info.currentForm == formData.formID;
+        boolean isKaioken = data.isInKaioken();
+
+        if (transformed) {
+            Form form = (Form) FormController.Instance.get(formData.getFormID());
+
+            if (!form.getStackable().isFormStackable(DBCForm.Kaioken)) {
+                return;
+            }
+        }
+
+        if (!isKaioken && tick == formData.getActivateKaiokenTick()) {
+            data.setForm(DBCForm.Kaioken, true);
+            data.getRawCompound().setByte("jrmcState2", (byte) formData.getKaiokenStage());
+            DBCSettingsUtil.setKaioken((EntityPlayer) caster, true);
+        }
+
+        if (isKaioken && formData.getDeactivateKaiokenTick() > 0 && tick == formData.getDeactivateKaiokenTick()) {
+            data.setForm(DBCForm.Kaioken, false);
+            DBCSettingsUtil.setKaioken((EntityPlayer) caster, false);
+        }
+    }
+
+    @Override
+    public void onAbilityComplete(Ability ability, EntityLivingBase caster, EntityLivingBase target, boolean interrupted) {
+        DBCData data = DBCData.get((EntityPlayer) caster);
+        AbilityFormData form = AbilityFormData.fromAbility(ability);
+        PlayerDBCInfo info = data.getDBCInfo();
+        boolean transformed = info.currentForm != -1 && info.currentForm == form.formID;
+        boolean isKaioken = data.isInKaioken();
+
+        if (transformed && !form.isKeepTransformed()) {
+            info.currentForm = -1;
+            info.updateClient();
+        } // and it looks like this
+
+        if (isKaioken && !form.isKeepKaioken()) {
+            data.setForm(DBCForm.Kaioken, false);
+            DBCSettingsUtil.setKaioken((EntityPlayer) caster, false);
+        }
     }
 
     @Override

@@ -2,7 +2,10 @@ package kamkeel.npcdbc.data.ability;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.constants.enums.AbilityDamageType;
+import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.controllers.data.ability.IAbilityFieldProvider;
@@ -10,8 +13,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.builder.FieldDef;
+import noppes.npcs.client.gui.select.GuiAnimationSelection;
+import noppes.npcs.controllers.AnimationController;
+import noppes.npcs.controllers.data.Animation;
 
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Injects DBC-specific tabs into ability configuration GUI:
@@ -35,6 +43,7 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
 
         // DBC tab - single stats instance shared across all fields
         DBCAbilityStats stats = DBCAbilityStats.fromAbility(ability);
+        AbilityFormData form = AbilityFormData.fromAbility(ability);
 
         // Player Settings - always shown
         addPlayerFields(stats, defs);
@@ -43,6 +52,75 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
         if (ability.hasDamage()) {
             addUniversalFields(stats, defs);
         }
+
+        addFormFields(ability, defs);
+    }
+
+    private void addFormFields(Ability ability, List<FieldDef> defs) {
+        AbilityFormData form = AbilityFormData.fromAbility(ability);
+
+        defs.add(FieldDef.section("ability.form.section").tab(TAB_DBC));
+
+        defs.add(formSubGui("ability.form.id", form::getFormID, form::setFormID).tab(TAB_DBC));
+
+        defs.add(FieldDef.row(
+            FieldDef.intField("ability.form.transformTick", form::getTransformTick, form::setTransformTick)
+                .range(0, ability.getWindUpTicks()),
+            FieldDef.intField("ability.form.detransformTick", form::getDetransformTick, form::setDetransformTick)
+                .range(0, form.getTransformTick())
+        ).tab(TAB_DBC));
+
+        defs.add(FieldDef.row(
+            FieldDef.boolField("ability.form.needsFormUnlocked", form::isNeedsFormUnlocked, form::setNeedsFormUnlocked),
+            FieldDef.boolField("ability.form.keepTransformed", form::isKeepTransformed, form::setKeepTransformed)
+        ).tab(TAB_DBC));
+
+        defs.add(
+            FieldDef.boolField("ability.form.activateTurbo", form::isActivateTurbo, form::setActivateTurbo)
+                .tab(TAB_DBC)
+        );
+
+        defs.add(FieldDef.section("ability.form.kaioken.section").tab(TAB_DBC));
+
+        defs.add(FieldDef.row(
+            FieldDef.boolField("ability.form.kaioken", form::isKaioken, form::setKaioken),
+            FieldDef.intField("ability.form.kaiokenStage", form::getKaiokenStage, form::setKaiokenStage)
+                .visibleWhen(form::isKaioken)
+        ).tab(TAB_DBC));
+
+        defs.add(FieldDef.row(
+            FieldDef.intField("ability.form.activateKaiokenTick", form::getActivateKaiokenTick, form::setActivateKaiokenTick)
+                .range(0, ability.getWindUpTicks()).visibleWhen(form::isKaioken),
+            FieldDef.intField("ability.form.deactivateKaiokenTick", form::getDeactivateKaiokenTick, form::setDeactivateKaiokenTick)
+                .range(0, ability.getWindUpTicks()).visibleWhen(form::isKaioken)
+        ).tab(TAB_DBC));
+
+        defs.add(
+            FieldDef.boolField("ability.form.keepKaioken", form::isKeepKaioken, form::setKeepKaioken)
+                .visibleWhen(form::isKaioken).tab(TAB_DBC)
+        );
+    }
+
+    public static FieldDef formSubGui(String label,
+                                      Supplier<Integer> idGetter, Consumer<Integer> idSetter) {
+        return FieldDef.subGuiField(label,
+            () -> new SubGuiSelectForm(-1, false, false),
+            gui -> {
+                SubGuiSelectForm sel = (SubGuiSelectForm) gui;
+                idSetter.accept(sel.selectedFormID);
+            })
+            .buttonLabel(() -> {
+                int id = idGetter.get();
+                if (id >= 0) {
+                    Form form = FormController.Instance != null
+                        ? (Form) FormController.Instance.get(id) : null;
+                    String formName = form != null ? form.getName() : "";
+                    return formName != null && !formName.isEmpty()
+                        ? "(ID: " + id + ") " + formName : "ID: " + id;
+                }
+                return "gui.none";
+            })
+            .clearable(() -> idSetter.accept(-1));
     }
 
     private void addIconFields(Ability ability, List<FieldDef> defs) {

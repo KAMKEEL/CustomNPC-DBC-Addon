@@ -544,6 +544,20 @@ effect.zenkai=Zenkai
 
 stats.ki=Ki
 
+ability.form.section=Forms
+ability.form.id=Form
+ability.form.transformTick=FormUp Delay
+ability.form.detransformTick=FormDown Delay
+ability.form.needsFormUnlocked=Needs Form
+ability.form.keepTransformed=Keep Transformed
+ability.form.activateTurbo=Turbo On
+ability.form.kaioken.section=Kaioken
+ability.form.kaioken=Kaioken
+ability.form.keepKaioken=Keep KK
+ability.form.kaiokenStage=KK Stage
+ability.form.activateKaiokenTick=KK Activate
+ability.form.deactivateKaiokenTick=KK Deactivate
+
 ############################
 ## GUI LABELS
 ############################
