@@ -324,13 +324,22 @@ public class DBCUtils {
                 }
 
                 float defense = lf ? 0 : def;
-                float defensePen2 = ((defense * defensePenetration) * 0.01F);
+                float rawDamage = dbcA;
                 double e = (double) (1.0F - 0.03F * (float) t);
-                String ss = "A=" + defense + (defensePen2 > 0 ? "-" + defensePenetration + "%" : "") + ", SEM=" + (1.0F - 0.03F * (float) t);
-                dbcA = (float) ((double) (dbcA - (defense - defensePen2)) * e);
+                String ss = "A=" + defense + (defensePenetration > 0 ? "-" + defensePenetration + "%" : "") + ", SEM=" + (1.0F - 0.03F * (float) t);
+
+                // Damage after full defense reduction
+                dbcA = (float) ((double) (dbcA - defense) * e);
                 dbcA = dbcA < 1 ? 1 : dbcA;
-                if ((double) ((float) (dbcA * defensePenetration) * 0.01F) * e > (double) dbcA) {
-                    dbcA = (float) ((double) ((float) (dbcA * defensePenetration) * 0.01F) * e);
+
+                // Defense Penetration: conditional minimum damage guarantee
+                // Only activates when defense > damage (normal formula gives minimum 1)
+                // Guarantees at least defPen% of raw damage gets through
+                if (defensePenetration > 0) {
+                    float guaranteedDamage = (float) ((float) (rawDamage * defensePenetration) * 0.01F * e);
+                    if (guaranteedDamage > dbcA) {
+                        dbcA = guaranteedDamage;
+                    }
                 }
 
                 dbcA = (float) ((double) dbcA / per);
@@ -534,29 +543,20 @@ public class DBCUtils {
                     enduranceReduction = (double) (1.0F - 0.03F * (float) enduranceLevel);
                 }
 
-                float defensePenetrated = 0;
-                // Default Penetration of the NPC
-                // By default all entities are 10. Players have their own
-                // default penetration skill. Based on if they are in Legendary
-                int npcDefensePenetration = dbcStats.getDefensePenetration();
-                if (dbcStats.hasDefensePenetration()) {
-                    // Defense Penetrated = RawDefense * (defensePen * 0.01%)
-                    // Defense Pen of 10 --> RawDefense * 0.1 -- 10% Penetrated
-                    // Defense Pen of 50 --> RawDefense * 0.5 -- 50% Penetrated
-                    // Defense Pen of 100 --> RawDefense * 1 -- 100% Penetrated
-                    defensePenetrated = ((float) (rawDefense * npcDefensePenetration) * 0.01F);
-                }
-
-                // Damage after Reduction
-                damageAmount = (float) ((damageAmount - (rawDefense - defensePenetrated)) * enduranceReduction);
+                // Damage after Defense Reduction (full defense applied)
+                damageAmount = (float) ((damageAmount - rawDefense) * enduranceReduction);
 
                 // Prevents Negative Damages
                 damageAmount = Math.max(damageAmount, 1);
 
+                // Defense Penetration: conditional minimum damage guarantee
+                // Only activates when defense > damage (normal formula gives minimum 1)
+                // Guarantees at least defPen% of raw damage gets through
                 if (dbcStats.hasDefensePenetration()) {
-                    // Guarantee Damage is dealt with Defense Penetration
-                    if ((double) ((float) (rawDamage * npcDefensePenetration) * 0.01F) * enduranceReduction > (double) damageAmount) {
-                        damageAmount = (float) ((double) ((float) (rawDamage * npcDefensePenetration) * 0.01F) * enduranceReduction);
+                    int npcDefensePenetration = dbcStats.getDefensePenetration();
+                    float guaranteedDamage = (float) ((float) (rawDamage * npcDefensePenetration) * 0.01F * enduranceReduction);
+                    if (guaranteedDamage > damageAmount) {
+                        damageAmount = guaranteedDamage;
                     }
                 }
 
