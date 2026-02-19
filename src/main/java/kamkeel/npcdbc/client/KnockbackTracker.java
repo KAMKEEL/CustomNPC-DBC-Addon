@@ -67,6 +67,20 @@ public class KnockbackTracker {
         } else {
             float friction = getHorizontalFriction(player);
 
+            // Wall collision detection: moveEntity zeroes motion on the collided axis,
+            // but dbcOutput still holds the old speed. Without this check, the tracker
+            // misinterprets the collision as a huge backward external force, causing
+            // the player to bounce off walls. Reset dbcOutput per-axis when the wall
+            // absorbed it (DBC was outputting significant motion but current is ~0).
+            if (player.isCollidedHorizontally) {
+                if (Math.abs(dbcOutputX) > MIN_THRESHOLD && Math.abs(player.motionX) < MIN_THRESHOLD) {
+                    dbcOutputX = 0;
+                }
+                if (Math.abs(dbcOutputZ) > MIN_THRESHOLD && Math.abs(player.motionZ) < MIN_THRESHOLD) {
+                    dbcOutputZ = 0;
+                }
+            }
+
             // external = current motion - what DBC's output decayed to via friction
             externalX = player.motionX - dbcOutputX * friction;
             externalZ = player.motionZ - dbcOutputZ * friction;
