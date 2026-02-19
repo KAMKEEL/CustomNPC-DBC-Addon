@@ -1,17 +1,19 @@
 package kamkeel.npcdbc.constants;
 
+import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.data.ability.AbilityIconData;
 import kamkeel.npcdbc.data.ability.toggle.DBCToggle;
 import kamkeel.npcdbc.data.ability.toggle.DBCToggleAbility;
-import kamkeel.npcs.controllers.data.ability.Ability;
-import kamkeel.npcs.controllers.data.ability.AbilityVariant;
-import kamkeel.npcs.controllers.data.ability.AnchorPoint;
-import kamkeel.npcs.controllers.data.ability.LockMovementType;
+import kamkeel.npcs.controllers.data.ability.*;
+import kamkeel.npcs.controllers.data.ability.type.AbilityEffect;
 import kamkeel.npcs.controllers.data.ability.type.energy.AbilityBeam;
 import kamkeel.npcs.controllers.data.ability.type.energy.AbilityDisc;
 import kamkeel.npcs.controllers.data.ability.type.energy.AbilityDome;
 import kamkeel.npcs.controllers.data.ability.type.energy.AbilityLaserShot;
 import kamkeel.npcs.controllers.data.ability.type.energy.AbilityOrb;
 import kamkeel.npcs.util.Register;
+
+import java.util.Arrays;
 
 public class DBCAbilities {
 
@@ -25,6 +27,7 @@ public class DBCAbilities {
     private static final String LASER = "ability.cnpc.laser_shot";
     private static final String DISC = "ability.cnpc.disc";
     private static final String DOME = "ability.cnpc.dome";
+    private static final String EFFECT = "ability.cnpc.effect";
 
     // Toggle Abilities
     public static final Ability FRIENDLY_FIST = ABILITIES.register("friendly_fist", () -> new DBCToggleAbility(DBCToggle.FRIENDLY_FIST));
@@ -488,6 +491,23 @@ public class DBCAbilities {
         dome.setOuterColorAlpha(0.8f);
         dome.setOuterColorWidth(0.1f);
         dome.setDomeRadius(4.0f);
+    });
+
+    public static final AbilityVariant NAMEK_REGEN = ABILITIES.registerVariant(EFFECT, "ability.npcdbc.namek_regen", GROUP, a -> {
+        AbilityEffect effect = (AbilityEffect) a;
+        a.setName("Namekian Regeneration");
+        a.setWindUpTicks(44);
+        a.setWindUpAnimationName("NamekRegen");
+        a.setTargetingMode(TargetingMode.SELF);
+        effect.setIncludeSelf(true);
+        effect.setCustomEffects(Arrays.asList(new AbilityCustomEffect(Effects.NAMEK_REGEN, 60, (byte) 1)));
+        AbilityIconData icon = AbilityIconData.fromAbility(effect);
+        icon.setTexture(CustomNpcPlusDBC.ID + ":textures/gui/ability_icons.png");
+        icon.setWidth(48);
+        icon.setHeight(48);
+        icon.setScale(1.5f);
+        icon.setIconX(384);
+        icon.setIconY(0);
     });
 
     public static void register() {
