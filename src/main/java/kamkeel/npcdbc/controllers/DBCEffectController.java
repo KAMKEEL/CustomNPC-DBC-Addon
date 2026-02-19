@@ -72,6 +72,7 @@ public class DBCEffectController implements IDBCEffectHandler {
         standardEffects.put(Effects.EXHAUSTED, new Exhausted());
 
         CustomEffectController.getInstance().registerEffectMap(DBC_EFFECT_INDEX, standardEffects);
+        CustomEffectController.getInstance().registerEffectMapLabel(DBC_EFFECT_INDEX, "DBC Addon");
     }
 
     public boolean hasEffect(EntityPlayer player, int id) {

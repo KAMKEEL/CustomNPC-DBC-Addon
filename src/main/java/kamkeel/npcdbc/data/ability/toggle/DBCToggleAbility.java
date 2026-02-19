@@ -4,6 +4,7 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.data.ability.AbilityIconData;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.controllers.data.ability.UserType;
+import kamkeel.npcs.controllers.data.telegraph.TelegraphType;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,6 +26,8 @@ public class DBCToggleAbility extends Ability {
         configureAsBuiltIn("npcdbc:" + toggle.key);
         this.name = toggle.displayName;
         this.toggleStates = toggle.getToggleStates();
+        this.telegraphType = TelegraphType.NONE;
+        this.showTelegraph = false;
         this.allowedBy = UserType.PLAYER_ONLY;
         this.toggle = toggle;
 
