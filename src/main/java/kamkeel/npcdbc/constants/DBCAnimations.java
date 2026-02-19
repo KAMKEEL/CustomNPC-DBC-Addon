@@ -29,6 +29,8 @@ public class DBCAnimations {
         "Windup", "Active");
     public static final Animation[] LARGE_SPIRIT_BOMB = ANIMATIONS.registerBundle("LargeSpiritBomb", BuiltInAnimation::new,
         "Windup", "Active");
+    public static final Animation[] SUPERNOVA = ANIMATIONS.registerBundle("Supernova", BuiltInAnimation::new,
+        "Windup", "Active");
 
     public static final Animation[] KAMEHAMEHA = ANIMATIONS.registerBundle("Kamehameha", BuiltInAnimation::new,
         "Windup", "Active");
