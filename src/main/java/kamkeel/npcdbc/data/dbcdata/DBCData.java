@@ -329,6 +329,28 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             this.customSkills = NBTHelper.javaIntegerObjectMap(c.getTagList("customSkills", Constants.NBT.TAG_COMPOUND), tag -> SkillContainer.fromNBT(this, tag));
     }
 
+    /**
+     * Sync a mirrored Java field from the raw NBT compound after a packet update.
+     * Called by DBCSetValPacket.receiveData to keep Java fields in sync with NBT.
+     */
+    public void syncFieldFromNBT(String tag) {
+        NBTTagCompound c = getRawCompound();
+        switch (tag) {
+            case "DBCisFlying":
+                isFlying = c.getBoolean("DBCisFlying");
+                break;
+            case "DBCIsFnPressed":
+                isFnPressed = c.getBoolean("DBCIsFnPressed");
+                break;
+            case "DBCFlightEnabled":
+                flightEnabled = c.getBoolean("DBCFlightEnabled");
+                break;
+            case "DBCFlightGravity":
+                flightGravity = c.getBoolean("DBCFlightGravity");
+                break;
+        }
+    }
+
     public List<OverlayChain> getOverlayChains() {
         List<OverlayChain> chains = new ArrayList<>();
 

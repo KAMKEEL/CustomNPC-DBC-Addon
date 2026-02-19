@@ -117,5 +117,8 @@ public final class DBCSetValPacket extends AbstractPacket {
                 dbcData.getRawCompound().setBoolean(tag, boolValue);
                 break;
         }
+
+        // Sync mirrored Java fields that may have been updated
+        dbcData.syncFieldFromNBT(tag);
     }
 }
