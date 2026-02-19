@@ -73,10 +73,10 @@ public final class DBCSelectAbility extends AbstractPacket {
                     if (ability != null) displayName = ability.getDisplayName();
                 }
             }
-            NetworkUtility.sendServerMessage(player, "\u00A7a", "npcdbc.abilitySelect", " ", displayName);
+//            NetworkUtility.sendServerMessage(player, "\u00A7a", "npcdbc.abilitySelect", " ", displayName);
         } else {
             // Clearing selection
-            NetworkUtility.sendServerMessage(player, "\u00A79", "npcdbc.clearedSelection");
+//            NetworkUtility.sendServerMessage(player, "\u00A79", "npcdbc.clearedSelection");
         }
     }
 }

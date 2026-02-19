@@ -41,6 +41,9 @@ public class ConfigDBCClient {
     public static Property EnableBloomProperty;
     public static boolean EnableBloom = true;
 
+    public static Property AbilityHotbarHorizontalProperty;
+    public static boolean AbilityHotbarHorizontal = false;
+
     public static Property FirstPerson3DAuraOpacityProperty;
     public static int FirstPerson3DAuraOpacity = 100;
 
@@ -96,6 +99,9 @@ public class ConfigDBCClient {
 
             EnableBloomProperty = config.get(RENDERING, "Enable Bloom", true, "Enables the bloom effect for player outlines and auras");
             EnableBloom = EnableBloomProperty.getBoolean(true);
+
+            AbilityHotbarHorizontalProperty = config.get(RENDERING, "Horizontal Ability Hotbar", false, "Renders the Ability Hotbar horizontally");
+            AbilityHotbarHorizontal = AbilityHotbarHorizontalProperty.getBoolean(false);
 
             FirstPerson3DAuraOpacityProperty = config.get(RENDERING, "First person 3D Aura Opacity", 100, "The opacity of the first person 3D Aura." + "\nModifying this makes it so auras on other players render normally without blinding you" + "\n(Min: 0, Max: 100)");
             FirstPerson3DAuraOpacity = Math.max(Math.min(100, FirstPerson3DAuraOpacityProperty.getInt(100)), 0);

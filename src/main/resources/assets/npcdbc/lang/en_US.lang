@@ -285,6 +285,8 @@ display.bloom=Bloom
 display.outlines=Outlines
 display.shaders=Shaders
 display.firstPersonAura=1st Person Aura Opacity
+display.horizontalHotbar=Horizontal Hotbar
+display.verticalHotbar=Vertical Hotbar
 
 outline.noiseSize=Noise Size
 outline.colorSmoothness=Color Smoothness

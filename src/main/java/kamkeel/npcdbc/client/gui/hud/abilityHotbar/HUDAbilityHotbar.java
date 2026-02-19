@@ -230,7 +230,7 @@ public class HUDAbilityHotbar extends Gui {
             visibleSelectedIndex = getSelectedVisibleIndex(visibleIndices);
         }
 
-        boolean isHorizontal = false;
+        boolean isHorizontal = ConfigDBCClient.AbilityHotbarHorizontal;
 
         // Base slot diameter and spacing
         int baseSize = 24;
@@ -239,7 +239,14 @@ public class HUDAbilityHotbar extends Gui {
         int screenW = sr.getScaledWidth();
         int screenH = sr.getScaledHeight();
 
-        int anchorX = isHorizontal ? screenW / 2 : 18;
+        // Anchor point:
+        // Vertical: left edge, centered vertically
+        // Horizontal: to the left of the vanilla Minecraft hotbar, bottom of screen
+        // Vanilla hotbar is 182px wide, centered. Its left edge = screenW/2 - 91.
+        // We place our carousel ending just before that, with a small gap.
+        int vanillaHotbarLeft = screenW / 2 - 91;
+        int carouselHalfWidth = 2 * spacing; // 2 slots to each side of center
+        int anchorX = isHorizontal ? vanillaHotbarLeft - carouselHalfWidth - spacing / 2 : 18;
         int anchorY = isHorizontal ? screenH - 18 : screenH / 2;
 
         float cooldownProgress = 0;

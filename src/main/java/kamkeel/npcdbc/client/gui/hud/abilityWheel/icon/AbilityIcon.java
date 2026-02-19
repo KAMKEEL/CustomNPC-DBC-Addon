@@ -14,13 +14,14 @@ import noppes.npcs.client.ClientCacheHandler;
 import noppes.npcs.client.renderer.ImageData;
 import org.lwjgl.opengl.GL11;
 
-/**
- * Renders ability icons in the Ability Wheel and Hotbar.
- * Uses AbilityIconData stored in the ability's customData.
- */
 @SideOnly(Side.CLIENT)
 public class AbilityIcon extends Gui {
-    private static final ResourceLocation FALLBACK_TEXTURE = new ResourceLocation("customnpcs", "textures/marks/question.png");
+    private static final ResourceLocation FALLBACK_TEXTURE = new ResourceLocation("npcdbc", "textures/gui/ability_icons.png");
+    private static final int FALLBACK_TEXTURE_X = 472;
+    private static final int FALLBACK_TEXTURE_Y = 53;
+    private static final int FALLBACK_TEXTURE_WIDTH = 32;
+    private static final int FALLBACK_TEXTURE_HEIGHT = 32;
+    private static final float FALLBACK_TEXTURE_SCALE = 2.0f;
 
     private final AbilityIconData iconData;
 
@@ -39,18 +40,10 @@ public class AbilityIcon extends Gui {
         this.height = iconData.getHeight();
     }
 
-    /**
-     * Draw the icon centered at the current position.
-     */
     public void draw() {
         draw(0);
     }
 
-    /**
-     * Draw the icon for a specific toggle state.
-     * Uses per-state UV overrides if available, otherwise falls back to default.
-     * @param state 0 = default/off, 1+ = active toggle state
-     */
     public void draw(int state) {
         TextureManager renderEngine = Minecraft.getMinecraft().renderEngine;
 
@@ -65,14 +58,11 @@ public class AbilityIcon extends Gui {
         Tessellator t;
 
         if (imageData == null || !imageData.imageLoaded()) {
-            // Fallback: render question mark
-            GL11.glScalef(2, 2, 1);
+            GL11.glScalef(FALLBACK_TEXTURE_SCALE, FALLBACK_TEXTURE_SCALE, 1);
             GL11.glTranslatef(0, -3, 1);
-
             renderEngine.bindTexture(FALLBACK_TEXTURE);
             t = getFallbackTessellator();
         } else {
-            // Render custom icon with state-aware UV
             GL11.glScalef(iconData.getScale(), iconData.getScale(), 1);
             renderEngine.bindTexture(imageData.getLocation());
             t = getTessellator(imageData, state);
@@ -82,9 +72,6 @@ public class AbilityIcon extends Gui {
         GL11.glPopMatrix();
     }
 
-    /**
-     * Draw the icon at a specific position (top-left corner).
-     */
     public void drawAt(int x, int y) {
         GL11.glPushMatrix();
         GL11.glTranslatef(x + width / 2f, y + height / 2f, 0);
@@ -117,21 +104,26 @@ public class AbilityIcon extends Gui {
     }
 
     private Tessellator getFallbackTessellator() {
-        float hw = width / 2f;
-        float hh = height / 2f;
+        float hw = FALLBACK_TEXTURE_WIDTH / 2f;
+        float hh = FALLBACK_TEXTURE_HEIGHT / 2f;
+
+        float texW = 512f;
+        float texH = 512f;
+
+        float u1 = FALLBACK_TEXTURE_X / texW;
+        float v1 = FALLBACK_TEXTURE_Y / texH;
+        float u2 = (FALLBACK_TEXTURE_X + FALLBACK_TEXTURE_WIDTH) / texW;
+        float v2 = (FALLBACK_TEXTURE_Y + FALLBACK_TEXTURE_HEIGHT) / texH;
 
         Tessellator t = Tessellator.instance;
         t.startDrawingQuads();
-        t.addVertexWithUV(-hw, hh, zLevel, 0, 1);
-        t.addVertexWithUV(hw, hh, zLevel, 1, 1);
-        t.addVertexWithUV(hw, -hh, zLevel, 1, 0);
-        t.addVertexWithUV(-hw, -hh, zLevel, 0, 0);
+        t.addVertexWithUV(-hw, hh, zLevel, u1, v2);
+        t.addVertexWithUV(hw, hh, zLevel, u2, v2);
+        t.addVertexWithUV(hw, -hh, zLevel, u2, v1);
+        t.addVertexWithUV(-hw, -hh, zLevel, u1, v1);
         return t;
     }
 
-    /**
-     * Check if this icon has a valid texture.
-     */
     public boolean hasTexture() {
         return iconData.hasTexture();
     }

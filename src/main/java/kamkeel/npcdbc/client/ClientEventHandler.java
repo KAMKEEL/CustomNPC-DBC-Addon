@@ -261,7 +261,8 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void onHudRender(RenderGameOverlayEvent.Post event) {
-        if (event.type == RenderGameOverlayEvent.ElementType.ALL) {
+        if (event.type == RenderGameOverlayEvent.ElementType.ALL ||
+            Minecraft.getMinecraft().currentScreen instanceof HUDAbilityWheel) {
             HUDAbilityHotbar.getInstance().onRender();
         }
     }

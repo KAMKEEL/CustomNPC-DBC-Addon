@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.gui.hud.abilityHotbar;
 
 import kamkeel.npcdbc.client.gui.hud.abilityWheel.icon.AbilityIcon;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.controllers.data.ability.ChainedAbility;
 import kamkeel.npcs.controllers.data.ability.IAbilityAction;
@@ -75,8 +76,8 @@ public class AbilityHotbarSlot extends Gui {
     public void drawCarousel(Minecraft mc, ScaledResolution sr, float cooldownProgress,
                              int cx, int cy, int size, boolean isCenter,
                              float slotAlpha) {
-        // nameAlpha is managed per-slot via updateNameFade() + setSelectedState()
         float nameAlpha = this.nameAlpha;
+        boolean isHorizontal = ConfigDBCClient.AbilityHotbarHorizontal;
         if (size <= 0 || slotAlpha <= 0) return;
         float radius = size / 2f;
         float baseAlpha = isCenter ? 0.9f : 0.6f;
@@ -122,17 +123,22 @@ public class AbilityHotbarSlot extends Gui {
             FontRenderer fr = mc.fontRenderer;
             String name = getAbilityName();
             if (name != null && !name.isEmpty()) {
-                // Build color with nameAlpha baked into the alpha channel
                 int a = (int)(nameAlpha * 255) & 0xFF;
                 int nameColor = (a << 24) | (getNameColor() & 0x00FFFFFF);
-                int nameX = cx + (int) radius + 4;
-                int nameY = cy - fr.FONT_HEIGHT / 2;
-                // drawStringWithShadow ignores alpha, so we use GL directly
+                int nameX, nameY;
+                if (isHorizontal) {
+                    // Centered above the slot
+                    nameX = cx - fr.getStringWidth(name) / 2;
+                    nameY = cy - (int) radius - fr.FONT_HEIGHT - 2;
+                } else {
+                    // To the right of the slot
+                    nameX = cx + (int) radius + 4;
+                    nameY = cy - fr.FONT_HEIGHT / 2;
+                }
                 GL11.glEnable(GL11.GL_BLEND);
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                GL11.glColor4f(0, 0, 0, nameAlpha * 0.5f); // shadow
-                fr.drawString(name, nameX + 1, nameY + 1, 0x000000);
                 GL11.glColor4f(1, 1, 1, nameAlpha);
+                fr.drawString(name, nameX + 1, nameY + 1, (a / 2) << 24); // shadow
                 fr.drawString(name, nameX, nameY, nameColor);
                 GL11.glDisable(GL11.GL_BLEND);
                 GL11.glColor4f(1, 1, 1, 1);
