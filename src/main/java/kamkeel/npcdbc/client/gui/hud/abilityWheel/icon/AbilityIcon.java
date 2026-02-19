@@ -43,6 +43,15 @@ public class AbilityIcon extends Gui {
      * Draw the icon centered at the current position.
      */
     public void draw() {
+        draw(0);
+    }
+
+    /**
+     * Draw the icon for a specific toggle state.
+     * Uses per-state UV overrides if available, otherwise falls back to default.
+     * @param state 0 = default/off, 1+ = active toggle state
+     */
+    public void draw(int state) {
         TextureManager renderEngine = Minecraft.getMinecraft().renderEngine;
 
         ImageData imageData = null;
@@ -63,10 +72,10 @@ public class AbilityIcon extends Gui {
             renderEngine.bindTexture(FALLBACK_TEXTURE);
             t = getFallbackTessellator();
         } else {
-            // Render custom icon
+            // Render custom icon with state-aware UV
             GL11.glScalef(iconData.getScale(), iconData.getScale(), 1);
             renderEngine.bindTexture(imageData.getLocation());
-            t = getTessellator(imageData);
+            t = getTessellator(imageData, state);
         }
 
         t.draw();
@@ -83,17 +92,20 @@ public class AbilityIcon extends Gui {
         GL11.glPopMatrix();
     }
 
-    private Tessellator getTessellator(ImageData imageData) {
+    private Tessellator getTessellator(ImageData imageData, int state) {
         float hw = width / 2f;
         float hh = height / 2f;
 
         float texW = imageData.getTotalWidth();
         float texH = imageData.getTotalHeight();
 
-        float u1 = iconData.getIconX() / texW;
-        float v1 = iconData.getIconY() / texH;
-        float u2 = (iconData.getIconX() + width) / texW;
-        float v2 = (iconData.getIconY() + height) / texH;
+        int ix = iconData.getIconXForState(state);
+        int iy = iconData.getIconYForState(state);
+
+        float u1 = ix / texW;
+        float v1 = iy / texH;
+        float u2 = (ix + width) / texW;
+        float v2 = (iy + height) / texH;
 
         Tessellator t = Tessellator.instance;
         t.startDrawingQuads();

@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.constants;
 
-import kamkeel.npcdbc.data.ability.toggle.*;
+import kamkeel.npcdbc.data.ability.toggle.DBCToggle;
+import kamkeel.npcdbc.data.ability.toggle.DBCToggleAbility;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.controllers.data.ability.AbilityVariant;
 import kamkeel.npcs.controllers.data.ability.AnchorPoint;
@@ -25,15 +26,17 @@ public class DBCAbilities {
     private static final String DISC = "ability.cnpc.disc";
     private static final String DOME = "ability.cnpc.dome";
 
-    public static final Ability DBC_TOGGLE = ABILITIES.registerType("dbc_toggle", AbilityDBCToggle::new);
-
     // Toggle Abilities
-//    public static final Ability KI_FIST = ABILITIES.register("ki_fist", AbilityKiFist::new);
-//    public static final Ability SWOOP = ABILITIES.register("swoop", AbilitySwoop::new);
-//    public static final Ability KI_PROTECTION = ABILITIES.register("ki_protection", AbilityKiProtection::new);
-//    public static final Ability FRIENDLY_FIST = ABILITIES.register("friendly_fist", AbilityFriendlyFist::new);
-//    public static final Ability KI_BLADE = ABILITIES.register("ki_blade", AbilityKiBlade::new);
-//    public static final Ability KI_SCYTHE = ABILITIES.register("ki_scythe", AbilityKiScythe::new);
+    public static final Ability FRIENDLY_FIST = ABILITIES.register("friendly_fist", () -> new DBCToggleAbility(DBCToggle.FRIENDLY_FIST));
+    public static final Ability SWOOP = ABILITIES.register("swoop", () -> new DBCToggleAbility(DBCToggle.SWOOP));
+    public static final Ability KAIOKEN = ABILITIES.register("kaioken", () -> new DBCToggleAbility(DBCToggle.KAIOKEN));
+    public static final Ability FUSION = ABILITIES.register("fusion", () -> new DBCToggleAbility(DBCToggle.FUSION));
+    public static final Ability KI_FIST = ABILITIES.register("ki_fist", () -> new DBCToggleAbility(DBCToggle.KI_FIST));
+    public static final Ability KI_PROTECTION = ABILITIES.register("ki_protection", () -> new DBCToggleAbility(DBCToggle.KI_PROTECTION));
+    public static final Ability KI_WEAPON = ABILITIES.register("ki_weapon", () -> new DBCToggleAbility(DBCToggle.KI_WEAPON));
+    public static final Ability POTENTIAL_UNLEASHED = ABILITIES.register("potential_unleashed", () -> new DBCToggleAbility(DBCToggle.POTENTIAL_UNLEASHED));
+    public static final Ability ULTRA_INSTINCT = ABILITIES.register("ultra_instinct", () -> new DBCToggleAbility(DBCToggle.ULTRA_INSTINCT));
+    public static final Ability GOD_OF_DESTRUCTION = ABILITIES.register("god_of_destruction", () -> new DBCToggleAbility(DBCToggle.GOD_OF_DESTRUCTION));
 
     // Ability Variants
 

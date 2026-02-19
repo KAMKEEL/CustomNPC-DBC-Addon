@@ -58,11 +58,16 @@ public final class DBCToggleAbilityAction extends AbstractPacket {
         PlayerData playerData = PlayerData.get(player);
         if (playerData == null || playerData.abilityData == null) return;
 
-        boolean nowActive = playerData.abilityData.toggleAbility(key);
+        int newState = playerData.abilityData.toggleAbility(key);
 
         String displayName = ability.getDisplayName();
-        if (nowActive) {
-            NetworkUtility.sendServerMessage(player, "\u00A7a", displayName, " ", "gui.enabled");
+        if (newState > 0) {
+            String stateLabel = ability.getToggleStateLabel(newState);
+            if (stateLabel != null) {
+                NetworkUtility.sendServerMessage(player, "\u00A7a", displayName, " ", stateLabel);
+            } else {
+                NetworkUtility.sendServerMessage(player, "\u00A7a", displayName, " ", "gui.enabled");
+            }
         } else {
             NetworkUtility.sendServerMessage(player, "\u00A7c", displayName, " ", "gui.disabled");
         }

@@ -103,7 +103,7 @@ public class AbilityHotbarSlot extends Gui {
             GL11.glPushMatrix();
             int iconOffset = (SLOT_SIZE - ICON_SIZE) / 2;
             GL11.glTranslatef(iconOffset + ICON_SIZE / 2f, iconOffset + ICON_SIZE / 2f, 0);
-            icon.draw();
+            icon.draw(getToggleState());
             GL11.glPopMatrix();
         }
 
@@ -117,8 +117,7 @@ public class AbilityHotbarSlot extends Gui {
         // Draw ability name (outside the scaled matrix)
         if (action != null && isSelected) {
             FontRenderer fr = mc.fontRenderer;
-            String name = ability != null ? ability.getDisplayName()
-                : (action instanceof ChainedAbility ? ((ChainedAbility) action).getDisplayName() : action.getName());
+            String name = getAbilityName();
             if (name != null && !name.isEmpty()) {
                 int nameX = x + SLOT_SIZE + 4;
                 int nameY = y + (SLOT_SIZE - fr.FONT_HEIGHT) / 2;
@@ -195,6 +194,32 @@ public class AbilityHotbarSlot extends Gui {
         GL11.glColor4f(1, 1, 1, 1);
     }
 
+    private String getAbilityName() {
+        if (ability != null) {
+            int state = getToggleState();
+            if (state > 0) {
+                String label = ability.getToggleStateLabel(state);
+                if (label != null) return label;
+            }
+            return ability.getDisplayName();
+        }
+        if (action instanceof ChainedAbility) return ((ChainedAbility) action).getDisplayName();
+        return action != null ? action.getName() : "";
+    }
+
+    /**
+     * Get the current toggle state for this slot's ability.
+     * @return 0 if not toggled/not toggleable, 1+ for active state
+     */
+    private int getToggleState() {
+        if (ability == null || !ability.isToggleable()) return 0;
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc.thePlayer == null) return 0;
+        PlayerData playerData = PlayerData.get(mc.thePlayer);
+        if (playerData == null || playerData.abilityData == null) return 0;
+        return playerData.abilityData.getToggleState(abilityKey);
+    }
+
     /**
      * Get the color for the ability name.
      * Toggleable abilities show green if active, red if inactive.
@@ -202,15 +227,7 @@ public class AbilityHotbarSlot extends Gui {
      */
     private int getNameColor() {
         if (ability != null && ability.isToggleable()) {
-            Minecraft mc = Minecraft.getMinecraft();
-            if (mc.thePlayer != null) {
-                PlayerData playerData = PlayerData.get(mc.thePlayer);
-                if (playerData != null && playerData.abilityData != null
-                    && playerData.abilityData.isAbilityToggled(abilityKey)) {
-                    return 0xFF55FF55; // Green - active
-                }
-            }
-            return 0xFFFF5555; // Red - inactive
+            return getToggleState() > 0 ? 0xFF55FF55 : 0xFFFF5555;
         }
         return 0xFFFFFFFF; // White - normal
     }

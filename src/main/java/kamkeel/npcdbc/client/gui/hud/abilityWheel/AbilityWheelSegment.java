@@ -130,7 +130,7 @@ public class AbilityWheelSegment extends WheelSegment {
         GL11.glPushMatrix();
 
         if (icon != null) {
-            icon.draw();
+            icon.draw(getToggleState());
         }
 
         GL11.glTranslatef(0, 5, 0);
@@ -141,9 +141,30 @@ public class AbilityWheelSegment extends WheelSegment {
     }
 
     public String getAbilityName() {
-        if (ability != null) return ability.getDisplayName();
+        if (ability != null) {
+            // Show state label when multi-state toggle is active
+            int state = getToggleState();
+            if (state > 0) {
+                String label = ability.getToggleStateLabel(state);
+                if (label != null) return label;
+            }
+            return ability.getDisplayName();
+        }
         if (action instanceof ChainedAbility) return ((ChainedAbility) action).getDisplayName();
         return !data.isEmpty() ? data.abilityKey : "";
+    }
+
+    /**
+     * Get the current toggle state for this segment's ability.
+     * @return 0 if not toggled/not toggleable, 1+ for active state
+     */
+    private int getToggleState() {
+        if (ability == null || !ability.isToggleable()) return 0;
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc.thePlayer == null) return 0;
+        PlayerData playerData = PlayerData.get(mc.thePlayer);
+        if (playerData == null || playerData.abilityData == null) return 0;
+        return playerData.abilityData.getToggleState(data.abilityKey);
     }
 
     /**
@@ -153,15 +174,7 @@ public class AbilityWheelSegment extends WheelSegment {
      */
     private int getNameColor() {
         if (ability != null && ability.isToggleable()) {
-            Minecraft mc = Minecraft.getMinecraft();
-            if (mc.thePlayer != null) {
-                PlayerData playerData = PlayerData.get(mc.thePlayer);
-                if (playerData != null && playerData.abilityData != null
-                    && playerData.abilityData.isAbilityToggled(data.abilityKey)) {
-                    return 0xFF55FF55; // Green - active
-                }
-            }
-            return 0xFFFF5555; // Red - inactive
+            return getToggleState() > 0 ? 0xFF55FF55 : 0xFFFF5555;
         }
         return 0xFFFFFFFF; // White - normal
     }

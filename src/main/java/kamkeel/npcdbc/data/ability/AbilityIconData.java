@@ -3,6 +3,7 @@ package kamkeel.npcdbc.data.ability;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.controllers.data.ability.ChainedAbility;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 
 /**
  * Icon data for abilities, stored in the ability's customData NBT.
@@ -20,6 +21,9 @@ public class AbilityIconData {
     public int width = 32;
     public int height = 32;
     public float scale = 1.0f;
+
+    /** Per-state icon UV overrides (0-indexed, maps to toggle states 1, 2, ...). */
+    private int[][] stateIcons = null;
 
     private AbilityIconData(NBTTagCompound customData) {
         this.customData = customData;
@@ -67,6 +71,16 @@ public class AbilityIconData {
         nbt.setInteger("Width", width);
         nbt.setInteger("Height", height);
         nbt.setFloat("Scale", scale);
+        if (stateIcons != null && stateIcons.length > 0) {
+            NBTTagList list = new NBTTagList();
+            for (int[] pair : stateIcons) {
+                NBTTagCompound comp = new NBTTagCompound();
+                comp.setInteger("IconX", pair[0]);
+                comp.setInteger("IconY", pair[1]);
+                list.appendTag(comp);
+            }
+            nbt.setTag("StateIcons", list);
+        }
     }
 
     public void readFromNBT(NBTTagCompound nbt) {
@@ -79,6 +93,15 @@ public class AbilityIconData {
         if (height <= 0) height = 32;
         scale = nbt.getFloat("Scale");
         if (scale <= 0) scale = 1.0f;
+        if (nbt.hasKey("StateIcons")) {
+            NBTTagList list = nbt.getTagList("StateIcons", 10);
+            stateIcons = new int[list.tagCount()][2];
+            for (int i = 0; i < list.tagCount(); i++) {
+                NBTTagCompound comp = list.getCompoundTagAt(i);
+                stateIcons[i][0] = comp.getInteger("IconX");
+                stateIcons[i][1] = comp.getInteger("IconY");
+            }
+        }
     }
 
     /**
@@ -144,5 +167,38 @@ public class AbilityIconData {
     public void setScale(float scale) {
         this.scale = Math.max(0.1f, scale);
         save();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // PER-STATE ICON OVERRIDES
+    // ═══════════════════════════════════════════════════════════════════
+
+    public void setStateIcons(int[][] stateIcons) {
+        this.stateIcons = stateIcons;
+        save();
+    }
+
+    /**
+     * Get iconX for a specific toggle state.
+     * Falls back to default iconX if no state override exists.
+     * @param state 1-indexed toggle state (0 = off/default)
+     */
+    public int getIconXForState(int state) {
+        if (state > 0 && stateIcons != null && state - 1 < stateIcons.length) {
+            return stateIcons[state - 1][0];
+        }
+        return iconX;
+    }
+
+    /**
+     * Get iconY for a specific toggle state.
+     * Falls back to default iconY if no state override exists.
+     * @param state 1-indexed toggle state (0 = off/default)
+     */
+    public int getIconYForState(int state) {
+        if (state > 0 && stateIcons != null && state - 1 < stateIcons.length) {
+            return stateIcons[state - 1][1];
+        }
+        return iconY;
     }
 }
