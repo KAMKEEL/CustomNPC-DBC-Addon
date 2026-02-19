@@ -528,6 +528,11 @@ ability.npcdbc.friendly_fist=Friendly Fist
 ability.npcdbc.ki_weapon=Ki Weapon
 ability.npcdbc.ki_blade=Ki Blade
 ability.npcdbc.ki_scythe=Ki Scythe
+ability.npcdbc.kaioken=Kaioken
+ability.npcdbc.fusion=Fusion
+ability.npcdbc.potential_unleashed=Potential Unleashed
+ability.npcdbc.ultra_instinct=Ultra Instinct
+ability.npcdbc.god_of_destruction=God of Destruction
 
 effect.healthregeneration=Health Regeneration
 effect.exhausted=Exhausted

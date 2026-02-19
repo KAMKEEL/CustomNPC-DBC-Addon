@@ -55,6 +55,11 @@ public class DBCToggleAbility extends Ability {
         return false;
     }
 
+    @Override
+    public boolean isConcurrentCapable() {
+        return true;
+    }
+
     // ═══════════════════════════════════════════════════════════════════
     // TOGGLE — all state changes routed through onToggleStateChanged
     // ═══════════════════════════════════════════════════════════════════
