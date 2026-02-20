@@ -285,8 +285,6 @@ display.bloom=Bloom
 display.outlines=Outlines
 display.shaders=Shaders
 display.firstPersonAura=1st Person Aura Opacity
-display.horizontalHotbar=Horizontal Hotbar
-display.verticalHotbar=Vertical Hotbar
 
 outline.noiseSize=Noise Size
 outline.colorSmoothness=Color Smoothness
@@ -490,6 +488,9 @@ item.npcdbc:three_potara.name=Supreme Potara Earring
 
 wheel.configure=Configure
 wheel.switchWheel=Switch Wheel
+hotbar.vertical=Vertical Hotbar
+hotbar.horizontal=Horizontal Hotbar
+hotbar.switchHotbar=Switch Hotbar
 
 ability.icon.section.uv=UV Coordinates
 ability.icon.x=Icon X

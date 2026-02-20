@@ -86,14 +86,25 @@ public class AbilityHotbarSlot extends Gui {
         GL11.glPushMatrix();
         GL11.glTranslatef(cx, cy, 0);
 
-        // Filled circle background
-        drawCircle(radius, 0.1f, 0.1f, 0.1f, alpha * 0.85f, false);
+        boolean altTexture = ConfigDBCClient.AlternateHotbarTexture;
 
-        // Border: golden for selected center, grey for others
-        if (isCenter) {
-            drawCircle(radius, 0.8f, 0.8f, 0.2f, alpha, true);
+        if (altTexture) {
+            drawRoundedRect(-radius, -radius, radius, radius, 3f, 0.5f, 0.5f, 0.5f, 0.75f * alpha, false);
+
+            if (isCenter) {
+                drawRoundedRect(-radius, -radius, radius, radius, 3f, 0.8f, 0.8f, 0.2f, alpha, true);
+            } else {
+                drawRoundedRect(-radius, -radius, radius, radius, 3f, 0.4f, 0.4f, 0.4f, alpha * 0.8f, true);
+            }
         } else {
-            drawCircle(radius, 0.4f, 0.4f, 0.4f, alpha * 0.8f, true);
+
+            if (isCenter) {
+                drawCircle(radius, 0.8f, 0.8f, 0.2f, 0.66f * alpha, false);
+                drawCircle(radius, 0.8f, 0.8f, 0.2f, alpha, true);
+            } else {
+                drawCircle(radius, 1f, 1f, 1f, 0.66f * alpha, false);
+                drawCircle(radius, 0.4f, 0.4f, 0.4f, alpha * 0.8f, true);
+            }
         }
 
         // Ability icon, scaled to fit inside circle
@@ -138,17 +149,48 @@ public class AbilityHotbarSlot extends Gui {
                 GL11.glEnable(GL11.GL_BLEND);
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 GL11.glColor4f(1, 1, 1, nameAlpha);
-                fr.drawString(name, nameX + 1, nameY + 1, (a / 2) << 24); // shadow
-                fr.drawString(name, nameX, nameY, nameColor);
+                fr.drawStringWithShadow(name, nameX, nameY, nameColor);
                 GL11.glDisable(GL11.GL_BLEND);
                 GL11.glColor4f(1, 1, 1, 1);
             }
         }
     }
 
+    /**
+     * Draw a square (filled or outline) centered at origin.
+     */
+    private void drawRoundedRect(float x1, float y1, float x2, float y2, float cr,
+                                 float r, float g, float b, float a, boolean outline) {
+
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_CULL_FACE);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glColor4f(r, g, b, a);
+
+        if (outline) {
+            GL11.glLineWidth(2.0f);
+            GL11.glBegin(GL11.GL_LINE_LOOP);
+        } else {
+            GL11.glBegin(GL11.GL_QUADS);
+        }
+
+        GL11.glVertex2f(x1, y1);
+        GL11.glVertex2f(x2, y1);
+        GL11.glVertex2f(x2, y2);
+        GL11.glVertex2f(x1, y2);
+
+        GL11.glEnd();
+
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glColor4f(1, 1, 1, 1);
+    }
+
     /** Draw a circle (filled or outline) centered at origin. */
     private void drawCircle(float radius, float r, float g, float b, float a, boolean outline) {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_CULL_FACE);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glColor4f(r, g, b, a);
@@ -169,6 +211,7 @@ public class AbilityHotbarSlot extends Gui {
 
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glColor4f(1, 1, 1, 1);
     }
 

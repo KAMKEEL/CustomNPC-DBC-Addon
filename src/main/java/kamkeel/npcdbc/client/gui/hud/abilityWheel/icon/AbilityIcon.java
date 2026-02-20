@@ -59,7 +59,6 @@ public class AbilityIcon extends Gui {
 
         if (imageData == null || !imageData.imageLoaded()) {
             GL11.glScalef(FALLBACK_TEXTURE_SCALE, FALLBACK_TEXTURE_SCALE, 1);
-            GL11.glTranslatef(0, -3, 1);
             renderEngine.bindTexture(FALLBACK_TEXTURE);
             t = getFallbackTessellator();
         } else {

@@ -13,7 +13,9 @@ import kamkeel.npcs.controllers.data.ability.type.energy.AbilityLaserShot;
 import kamkeel.npcs.controllers.data.ability.type.energy.AbilityOrb;
 import kamkeel.npcs.util.Register;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class DBCAbilities {
 
@@ -406,6 +408,8 @@ public class DBCAbilities {
         a.setWindUpTicks(80);
         a.setWindUpAnimationName("SpecialBeamCannon_Windup");
         a.setActiveAnimationName("SpecialBeamCannon_Active");
+        a.setRotationMode(RotationMode.LOCKED);
+        a.setRotationPhase(LockMovementType.ACTIVE);
         laser.setLaserWidth(0.2f);
         laser.setMaxDistance(150.0f);
         laser.setInnerColor(0xFFFF00);
@@ -414,6 +418,7 @@ public class DBCAbilities {
         laser.setLightningEffect(true);
         laser.setLightningDensity(1.25f);
         laser.setLightningRadius(1.25f);
+        laser.setAnchorPointEnum(AnchorPoint.RIGHT_HAND);
         laser.setAnchorOffsetX(-0.1f);
         laser.setAnchorOffsetY(0.2f);
     });
@@ -500,12 +505,16 @@ public class DBCAbilities {
         a.setWindUpAnimationName("NamekRegen");
         a.setTargetingMode(TargetingMode.SELF);
         effect.setIncludeSelf(true);
-        effect.setCustomEffects(Arrays.asList(new AbilityCustomEffect(Effects.NAMEK_REGEN, 60, (byte) 1)));
+
+        List<AbilityCustomEffect> list = new ArrayList<>();
+        list.add(new AbilityCustomEffect(Effects.NAMEK_REGEN, 60, (byte) 1, 1));
+        effect.setCustomEffects(list);
+
         AbilityIconData icon = AbilityIconData.fromAbility(effect);
         icon.setTexture(CustomNpcPlusDBC.ID + ":textures/gui/ability_icons.png");
         icon.setWidth(48);
         icon.setHeight(48);
-        icon.setScale(1.5f);
+        icon.setScale(2.0f);
         icon.setIconX(384);
         icon.setIconY(0);
     });

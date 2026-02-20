@@ -158,7 +158,8 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener,
             addButton(new GuiNpcButton(8, x - 94 - 75, y - 25, 150, 20, "gui.edit"));
             addButton(new GuiNpcButton(7, x += 62, y, 80, 20, "wheel.switchWheel"));
             addButton(new GuiNpcButton(9, x - 250 - 150, y, 150, 20,
-                new String[]{"display.horizontalHotbar", "display.verticalHotbar"}, ConfigDBCClient.AbilityHotbarHorizontal ? 0 : 1));
+                new String[]{"hotbar.horizontal", "hotbar.vertical"}, ConfigDBCClient.AbilityHotbarHorizontal ? 0 : 1));
+            addButton(new GuiNpcButton(10, x, y - 23, 80, 20, "hotbar.switchHotbar"));
 
 
             x = (int) ((this.width / 2) * undoMCScaling + 190);
@@ -199,6 +200,10 @@ public class HUDAbilityWheel extends GuiNPCInterface implements ISubGuiListener,
         } else if (button.id == 9) {
             ConfigDBCClient.AbilityHotbarHorizontal = ((GuiNpcButton) guibutton).getValue() == 0;
             ConfigDBCClient.AbilityHotbarHorizontalProperty.set(ConfigDBCClient.AbilityHotbarHorizontal);
+            ConfigDBCClient.config.save();
+        } else if (button.id == 10) {
+            ConfigDBCClient.AlternateHotbarTexture = !ConfigDBCClient.AlternateHotbarTexture;
+            ConfigDBCClient.AlternateHotbarTextureProperty.set(ConfigDBCClient.AlternateHotbarTexture);
             ConfigDBCClient.config.save();
         }
 
