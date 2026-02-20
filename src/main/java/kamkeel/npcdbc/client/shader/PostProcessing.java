@@ -4,7 +4,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientConstants;
-import kamkeel.npcdbc.client.gui.hud.abilityWheel.HUDAbilityWheel;
 import kamkeel.npcdbc.client.gui.hud.formWheel.HUDFormWheel;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import net.minecraft.client.Minecraft;
@@ -140,10 +139,9 @@ public class PostProcessing {
         }
 
         boolean isFormWheel = mc.currentScreen instanceof HUDFormWheel && HUDFormWheel.BLUR_ENABLED;
-        boolean isAbilityWheel = mc.currentScreen instanceof HUDAbilityWheel && HUDAbilityWheel.BLUR_ENABLED;
-        float blurIntensity = isFormWheel ? HUDFormWheel.BLUR_INTENSITY : (isAbilityWheel ? HUDAbilityWheel.BLUR_INTENSITY : 0);
+        float blurIntensity = isFormWheel ? HUDFormWheel.BLUR_INTENSITY : 0;
 
-        if (bloomSupported && ShaderHelper.shadersEnabled() && (isFormWheel || isAbilityWheel)) {
+        if (bloomSupported && ShaderHelper.shadersEnabled() && isFormWheel) {
             Framebuffer buff = getMainBuffer();
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glLoadIdentity();

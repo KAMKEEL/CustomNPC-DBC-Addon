@@ -21,7 +21,6 @@ import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.util.NBTHelper;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
-import kamkeel.npcs.controllers.AbilityController;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -55,7 +54,6 @@ public class PlayerDBCInfo {
     public HashMap<Integer, Integer> formTimers = new HashMap<>();
     public HashMap<Integer, FormDisplay.BodyColor> configuredFormColors = new HashMap<>();
     public FormWheelData[] formWheel = new FormWheelData[6];
-    public AbilityWheelData[] abilityWheel = new AbilityWheelData[12];
 
     public OverlayManager overlayManager = new OverlayManager();
 
@@ -65,8 +63,6 @@ public class PlayerDBCInfo {
         for (int i = 0; i < formWheel.length; i++)
             formWheel[i] = new FormWheelData(i);
 
-        for (int i = 0; i < abilityWheel.length; i++)
-            abilityWheel[i] = new AbilityWheelData(i);
     }
 
     public void addForm(Form form) {
@@ -115,16 +111,6 @@ public class PlayerDBCInfo {
             formWheel[wheelSlot].reset();
     }
 
-    public void addAbilityWheel(int wheelSlot, AbilityWheelData data) {
-        if (wheelSlot < 0 || wheelSlot >= abilityWheel.length)
-            return;
-        abilityWheel[wheelSlot].readFromNBT(data.writeToNBT(new NBTTagCompound()));
-    }
-
-    public void removeAbilityWheel(int wheelSlot) {
-        if (wheelSlot >= 0 && wheelSlot < abilityWheel.length)
-            abilityWheel[wheelSlot].reset();
-    }
 
 
     public Form getForm(int id) {
@@ -455,8 +441,6 @@ public class PlayerDBCInfo {
         for (int i = 0; i < formWheel.length; i++)
             formWheel[i].writeToNBT(dbcCompound);
 
-        for (int i = 0; i < abilityWheel.length; i++)
-            abilityWheel[i].writeToNBT(dbcCompound);
 
         dbcCompound.setInteger("CurrentAura", currentAura);
         dbcCompound.setInteger("SelectedAura", selectedAura);
@@ -481,9 +465,6 @@ public class PlayerDBCInfo {
         for (int i = 0; i < formWheel.length; i++)
             formWheel[i].readFromNBT(dbcCompound.getCompoundTag("FormWheel" + i));
 
-        for (int i = 0; i < abilityWheel.length; i++)
-            abilityWheel[i].readFromNBT(dbcCompound.getCompoundTag("AbilityWheel" + i));
-        validateAbilityWheel();
 
         currentAura = dbcCompound.getInteger("CurrentAura");
         selectedAura = dbcCompound.getInteger("SelectedAura");
@@ -508,19 +489,6 @@ public class PlayerDBCInfo {
             overlayManager.readFromNBT(dbcCompound.getCompoundTag("OverlayManager"));
     }
 
-    private void validateAbilityWheel() {
-        if (AbilityController.Instance == null) return;
-        for (AbilityWheelData data : abilityWheel) {
-            if (data.isEmpty()) continue;
-            boolean valid;
-            if (data.isChainKey()) {
-                valid = AbilityController.Instance.canResolveChainedAbility(data.getResolveKey());
-            } else {
-                valid = AbilityController.Instance.canResolveAbility(data.abilityKey);
-            }
-            if (!valid) data.reset();
-        }
-    }
 
     private void loadBonuses(NBTTagCompound dbcCompound) {
         if (FMLCommonHandler.instance().getEffectiveSide().isClient() || this.parent.player == null)

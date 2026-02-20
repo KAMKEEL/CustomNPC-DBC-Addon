@@ -10,8 +10,6 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.client.gui.global.auras.SubGuiAuraDisplay;
-import kamkeel.npcdbc.client.gui.hud.abilityHotbar.HUDAbilityHotbar;
-import kamkeel.npcdbc.client.gui.hud.abilityWheel.HUDAbilityWheel;
 import kamkeel.npcdbc.client.gui.hud.formWheel.HUDFormWheel;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.client.sound.SoundHandler;
@@ -41,7 +39,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
-import org.lwjgl.input.Mouse;
+
 
 import static noppes.npcs.NoppesStringUtils.translate;
 
@@ -142,14 +140,6 @@ public class ClientEventHandler {
             if (PlayerDataUtil.getClientDBCInfo() != null)
                 mc.displayGuiScreen(new HUDFormWheel());
         }
-        if (KeyHandler.AbilityWheelKey.isPressed()) {
-            mc.displayGuiScreen(new HUDAbilityWheel());
-        }
-
-        int scroll = Mouse.getEventDWheel();
-        if (scroll != 0) {
-            HUDAbilityHotbar.getInstance().onScroll(scroll);
-        }
     }
 
     @SubscribeEvent
@@ -160,10 +150,6 @@ public class ClientEventHandler {
             if (formData != null) {
                 if (KeyHandler.FormWheelKey.isPressed()) {
                     mc.displayGuiScreen(new HUDFormWheel());
-                    return;
-                }
-                if (KeyHandler.AbilityWheelKey.isPressed()) {
-                    mc.displayGuiScreen(new HUDAbilityWheel());
                     return;
                 }
 
@@ -259,13 +245,7 @@ public class ClientEventHandler {
         }
     }
 
-    @SubscribeEvent
-    public void onHudRender(RenderGameOverlayEvent.Post event) {
-        if (event.type == RenderGameOverlayEvent.ElementType.ALL ||
-            Minecraft.getMinecraft().currentScreen instanceof HUDAbilityWheel) {
-            HUDAbilityHotbar.getInstance().onRender();
-        }
-    }
+    // DBC Ability Hotbar HUD removed - now handled by CustomNPC+ AbilityHotbarComponent
 
     @SubscribeEvent
     public void entityAura(LivingEvent.LivingUpdateEvent event) {

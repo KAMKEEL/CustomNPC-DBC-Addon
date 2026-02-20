@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.data.ability.toggle;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.data.ability.AbilityIconData;
+import kamkeel.npcs.controllers.data.ability.AbilityIconData;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.controllers.data.ability.UserType;
 import kamkeel.npcs.controllers.data.telegraph.TelegraphType;

@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.constants;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.data.ability.AbilityIconData;
+import kamkeel.npcs.controllers.data.ability.AbilityIconData;
 import kamkeel.npcdbc.data.ability.toggle.DBCToggle;
 import kamkeel.npcdbc.data.ability.toggle.DBCToggleAbility;
 import kamkeel.npcs.controllers.data.ability.*;

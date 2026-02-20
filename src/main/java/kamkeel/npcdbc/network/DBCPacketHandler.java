@@ -25,8 +25,6 @@ import kamkeel.npcdbc.network.packets.player.SendChat;
 import kamkeel.npcdbc.network.packets.player.StopSound;
 import kamkeel.npcdbc.network.packets.player.TransformPacket;
 import kamkeel.npcdbc.network.packets.player.TurboPacket;
-import kamkeel.npcdbc.network.packets.player.ability.DBCRequestAbilityWheel;
-import kamkeel.npcdbc.network.packets.player.ability.DBCSaveAbilityWheel;
 import kamkeel.npcdbc.network.packets.player.ability.DBCSelectAbility;
 import kamkeel.npcdbc.network.packets.player.ability.DBCToggleAbilityAction;
 import kamkeel.npcdbc.network.packets.player.aura.DBCRequestAura;
@@ -107,8 +105,6 @@ public class DBCPacketHandler {
         PLAYER_PACKETS.registerPacket(new CustomSkillPacket());
         PLAYER_PACKETS.registerPacket(new DBCSelectAbility());
         PLAYER_PACKETS.registerPacket(new DBCToggleAbilityAction());
-        PLAYER_PACKETS.registerPacket(new DBCRequestAbilityWheel());
-        PLAYER_PACKETS.registerPacket(new DBCSaveAbilityWheel());
     }
 
     private void registerGetPackets() {

@@ -13,7 +13,6 @@ import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.data.ability.DBCAbilityFieldProvider;
-import kamkeel.npcdbc.data.ability.DBCChainedAbilityFieldProvider;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.items.ModItems;
 import kamkeel.npcs.controllers.AbilityController;
@@ -64,7 +63,6 @@ public class ClientProxy extends CommonProxy {
 
         // Register DBC ability field providers for GUI tab injection
         AbilityController.Instance.registerFieldProvider(new DBCAbilityFieldProvider());
-        AbilityController.Instance.registerChainedFieldProvider(new DBCChainedAbilityFieldProvider());
         RenderingRegistry.registerEntityRenderingHandler(EntityAura.class, new AuraRenderer());
         MinecraftForgeClient.registerItemRenderer(ModItems.Potaras, new PotaraItemRenderer());
         ShaderHelper.loadShaders(false);

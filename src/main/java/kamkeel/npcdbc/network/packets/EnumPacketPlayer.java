@@ -25,7 +25,5 @@ public enum EnumPacketPlayer {
     CustomSkill,
     Turbo,
     AbilitySelect,
-    AbilityToggle,
-    AbilityWheel,
-    AbilityWheelSave
+    AbilityToggle
 }

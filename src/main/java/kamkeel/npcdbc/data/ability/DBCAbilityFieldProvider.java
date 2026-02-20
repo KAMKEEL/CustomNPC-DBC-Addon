@@ -15,24 +15,17 @@ import java.util.List;
 
 /**
  * Injects DBC-specific tabs into ability configuration GUI:
- * - "Icon" tab for all abilities (icon texture and UV settings)
  * - "DBC" tab with Player Settings (resource costs, damage config) and Universal Settings (DBC combat stats)
  */
 @SideOnly(Side.CLIENT)
 public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
     private static final String TAB_DBC = "DBC";
-    private static final String TAB_ICON = "Icon";
 
     private static final String[] ATTRIBUTE_NAMES = {"STR", "DEX", "CON", "WIL", "MND", "SPI"};
     private static final String[] STAT_TYPE_NAMES = {"Melee", "Defense", "Body", "Stamina", "Ki Power", "Ki Pool"};
 
     @Override
     public void addFieldDefinitions(Ability ability, List<FieldDef> defs) {
-        // Icon tab - skip for NPC inline abilities (only relevant for parent/preset abilities)
-        if (!ability.isNpcInlineEdit()) {
-            addIconFields(ability, defs);
-        }
-
         // DBC tab - single stats instance shared across all fields
         DBCAbilityStats stats = DBCAbilityStats.fromAbility(ability);
 
@@ -43,32 +36,6 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
         if (ability.hasDamage()) {
             addUniversalFields(stats, defs);
         }
-    }
-
-    private void addIconFields(Ability ability, List<FieldDef> defs) {
-        AbilityIconData icon = AbilityIconData.fromAbility(ability);
-
-        // Texture path (URL or resource location)
-        defs.add(FieldDef.stringField("gui.texture", icon::getTexture, icon::setTexture)
-            .tab(TAB_ICON));
-
-        // UV coordinates section
-        defs.add(FieldDef.section("ability.icon.section.uv")
-            .tab(TAB_ICON));
-        defs.add(FieldDef.intField("ability.icon.x", icon::getIconX, icon::setIconX)
-            .tab(TAB_ICON).range(0, 4096));
-        defs.add(FieldDef.intField("ability.icon.y", icon::getIconY, icon::setIconY)
-            .tab(TAB_ICON).range(0, 4096));
-
-        // Dimensions section
-        defs.add(FieldDef.section("gui.size")
-            .tab(TAB_ICON));
-        defs.add(FieldDef.intField("gui.width", icon::getWidth, icon::setWidth)
-            .tab(TAB_ICON).range(1, 256));
-        defs.add(FieldDef.intField("gui.height", icon::getHeight, icon::setHeight)
-            .tab(TAB_ICON).range(1, 256));
-        defs.add(FieldDef.floatField("gui.scale", icon::getScale, icon::setScale)
-            .tab(TAB_ICON).range(0.1f, 10.0f));
     }
 
     private void addPlayerFields(DBCAbilityStats stats, List<FieldDef> defs) {

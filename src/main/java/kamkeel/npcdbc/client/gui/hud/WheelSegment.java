@@ -2,7 +2,6 @@ package kamkeel.npcdbc.client.gui.hud;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.api.Color;
-import kamkeel.npcdbc.client.gui.hud.abilityWheel.AbilityWheelSegment;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -15,8 +14,6 @@ public abstract class WheelSegment extends Gui {
     private static final int HOVER_TIME = 200;
     public static ResourceLocation formVariant1 = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/hud/formwheel/GuiWheelVariant1.png");
     public static ResourceLocation formVariant2 = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/hud/formwheel/GuiWheelVariant2.png");
-    public static ResourceLocation abilityVariant1 = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/hud/abilitywheel/GuiWheelVariant1.png");
-    public static ResourceLocation abilityVariant2 = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/hud/abilitywheel/GuiWheelVariant2.png");
 
     public static Color HOVERED = new Color(0xADD8E6, 0.65f);
     public static Color NOT_HOVERED = new Color(0xFFFFFF, 0.35f);
@@ -120,9 +117,9 @@ public abstract class WheelSegment extends Gui {
 
     public void drawIndexedTexture() {
         if (!ConfigDBCClient.AlteranteSelectionWheelTexture) {
-            Minecraft.getMinecraft().getTextureManager().bindTexture(this instanceof AbilityWheelSegment ? abilityVariant1 : formVariant1);
+            Minecraft.getMinecraft().getTextureManager().bindTexture(formVariant1);
         } else {
-            Minecraft.getMinecraft().getTextureManager().bindTexture(this instanceof AbilityWheelSegment ? abilityVariant2 : formVariant2);
+            Minecraft.getMinecraft().getTextureManager().bindTexture(formVariant2);
         }
 
         Tessellator tessellator = Tessellator.instance;

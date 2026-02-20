@@ -3,7 +3,6 @@ package kamkeel.npcdbc.network;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
-import kamkeel.npcdbc.data.AbilityWheelData;
 import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
@@ -12,7 +11,6 @@ import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.packets.player.SendChat;
 import kamkeel.npcdbc.util.PlayerDataUtil;
-import kamkeel.npcs.controllers.AbilityController;
 import kamkeel.npcs.network.packets.data.large.GuiDataPacket;
 import kamkeel.npcs.network.packets.data.large.ScrollDataPacket;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,7 +18,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.constants.EnumScrollData;
 import noppes.npcs.controllers.PlayerDataController;
-import noppes.npcs.controllers.data.PlayerData;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -74,41 +71,6 @@ public class NetworkUtility {
                 if (wheelData.formID != -1 && !wheelData.isDBC && !FormController.getInstance().has(wheelData.formID))
                     wheelData.formID = -1;
                 wheelData.writeToNBT(compound);
-            }
-        }
-        GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);
-    }
-
-    public static void sendPlayerAbilityWheel(EntityPlayer player) {
-        PlayerData pData = PlayerDataController.Instance.getPlayerData(player);
-        PlayerDBCInfo data = ((IPlayerDBCInfo) pData).getPlayerDBCInfo();
-        NBTTagCompound compound = new NBTTagCompound();
-        boolean anyCleared = false;
-        if (data != null) {
-            for (int i = 0; i < data.abilityWheel.length; i++) {
-                AbilityWheelData wheelData = data.abilityWheel[i];
-                // Validate ability or chain still exists AND player still has it unlocked
-                if (!wheelData.isEmpty() && AbilityController.Instance != null) {
-                    boolean valid;
-                    if (wheelData.isChainKey()) {
-                        valid = AbilityController.Instance.canResolveChainedAbility(wheelData.getResolveKey());
-                    } else {
-                        valid = AbilityController.Instance.canResolveAbility(wheelData.abilityKey);
-                    }
-                    if (valid && pData.abilityData != null) {
-                        valid = pData.abilityData.hasUnlockedAbility(wheelData.abilityKey);
-                    }
-                    if (!valid) {
-                        wheelData.reset();
-                        anyCleared = true;
-                    }
-                }
-                wheelData.writeToNBT(compound);
-            }
-            // Trigger a full sync so the client receives the validated data
-            // even if GuiDataPacket is not handled by the current GUI
-            if (anyCleared) {
-                data.updateClient();
             }
         }
         GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);

@@ -354,10 +354,6 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                 ConfigDBCClient.EnableShaders = ((GuiNpcButton) guibutton).getValue() == 0;
                 ConfigDBCClient.EnableShadersProperty.set(ConfigDBCClient.EnableShaders);
                 ConfigDBCClient.config.save();
-            } else if (guibutton.id == 14) {
-                ConfigDBCClient.AbilityHotbarHorizontal = ((GuiNpcButton) guibutton).getValue() == 0;
-                ConfigDBCClient.AbilityHotbarHorizontalProperty.set(ConfigDBCClient.AbilityHotbarHorizontal);
-                ConfigDBCClient.config.save();
             }
         }
     }
