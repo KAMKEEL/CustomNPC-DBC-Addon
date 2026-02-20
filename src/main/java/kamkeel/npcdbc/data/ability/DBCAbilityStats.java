@@ -43,7 +43,7 @@ public class DBCAbilityStats implements IDBCAbility {
     // Player settings - damage configuration
     public int playerDamageType = 0;       // AbilityDamageType ordinal: 0=DEFAULT, 1=FLAT, 2=MELEE, 3=KI, 4=CNPC
     public int scalingAttribute = 0;       // DBCAttribute index: 0=STR, 1=DEX, 2=CON, 3=WIL, 4=MND, 5=SPI
-    public float scalingMultiplier = 1.0f; // 0.0-10.0
+    public float scalingMultiplier = 1.0f;
     public int flatDamage = 100;
     public boolean usePlayerSettings = true; // When true, respects player DBC toggles (Ki Fist, Ki Weapon, Ki Infuse)
     // CNPC multi-set scaling
@@ -391,7 +391,7 @@ public class DBCAbilityStats implements IDBCAbility {
 
     @Override
     public void setScalingMultiplier(float mult) {
-        this.scalingMultiplier = ValueUtil.clamp(mult, 0.0f, 10.0f);
+        this.scalingMultiplier = Math.max(0.0f, mult);
         save();
     }
 
@@ -472,7 +472,7 @@ public class DBCAbilityStats implements IDBCAbility {
     }
 
     public void setMultiplierForSet(int set, float mult) {
-        cnpcSets[clampSet(set)].multiplier = ValueUtil.clamp(mult, 0.0f, 10.0f);
+        cnpcSets[clampSet(set)].multiplier = Math.max(0.0f, mult);
         save();
     }
 
