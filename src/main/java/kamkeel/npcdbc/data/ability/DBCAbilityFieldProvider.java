@@ -214,7 +214,7 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
         defs.add(FieldDef.floatField("stats.cnpc.multiplier",
                 () -> stats.getMultiplierForSet(set),
                 (val) -> stats.setMultiplierForSet(set, val))
-            .tab(TAB_DBC).range(0.0f, 10.0f).visibleWhen(visible));
+            .tab(TAB_DBC).range(0.0f, 500.0f).visibleWhen(visible));
 
         // Ki bonus toggles
         defs.add(FieldDef.boolField("stats.cnpc.kiFist",
