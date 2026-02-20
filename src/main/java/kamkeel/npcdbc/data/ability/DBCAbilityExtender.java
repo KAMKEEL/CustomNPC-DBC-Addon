@@ -96,6 +96,16 @@ public class DBCAbilityExtender implements IAbilityExtender {
     }
 
     @Override
+    public float modifyProjectileDamage(Ability ability, EntityLivingBase caster, float baseDamage) {
+        if (!(caster instanceof EntityPlayer))
+            return baseDamage;
+
+        DBCAbilityStats stats = DBCAbilityStats.fromAbility(ability);
+        float calcDamage = DBCUtils.calculateAbilityAttackDamage((EntityPlayer) caster, stats);
+        return calcDamage > 0 ? calcDamage : baseDamage;
+    }
+
+    @Override
     public boolean onAbilityDamage(Ability ability, EntityLivingBase caster, EntityLivingBase target,
                                    float damage, float knockback, float knockbackUp,
                                    double knockbackDirX, double knockbackDirZ) {
