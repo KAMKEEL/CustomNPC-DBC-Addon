@@ -89,7 +89,7 @@ public class AbilityHotbarSlot extends Gui {
         boolean altTexture = ConfigDBCClient.AlternateHotbarTexture;
 
         if (altTexture) {
-            drawRoundedRect(-radius, -radius, radius, radius, 3f, 0.5f, 0.5f, 0.5f, 0.75f * alpha, false);
+            drawRoundedRect(-radius, -radius, radius, radius, 3f, 0.6f, 0.6f, 0.6f, 0.75f * alpha, false);
 
             if (isCenter) {
                 drawRoundedRect(-radius, -radius, radius, radius, 3f, 0.8f, 0.8f, 0.2f, alpha, true);
