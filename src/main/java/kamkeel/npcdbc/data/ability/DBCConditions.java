@@ -1,25 +1,24 @@
 package kamkeel.npcdbc.data.ability;
 
-import kamkeel.npcdbc.data.ability.conditions.ConditionDBCClass;
-import kamkeel.npcdbc.data.ability.conditions.ConditionDBCLevel;
-import kamkeel.npcdbc.data.ability.conditions.ConditionDBCStat;
-import kamkeel.npcdbc.data.ability.conditions.ConditionKiThreshold;
-import kamkeel.npcdbc.data.ability.conditions.ConditionForm;
-import kamkeel.npcdbc.data.ability.conditions.ConditionRace;
+import kamkeel.npcdbc.data.ability.conditions.*;
 import kamkeel.npcs.controllers.AbilityController;
+import kamkeel.npcs.controllers.data.ability.conditions.AbilityCondition;
 import kamkeel.npcs.util.Register;
 
 public class DBCConditions {
+    public static final Register.Conditions CONDITIONS = Register.Conditions.create("npcdbc", "DBC Addon");
+
+    public static final AbilityCondition KI_THRESHOLD = CONDITIONS.register("ki_threshold", ConditionKiThreshold::new);
+    public static final AbilityCondition FORM = CONDITIONS.register("form", ConditionForm::new);
+    public static final AbilityCondition RACE = CONDITIONS.register("race", ConditionRace::new);
+    public static final AbilityCondition STAT = CONDITIONS.register("stat", ConditionDBCStat::new);
+    public static final AbilityCondition LEVEL = CONDITIONS.register("level", ConditionDBCLevel::new);
+    public static final AbilityCondition CLASS = CONDITIONS.register("class", ConditionDBCClass::new);
+    public static final AbilityCondition SKILL = CONDITIONS.register("skill", ConditionSkill::new);
+
     public static void register() {
         if (AbilityController.Instance == null) return;
 
-        Register.Conditions conditions = Register.Conditions.create("npcdbc", "DBC Addon");
-        conditions.register("ki_threshold", ConditionKiThreshold::new);
-        conditions.register("form", ConditionForm::new);
-        conditions.register("race", ConditionRace::new);
-        conditions.register("stat", ConditionDBCStat::new);
-        conditions.register("level", ConditionDBCLevel::new);
-        conditions.register("class", ConditionDBCClass::new);
-        conditions.register();
+        CONDITIONS.register();
     }
 }
