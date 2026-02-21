@@ -13,10 +13,7 @@ import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.api.skill.ICustomSkill;
 import kamkeel.npcdbc.client.utils.SimplifiedDBCData;
-import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcdbc.constants.DBCRace;
-import kamkeel.npcdbc.constants.DBCSettings;
-import kamkeel.npcdbc.constants.Effects;
+import kamkeel.npcdbc.constants.*;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
@@ -705,6 +702,54 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
                 break;
         }
         return StatusEffects;
+    }
+
+    public boolean hasSkill(String skillName) {
+        DBCSkills skill = DBCSkills.byName(skillName);
+        if (skill == null) {
+//            throw new CustomNPCsException("Skill name not recognized");
+            return false;
+        }
+
+        return Skills.contains(skill.id());
+    }
+
+    public boolean hasSkill(int index) {
+        DBCSkills skill = DBCSkills.byIndex(index);
+        if (skill == null) {
+//            throw new CustomNPCsException("Skill index not recognized");
+            return false;
+        }
+
+        return Skills.contains(skill.id());
+    }
+
+    public int getSkillLevel(String skillName) {
+        if (!hasSkill(skillName)) return 0;
+
+        DBCSkills skill = DBCSkills.byName(skillName);
+        if (skill == null) {
+//            throw new CustomNPCsException("Skill name not recognized");
+            return 0;
+        }
+
+        return getSkillLevel(skill.index());
+    }
+
+    public int getSkillLevel(int index) {
+        if (!hasSkill(index)) return 0;
+        return JRMCoreH.SklLvl(index, Skills.split(","));
+    }
+
+    public boolean hasCustomSkill(int id) {
+        return customSkills.containsKey(id);
+    }
+
+    public int getCustomSkillLevel(int id) {
+        if (!hasCustomSkill(id)) return 0;
+
+        SkillContainer container = customSkills.get(id);
+        return container.getLevel();
     }
 
     public boolean settingOn(int id) {

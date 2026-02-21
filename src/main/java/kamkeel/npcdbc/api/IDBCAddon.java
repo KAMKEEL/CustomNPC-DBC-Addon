@@ -212,6 +212,8 @@ public interface IDBCAddon extends IDBCPlayer {
      */
     boolean isChargingKi();
 
+    boolean hasSkill(String skillname);
+
     /**
      * @param skillname Acceptable skill names:
      *                  <code>"Fusion", "Jump", "Dash", "Fly", "Endurance", <br>

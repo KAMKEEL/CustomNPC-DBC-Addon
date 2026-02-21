@@ -30,10 +30,6 @@ public enum DBCSkills {
         this.stringId = stringId;
     }
 
-    public int index() {
-        return DBCUtils.getDBCSkillIndex(name());
-    }
-
     public static DBCSkills byIndex(int index) {
         for (DBCSkills skill : values())
             if (index == skill.index())
@@ -48,6 +44,18 @@ public enum DBCSkills {
                 return skill;
 
         return null;
+    }
+
+    public static DBCSkills byName(String name) {
+        for (DBCSkills skill : values())
+            if (name.equals(skill.name()))
+                return skill;
+
+        return null;
+    }
+
+    public int index() {
+        return DBCUtils.getDBCSkillIndex(name());
     }
 
     public String id() {
