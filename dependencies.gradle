@@ -47,6 +47,7 @@ dependencies {
 
 //    implementation(files("janino/build/libs/standalone-JaninoLoader-1.0.1-ALPHA.jar"))
     implementation(files("lib/standalone-JaninoLoader-1.0.2-ALPHA.jar"))
+    implementation(files("lib/crystalgraphics-1.0.0.jar"))
 
 //    implementation(files(customNpcJar))
 

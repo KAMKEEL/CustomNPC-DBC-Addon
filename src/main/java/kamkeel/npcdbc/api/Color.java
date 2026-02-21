@@ -2,6 +2,7 @@ package kamkeel.npcdbc.api;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import io.github.somehussar.crystalgraphics.api.shader.CgShaderBindings;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import org.lwjgl.opengl.GL11;
@@ -78,6 +79,11 @@ public class Color {
     @SideOnly(Side.CLIENT)
     public void uniform(String name) {
         ShaderHelper.uniformColor(name, color, alpha);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void uniform(CgShaderBindings bindings, String name) {
+        bindings.vec4(name, getRedF(), getGreenF(), getBlueF(), alpha == -1 ? 1f : alpha);
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound, String name) {

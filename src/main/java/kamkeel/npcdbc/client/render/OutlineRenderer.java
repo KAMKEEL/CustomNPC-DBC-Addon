@@ -4,9 +4,11 @@ import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import JinRyuu.JRMCore.i.ExtendedPlayer;
+import io.github.somehussar.crystalgraphics.CrystalGraphics;
+import io.github.somehussar.crystalgraphics.api.shader.CgShader;
+import io.github.somehussar.crystalgraphics.api.shader.CgShaderScope;
 import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
-import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.client.shader.ShaderResources;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -15,18 +17,16 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.util.DBCUtils;
+
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.entity.EntityCustomNpc;
 import org.lwjgl.opengl.GL11;
 
 import static kamkeel.npcdbc.client.render.RenderEventHandler.disableStencilWriting;
-import static kamkeel.npcdbc.client.shader.ShaderHelper.releaseShader;
-import static kamkeel.npcdbc.client.shader.ShaderHelper.uniform1f;
-import static kamkeel.npcdbc.client.shader.ShaderHelper.uniformTexture;
-import static kamkeel.npcdbc.client.shader.ShaderHelper.useShader;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_LIGHTING;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
@@ -43,6 +43,10 @@ import static org.lwjgl.opengl.GL11.glScalef;
 import static org.lwjgl.opengl.GL11.glTranslatef;
 
 public class OutlineRenderer {
+
+    private static final CgShader OUTLINE_SHADER = CrystalGraphics.getShaderManager().load("npcdbc:shader/outline.vert",
+            "npcdbc:shader/outline.frag");
+
     public static void renderOutline(RenderPlayerJBRA render, Outline outline, EntityPlayer player, float partialTicks, boolean isArm) {
         ClientConstants.renderingOutline = true;
         DBCData data = DBCData.get(player);
@@ -57,16 +61,16 @@ public class OutlineRenderer {
         ///////////////////////////////////
         ///////////////////////////////////
         //Outer
-        useShader(ShaderHelper.outline, () -> {
-            uniformTexture("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
-            outline.innerColor.uniform("innerColor");
-            outline.outerColor.uniform("outerColor");
-            uniform1f("noiseSize", outline.noiseSize);
-            uniform1f("range", outline.colorSmoothness);
-            uniform1f("threshold", outline.colorInterpolation);
-            uniform1f("noiseSpeed", outline.speed);
-            uniform1f("throbSpeed", outline.pulsingSpeed);
-        });
+        try (CgShaderScope ignored = OUTLINE_SHADER.applyBindings(b -> {
+            b.sampler2D("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
+            outline.innerColor.uniform(b, "innerColor");
+            outline.outerColor.uniform(b, "outerColor");
+            b.set1f("noiseSize", outline.noiseSize);
+            b.set1f("range", outline.colorSmoothness);
+            b.set1f("threshold", outline.colorInterpolation);
+            b.set1f("noiseSpeed", outline.speed);
+            b.set1f("throbSpeed", outline.pulsingSpeed);
+        }).bindScoped()) {
         float scale = 1.025f, yScale = 1.025f, outlineSize = isArm ? 1f : outline.size;
         ItemStack chestPlate = player.getEquipmentInSlot(3);
         if (chestPlate != null) {
@@ -130,8 +134,7 @@ public class OutlineRenderer {
             glPopMatrix();
             disableStencilWriting(player.getEntityId() % 256, false);
         }
-
-        releaseShader();
+        }
         ///////////////////////////////////
         ///////////////////////////////////
         //Inner
@@ -180,16 +183,16 @@ public class OutlineRenderer {
         glDisable(GL_TEXTURE_2D);
         glPushMatrix();
 
-        useShader(ShaderHelper.outline, () -> {
-            uniformTexture("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
-            outline.innerColor.uniform("innerColor");
-            outline.outerColor.uniform("outerColor");
-            uniform1f("noiseSize", outline.noiseSize);
-            uniform1f("range", outline.colorSmoothness);
-            uniform1f("threshold", outline.colorInterpolation);
-            uniform1f("noiseSpeed", outline.speed);
-            uniform1f("throbSpeed", outline.pulsingSpeed);
-        });
+        try (CgShaderScope ignored = OUTLINE_SHADER.applyBindings(b -> {
+            b.sampler2D("noiseTexture", 2, new ResourceLocation(ShaderResources.PERLIN_NOISE));
+            outline.innerColor.uniform(b, "innerColor");
+            outline.outerColor.uniform(b, "outerColor");
+            b.set1f("noiseSize", outline.noiseSize);
+            b.set1f("range", outline.colorSmoothness);
+            b.set1f("threshold", outline.colorInterpolation);
+            b.set1f("noiseSpeed", outline.speed);
+            b.set1f("throbSpeed", outline.pulsingSpeed);
+        }).bindScoped()) {
         ///////////////////////////////////
         ///////////////////////////////////
         //Outer
@@ -234,7 +237,7 @@ public class OutlineRenderer {
         ///////////////////////////////////
         ///////////////////////////////////
         glPopMatrix();
-        releaseShader();
+        }
         GL11.glEnable(GL_LIGHTING);
         GL11.glDisable(GL_BLEND);
         GL11.glEnable(GL_TEXTURE_2D);
