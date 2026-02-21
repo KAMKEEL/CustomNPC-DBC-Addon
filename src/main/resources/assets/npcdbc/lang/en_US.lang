@@ -543,6 +543,14 @@ condition.ki_below=Ki Below
 condition.ki_equal=Ki Equal
 condition.thresholdPercent=Threshold
 
+# Condition Form
+condition.npcdbc.form=Has Form
+condition.form_id=Form
+condition.transformed=Transformed
+condition.form_unlocked=Needs Unlocked
+condition.is_dbc=Is DBC
+condition.race_id=Race
+
 effect.healthregeneration=Health Regeneration
 effect.exhausted=Exhausted
 effect.darkness=Darkness

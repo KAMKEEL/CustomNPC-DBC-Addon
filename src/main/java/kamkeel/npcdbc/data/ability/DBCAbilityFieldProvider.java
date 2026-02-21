@@ -2,7 +2,10 @@ package kamkeel.npcdbc.data.ability;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.constants.enums.AbilityDamageType;
+import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.controllers.data.ability.IAbilityFieldProvider;
@@ -12,6 +15,8 @@ import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.builder.FieldDef;
 
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Injects DBC-specific tabs into ability configuration GUI:
@@ -274,5 +279,28 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
         defs.add(FieldDef.intField("stats.defensePenetration", stats::getDefensePenetration, stats::setDefensePenetration)
             .tab(TAB_DBC).range(0, 100)
             .visibleWhen(() -> stats.isEnabled() && stats.hasDefensePenetration()));
+    }
+
+    public static FieldDef formSubGui(String label,
+                                      Supplier<Integer> idGetter, Consumer<Integer> idSetter) {
+        return FieldDef.subGuiField(label, () -> {
+                    SubGuiSelectForm gui = new SubGuiSelectForm(-1, false, false);
+                    return gui;
+                }, gui -> {
+                    SubGuiSelectForm sel = (SubGuiSelectForm) gui;
+                    idSetter.accept(sel.selectedFormID);
+                })
+            .buttonLabel(() -> {
+                int id = idGetter.get();
+                if (id >= 0) {
+                    Form form = FormController.Instance != null
+                        ? (Form) FormController.Instance.get(id) : null;
+                    String formName = form != null ? form.getName() : "";
+                    return formName != null && !formName.isEmpty()
+                        ? "(ID: " + id + ") " + formName : "ID: " + id;
+                }
+                return "gui.none";
+            })
+            .clearable(() -> idSetter.accept(-1));
     }
 }
