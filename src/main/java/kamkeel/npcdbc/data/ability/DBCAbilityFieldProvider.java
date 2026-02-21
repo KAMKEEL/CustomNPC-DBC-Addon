@@ -3,7 +3,7 @@ package kamkeel.npcdbc.data.ability;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
-import kamkeel.npcdbc.constants.enums.AbilityDamageType;
+import kamkeel.npcdbc.constants.enums.EnumAbilityDamageType;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.DBCUtils;
@@ -75,8 +75,8 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
         // Player damage configuration
         defs.add(FieldDef.section("stats.section.playerDamage")
             .tab(TAB_DBC));
-        defs.add(FieldDef.enumField("stats.playerDamageType", AbilityDamageType.class,
-                () -> AbilityDamageType.fromOrdinal(stats.getPlayerDamageType()),
+        defs.add(FieldDef.enumField("stats.playerDamageType", EnumAbilityDamageType.class,
+                () -> EnumAbilityDamageType.fromOrdinal(stats.getPlayerDamageType()),
                 (val) -> stats.setPlayerDamageType(val.ordinal()))
             .tab(TAB_DBC));
 
