@@ -132,9 +132,14 @@ public class KnockbackTracker {
 
     /**
      * Horizontal friction factor from vanilla's moveEntityWithHeading.
+     * Water and lava use their own drag (0.8 / 0.5) instead of normal friction.
      * Air: 0.91, Ground: blockSlipperiness * 0.91 (0.546 for normal blocks).
      */
     private static float getHorizontalFriction(EntityPlayer player) {
+        // Fluids apply their own drag in moveEntityWithHeading, replacing normal friction
+        if (player.isInWater()) return 0.8F;
+        if (player.handleLavaMovement()) return 0.5F;
+
         if (!player.onGround) return 0.91F;
 
         int x = MathHelper.floor_double(player.posX);
