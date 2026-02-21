@@ -2,6 +2,7 @@ package kamkeel.npcdbc.data.ability.conditions;
 
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.enums.EnumDBCRaces;
+import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.ability.DBCAbilityFieldProvider;
@@ -9,10 +10,12 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
+import kamkeel.npcs.controllers.data.ability.UserType;
 import kamkeel.npcs.controllers.data.ability.conditions.AbilityCondition;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.builder.FieldDef;
 import noppes.npcs.entity.EntityNPCInterface;
 
@@ -28,6 +31,7 @@ public class ConditionForm extends AbilityCondition {
     public ConditionForm() {
         this.typeId = "condition.npcdbc.form";
         this.name = "condition.npcdbc.form";
+        this.userType = UserType.BOTH;
     }
 
     @Override
@@ -66,7 +70,7 @@ public class ConditionForm extends AbilityCondition {
             return isTransformed && hasFormUnlocked;
         }
 
-        return false;
+        return true;
     }
 
     @Override
@@ -82,6 +86,21 @@ public class ConditionForm extends AbilityCondition {
         // TODO overhaul select form menu to show all dbc forms
 //        defs.add(FieldDef.enumField("condition.race_id", EnumDBCRaces.class, this::getRace, this::setRace)
 //            .range(0, 5).visibleWhen(this::isDBC));
+    }
+
+    @Override
+    public String getConditionSummary() {
+        String filterLabel = StatCollector.translateToLocal("condition.filter." + getFilter().name().toLowerCase());
+        String formName = "None";
+        if (formID > 0) {
+            if (!isDBC) {
+                IForm form = FormController.getInstance().get(formID);
+                formName = form != null ? form.getName() : "ID:" + formID;
+            } else {
+                formName = "DBC Form " + formID;
+            }
+        }
+        return "[" + filterLabel + "] Form: " + formName;
     }
 
     private boolean isFormValid(int formID) {
@@ -112,11 +131,20 @@ public class ConditionForm extends AbilityCondition {
         isDBC = nbt.getBoolean("isDBC");
     }
 
+    @Override
+    public boolean isConfigured() {
+        return formID >= 0;
+    }
+
     public int getFormID() {
         return formID;
     }
 
     public void setFormID(int formID) {
+        if (formID < 0) {
+            this.formID = -1;
+            return;
+        }
         if (!isFormValid(formID)) return;
         this.formID = formID;
     }

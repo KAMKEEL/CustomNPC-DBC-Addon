@@ -554,6 +554,21 @@ condition.is_dbc=Is DBC
 condition.npcdbc.race=Is Race
 condition.race_id=Race
 
+# Condition DBC Stat
+condition.npcdbc.stat=DBC Stat
+condition.stat_type=Stat
+condition.stat.str=Strength
+condition.stat.dex=Dexterity
+condition.stat.con=Constitution
+condition.stat.wil=Willpower
+condition.stat.mnd=Mind
+condition.stat.spi=Spirit
+
+# Condition DBC Level
+condition.npcdbc.level=DBC Level
+condition.level=Level
+condition.compare_type=Compare Type
+
 effect.healthregeneration=Health Regeneration
 effect.exhausted=Exhausted
 effect.darkness=Darkness

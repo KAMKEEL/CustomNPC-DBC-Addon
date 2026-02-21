@@ -5,10 +5,12 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
+import kamkeel.npcs.controllers.data.ability.UserType;
 import kamkeel.npcs.controllers.data.ability.conditions.AbilityCondition;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.builder.FieldDef;
 import noppes.npcs.entity.EntityNPCInterface;
 
@@ -20,19 +22,11 @@ public class ConditionRace extends AbilityCondition {
     public ConditionRace() {
         this.typeId = "condition.npcdbc.race";
         this.name = "condition.npcdbc.race";
+        this.userType = UserType.PLAYER_ONLY;
     }
 
     @Override
     public boolean checkEntity(EntityLivingBase entity) {
-        if (entity instanceof EntityNPCInterface) {
-            EntityNPCInterface npc = (EntityNPCInterface) entity;
-
-            DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
-            if (!display.isEnabled()) return false;
-
-            return display.getRace() == getRace().ordinal();
-        }
-
         if (entity instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) entity;
 
@@ -41,7 +35,7 @@ public class ConditionRace extends AbilityCondition {
             return data.Race == getRace().ordinal();
         }
 
-        return false;
+        return true;
     }
 
     @Override
@@ -65,5 +59,12 @@ public class ConditionRace extends AbilityCondition {
 
     public void setRace(EnumDBCRaces race) {
         this.race = race;
+    }
+
+    @Override
+    public String getConditionSummary() {
+        String filterLabel = StatCollector.translateToLocal("condition.filter." + getFilter().name().toLowerCase());
+        String raceName = getRace().name();
+        return "[" + filterLabel + "] Race: " + raceName;
     }
 }
