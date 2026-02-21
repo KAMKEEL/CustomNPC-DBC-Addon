@@ -131,7 +131,7 @@ public class DBCAbilities {
     public static final AbilityVariant BIG_BANG_ATTACK = ABILITIES.registerVariant(ORB, "ability.npcdbc.bigbang_attack", GROUP, a -> {
         AbilityOrb orb = (AbilityOrb) a;
         a.setName("Big Bang Attack");
-        a.setDisplayName("&bBig Bang &fAttack");
+        a.setDisplayName("&bBig Bang Attack");
         a.setPerAbilityCooldown(true);
         a.setWindUpTicks(50);
         a.setShowTelegraph(false);
@@ -197,7 +197,7 @@ public class DBCAbilities {
     public static final AbilityVariant SPIRIT_BOMB = ABILITIES.registerVariant(ORB, "ability.npcdbc.spirit_bomb", GROUP, a -> {
         AbilityOrb orb = (AbilityOrb) a;
         a.setName("Spirit Bomb");
-        a.setDisplayName("&fSpirit &bBomb");
+        a.setDisplayName("&bSpirit Bomb");
         a.setPerAbilityCooldown(true);
         a.setWindUpTicks(100);
         a.setShowTelegraph(false);
@@ -221,7 +221,7 @@ public class DBCAbilities {
     public static final AbilityVariant LARGE_SPIRIT_BOMB = ABILITIES.registerVariant(ORB, "ability.npcdbc.large_spirit_bomb", GROUP, a -> {
         AbilityOrb orb = (AbilityOrb) a;
         a.setName("Large Spirit Bomb");
-        a.setDisplayName("&bLarge &fSpirit &bBomb");
+        a.setDisplayName("&bLarge Spirit Bomb");
         a.setPerAbilityCooldown(true);
         a.setWindUpTicks(150);
         a.setMaxRange(100.0f);
@@ -247,7 +247,7 @@ public class DBCAbilities {
     public static final AbilityVariant SUPER_SPIRIT_BOMB = ABILITIES.registerVariant(ORB, "ability.npcdbc.super_spirit_bomb", GROUP, a -> {
         AbilityOrb orb = (AbilityOrb) a;
         a.setName("Super Spirit Bomb");
-        a.setDisplayName("&bSuper &fSpirit &bBomb");
+        a.setDisplayName("&bSuper Spirit Bomb");
         a.setPerAbilityCooldown(true);
         a.setWindUpTicks(250);
         a.setMaxRange(100.0f);
