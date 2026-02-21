@@ -14,7 +14,6 @@ import kamkeel.npcs.controllers.data.ability.type.energy.AbilityOrb;
 import kamkeel.npcs.util.Register;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class DBCAbilities {
@@ -49,6 +48,8 @@ public class DBCAbilities {
     public static final AbilityVariant KI_BLAST = ABILITIES.registerVariant(ORB, "ability.npcdbc.ki_blast", GROUP, a -> {
         AbilityOrb orb = (AbilityOrb) a;
         a.setName("Energy Blast");
+        a.setDisplayName("&eEnergy Blast");
+        a.setPerAbilityCooldown(true);
         a.setWindUpTicks(15);
         a.setShowTelegraph(false);
         a.setWindUpAnimationName("EnergyGeneric_Windup");
@@ -65,6 +66,8 @@ public class DBCAbilities {
     public static final AbilityVariant KI_BLAST_VOLLEY = ABILITIES.registerVariant(ORB, "ability.npcdbc.ki_blast_volley", GROUP, a -> {
         AbilityOrb orb = (AbilityOrb) a;
         a.setName("Energy Blast Volley");
+        a.setDisplayName("&eEnergy Blast Volley");
+        a.setPerAbilityCooldown(true);
         a.setWindUpTicks(30);
         a.setShowTelegraph(false);
         a.setMaxRange(75.0f);
@@ -92,6 +95,8 @@ public class DBCAbilities {
     public static final AbilityVariant FINISH_BREAKER = ABILITIES.registerVariant(ORB, "ability.npcdbc.finish_breaker", GROUP, a -> {
         AbilityOrb orb = (AbilityOrb) a;
         a.setName("Finish Breaker");
+        a.setDisplayName("&eFinish Breaker");
+        a.setPerAbilityCooldown(true);
         a.setWindUpTicks(30);
         a.setShowTelegraph(false);
         a.setMaxRange(75.0f);
@@ -125,6 +130,8 @@ public class DBCAbilities {
     public static final AbilityVariant BIG_BANG_ATTACK = ABILITIES.registerVariant(ORB, "ability.npcdbc.bigbang_attack", GROUP, a -> {
         AbilityOrb orb = (AbilityOrb) a;
         a.setName("Big Bang Attack");
+        a.setDisplayName("&bBig Bang &fAttack");
+        a.setPerAbilityCooldown(true);
         a.setWindUpTicks(50);
         a.setShowTelegraph(false);
         a.setWindUpAnimationName("BigBangAttack_Windup");
@@ -144,6 +151,8 @@ public class DBCAbilities {
     public static final AbilityVariant BURNING_ATTACK = ABILITIES.registerVariant(ORB, "ability.npcdbc.burning_attack", GROUP, a -> {
         AbilityOrb orb = (AbilityOrb) a;
         a.setName("Burning Attack");
+        a.setDisplayName("&6Burning &eAttack");
+        a.setPerAbilityCooldown(true);
         a.setWindUpTicks(50);
         a.setShowTelegraph(false);
         a.setWindUpAnimationName("BurningAttack_Windup");
@@ -163,6 +172,8 @@ public class DBCAbilities {
     public static final AbilityVariant DEATH_BALL = ABILITIES.registerVariant(ORB, "ability.npcdbc.death_ball", GROUP, a -> {
         AbilityOrb orb = (AbilityOrb) a;
         a.setName("Death Ball");
+        a.setDisplayName("&5Death Ball");
+        a.setPerAbilityCooldown(true);
         a.setWindUpTicks(50);
         a.setShowTelegraph(false);
         a.setWindUpAnimationName("DeathBall_Windup");
@@ -185,6 +196,8 @@ public class DBCAbilities {
     public static final AbilityVariant SPIRIT_BOMB = ABILITIES.registerVariant(ORB, "ability.npcdbc.spirit_bomb", GROUP, a -> {
         AbilityOrb orb = (AbilityOrb) a;
         a.setName("Spirit Bomb");
+        a.setDisplayName("&fSpirit &bBomb");
+        a.setPerAbilityCooldown(true);
         a.setWindUpTicks(100);
         a.setShowTelegraph(false);
         a.setWindUpAnimationName("SpiritBomb_Windup");
@@ -207,6 +220,8 @@ public class DBCAbilities {
     public static final AbilityVariant LARGE_SPIRIT_BOMB = ABILITIES.registerVariant(ORB, "ability.npcdbc.large_spirit_bomb", GROUP, a -> {
         AbilityOrb orb = (AbilityOrb) a;
         a.setName("Large Spirit Bomb");
+        a.setDisplayName("&bLarge &fSpirit &bBomb");
+        a.setPerAbilityCooldown(true);
         a.setWindUpTicks(150);
         a.setMaxRange(100.0f);
         a.setLockMovement(LockMovementType.WINDUP_AND_ACTIVE);
@@ -231,6 +246,8 @@ public class DBCAbilities {
     public static final AbilityVariant SUPER_SPIRIT_BOMB = ABILITIES.registerVariant(ORB, "ability.npcdbc.super_spirit_bomb", GROUP, a -> {
         AbilityOrb orb = (AbilityOrb) a;
         a.setName("Super Spirit Bomb");
+        a.setDisplayName("&bSuper &fSpirit &bBomb");
+        a.setPerAbilityCooldown(true);
         a.setWindUpTicks(250);
         a.setMaxRange(100.0f);
         a.setLockMovement(LockMovementType.WINDUP_AND_ACTIVE);
@@ -253,6 +270,8 @@ public class DBCAbilities {
     public static final AbilityVariant SUPERNOVA = ABILITIES.registerVariant(ORB, "ability.npcdbc.supernova", GROUP, a -> {
         AbilityOrb orb = (AbilityOrb) a;
         a.setName("Supernova");
+        a.setDisplayName("&6Supernova");
+        a.setPerAbilityCooldown(true);
         a.setWindUpTicks(100);
         a.setMaxRange(100.0f);
         a.setShowTelegraph(false);
@@ -277,8 +296,12 @@ public class DBCAbilities {
     public static final AbilityVariant KI_WAVE = ABILITIES.registerVariant(BEAM, "ability.npcdbc.ki_wave", GROUP, a -> {
         AbilityBeam beam = (AbilityBeam) a;
         a.setName("Energy Wave");
+        a.setDisplayName("&eEnergy Wave");
+        a.setPerAbilityCooldown(true);
         a.setWindUpTicks(30);
         a.setShowTelegraph(false);
+        a.setRotationMode(RotationMode.LOCKED);
+        a.setRotationPhase(LockMovementType.ACTIVE);
         a.setWindUpAnimationName("EnergyGeneric_Windup");
         a.setActiveAnimationName("EnergyGeneric_Charge");
         beam.setBeamWidth(1.0f);
@@ -295,8 +318,12 @@ public class DBCAbilities {
     public static final AbilityVariant KAMEHAMEHA = ABILITIES.registerVariant(BEAM, "ability.npcdbc.kamehameha", GROUP, a -> {
         AbilityBeam beam = (AbilityBeam) a;
         a.setName("Kamehameha");
+        a.setDisplayName("&bKamehameha");
+        a.setPerAbilityCooldown(true);
         a.setWindUpTicks(60);
         a.setShowTelegraph(false);
+        a.setRotationMode(RotationMode.LOCKED);
+        a.setRotationPhase(LockMovementType.ACTIVE);
         a.setWindUpSound("DBC4.cbeam4s");
         a.setActiveSound("DBC4.fbeam4s");
         a.setWindUpAnimationName("Kamehameha_Windup");
@@ -313,8 +340,12 @@ public class DBCAbilities {
     public static final AbilityVariant MASENKO = ABILITIES.registerVariant(BEAM, "ability.npcdbc.masenko", GROUP, a -> {
         AbilityBeam beam = (AbilityBeam) a;
         a.setName("Masenko");
+        a.setDisplayName("&eMasenko");
+        a.setPerAbilityCooldown(true);
         a.setWindUpTicks(40);
         a.setShowTelegraph(false);
+        a.setRotationMode(RotationMode.LOCKED);
+        a.setRotationPhase(LockMovementType.ACTIVE);
         a.setWindUpAnimationName("Masenko_Windup");
         a.setActiveAnimationName("Masenko_Active");
         beam.setBeamWidth(1.5f);
@@ -332,8 +363,12 @@ public class DBCAbilities {
     public static final AbilityVariant GALICK_GUN = ABILITIES.registerVariant(BEAM, "ability.npcdbc.galick_gun", GROUP, a -> {
         AbilityBeam beam = (AbilityBeam) a;
         a.setName("Galick Gun");
+        a.setDisplayName("&dGalick Gun");
+        a.setPerAbilityCooldown(true);
         a.setWindUpTicks(40);
         a.setShowTelegraph(false);
+        a.setRotationMode(RotationMode.LOCKED);
+        a.setRotationPhase(LockMovementType.ACTIVE);
         a.setWindUpAnimationName("GalickGun_Windup");
         a.setActiveAnimationName("GalickGun_Active");
         beam.setBeamWidth(2.0f);
@@ -351,8 +386,12 @@ public class DBCAbilities {
     public static final AbilityVariant DOUBLE_SUNDAY = ABILITIES.registerVariant(BEAM, "ability.npcdbc.double_sunday", GROUP, a -> {
         AbilityBeam beam = (AbilityBeam) a;
         a.setName("Double Sunday");
+        a.setDisplayName("&dDouble &fSunday");
+        a.setPerAbilityCooldown(true);
         a.setWindUpTicks(30);
         a.setShowTelegraph(false);
+        a.setRotationMode(RotationMode.LOCKED);
+        a.setRotationPhase(LockMovementType.ACTIVE);
         a.setWindUpAnimationName("DoubleSunday_Windup");
         a.setActiveAnimationName("DoubleSunday_Active");
         beam.setProjectileCount(2);
@@ -377,8 +416,12 @@ public class DBCAbilities {
     public static final AbilityVariant FINAL_FLASH = ABILITIES.registerVariant(BEAM, "ability.npcdbc.final_flash", GROUP, a -> {
         AbilityBeam beam = (AbilityBeam) a;
         a.setName("Final Flash");
+        a.setDisplayName("&eFinal Flash");
+        a.setPerAbilityCooldown(true);
         a.setWindUpTicks(80);
         a.setShowTelegraph(false);
+        a.setRotationMode(RotationMode.LOCKED);
+        a.setRotationPhase(LockMovementType.ACTIVE);
         a.setWindUpAnimationName("FinalFlash_Windup");
         a.setActiveAnimationName("FinalFlash_Active");
         beam.setProjectileCount(2);
@@ -405,11 +448,14 @@ public class DBCAbilities {
     public static final AbilityVariant SPECIAL_BEAM_CANNON = ABILITIES.registerVariant(LASER, "ability.npcdbc.special_beam_cannon", GROUP, a -> {
         AbilityLaserShot laser = (AbilityLaserShot) a;
         a.setName("Special Beam Cannon");
+        a.setDisplayName("&dSpecial &eBeam &dCannon");
+        a.setPerAbilityCooldown(true);
         a.setWindUpTicks(80);
-        a.setWindUpAnimationName("SpecialBeamCannon_Windup");
-        a.setActiveAnimationName("SpecialBeamCannon_Active");
+        a.setShowTelegraph(false);
         a.setRotationMode(RotationMode.LOCKED);
         a.setRotationPhase(LockMovementType.ACTIVE);
+        a.setWindUpAnimationName("SpecialBeamCannon_Windup");
+        a.setActiveAnimationName("SpecialBeamCannon_Active");
         laser.setLaserWidth(0.2f);
         laser.setMaxDistance(150.0f);
         laser.setInnerColor(0xFFFF00);
@@ -426,7 +472,12 @@ public class DBCAbilities {
     public static final AbilityVariant TRIBEAM = ABILITIES.registerVariant(LASER, "ability.npcdbc.tribeam", GROUP, a -> {
         AbilityLaserShot laser = (AbilityLaserShot) a;
         a.setName("Tri-Beam");
+        a.setDisplayName("&6Tri-Beam");
+        a.setPerAbilityCooldown(true);
         a.setWindUpTicks(50);
+        a.setShowTelegraph(false);
+        a.setRotationMode(RotationMode.LOCKED);
+        a.setRotationPhase(LockMovementType.ACTIVE);
         a.setWindUpAnimationName("TriBeam_Windup");
         a.setActiveAnimationName("TriBeam_Active");
         laser.setLaserWidth(1.5f);
@@ -443,6 +494,8 @@ public class DBCAbilities {
     public static final AbilityVariant DESTRUCTO_DISC = ABILITIES.registerVariant(DISC, "ability.npcdbc.destructo_disc", GROUP, a -> {
         AbilityDisc disc = (AbilityDisc) a;
         a.setName("Destructo Disc");
+        a.setDisplayName("&6Destructo &eDisc");
+        a.setPerAbilityCooldown(true);
         a.setShowTelegraph(false);
         a.setLockMovement(LockMovementType.WINDUP_AND_ACTIVE);
         disc.setSpeed(1.5f);
@@ -460,6 +513,8 @@ public class DBCAbilities {
     public static final AbilityVariant DEATH_SAUCER = ABILITIES.registerVariant(DISC, "ability.npcdbc.death_saucer", GROUP, a -> {
         AbilityDisc disc = (AbilityDisc) a;
         a.setName("Death Saucer");
+        a.setDisplayName("&cDeath &dSaucer");
+        a.setPerAbilityCooldown(true);
         a.setShowTelegraph(false);
         a.setLockMovement(LockMovementType.WINDUP_AND_ACTIVE);
         a.setWindUpAnimationName("Ability_DiscDual_Windup");
@@ -485,6 +540,8 @@ public class DBCAbilities {
     public static final AbilityVariant ANDROID_BARRIER = ABILITIES.registerVariant(DOME, "ability.npcdbc.android_barrier", GROUP, a -> {
         AbilityDome dome = (AbilityDome) a;
         a.setName("Android Barrier");
+        a.setDisplayName("&aAndroid Barrier");
+        a.setPerAbilityCooldown(true);
         a.setShowTelegraph(false);
         a.setLockMovement(LockMovementType.WINDUP_AND_ACTIVE);
         a.setWindUpAnimationName("AndroidBarrier");
@@ -501,6 +558,8 @@ public class DBCAbilities {
     public static final AbilityVariant NAMEK_REGEN = ABILITIES.registerVariant(EFFECT, "ability.npcdbc.namek_regen", GROUP, a -> {
         AbilityEffect effect = (AbilityEffect) a;
         a.setName("Namekian Regeneration");
+        a.setDisplayName("&2Namekian Regeneration");
+        a.setPerAbilityCooldown(true);
         a.setWindUpTicks(44);
         a.setWindUpAnimationName("NamekRegen");
         a.setTargetingMode(TargetingMode.SELF);
