@@ -569,6 +569,13 @@ condition.npcdbc.level=DBC Level
 condition.level=Level
 condition.compare_type=Compare Type
 
+# Condition DBC Class
+condition.npcdbc.class=DBC Class
+condition.class_type=Class
+condition.class.martial_artist=Martial Artist
+condition.class.spiritualist=Spiritualist
+condition.class.warrior=Warrior
+
 effect.healthregeneration=Health Regeneration
 effect.exhausted=Exhausted
 effect.darkness=Darkness

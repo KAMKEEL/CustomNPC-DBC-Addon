@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.data.ability;
 
+import kamkeel.npcdbc.data.ability.conditions.ConditionDBCClass;
 import kamkeel.npcdbc.data.ability.conditions.ConditionDBCLevel;
 import kamkeel.npcdbc.data.ability.conditions.ConditionDBCStat;
 import kamkeel.npcdbc.data.ability.conditions.ConditionKiThreshold;
@@ -18,6 +19,7 @@ public class DBCConditions {
         conditions.register("race", ConditionRace::new);
         conditions.register("stat", ConditionDBCStat::new);
         conditions.register("level", ConditionDBCLevel::new);
+        conditions.register("class", ConditionDBCClass::new);
         conditions.register();
     }
 }
