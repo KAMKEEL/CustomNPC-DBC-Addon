@@ -39,7 +39,7 @@ public class ConditionDBCClass extends AbilityCondition {
 
     @Override
     public String getConditionSummary() {
-        String filterLabel = StatCollector.translateToLocal("condition.filter." + getFilter().name().toLowerCase());
+        String filterLabel = StatCollector.translateToLocal(getFilter().toString());
         String className = StatCollector.translateToLocal(dbcClass.toString());
         return "[" + filterLabel + "] Class: " + className;
     }

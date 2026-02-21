@@ -90,7 +90,7 @@ public class ConditionForm extends AbilityCondition {
 
     @Override
     public String getConditionSummary() {
-        String filterLabel = StatCollector.translateToLocal("condition.filter." + getFilter().name().toLowerCase());
+        String filterLabel = StatCollector.translateToLocal(getFilter().toString());
         String formName = "None";
         if (formID > 0) {
             if (!isDBC) {
