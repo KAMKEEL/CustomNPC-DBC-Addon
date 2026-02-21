@@ -3,9 +3,13 @@ package kamkeel.npcdbc.data.ability;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
+import kamkeel.npcdbc.client.gui.component.SubGuiSelectSkill;
+import kamkeel.npcdbc.constants.DBCSkills;
 import kamkeel.npcdbc.constants.enums.EnumAbilityDamageType;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.controllers.SkillController;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.skill.CustomSkill;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.controllers.data.ability.IAbilityFieldProvider;
@@ -302,5 +306,44 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
                 return "gui.none";
             })
             .clearable(() -> idSetter.accept(-1));
+    }
+
+    public static FieldDef skillSubGui(String label,
+                                       Supplier<Integer> idGetter,    Consumer<Integer> idSetter,
+                                       Supplier<Integer> modeGetter,  Consumer<Integer> modeSetter) {
+        return FieldDef.subGuiField(label, () -> {
+                int currentId = idGetter.get();
+                int currentMode = modeGetter != null ? modeGetter.get() : SubGuiSelectSkill.MODE_DBC;
+                return new SubGuiSelectSkill(currentId, currentMode);
+            }, gui -> {
+                SubGuiSelectSkill sel = (SubGuiSelectSkill) gui;
+                if (sel.getSelectedMode() >= 0) {
+                    idSetter.accept(sel.getSelectedSkillId());
+                    if (modeSetter != null)
+                        modeSetter.accept(sel.getSelectedMode());
+                }
+            })
+            .buttonLabel(() -> {
+                int id = idGetter.get();
+                int mode = modeGetter != null ? modeGetter.get() : SubGuiSelectSkill.MODE_DBC;
+                if (id >= 0) {
+                    if (mode == SubGuiSelectSkill.MODE_DBC) {
+                        DBCSkills skill = DBCSkills.byIndex(id);
+                        String name = skill != null ? skill.name() : "";
+                        return !name.isEmpty() ? "[DBC] (ID: " + id + ") " + name : "[DBC] ID: " + id;
+                    } else {
+                        CustomSkill skill = SkillController.Instance != null
+                            ? SkillController.Instance.customSkills.get(id) : null;
+                        String name = skill != null ? skill.stringLiteralId : "";
+                        return !name.isEmpty() ? "[Custom] (ID: " + id + ") " + name : "[Custom] ID: " + id;
+                    }
+                }
+                return "gui.none";
+            })
+            .clearable(() -> {
+                idSetter.accept(-1);
+                if (modeSetter != null)
+                    modeSetter.accept(SubGuiSelectSkill.MODE_DBC);
+            });
     }
 }
