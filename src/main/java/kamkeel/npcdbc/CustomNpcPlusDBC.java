@@ -23,6 +23,7 @@ import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.controllers.SkillController;
 import kamkeel.npcdbc.data.DBCProfileData;
 import kamkeel.npcdbc.data.ability.DBCAbilityExtender;
+import kamkeel.npcdbc.data.ability.DBCConditions;
 import kamkeel.npcdbc.data.attribute.DBCItemAttributes;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.items.ModItems;
@@ -94,8 +95,9 @@ public class CustomNpcPlusDBC {
             ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.SKILL_EVENT.function, IDBCEvent.SkillEvent.class);
         }
 
-        DBCAbilities.register();
+        DBCConditions.register();
         DBCAnimations.register();
+        DBCAbilities.register();
     }
 
     @Mod.EventHandler
