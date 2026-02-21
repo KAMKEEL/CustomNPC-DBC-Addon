@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data.ability.conditions;
 
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.constants.enums.EnumDBCRaces;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.ability.DBCAbilityFieldProvider;
@@ -19,39 +20,10 @@ import java.util.List;
 
 public class ConditionForm extends AbilityCondition {
     private int formID = -1;
-    private Race race = Race.HUMAN;
+    private EnumDBCRaces race = EnumDBCRaces.HUMAN;
     private boolean formActive = true;
     private boolean formUnlocked = true;
     private boolean isDBC = false;
-
-    public enum Race {
-        HUMAN, SAIYAN, HALFSAIYAN, NAMEKIAN, ARCOSIAN, MAJIN;
-
-        @Override
-        public String toString() {
-            switch (this) {
-                case HUMAN:
-                    return "display.human";
-                case SAIYAN:
-                    return "display.saiyan";
-                case HALFSAIYAN:
-                    return "display.halfsaiyan";
-                case NAMEKIAN:
-                    return "display.namekian";
-                case ARCOSIAN:
-                    return "display.arcosian";
-                case MAJIN:
-                    return "display.majin";
-                default:
-                    return name();
-            }
-        }
-
-        public static Race fromOrdinal(int ordinal) {
-            Race[] values = values();
-            return (ordinal >= 0 && ordinal < values.length) ? values[ordinal] : HUMAN;
-        }
-    }
 
     public ConditionForm() {
         this.typeId = "condition.npcdbc.form";
@@ -59,26 +31,16 @@ public class ConditionForm extends AbilityCondition {
     }
 
     @Override
-    public boolean check(EntityLivingBase caster, EntityLivingBase target) {
-        switch (getFilter()) {
-            case CASTER:
-                return checkEntity(caster);
-            case TARGET:
-                return target != null && checkEntity(target);
-            case BOTH:
-                return checkEntity(caster) && (target != null && checkEntity(target));
-            default:
-                return checkEntity(caster);
-        }
-    }
-
     public boolean checkEntity(EntityLivingBase entity) {
         if (isDBC && entity instanceof EntityNPCInterface) return false;
         if (!isFormValid(getFormID())) return false;
 
         if (entity instanceof EntityNPCInterface) {
             EntityNPCInterface npc = (EntityNPCInterface) entity;
+
             DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
+            if (!display.isEnabled()) return false;
+
             Form npcForm = display.getForm();
             if (npcForm == null) return false;
 
@@ -87,6 +49,7 @@ public class ConditionForm extends AbilityCondition {
 
         if (entity instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) entity;
+
             DBCData data = DBCData.get(player);
             boolean hasFormUnlocked;
             boolean isTransformed;
@@ -117,7 +80,7 @@ public class ConditionForm extends AbilityCondition {
 //        defs.add(FieldDef.boolField("condition.is_dbc", this::isDBC, this::setDBC));
 
         // TODO overhaul select form menu to show all dbc forms
-//        defs.add(FieldDef.enumField("condition.race_id", Race.class, this::getRace, this::setRace)
+//        defs.add(FieldDef.enumField("condition.race_id", EnumDBCRaces.class, this::getRace, this::setRace)
 //            .range(0, 5).visibleWhen(this::isDBC));
     }
 
@@ -143,7 +106,7 @@ public class ConditionForm extends AbilityCondition {
     @Override
     public void readTypeNBT(NBTTagCompound nbt) {
         formID = nbt.getInteger("formID");
-        race = Race.fromOrdinal(nbt.getInteger("race"));
+        race = EnumDBCRaces.fromOrdinal(nbt.getInteger("race"));
         formActive = nbt.getBoolean("transformed");
         formUnlocked = nbt.getBoolean("formUnlocked");
         isDBC = nbt.getBoolean("isDBC");
@@ -158,11 +121,11 @@ public class ConditionForm extends AbilityCondition {
         this.formID = formID;
     }
 
-    public Race getRace() {
+    public EnumDBCRaces getRace() {
         return race;
     }
 
-    public void setRace(Race race) {
+    public void setRace(EnumDBCRaces race) {
         this.race = race;
     }
 

@@ -68,31 +68,15 @@ public class ConditionKiThreshold extends AbilityCondition {
     }
 
     @Override
-    public boolean check(EntityLivingBase caster, EntityLivingBase target) {
-        if (caster instanceof EntityNPCInterface || target instanceof EntityNPCInterface) {
+    public boolean checkEntity(EntityLivingBase entity) {
+        if (entity instanceof EntityNPCInterface) {
             return false;
         }
 
-        DBCData casterData = DBCData.get((EntityPlayer) caster);
-        DBCData targetData = DBCData.get((EntityPlayer) caster);
+        DBCData entityData = DBCData.get((EntityPlayer) entity);
 
-        float casterKi = isPercent() ? (float) casterData.Ki / casterData.stats.getMaxKi() : casterData.Ki;
-        float targetKi = isPercent() ? (float) targetData.Ki / targetData.stats.getMaxKi() : targetData.Ki;
-        return compare(casterKi, targetKi);
-    }
-
-    public boolean compare(float casterKi, float targetKi) {
-        boolean casterCheck = thresholdType.test(casterKi, isPercent() ? thresholdPercent : threshold);
-        boolean targetCheck = thresholdType.test(targetKi, isPercent() ? thresholdPercent : threshold);
-
-        switch (getFilter()) {
-            case BOTH:
-                return casterCheck && targetCheck;
-            case CASTER:
-                return casterCheck;
-            default:
-                return targetCheck;
-        }
+        float casterKi = isPercent() ? (float) entityData.Ki / entityData.stats.getMaxKi() : entityData.Ki;
+        return thresholdType.test(casterKi, isPercent() ? getThresholdPercent() : getThreshold());
     }
 
     @Override

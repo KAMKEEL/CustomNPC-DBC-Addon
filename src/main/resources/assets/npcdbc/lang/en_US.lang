@@ -544,11 +544,14 @@ condition.ki_equal=Ki Equal
 condition.thresholdPercent=Threshold
 
 # Condition Form
-condition.npcdbc.form=Has Form
+condition.npcdbc.form=Transformation
 condition.form_id=Form
 condition.transformed=Transformed
 condition.form_unlocked=Needs Unlocked
 condition.is_dbc=Is DBC
+
+# Condition Race
+condition.npcdbc.race=Is Race
 condition.race_id=Race
 
 effect.healthregeneration=Health Regeneration
