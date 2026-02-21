@@ -98,6 +98,7 @@ public class DBCAbilities {
         a.setDisplayName("&eFinish Breaker");
         a.setPerAbilityCooldown(true);
         a.setWindUpTicks(30);
+        a.setLockMovement(LockMovementType.ACTIVE);
         a.setShowTelegraph(false);
         a.setMaxRange(75.0f);
         a.setBurstEnabled(true);
