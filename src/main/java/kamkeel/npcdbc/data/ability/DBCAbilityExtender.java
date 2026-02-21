@@ -96,6 +96,52 @@ public class DBCAbilityExtender implements IAbilityExtender {
     }
 
     @Override
+    public float modifyBarrierHealth(Ability ability, EntityLivingBase caster, float baseHealth) {
+        if (!(caster instanceof EntityPlayer))
+            return baseHealth; // NPCs always use flat health
+
+        DBCAbilityStats stats = DBCAbilityStats.fromAbility(ability);
+        if (!stats.barrierScalingEnabled)
+            return baseHealth;
+
+        float scaledHealth = DBCUtils.calculateBarrierHealth((EntityPlayer) caster, stats);
+        return scaledHealth > 0 ? scaledHealth : baseHealth;
+    }
+
+    @Override
+    public boolean onAbilityHeal(Ability ability, EntityLivingBase caster, EntityLivingBase target, float healAmount) {
+        if (!(target instanceof EntityPlayer))
+            return false; // Non-DBC entities use vanilla healing
+
+        DBCData data = DBCData.get((EntityPlayer) target);
+        if (data == null)
+            return false;
+
+        DBCAbilityStats stats = DBCAbilityStats.fromAbility(ability);
+
+        // When heal scaling is enabled and caster is a player, use CNPC scaling sets
+        // Scaled values are always applied as flat body HP (they produce DBC-scale numbers)
+        if (stats.healScalingEnabled && caster instanceof EntityPlayer) {
+            float scaled = DBCUtils.calculateHealingAmount((EntityPlayer) caster, stats);
+            if (scaled > 0) {
+                data.stats.restoreHealthFlat((int) scaled);
+                return true;
+            }
+        }
+
+        // No scaling — use ability's base heal amount with healing mode
+        if (stats.healingMode == 0) {
+            // FLAT: heal amount is direct body HP
+            data.stats.restoreHealthFlat((int) healAmount);
+        } else {
+            // PERCENT: heal amount is treated as percentage of max body
+            data.stats.restoreHealthPercent(healAmount);
+        }
+
+        return true; // Handled — skip vanilla entity.heal()
+    }
+
+    @Override
     public float modifyProjectileDamage(Ability ability, EntityLivingBase caster, float baseDamage) {
         if (!(caster instanceof EntityPlayer))
             return baseDamage;
@@ -140,11 +186,19 @@ public class DBCAbilityExtender implements IAbilityExtender {
                 DBCUtils.abilityDamageHandled = false;
             }
 
-            if (stats.isEnabled()) {
-                // Universal settings enabled: use ability's ignore flags for defender reduction
+            // Player DBC Stats: when enabled AND usePlayerSettings is true, the ability's
+            // configured ignore flags (IgnoreDex, FriendlyFist, etc.) override the player's own settings.
+            // For NPC casters, usePlayerSettings is irrelevant — always use ability stats when enabled.
+            boolean useAbilityStats = stats.isEnabled();
+            if (caster instanceof EntityPlayer && !stats.getUsePlayerSettings()) {
+                useAbilityStats = false;
+            }
+
+            if (useAbilityStats) {
+                // Use ability's configured ignore flags for defender reduction
                 applyDBCDamageToPlayer((EntityPlayer) target, outDamage, stats, source);
             } else {
-                // Universal settings off: generic DBC defender reduction
+                // Use player's own DBC combat settings (generic defender reduction)
                 applyDBCDamageToPlayerDefault((EntityPlayer) target, outDamage, stats, source);
             }
         } else if (target instanceof EntityNPCInterface) {
@@ -187,6 +241,8 @@ public class DBCAbilityExtender implements IAbilityExtender {
     /**
      * Apply damage to a player through the DBC damage system with default defender reduction.
      * Uses calculateDBCDamageFromSource which applies generic DEX/blocking/ki protection.
+     * Friendly fist is handled by calculateDBCDamageFromSource (from the attacker's own toggles),
+     * so we pass null for stats to avoid the ability's friendly fist overriding the player's settings.
      */
     private void applyDBCDamageToPlayerDefault(EntityPlayer player, float damage, DBCAbilityStats stats, DamageSource source) {
         DBCDamageCalc damageCalc = DBCUtils.calculateDBCDamageFromSource(player, damage, source);
@@ -206,6 +262,7 @@ public class DBCAbilityExtender implements IAbilityExtender {
         DBCUtils.lastSetDamage = damageCalc;
         damageCalc.processExtras();
 
-        DBCUtils.doDBCDamage(player, damageCalc.damage, stats, source);
+        // Pass null for stats — player's own settings are used (friendly fist already handled above)
+        DBCUtils.doDBCDamage(player, damageCalc.damage, null, source);
     }
 }

@@ -588,7 +588,7 @@ public class DBCUtils {
         float reducedHP = playerHP - effectiveDamage;
         float newHP = reducedHP;
 
-        boolean friendlyFist = dbcStats.isFriendlyFist();
+        boolean friendlyFist = dbcStats != null && dbcStats.isFriendlyFist();
 
         if (!isInCreativeMode(player)) {
             if (friendlyFist) {
@@ -813,8 +813,6 @@ public class DBCUtils {
         boolean gd = StusEfcts(20, statusEffects);
         boolean fused = StusEfcts(10, statusEffects) || StusEfcts(11, statusEffects);
 
-        boolean usePlayerSettings = abilityStats.usePlayerSettings;
-
         float damage = 0;
 
         if (damageType == 2) {
@@ -822,6 +820,7 @@ public class DBCUtils {
             // MELEE FORMULA
             // Chosen attribute through Melee stat type
             // + Ki Fist bonus (from SPI) + Ki Weapon bonus (from WIL)
+            // Ki bonuses always respect the player's own toggles
             // ═══════════════════════════════════════════
             int scalingAttribute = abilityStats.scalingAttribute;
             int modifiedAttr = getPlayerAttribute(caster, attrs, scalingAttribute,
@@ -832,12 +831,12 @@ public class DBCUtils {
                 modifiedAttr, race, classID, 0.0F);
             double baseDmg = baseStat * release * 0.01 * weightPerc(0, caster);
 
-            boolean forced = !usePlayerSettings;
+            // Player always controls their own Ki Fist / Ki Weapon toggles
             int kiFistBonus = computeKiFistBonus(caster, attrs, skills, powerType, race, classID,
-                release, currentEnergy, forced, state, state2, sklx, resrv,
+                release, currentEnergy, false, state, state2, sklx, resrv,
                 lg, mj, kk, mc, mn, gd, fused, absorption);
             int kiWeaponDamage = computeKiWeaponBonus(caster, attrs, skills, powerType, race, classID,
-                release, currentEnergy, forced, state, state2, sklx, resrv,
+                release, currentEnergy, false, state, state2, sklx, resrv,
                 lg, mj, kk, mc, mn, gd, fused, absorption);
 
             damage = (float) (baseDmg + kiFistBonus + kiWeaponDamage);
@@ -847,6 +846,7 @@ public class DBCUtils {
             // KI FORMULA
             // Chosen attribute through EnergyPower stat type
             // + Ki Infuse bonus (from WIL, using Ki Weapon skill level)
+            // Ki bonuses always respect the player's own toggles
             // ═══════════════════════════════════════════
             int scalingAttribute = abilityStats.scalingAttribute;
             int modifiedAttr = getPlayerAttribute(caster, attrs, scalingAttribute,
@@ -857,9 +857,9 @@ public class DBCUtils {
                 modifiedAttr, race, classID, 0.0F);
             float baseDmg = (float) (baseStat * release * 0.01 * weightPerc(1, caster));
 
-            boolean forced = !usePlayerSettings;
+            // Player always controls their own Ki Infuse toggle
             float[] infuseResult = computeKiInfuseBonus(caster, attrs, skills, powerType, race, classID,
-                release, currentEnergy, forced, state, state2, sklx, resrv,
+                release, currentEnergy, false, state, state2, sklx, resrv,
                 lg, mj, kk, mc, mn, gd, fused, absorption);
             float kiInfuseBonus = infuseResult[0];
             float kiInfuseMultiplier = infuseResult[1];
@@ -1088,6 +1088,104 @@ public class DBCUtils {
         if (set.kiInfuse) line += " *KI";
 
         return line;
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // CNPC SCALING SET CALCULATION (shared by barrier health, heal scaling)
+    // ═══════════════════════════════════════════════════════════════════
+
+    /**
+     * Core CNPC multi-set formula: for each set, compute attribute * stat * multiplier * weight,
+     * plus optional ki bonuses, then sum all sets and apply release.
+     *
+     * @param caster The player
+     * @param stats  The ability's DBC stats containing the scaling sets
+     * @return Computed value from scaling sets, or 0 if player data is invalid
+     */
+    public static float calculateScalingSets(EntityPlayer caster, DBCAbilityStats stats) {
+        DBCData data = DBCData.get(caster);
+        if (data.isFusionSpectator()) return 0;
+
+        int powerType = data.Powertype;
+        if (!JRMCoreH.isPowerTypeKi(powerType)) return 0;
+
+        int race = data.Race;
+        int state = data.State;
+        int state2 = data.State2;
+        int classID = data.Class;
+        double release = data.Release;
+        int currentEnergy = data.Ki;
+        String sklx = data.RacialSkills;
+        int resrv = data.ArcReserve;
+        String absorption = data.MajinAbsorptionData;
+        int[] attrs = data.stats.getAllAttributes();
+        String[] skills = data.Skills.split(",");
+        String statusEffects = data.StatusEffects;
+        boolean mj = StusEfcts(12, statusEffects);
+        boolean lg = StusEfcts(14, statusEffects);
+        boolean kk = StusEfcts(5, statusEffects);
+        boolean mc = StusEfcts(13, statusEffects);
+        boolean mn = StusEfcts(19, statusEffects);
+        boolean gd = StusEfcts(20, statusEffects);
+        boolean fused = StusEfcts(10, statusEffects) || StusEfcts(11, statusEffects);
+
+        float total = 0;
+        int setCount = stats.getScalingSetCount();
+
+        for (int s = 0; s < setCount; s++) {
+            CNPCScalingSet set = stats.getSet(s);
+
+            int modAttr = getPlayerAttribute(caster, attrs, set.attribute,
+                state, state2, race, sklx, (int) release, resrv,
+                lg, mj, kk, mc, mn, gd, powerType, skills, fused, absorption);
+
+            float value;
+            if (set.statEnabled) {
+                value = stat(caster, set.attribute, powerType, set.statType, modAttr, race, classID, 0.0F);
+            } else {
+                value = modAttr;
+            }
+
+            int weightType = isPhysicalStat(set.statType) ? 0 : 1;
+            float setVal = value * set.multiplier * (float) weightPerc(weightType, caster);
+
+            if (set.kiFist) {
+                setVal += computeKiFistBonus(caster, attrs, skills, powerType, race, classID,
+                    release, currentEnergy, true, state, state2, sklx, resrv,
+                    lg, mj, kk, mc, mn, gd, fused, absorption);
+            }
+            if (set.kiWeapon) {
+                setVal += computeKiWeaponBonus(caster, attrs, skills, powerType, race, classID,
+                    release, currentEnergy, true, state, state2, sklx, resrv,
+                    lg, mj, kk, mc, mn, gd, fused, absorption);
+            }
+            if (set.kiInfuse) {
+                float[] infuseResult = computeKiInfuseBonus(caster, attrs, skills, powerType, race, classID,
+                    release, currentEnergy, true, state, state2, sklx, resrv,
+                    lg, mj, kk, mc, mn, gd, fused, absorption);
+                setVal *= infuseResult[1];
+            }
+
+            total += setVal;
+        }
+
+        return total * (float) (release * 0.01);
+    }
+
+    /**
+     * Calculate barrier health from CNPC scaling sets.
+     */
+    public static float calculateBarrierHealth(EntityPlayer caster, DBCAbilityStats stats) {
+        if (!stats.barrierScalingEnabled) return 0;
+        return calculateScalingSets(caster, stats);
+    }
+
+    /**
+     * Calculate healing amount from CNPC scaling sets.
+     */
+    public static float calculateHealingAmount(EntityPlayer caster, DBCAbilityStats stats) {
+        if (!stats.healScalingEnabled) return 0;
+        return calculateScalingSets(caster, stats);
     }
 
     private static float getUltraInstinctCounterStaminaCost(final EntityPlayer targetPlayer, final byte targetState2) {
