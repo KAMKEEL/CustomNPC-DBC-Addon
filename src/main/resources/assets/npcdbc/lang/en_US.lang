@@ -576,6 +576,12 @@ condition.class.martial_artist=Martial Artist
 condition.class.spiritualist=Spiritualist
 condition.class.warrior=Warrior
 
+# Condition Skill
+condition.npcdbc.skill=Skill Unlocked
+condition.skill_id=Skill
+condition.skill_level=Skill Level
+condition.is_custom=Is Custom
+
 effect.healthregeneration=Health Regeneration
 effect.exhausted=Exhausted
 effect.darkness=Darkness
