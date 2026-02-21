@@ -1,5 +1,7 @@
 package kamkeel.npcdbc.data.ability.conditions;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcs.controllers.data.ability.UserType;
 import kamkeel.npcs.controllers.data.ability.conditions.ConditionThreshold;
@@ -63,6 +65,7 @@ public class ConditionDBCStat extends ConditionThreshold {
         return super.checkEntity(entity);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void getConditionDefinitions(List<FieldDef> defs) {
         defs.add(FieldDef.enumField("condition.stat_type", StatType.class, this::getStatType, this::setStatType));

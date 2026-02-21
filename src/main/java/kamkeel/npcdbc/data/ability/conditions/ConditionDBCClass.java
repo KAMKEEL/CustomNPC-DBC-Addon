@@ -1,5 +1,7 @@
 package kamkeel.npcdbc.data.ability.conditions;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.constants.enums.EnumDBCClasses;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcs.controllers.data.ability.UserType;
@@ -32,11 +34,13 @@ public class ConditionDBCClass extends AbilityCondition {
         return data.Class == dbcClass.ordinal();
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void getConditionDefinitions(List<FieldDef> defs) {
         defs.add(FieldDef.enumField("condition.class_type", EnumDBCClasses.class, this::getDbcClass, this::setDbcClass));
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public String getConditionSummary() {
         String filterLabel = StatCollector.translateToLocal(getFilter().toString());

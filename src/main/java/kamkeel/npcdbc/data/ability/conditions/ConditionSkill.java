@@ -1,5 +1,7 @@
 package kamkeel.npcdbc.data.ability.conditions;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.skill.ICustomSkill;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectSkill;
 import kamkeel.npcdbc.constants.DBCSkills;
@@ -53,6 +55,7 @@ public class ConditionSkill extends AbilityCondition {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void getConditionDefinitions(List<FieldDef> defs) {
         defs.add(DBCAbilityFieldProvider.skillSubGui("condition.skill_id", this::getSkillId, this::setSkillId,
@@ -62,6 +65,7 @@ public class ConditionSkill extends AbilityCondition {
         defs.add(FieldDef.intField("condition.skill_level", this::getSkillLevel, this::setSkillLevel).range(0, 10));
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public String getConditionSummary() {
         String filterLabel = StatCollector.translateToLocal(getFilter().toString());
