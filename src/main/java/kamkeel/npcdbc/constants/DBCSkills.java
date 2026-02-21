@@ -42,6 +42,14 @@ public enum DBCSkills {
         return null;
     }
 
+    public static DBCSkills byId(String id) {
+        for (DBCSkills skill : values())
+            if (id.equals(skill.id()))
+                return skill;
+
+        return null;
+    }
+
     public String id() {
         return stringId;
     }
