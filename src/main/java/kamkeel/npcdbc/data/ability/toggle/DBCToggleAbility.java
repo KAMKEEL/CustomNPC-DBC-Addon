@@ -37,8 +37,8 @@ public class DBCToggleAbility extends Ability {
         }
 
         this.setIconTexture(CustomNpcPlusDBC.ID + ":textures/gui/ability_icons.png");
-        this.setIconWidth(48);
-        this.setIconHeight(48);
+        this.setIconWidth(toggle.width);
+        this.setIconHeight(toggle.height);
         this.setIconScale(1.5f);
         this.setIconX(toggle.iconX);
         this.setIconY(toggle.iconY);

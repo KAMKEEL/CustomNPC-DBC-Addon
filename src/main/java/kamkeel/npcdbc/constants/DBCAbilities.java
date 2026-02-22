@@ -1,10 +1,13 @@
 package kamkeel.npcdbc.constants;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.constants.enums.EnumDBCRaces;
+import kamkeel.npcdbc.data.ability.conditions.ConditionRace;
 import kamkeel.npcs.controllers.data.ability.AbilityIconData;
 import kamkeel.npcdbc.data.ability.toggle.DBCToggle;
 import kamkeel.npcdbc.data.ability.toggle.DBCToggleAbility;
 import kamkeel.npcs.controllers.data.ability.*;
+import kamkeel.npcs.controllers.data.ability.conditions.ConditionFilter;
 import kamkeel.npcs.controllers.data.ability.type.AbilityEffect;
 import kamkeel.npcs.controllers.data.ability.type.energy.AbilityBeam;
 import kamkeel.npcs.controllers.data.ability.type.energy.AbilityDisc;
@@ -565,6 +568,12 @@ public class DBCAbilities {
         a.setWindUpAnimationName("NamekRegen");
         a.setTargetingMode(TargetingMode.SELF);
         effect.setIncludeSelf(true);
+
+        ConditionRace condition = new ConditionRace();
+        condition.setRace(EnumDBCRaces.NAMEKIAN);
+        condition.setFilter(ConditionFilter.CASTER);
+
+        a.addCondition(condition);
 
         List<AbilityCustomEffect> list = new ArrayList<>();
         list.add(new AbilityCustomEffect(Effects.NAMEK_REGEN, 60, (byte) 1, 1));
