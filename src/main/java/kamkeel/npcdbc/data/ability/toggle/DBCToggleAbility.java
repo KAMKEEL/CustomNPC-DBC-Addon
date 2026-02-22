@@ -24,7 +24,8 @@ public class DBCToggleAbility extends Ability {
 
     public DBCToggleAbility(DBCToggle toggle) {
         configureAsBuiltIn("npcdbc:" + toggle.key);
-        this.name = toggle.displayName;
+        this.name = toggle.displayName.replace(" ", "_");
+        this.displayName = toggle.displayName;
         this.toggleStates = toggle.getToggleStates();
         this.telegraphType = TelegraphType.NONE;
         this.showTelegraph = false;

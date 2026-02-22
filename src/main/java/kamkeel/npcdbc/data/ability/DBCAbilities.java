@@ -1,6 +1,7 @@
-package kamkeel.npcdbc.constants;
+package kamkeel.npcdbc.data.ability;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.constants.enums.EnumDBCRaces;
 import kamkeel.npcdbc.data.ability.conditions.ConditionRace;
 import kamkeel.npcs.controllers.data.ability.data.effect.AbilityCustomEffect;
