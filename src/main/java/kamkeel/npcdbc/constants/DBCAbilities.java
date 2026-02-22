@@ -3,11 +3,17 @@ package kamkeel.npcdbc.constants;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.constants.enums.EnumDBCRaces;
 import kamkeel.npcdbc.data.ability.conditions.ConditionRace;
-import kamkeel.npcs.controllers.data.ability.AbilityIconData;
+import kamkeel.npcs.controllers.data.ability.data.effect.AbilityCustomEffect;
+import kamkeel.npcs.controllers.data.ability.data.AbilityIconData;
 import kamkeel.npcdbc.data.ability.toggle.DBCToggle;
 import kamkeel.npcdbc.data.ability.toggle.DBCToggleAbility;
-import kamkeel.npcs.controllers.data.ability.*;
 import kamkeel.npcs.controllers.data.ability.conditions.ConditionFilter;
+import kamkeel.npcs.controllers.data.ability.Ability;
+import kamkeel.npcs.controllers.data.ability.AbilityVariant;
+import kamkeel.npcs.controllers.data.ability.enums.AnchorPoint;
+import kamkeel.npcs.controllers.data.ability.enums.LockMode;
+import kamkeel.npcs.controllers.data.ability.enums.RotationMode;
+import kamkeel.npcs.controllers.data.ability.enums.TargetingMode;
 import kamkeel.npcs.controllers.data.ability.type.AbilityEffect;
 import kamkeel.npcs.controllers.data.ability.type.energy.AbilityBeam;
 import kamkeel.npcs.controllers.data.ability.type.energy.AbilityDisc;
@@ -101,7 +107,7 @@ public class DBCAbilities {
         a.setDisplayName("&eFinish Breaker");
         a.setPerAbilityCooldown(true);
         a.setWindUpTicks(30);
-        a.setLockMovement(LockMovementType.ACTIVE);
+        a.setLockMovement(LockMode.ACTIVE);
         a.setShowTelegraph(false);
         a.setMaxRange(75.0f);
         a.setBurstEnabled(true);
@@ -228,7 +234,7 @@ public class DBCAbilities {
         a.setPerAbilityCooldown(true);
         a.setWindUpTicks(150);
         a.setMaxRange(100.0f);
-        a.setLockMovement(LockMovementType.WINDUP_AND_ACTIVE);
+        a.setLockMovement(LockMode.WINDUP_AND_ACTIVE);
         a.setShowTelegraph(false);
         a.setWindUpAnimationName("LargeSpiritBomb_Windup");
         a.setActiveAnimationName("LargeSpiritBomb_Active");
@@ -254,7 +260,7 @@ public class DBCAbilities {
         a.setPerAbilityCooldown(true);
         a.setWindUpTicks(250);
         a.setMaxRange(100.0f);
-        a.setLockMovement(LockMovementType.WINDUP_AND_ACTIVE);
+        a.setLockMovement(LockMode.WINDUP_AND_ACTIVE);
         a.setShowTelegraph(false);
         orb.setHoming(true);
         orb.setHomingStrength(0.05f);
@@ -305,7 +311,7 @@ public class DBCAbilities {
         a.setWindUpTicks(30);
         a.setShowTelegraph(false);
         a.setRotationMode(RotationMode.LOCKED);
-        a.setRotationPhase(LockMovementType.ACTIVE);
+        a.setRotationPhase(LockMode.ACTIVE);
         a.setWindUpAnimationName("EnergyGeneric_Windup");
         a.setActiveAnimationName("EnergyGeneric_Charge");
         beam.setBeamWidth(1.0f);
@@ -327,7 +333,7 @@ public class DBCAbilities {
         a.setWindUpTicks(60);
         a.setShowTelegraph(false);
         a.setRotationMode(RotationMode.LOCKED);
-        a.setRotationPhase(LockMovementType.ACTIVE);
+        a.setRotationPhase(LockMode.ACTIVE);
         a.setWindUpSound("DBC4.cbeam4s");
         a.setActiveSound("DBC4.fbeam4s");
         a.setWindUpAnimationName("Kamehameha_Windup");
@@ -349,7 +355,7 @@ public class DBCAbilities {
         a.setWindUpTicks(40);
         a.setShowTelegraph(false);
         a.setRotationMode(RotationMode.LOCKED);
-        a.setRotationPhase(LockMovementType.ACTIVE);
+        a.setRotationPhase(LockMode.ACTIVE);
         a.setWindUpAnimationName("Masenko_Windup");
         a.setActiveAnimationName("Masenko_Active");
         beam.setBeamWidth(1.5f);
@@ -372,7 +378,7 @@ public class DBCAbilities {
         a.setWindUpTicks(40);
         a.setShowTelegraph(false);
         a.setRotationMode(RotationMode.LOCKED);
-        a.setRotationPhase(LockMovementType.ACTIVE);
+        a.setRotationPhase(LockMode.ACTIVE);
         a.setWindUpAnimationName("GalickGun_Windup");
         a.setActiveAnimationName("GalickGun_Active");
         beam.setBeamWidth(2.0f);
@@ -395,7 +401,7 @@ public class DBCAbilities {
         a.setWindUpTicks(30);
         a.setShowTelegraph(false);
         a.setRotationMode(RotationMode.LOCKED);
-        a.setRotationPhase(LockMovementType.ACTIVE);
+        a.setRotationPhase(LockMode.ACTIVE);
         a.setWindUpAnimationName("DoubleSunday_Windup");
         a.setActiveAnimationName("DoubleSunday_Active");
         beam.setProjectileCount(2);
@@ -425,7 +431,7 @@ public class DBCAbilities {
         a.setWindUpTicks(80);
         a.setShowTelegraph(false);
         a.setRotationMode(RotationMode.LOCKED);
-        a.setRotationPhase(LockMovementType.ACTIVE);
+        a.setRotationPhase(LockMode.ACTIVE);
         a.setWindUpAnimationName("FinalFlash_Windup");
         a.setActiveAnimationName("FinalFlash_Active");
         beam.setProjectileCount(2);
@@ -457,7 +463,7 @@ public class DBCAbilities {
         a.setWindUpTicks(80);
         a.setShowTelegraph(false);
         a.setRotationMode(RotationMode.LOCKED);
-        a.setRotationPhase(LockMovementType.ACTIVE);
+        a.setRotationPhase(LockMode.ACTIVE);
         a.setWindUpAnimationName("SpecialBeamCannon_Windup");
         a.setActiveAnimationName("SpecialBeamCannon_Active");
         laser.setLaserWidth(0.2f);
@@ -481,7 +487,7 @@ public class DBCAbilities {
         a.setWindUpTicks(50);
         a.setShowTelegraph(false);
         a.setRotationMode(RotationMode.LOCKED);
-        a.setRotationPhase(LockMovementType.ACTIVE);
+        a.setRotationPhase(LockMode.ACTIVE);
         a.setWindUpAnimationName("TriBeam_Windup");
         a.setActiveAnimationName("TriBeam_Active");
         laser.setLaserWidth(1.5f);
@@ -501,7 +507,7 @@ public class DBCAbilities {
         a.setDisplayName("&6Destructo &eDisc");
         a.setPerAbilityCooldown(true);
         a.setShowTelegraph(false);
-        a.setLockMovement(LockMovementType.WINDUP_AND_ACTIVE);
+        a.setLockMovement(LockMode.WINDUP_AND_ACTIVE);
         disc.setSpeed(1.5f);
         disc.setOuterColor(0xFFDD00);
         disc.setInnerColor(0xFFFF00);
@@ -520,7 +526,7 @@ public class DBCAbilities {
         a.setDisplayName("&cDeath &dSaucer");
         a.setPerAbilityCooldown(true);
         a.setShowTelegraph(false);
-        a.setLockMovement(LockMovementType.WINDUP_AND_ACTIVE);
+        a.setLockMovement(LockMode.WINDUP_AND_ACTIVE);
         a.setWindUpAnimationName("Ability_DiscDual_Windup");
         a.setActiveAnimationName("Ability_DiscDual_Active");
         disc.setProjectileCount(2);
@@ -547,7 +553,7 @@ public class DBCAbilities {
         a.setDisplayName("&aAndroid Barrier");
         a.setPerAbilityCooldown(true);
         a.setShowTelegraph(false);
-        a.setLockMovement(LockMovementType.WINDUP_AND_ACTIVE);
+        a.setLockMovement(LockMode.WINDUP_AND_ACTIVE);
         a.setWindUpAnimationName("AndroidBarrier");
         a.setActiveAnimationName("AndroidBarrier");
         a.setWindUpTicks(10);

@@ -12,7 +12,7 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.skill.CustomSkill;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcs.controllers.data.ability.Ability;
-import kamkeel.npcs.controllers.data.ability.IAbilityFieldProvider;
+import kamkeel.npcs.controllers.data.ability.gui.IAbilityFieldProvider;
 import kamkeel.npcs.controllers.data.ability.type.AbilityEffect;
 import kamkeel.npcs.controllers.data.ability.type.energy.AbilityBarrier;
 import net.minecraft.client.Minecraft;

@@ -12,7 +12,7 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
-import kamkeel.npcs.controllers.data.ability.UserType;
+import kamkeel.npcs.controllers.data.ability.enums.UserType;
 import kamkeel.npcs.controllers.data.ability.conditions.AbilityCondition;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;

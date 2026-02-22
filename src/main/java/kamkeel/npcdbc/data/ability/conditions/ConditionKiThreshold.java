@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.data.ability.conditions;
 
 import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcs.controllers.data.ability.UserType;
+import kamkeel.npcs.controllers.data.ability.enums.UserType;
 import kamkeel.npcs.controllers.data.ability.conditions.ConditionThreshold;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
