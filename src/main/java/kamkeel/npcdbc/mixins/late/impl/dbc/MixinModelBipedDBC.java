@@ -14,6 +14,7 @@ import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -144,6 +145,14 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 if (dbcData.Race == 5 && !form.display.effectMajinHair)
                     return;
 
+                // Cancel eyebrow rendering when form has hasEyebrows disabled
+                // Base DBC calls renderHairs("EYEBROW") for player eyebrow rendering
+                if (!form.display.hasEyebrows && hair.contains("EYEBROW")) {
+                    ci.setReturnValue("");
+                    return;
+                }
+
+                boolean isSSJ3Stacking = form.stackable.vanillaStackable && dbcData.State == DBCForm.SuperSaiyan3;
                 boolean isSSJ3 = false;
                 if (form.display.hairType.equals("ssj3") || form.display.hairType.equals("raditz")) {
                     isSSJ3 = form.display.hairType.equals("ssj3") ? true : false;
@@ -165,8 +174,8 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 }
 
 
-                //sets hairstates for default presets
-                if (isHairPreset(hair)) {
+                //sets hairstates for default presets (skip when SSJ3 stacking to preserve D01)
+                if (isHairPreset(hair) && !isSSJ3Stacking) {
                     String oldHair = Hair.get();
                     if (form.display.hairType.equals("base"))
                         oldHair = oldHair.replace(oldHair.charAt(0), 'A');
@@ -190,7 +199,8 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 }
 
 
-                if (isHairPreset(hair)) {
+                // Skip custom hairCode when SSJ3 is stacking - let base DBC render D01 preset
+                if (isHairPreset(hair) && !isSSJ3Stacking) {
                     if (!form.display.hairType.equalsIgnoreCase("bald")) {
                         if (form.display.hairCode.length() > 5 || form.display.hairType.equals("ssj4")) {//if valid hair
                             RenderPlayerJBRA renderer = (RenderPlayerJBRA) RenderManager.instance.getEntityRenderObject(ClientEventHandler.renderingPlayer);
