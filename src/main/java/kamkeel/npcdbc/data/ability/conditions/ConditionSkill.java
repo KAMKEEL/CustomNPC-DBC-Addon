@@ -63,6 +63,8 @@ public class ConditionSkill extends AbilityCondition {
             mode -> setCustom(mode == SubGuiSelectSkill.MODE_CUSTOM)));
 
         defs.add(FieldDef.intField("condition.skill_level", this::getSkillLevel, this::setSkillLevel).range(0, 10));
+
+        defs.add(FieldDef.labelField("condition.is_custom", () -> "\u00A7e" + (isCustom() ? "Yes" : "No")));
     }
 
     @SideOnly(Side.CLIENT)
