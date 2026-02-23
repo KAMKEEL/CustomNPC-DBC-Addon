@@ -21,7 +21,6 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.FacePartData.Part;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
-import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelRenderer;
@@ -122,6 +121,15 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 Set<Part> disabledParts = dbcData.getDisabledFaceParts();
                 if (disabledParts.contains(Part.fromPartId(hair)))
                     ci.setReturnValue("");
+
+                // Cancel normal face rendering for oozaru forms (oozaru renders its own eyes via renderOozaru)
+                if (form.display.hairType.equals("oozaru") && !ClientConstants.renderingOozaru) {
+                    if (hair.contains("FACENOSE") || hair.contains("FACEMOUTH") || hair.contains("EYEBROW") ||
+                        hair.contains("EYEBASE") || hair.contains("EYELEFT") || hair.contains("EYERIGHT")) {
+                        ci.setReturnValue("");
+                        return;
+                    }
+                }
 
                 boolean isMonke = form.display.hasBodyFur || form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru");
                 HD = ConfigDBCClient.EnableHDTextures;
@@ -311,7 +319,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
             faceType.contains("FACENOSE") ||
                 faceType.contains("FACEMOUTH") ||
                 faceType.contains("EYEBROW") ||
-                (faceType.contains("EYEBASE") && !Utility.stackTraceContains("renderOozaru")) ||
+                (faceType.contains("EYEBASE") && !ClientConstants.renderingOozaru) ||
                 faceType.contains("EYELEFT") ||
                 faceType.contains("EYERIGHT")
         ) ci.setReturnValue("");
