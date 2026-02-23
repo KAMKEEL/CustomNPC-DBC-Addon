@@ -591,6 +591,9 @@ condition.skill_id=Skill
 condition.skill_level=Skill Level
 condition.is_custom=Is Custom
 
+# Condition Locked On
+condition.npcdbc.locked_on=Is Locked On
+
 effect.healthregeneration=Health Regeneration
 effect.exhausted=Exhausted
 effect.darkness=Darkness
