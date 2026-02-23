@@ -60,6 +60,14 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         this.dbcData.setLockOnTarget(lockOnTarget == null ? null : lockOnTarget.getMCEntity());
     }
 
+    public IEntityLivingBase getLockOnTarget() {
+        return this.dbcData.getLockOnTarget();
+    }
+
+    public boolean hasLockOnTarget() {
+        return this.dbcData.hasLockOnTarget();
+    }
+
     @Override
     public void setKiFistOn(boolean on) {
         if (dbcData.Skills.contains("KF")) {

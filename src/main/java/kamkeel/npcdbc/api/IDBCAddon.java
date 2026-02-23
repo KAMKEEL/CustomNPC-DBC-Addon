@@ -39,6 +39,10 @@ public interface IDBCAddon extends IDBCPlayer {
      */
     void setLockOnTarget(IEntityLivingBase lockOnTarget);
 
+    IEntityLivingBase getLockOnTarget();
+
+    boolean hasLockOnTarget();
+
     /**
      * This will only work if the player has the ki fist skill
      *

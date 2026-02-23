@@ -32,11 +32,7 @@ import kamkeel.npcdbc.data.overlay.OverlayManager;
 import kamkeel.npcdbc.data.skill.SkillContainer;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.network.DBCPacketHandler;
-import kamkeel.npcdbc.network.packets.player.DBCSetFlight;
-import kamkeel.npcdbc.network.packets.player.DBCUpdateLockOn;
-import kamkeel.npcdbc.network.packets.player.PingFormColorPacket;
-import kamkeel.npcdbc.network.packets.player.PingPacket;
-import kamkeel.npcdbc.network.packets.player.TurboPacket;
+import kamkeel.npcdbc.network.packets.player.*;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.NBTHelper;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -48,10 +44,12 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import noppes.npcs.api.entity.IEntityLivingBase;
 import noppes.npcs.controllers.CustomEffectController;
 import noppes.npcs.controllers.data.EffectKey;
 import noppes.npcs.controllers.data.PlayerEffect;
 import noppes.npcs.scripted.CustomNPCsException;
+import noppes.npcs.scripted.NpcAPI;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.ArrayList;
@@ -112,6 +110,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     // Custom Form / Custom Aura
     public int addonFormID = -1, auraID = -1, outlineID = -1;
     public float addonFormLevel = 0, addonCurrentHeat = 0;
+
+    public EntityLivingBase LockOn;
 
     /**
      * Client-side bonus store. Needed for proper Battle Power calculations on the client.
@@ -1089,11 +1089,11 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public void setLockOnTarget(EntityLivingBase lockOnTarget) {
 
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-            DBCUpdateLockOn packet;
+            DBCLockOn.Update packet;
             if (lockOnTarget == null) {
-                packet = new DBCUpdateLockOn();
+                packet = new DBCLockOn.Update();
             } else {
-                packet = new DBCUpdateLockOn(lockOnTarget.getEntityId());
+                packet = new DBCLockOn.Update(lockOnTarget.getEntityId());
             }
             DBCPacketHandler.Instance.sendToPlayer(packet, (EntityPlayerMP) player);
             return;
@@ -1102,10 +1102,22 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         if (side == Side.CLIENT) {
             if (player == Minecraft.getMinecraft().thePlayer) {
-                DBCUpdateLockOn.setLockOnTarget(lockOnTarget);
+                DBCLockOn.Update.setLockOnTarget(lockOnTarget);
             }
             return;
         }
+    }
+
+    public IEntityLivingBase getLockOnTarget() {
+        if (LockOn != null) {
+            return (IEntityLivingBase) NpcAPI.Instance().getIEntity(LockOn);
+        }
+
+        return null;
+    }
+
+    public boolean hasLockOnTarget() {
+        return getLockOnTarget() != null;
     }
 
     @Override
