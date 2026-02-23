@@ -609,6 +609,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @Unique
     private void renderOozaru(int bodyCM, int eyeColor, int furColor) {
+        ClientConstants.renderingOozaru = true;
         ResourceLocation bdyskn = new ResourceLocation(HD ? HDDir + "oozaru/oozaru1.png" : "jinryuudragonbc:cc/oozaru1.png"); //human hairless face
         this.bindTexture(bdyskn);
         RenderPlayerJBRA.glColor3f(bodyCM);
@@ -622,6 +623,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         this.modelMain.renderHairs(0.0625F, "EYEBASE");
         RenderPlayerJBRA.glColor3f(bodyCM); //
         this.modelMain.renderHairs(0.0625F, "OOZARU");
+        ClientConstants.renderingOozaru = false;
     }
 
     @Unique
