@@ -7,6 +7,9 @@ import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcs.controllers.data.ability.Ability;
+import kamkeel.npcs.controllers.data.ability.conditions.AbilityCondition;
+import kamkeel.npcs.controllers.data.ability.conditions.ConditionHPThreshold;
+import kamkeel.npcs.controllers.data.ability.conditions.ConditionThreshold;
 import kamkeel.npcs.controllers.data.ability.enums.AbilityPhase;
 import kamkeel.npcs.controllers.data.ability.extender.IAbilityExtender;
 import net.minecraft.entity.EntityLivingBase;
@@ -264,5 +267,34 @@ public class DBCAbilityExtender implements IAbilityExtender {
 
         // Pass null for stats — player's own settings are used (friendly fist already handled above)
         DBCUtils.doDBCDamage(player, damageCalc.damage, null, source);
+    }
+
+    @Override
+    public Boolean onCheckConditionForPlayer(AbilityCondition condition, EntityLivingBase player) {
+        if (condition instanceof ConditionHPThreshold) {
+            return handleConditionHPThreshold((ConditionHPThreshold) condition, (EntityPlayer) player);
+        }
+
+        return null;
+    }
+
+    public boolean handleConditionHPThreshold(ConditionHPThreshold condition, EntityPlayer player) {
+        boolean isPercent = condition.isPercent();
+        ConditionThreshold.ThresholdType thresholdType = condition.getThresholdType();
+        DBCData dbcData = DBCData.get(player);
+
+        float value;
+        float threshold;
+        float thresholdPercent = condition.getThresholdPercent();
+        float thresholdFlat = condition.getThresholdFlat();
+        if (isPercent) {
+            float max = dbcData.simplifiedDBCData.getMaxHP();
+            value = max > 0 ? dbcData.simplifiedDBCData.getHP() / max : 0;
+            threshold = thresholdPercent;
+        } else {
+            value = dbcData.simplifiedDBCData.getHP();
+            threshold = thresholdFlat;
+        }
+        return thresholdType.test(value, threshold);
     }
 }
