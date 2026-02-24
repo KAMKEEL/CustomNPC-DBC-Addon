@@ -156,14 +156,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 //majin effect check
                 if (dbcData.Race == 5 && !form.display.effectMajinHair)
                     return;
-
-                // Cancel eyebrow rendering when form has hasEyebrows disabled
-                // Base DBC calls renderHairs("EYEBROW") for player eyebrow rendering
-                if (!form.display.hasEyebrows && hair.contains("EYEBROW")) {
-                    ci.setReturnValue("");
-                    return;
-                }
-
+                
                 boolean isSSJ3 = false;
                 if (form.display.hairType.equals("ssj3") || form.display.hairType.equals("raditz")) {
                     isSSJ3 = form.display.hairType.equals("ssj3") ? true : false;
