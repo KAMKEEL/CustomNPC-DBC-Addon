@@ -91,6 +91,7 @@ public class DBCUtils {
 
     public static boolean damageEntityCalled = false;
     public static boolean abilityDamageHandled = false;
+    public static Float abilityDamageAmount = null; // Actual ability damage for player script events
 
     public static String[] CONFIG_UI_NAME;
     public static String[] cCONFIG_UI_NAME;
