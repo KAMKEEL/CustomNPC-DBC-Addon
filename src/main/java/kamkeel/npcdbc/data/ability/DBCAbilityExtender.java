@@ -180,7 +180,9 @@ public class DBCAbilityExtender implements IAbilityExtender {
         if (caster instanceof EntityPlayer) {
             float calcDamage = DBCUtils.calculateAbilityAttackDamage((EntityPlayer) caster, stats);
             if (calcDamage > 0) {
-                outDamage = calcDamage;
+                // DBC scaling replaces the base damage; re-apply any ability-internal modifiers
+                // (e.g. Slam height scaling) so the ability's multiplier is preserved
+                outDamage = calcDamage * ability.getDamageMultiplier();
             }
         }
 
@@ -204,10 +206,12 @@ public class DBCAbilityExtender implements IAbilityExtender {
 
             // Player target: flag-guarded attackEntityFrom for knockback/animation only
             DBCUtils.abilityDamageHandled = true;
+            DBCUtils.abilityDamageAmount = outDamage;
             try {
                 target.attackEntityFrom(source, 1.0f);
             } finally {
                 DBCUtils.abilityDamageHandled = false;
+                DBCUtils.abilityDamageAmount = null;
             }
 
             // Player DBC Stats: when enabled AND usePlayerSettings is false, the ability's

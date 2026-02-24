@@ -43,6 +43,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.UUID;
 
+import noppes.npcs.client.ClientAbilityState;
+
 import static kamkeel.npcdbc.constants.DBCForm.UltraInstinct;
 
 @Mixin(value = DBCKiTech.class, remap = false)
@@ -224,6 +226,9 @@ public abstract class MixinDBCKiTech {
         if (!DBCData.getClient().flightEnabled)
             ci.cancel();
 
+        // Suppress DBC flight during abilities that control movement (e.g. Slam)
+        if (ClientAbilityState.hasAbilityMovement && ClientAbilityState.activePhase)
+            ci.cancel();
     }
 
 
