@@ -167,6 +167,13 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                     }
                 }
 
+                //render SSJ3 brows AKA "no eyebrows"
+                if (hair.contains("EYEBROW") && dbcData.Race != 3 && (isSSJ3 || !form.display.hasEyebrows)) { //bind ssj3 eyebrow texture to ssj3 hair type
+                    int gen = JRMCoreH.dnsGender(dbcData.DNS);
+                    int eyes = JRMCoreH.dnsEyes(dbcData.DNS);
+                    Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + (gen == 1 ? "f" : "") + "humw" + eyes + ".png"));
+                }
+
                 //hair color for all forms
                 if ((isHairPreset(hair) || hair.contains("EYEBROW"))) {
                     if (!playerColors.hasHairColor(dbcData, form.display)) {
