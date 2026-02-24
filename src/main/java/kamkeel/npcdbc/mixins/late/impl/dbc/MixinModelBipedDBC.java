@@ -21,6 +21,8 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.FacePartData.Part;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
+import kamkeel.npcdbc.util.Utility;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelRenderer;
@@ -118,12 +120,8 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 hair = Hair.get();
                 DBCData dbcData = DBCData.get(ClientEventHandler.renderingPlayer);
 
-                boolean isSSJ3Hair = form.display.hairType.equals("ssj3");
-                boolean isSSJ3Stacking = form.stackable.vanillaStackable && dbcData.State == DBCForm.SuperSaiyan3;
-                boolean hasSSJ3Eyebrow = (isSSJ3Hair || isSSJ3Stacking) && hair.contains("EYEBROW");
-
                 Set<Part> disabledParts = dbcData.getDisabledFaceParts();
-                if (disabledParts.contains(Part.fromPartId(hair)) && !hasSSJ3Eyebrow) {
+                if (disabledParts.contains(Part.fromPartId(hair)))
                     ci.setReturnValue("");
                     return;
                 }
@@ -160,11 +158,12 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                     return;
 
                 // Cancel eyebrow rendering when form has hasEyebrows disabled
-                // SSJ3 forms are excluded because DBC has custom SSJ3 eyebrow textures (ssj3eyebrow/)
-                if (!form.display.hasEyebrows && hair.contains("EYEBROW") && !hasSSJ3Eyebrow) {
+                // Base DBC calls renderHairs("EYEBROW") for player eyebrow rendering
+                if (!form.display.hasEyebrows && hair.contains("EYEBROW")) {
                     ci.setReturnValue("");
                     return;
                 }
+
                 boolean isSSJ3 = false;
                 if (form.display.hairType.equals("ssj3") || form.display.hairType.equals("raditz")) {
                     isSSJ3 = form.display.hairType.equals("ssj3") ? true : false;
@@ -186,8 +185,8 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 }
 
 
-                //sets hairstates for default presets (skip when SSJ3 stacking to preserve D01)
-                if (isHairPreset(hair) && !isSSJ3Stacking) {
+                //sets hairstates for default presets
+                if (isHairPreset(hair)) {
                     String oldHair = Hair.get();
                     if (form.display.hairType.equals("base"))
                         oldHair = oldHair.replace(oldHair.charAt(0), 'A');
@@ -211,8 +210,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 }
 
 
-                // Skip custom hairCode when SSJ3 is stacking - let base DBC render D01 preset
-                if (isHairPreset(hair) && !isSSJ3Stacking) {
+                if (isHairPreset(hair)) {
                     if (!form.display.hairType.equalsIgnoreCase("bald")) {
                         if (form.display.hairCode.length() > 5 || form.display.hairType.equals("ssj4")) {//if valid hair
                             RenderPlayerJBRA renderer = (RenderPlayerJBRA) RenderManager.instance.getEntityRenderObject(ClientEventHandler.renderingPlayer);
@@ -323,7 +321,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
             faceType.contains("FACENOSE") ||
                 faceType.contains("FACEMOUTH") ||
                 faceType.contains("EYEBROW") ||
-                (faceType.contains("EYEBASE") && !ClientConstants.renderingOozaru) ||
+                (faceType.contains("EYEBASE") && !Utility.stackTraceContains("renderOozaru")) ||
                 faceType.contains("EYELEFT") ||
                 faceType.contains("EYERIGHT")
         ) ci.setReturnValue("");
