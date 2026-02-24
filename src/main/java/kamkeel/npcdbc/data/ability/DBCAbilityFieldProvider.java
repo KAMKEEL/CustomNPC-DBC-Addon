@@ -2,9 +2,11 @@ package kamkeel.npcdbc.data.ability;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.client.gui.component.SubGuiSelectDBCEffect;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectSkill;
 import kamkeel.npcdbc.constants.DBCSkills;
+import kamkeel.npcdbc.constants.DBCStatusEffects;
 import kamkeel.npcdbc.constants.enums.EnumAbilityDamageType;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.SkillController;
@@ -408,6 +410,38 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
                 idSetter.accept(-1);
                 if (modeSetter != null)
                     modeSetter.accept(SubGuiSelectSkill.MODE_DBC);
+            });
+    }
+
+    public static FieldDef statusEffectSubGui(String label,
+                                              Supplier<Integer> ordinalGetter, Consumer<Integer> ordinalSetter,
+                                              Supplier<Integer> modeGetter,    Consumer<Integer> modeSetter) {
+        return FieldDef.subGuiField(label, () -> {
+                int currentOrdinal = ordinalGetter.get();
+                int currentMode = modeGetter != null ? modeGetter.get() : SubGuiSelectDBCEffect.MODE_PERMANENT;
+                return new SubGuiSelectDBCEffect(currentOrdinal, currentMode);
+            }, gui -> {
+                if (gui.getSelectedMode() >= 0) {
+                    ordinalSetter.accept(gui.getSelectedOrdinal());
+                    if (modeSetter != null)
+                        modeSetter.accept(gui.getSelectedMode());
+                }
+            })
+            .buttonLabel(() -> {
+                int ordinal = ordinalGetter.get();
+                int mode = modeGetter != null ? modeGetter.get() : SubGuiSelectDBCEffect.MODE_PERMANENT;
+                if (ordinal >= 0) {
+                    DBCStatusEffects effect = DBCStatusEffects.byOrdinal(ordinal);
+                    String name = effect != null ? effect.name() : "";
+                    String tag = DBCStatusEffects.getTypeName(mode);
+                    return !name.isEmpty() ? "[" + tag + "] " + name : "[" + tag + "] ID: " + ordinal;
+                }
+                return "gui.none";
+            })
+            .clearable(() -> {
+                ordinalSetter.accept(-1);
+                if (modeSetter != null)
+                    modeSetter.accept(SubGuiSelectDBCEffect.MODE_PERMANENT);
             });
     }
 }

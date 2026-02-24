@@ -584,6 +584,11 @@ condition.class.martial_artist=Martial Artist
 condition.class.spiritualist=Spiritualist
 condition.class.warrior=Warrior
 
+# Condition DBC Effect
+condition.npcdbc.dbc_effect=DBC Effect
+condition.dbceffect_id=DBC Effect
+condition.dbceffect_type=Effect Type
+
 # Condition Skill
 condition.npcdbc.skill=Skill Unlocked
 condition.skill_id=Skill
@@ -607,6 +612,8 @@ effect.potara=Potara
 effect.kiregeneration=Ki Regeneration
 effect.staminaregeneration=Stamina Regeneration
 effect.zenkai=Zenkai
+effect.dbc.permanent=Permanent
+effect.dbc.temporary=Temporary
 
 stats.ki=Ki
 
