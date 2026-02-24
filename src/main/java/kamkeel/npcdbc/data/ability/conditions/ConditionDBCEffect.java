@@ -1,5 +1,7 @@
 package kamkeel.npcdbc.data.ability.conditions;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.constants.DBCStatusEffects;
 import kamkeel.npcdbc.data.ability.DBCAbilityFieldProvider;
 import kamkeel.npcs.controllers.data.ability.conditions.AbilityCondition;
@@ -40,6 +42,7 @@ public class ConditionDBCEffect extends AbilityCondition {
         return id >= 0 && id < DBCStatusEffects.values().length;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void getConditionDefinitions(List<FieldDef> defs) {
         defs.add(DBCAbilityFieldProvider.statusEffectSubGui("condition.dbceffect_id",
@@ -49,6 +52,7 @@ public class ConditionDBCEffect extends AbilityCondition {
         defs.add(FieldDef.labelField("condition.dbceffect_type", () -> "\u00A7e" + DBCStatusEffects.getTypeName(getEffectType())));
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public String getConditionSummary() {
         String filterLabel = StatCollector.translateToLocal(getFilter().toString());
