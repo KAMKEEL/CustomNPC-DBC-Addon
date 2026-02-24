@@ -121,7 +121,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 DBCData dbcData = DBCData.get(ClientEventHandler.renderingPlayer);
 
                 Set<Part> disabledParts = dbcData.getDisabledFaceParts();
-                if (disabledParts.contains(Part.fromPartId(hair)))
+                if (disabledParts.contains(Part.fromPartId(hair))) {
                     ci.setReturnValue("");
                     return;
                 }
