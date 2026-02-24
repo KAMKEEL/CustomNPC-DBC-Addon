@@ -84,21 +84,28 @@ public class DBCAbilityExtender implements IAbilityExtender {
 
         DBCData data = DBCData.get((EntityPlayer) caster);
 
+        int actualKiDrain = 0;
+        int actualStaminaDrain = 0;
+
         if (kiDrain > 0) {
-            int actual = stats.isKiDrainPercent()
+            actualKiDrain = stats.isKiDrainPercent()
                 ? (int) (kiDrain / 100.0 * data.stats.getMaxKi()) : kiDrain;
-            if (data.Ki < actual)
+            if (data.Ki < actualKiDrain)
                 return false; // interrupt — not enough ki
-            data.stats.restoreKiFlat(-actual);
         }
 
         if (staminaDrain > 0) {
-            int actual = stats.isStaminaDrainPercent()
+            actualStaminaDrain = stats.isStaminaDrainPercent()
                 ? (int) (staminaDrain / 100.0 * data.stats.getMaxStamina()) : staminaDrain;
-            if (data.Stamina < actual)
+            if (data.Stamina < actualStaminaDrain)
                 return false; // interrupt — not enough stamina
-            data.stats.restoreStaminaFlat(-actual);
         }
+
+        // Deduct both after validation passes
+        if (actualKiDrain > 0)
+            data.stats.restoreKiFlat(-actualKiDrain);
+        if (actualStaminaDrain > 0)
+            data.stats.restoreStaminaFlat(-actualStaminaDrain);
 
         return true;
     }
