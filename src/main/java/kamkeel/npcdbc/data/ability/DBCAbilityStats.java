@@ -45,7 +45,7 @@ public class DBCAbilityStats implements IDBCAbility {
     public int scalingAttribute = 0;       // DBCAttribute index: 0=STR, 1=DEX, 2=CON, 3=WIL, 4=MND, 5=SPI
     public float scalingMultiplier = 1.0f;
     public int flatDamage = 100;
-    public boolean usePlayerSettings = false; // When true, ability's DBC combat settings override the player's own
+    public boolean usePlayerSettings = true; // When true, use the player's own DBC settings (Friendly Fist, etc.) instead of the ability's
     // CNPC multi-set scaling
     public int scalingSetCount = 1;
     private static final int MAX_SETS = 3;

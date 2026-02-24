@@ -1,5 +1,9 @@
 package kamkeel.npcdbc.data.ability;
 
+import JinRyuu.JRMCore.JRMCoreConfig;
+import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.JRMCoreHDBC;
+import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.constants.DBCDamageSource;
 import kamkeel.npcdbc.data.DBCDamageCalc;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -14,6 +18,7 @@ import kamkeel.npcs.controllers.data.ability.enums.AbilityPhase;
 import kamkeel.npcs.controllers.data.ability.extender.IAbilityExtender;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
 import noppes.npcs.NpcDamageSource;
 import noppes.npcs.entity.EntityNPCInterface;
@@ -181,6 +186,22 @@ public class DBCAbilityExtender implements IAbilityExtender {
 
         // Route damage to target
         if (target instanceof EntityPlayer) {
+            // Check No PVP dimension toggle for player-to-player ability damage
+            if (caster instanceof EntityPlayer) {
+                MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+                if (server != null) {
+                    String pvpSetting = JRMCoreH.rwip(server, target.dimension + "");
+                    if ("false".equalsIgnoreCase(pvpSetting)) {
+                        return true; // No damage in No PVP dimension
+                    }
+                }
+            }
+
+            // Check JRMC safezone protection
+            if (JRMCoreConfig.sfzns && JRMCoreHDBC.JRMCoreEHonLivingHurtSafeZone(target)) {
+                return true; // No damage inside safezone
+            }
+
             // Player target: flag-guarded attackEntityFrom for knockback/animation only
             DBCUtils.abilityDamageHandled = true;
             try {
@@ -189,11 +210,12 @@ public class DBCAbilityExtender implements IAbilityExtender {
                 DBCUtils.abilityDamageHandled = false;
             }
 
-            // Player DBC Stats: when enabled AND usePlayerSettings is true, the ability's
+            // Player DBC Stats: when enabled AND usePlayerSettings is false, the ability's
             // configured ignore flags (IgnoreDex, FriendlyFist, etc.) override the player's own settings.
+            // When usePlayerSettings is true, the player's own DBC settings (Friendly Fist, etc.) are used.
             // For NPC casters, usePlayerSettings is irrelevant — always use ability stats when enabled.
             boolean useAbilityStats = stats.isEnabled();
-            if (caster instanceof EntityPlayer && !stats.getUsePlayerSettings()) {
+            if (caster instanceof EntityPlayer && stats.getUsePlayerSettings()) {
                 useAbilityStats = false;
             }
 

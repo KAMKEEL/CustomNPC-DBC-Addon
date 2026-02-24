@@ -70,7 +70,7 @@ stats.hover.cnpc.kiWeapon=Adds Ki Weapon bonus (WIL/Ki Power) to this set. Requi
 stats.hover.cnpc.kiInfuse=Multiplies this set's damage by Ki Infuse multiplier. Requires Ki Weapon skill.
 stats.cnpc.previewLine=Set
 stats.cnpc.previewTotal=Total
-stats.hover.playerDBCStats=When enabled, the ability's configured DBC combat settings (Ignore Dex, Friendly Fist, Defense Penetration, etc.) override the player's own settings. When disabled, the player's own DBC combat settings are used instead. Cannot be enabled when DBC Stats is disabled.
+stats.hover.playerDBCStats=When enabled, the player's own DBC settings (Friendly Fist, etc.) are used instead of the ability's. When disabled, the ability's configured DBC combat settings (Ignore Dex, Friendly Fist, Defense Penetration, etc.) override the player's own settings. Greyed out when DBC Stats is disabled.
 stats.damagePreview=Preview
 stats.section.universalSettings=Universal Settings
 

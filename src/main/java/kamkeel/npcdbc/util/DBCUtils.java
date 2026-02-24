@@ -577,8 +577,11 @@ public class DBCUtils {
 
         int playerHP = getInt(player, "jrmcBdy");
 
+        // Read KO flag from damage calc before clearing (set by player's Friendly Fist in calculateDBCDamageFromSource)
+        boolean koFromCalc = false;
         if (lastSetDamage != null) {
             damage = Math.max(lastSetDamage.damage, 0);
+            koFromCalc = lastSetDamage.ko;
             lastSetDamage = null;
         }
 
@@ -597,6 +600,21 @@ public class DBCUtils {
                 if (ko <= 0 && newHP == 20) {
                     if (!DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer(player), source))) {
                         setInt((int) dbcStats.getFriendlyFistAmount(), player, "jrmcHar4va");
+                        setByte(race == 4 ? (state < 4 ? state : 4) : 0, player, "jrmcState");
+                        setByte((int) 0, player, "jrmcState2");
+                        setByte((int) 0, player, "jrmcRelease");
+                        setInt((int) 0, player, "jrmcStamina");
+                        StusEfcts(19, statusEffects, (EntityPlayer) player, false);
+                    }
+                }
+            } else if (koFromCalc) {
+                // Player's own Friendly Fist setting triggered KO in calculateDBCDamageFromSource
+                // Apply the same KO logic with DBC's default KO duration (6 seconds)
+                int ko = getInt(player, "jrmcHar4va");
+                newHP = Math.max(reducedHP, 20);
+                if (ko <= 0 && newHP == 20) {
+                    if (!DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer(player), source))) {
+                        setInt(6, player, "jrmcHar4va");
                         setByte(race == 4 ? (state < 4 ? state : 4) : 0, player, "jrmcState");
                         setByte((int) 0, player, "jrmcState2");
                         setByte((int) 0, player, "jrmcRelease");
