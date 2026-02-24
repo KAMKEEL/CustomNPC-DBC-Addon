@@ -45,7 +45,7 @@ public class CustomNpcPlusDBC {
 
     public static final String name = "CustomNPC+ DBC Addon";
     public static final String ID = "npcdbc";
-    public static final String version = "1.2-beta8";
+    public static final String version = "1.2-beta9";
 
     @SidedProxy(clientSide = "kamkeel.npcdbc.client.ClientProxy", serverSide = "kamkeel.npcdbc.CommonProxy")
     public static CommonProxy proxy;
