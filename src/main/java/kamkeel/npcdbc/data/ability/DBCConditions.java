@@ -9,6 +9,7 @@ public class DBCConditions {
     public static final Register.Conditions CONDITIONS = Register.Conditions.create("npcdbc", "DBC Addon");
 
     public static final AbilityCondition KI_THRESHOLD = CONDITIONS.register("ki_threshold", ConditionKiThreshold::new);
+    public static final AbilityCondition STAMINA_THRESHOLD = CONDITIONS.register("stamina_threshold", ConditionStaminaThreshold::new);
     public static final AbilityCondition FORM = CONDITIONS.register("form", ConditionForm::new);
     public static final AbilityCondition RACE = CONDITIONS.register("race", ConditionRace::new);
     public static final AbilityCondition STAT = CONDITIONS.register("stat", ConditionDBCStat::new);

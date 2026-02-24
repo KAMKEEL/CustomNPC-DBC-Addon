@@ -102,6 +102,10 @@ public class ConditionSkill extends AbilityCondition {
     }
 
     public void setSkillId(int skillId) {
+        if (skillId < 0) {
+            this.skillId = -1;
+            return;
+        }
         if (!isSkillValid(skillId)) return;
         this.skillId = skillId;
     }
@@ -111,7 +115,7 @@ public class ConditionSkill extends AbilityCondition {
     }
 
     public void setSkillLevel(int skillLevel) {
-        this.skillLevel = skillLevel;
+        this.skillLevel = Math.max(0, Math.min(10, skillLevel));
     }
 
     private boolean isCustom() {

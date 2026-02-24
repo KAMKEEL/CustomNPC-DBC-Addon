@@ -547,10 +547,9 @@ ability.npcdbc.god_of_destruction=God of Destruction
 
 # Condition Ki Threshold
 condition.npcdbc.ki_threshold=Ki Threshold
-condition.ki_above=Ki Above
-condition.ki_below=Ki Below
-condition.ki_equal=Ki Equal
-condition.thresholdPercent=Threshold
+
+# Condition Stamina Threshold
+condition.npcdbc.stamina_threshold=Stamina Threshold
 
 # Condition Form
 condition.npcdbc.form=Transformation
