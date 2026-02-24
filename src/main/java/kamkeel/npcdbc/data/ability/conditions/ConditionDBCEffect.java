@@ -52,10 +52,10 @@ public class ConditionDBCEffect extends AbilityCondition {
     @Override
     public String getConditionSummary() {
         String filterLabel = StatCollector.translateToLocal(getFilter().toString());
-        String skillName = "None";
+        String skillName = StatCollector.translateToLocal("gui.none");
         if (isEffectValid(effectId)) {
             DBCStatusEffects effect = DBCStatusEffects.byOrdinal(effectId);
-            skillName = effect != null ? effect.name() : "None";
+            skillName = effect != null ? effect.name() : skillName;
         }
         return "[" + filterLabel + "] DBC Effect: " + skillName;
     }

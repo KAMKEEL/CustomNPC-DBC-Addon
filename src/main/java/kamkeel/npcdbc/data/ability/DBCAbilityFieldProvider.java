@@ -429,12 +429,10 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
             })
             .buttonLabel(() -> {
                 int ordinal = ordinalGetter.get();
-                int mode = modeGetter != null ? modeGetter.get() : SubGuiSelectDBCEffect.MODE_PERMANENT;
                 if (ordinal >= 0) {
                     DBCStatusEffects effect = DBCStatusEffects.byOrdinal(ordinal);
                     String name = effect != null ? effect.name() : "";
-                    String tag = DBCStatusEffects.getTypeName(mode);
-                    return !name.isEmpty() ? "[" + tag + "] " + name : "[" + tag + "] ID: " + ordinal;
+                    return !name.isEmpty() ? name : "ID: " + ordinal;
                 }
                 return "gui.none";
             })
