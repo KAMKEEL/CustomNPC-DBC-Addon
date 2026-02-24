@@ -108,7 +108,6 @@ public class CNPCAnimationHelper {
             return false;
         }
 
-        boolean changed = false;
         AnimationData animData = null;
         if (ClientEventHandler.renderingPlayer != null) {
             ClientEventHandler.playerModel = modelRenderer.baseModel;
@@ -156,11 +155,10 @@ public class CNPCAnimationHelper {
                     modelRenderer.rotationPointX = originalPart.pivot[0] + part.prevPivots[0];
                     modelRenderer.rotationPointY = originalPart.pivot[1] + part.prevPivots[1];
                     modelRenderer.rotationPointZ = originalPart.pivot[2] + part.prevPivots[2];
-                    changed = true;
                 }
             }
         }
-        return changed;
+        return false;
     }
 
     private static EnumAnimationPart getPlayerPartType(ModelRenderer renderer) {
