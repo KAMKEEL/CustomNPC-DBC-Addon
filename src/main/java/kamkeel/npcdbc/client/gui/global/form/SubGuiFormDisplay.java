@@ -236,7 +236,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
             window.addButton(new GuiNpcButtonYesNo(123, x + 50, y - 5, 54, 20, form.display.hasBodyFur));
 
-            if (display.hasBodyFur) {
+            if (display.hasBodyFur || display.hairType.equals("ssj4")) {
                 y += 25;
                 window.addLabel(new GuiNpcLabel(1113, "Type", x, y, 0xFFFFFF));
                 window.addButton(new GuiNpcButton(11132, width - x - 75, y - 5, 50, 20, new String[]{"GT", "Daima", "Legend"}, display.furType));
