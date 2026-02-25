@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.client.overlay.IOverlay;
+import kamkeel.npcdbc.api.client.overlay.IOverlayChain;
 import kamkeel.npcdbc.api.form.IFormDisplay;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -457,6 +458,26 @@ public class FormDisplay implements IFormDisplay {
         return isCustomizable;
     }
 
+    @Override
+    public IOverlayChain getOverlayChain() {
+        return overlays;
+    }
+
+    @Override
+    public IOverlay.Type[] getDisabledOverlayTypes() {
+        return disabledOverlayTypes.toArray(new IOverlay.Type[0]);
+    }
+
+    @Override
+    public void setDisabledOverlayTypes(IOverlay.Type[] types) {
+        disabledOverlayTypes.clear();
+        if (types != null) {
+            for (IOverlay.Type t : types) {
+                if (t != null)
+                    disabledOverlayTypes.add(t);
+            }
+        }
+    }
     /**
      * Class made for the purpose of letting players customize their forms from the default colors.
      */

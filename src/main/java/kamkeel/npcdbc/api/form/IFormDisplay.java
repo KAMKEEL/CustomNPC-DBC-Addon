@@ -1,8 +1,9 @@
 package kamkeel.npcdbc.api.form;
 
 import kamkeel.npcdbc.api.aura.IAura;
+import kamkeel.npcdbc.api.client.overlay.IOverlay;
+import kamkeel.npcdbc.api.client.overlay.IOverlayChain;
 import kamkeel.npcdbc.api.outline.IOutline;
-
 /**
  * This interface is heavily based on how DBC calculates its form masteries. Please check any race's form_mastery.cfg config to
  * get a better understanding on how this interface functions
@@ -161,4 +162,23 @@ public interface IFormDisplay {
      * @return If the form colors are customizable by players.
      */
     boolean isCustomizable();
+
+    /**
+     * @return The overlay chain associated with this form display
+     */
+    IOverlayChain getOverlayChain();
+
+    /**
+     * Returns the set of overlay types that are disabled for this form.
+     *
+     * @return Array of disabled {@link IOverlay.Type} values
+     */
+    IOverlay.Type[] getDisabledOverlayTypes();
+
+    /**
+     * Sets the disabled overlay types for this form.
+     *
+     * @param types Array of {@link IOverlay.Type} values to disable
+     */
+    void setDisabledOverlayTypes(IOverlay.Type[] types);
 }

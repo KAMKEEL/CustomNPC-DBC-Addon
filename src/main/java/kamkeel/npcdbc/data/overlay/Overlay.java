@@ -292,6 +292,38 @@ public class Overlay implements IOverlay {
         return this;
     }
 
+    // ── IOverlay API mutators ──
+
+    @Override
+    public IOverlay setTexture(String texture) {
+        return texture(texture);
+    }
+
+    @Override
+    public IOverlay setColor(int color) {
+        return color(color);
+    }
+
+    @Override
+    public IOverlay setAlpha(float alpha) {
+        return alpha(alpha);
+    }
+
+    @Override
+    public IOverlay setGlow(boolean glow) {
+        return glow(glow);
+    }
+
+    @Override
+    public IOverlay setEnabled(boolean enabled) {
+        return enabled(enabled);
+    }
+
+    @Override
+    public IOverlay setColorType(int colorType) {
+        return colorType(colorType);
+    }
+
     public void readFromNBT(NBTTagCompound compound) {
         enabled = compound.getBoolean("enabled");
 
