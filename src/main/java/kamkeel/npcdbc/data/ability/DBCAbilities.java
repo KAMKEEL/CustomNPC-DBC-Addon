@@ -19,7 +19,7 @@ import kamkeel.npcs.controllers.data.ability.type.AbilityEffect;
 import kamkeel.npcs.controllers.data.ability.type.energy.AbilityBeam;
 import kamkeel.npcs.controllers.data.ability.type.energy.AbilityDisc;
 import kamkeel.npcs.controllers.data.ability.type.energy.AbilityDome;
-import kamkeel.npcs.controllers.data.ability.type.energy.AbilityLaserShot;
+import kamkeel.npcs.controllers.data.ability.type.energy.AbilityLaser;
 import kamkeel.npcs.controllers.data.ability.type.energy.AbilityOrb;
 import kamkeel.npcs.util.Register;
 
@@ -457,7 +457,7 @@ public class DBCAbilities {
 
     // Laser Variants
     public static final AbilityVariant SPECIAL_BEAM_CANNON = ABILITIES.registerVariant(LASER, "ability.npcdbc.special_beam_cannon", GROUP, a -> {
-        AbilityLaserShot laser = (AbilityLaserShot) a;
+        AbilityLaser laser = (AbilityLaser) a;
         a.setName("Special Beam Cannon");
         a.setDisplayName("&dSpecial &eBeam &dCannon");
         a.setPerAbilityCooldown(true);
@@ -481,7 +481,7 @@ public class DBCAbilities {
     });
 
     public static final AbilityVariant TRIBEAM = ABILITIES.registerVariant(LASER, "ability.npcdbc.tribeam", GROUP, a -> {
-        AbilityLaserShot laser = (AbilityLaserShot) a;
+        AbilityLaser laser = (AbilityLaser) a;
         a.setName("Tri-Beam");
         a.setDisplayName("&6Tri-Beam");
         a.setPerAbilityCooldown(true);
@@ -493,7 +493,6 @@ public class DBCAbilities {
         a.setActiveAnimationName("TriBeam_Active");
         laser.setLaserWidth(1.5f);
         laser.setExpansionSpeed(2.0f);
-        laser.setLingerTicks(4);
         laser.setMaxDistance(150.0f);
         laser.setInnerColor(0xFCAE47);
         laser.setOuterColor(0xFF8800);

@@ -169,7 +169,8 @@ public class DBCAbilityExtender implements IAbilityExtender {
     @Override
     public boolean onAbilityDamage(Ability ability, EntityLivingBase caster, EntityLivingBase target,
                                    float damage, float knockback, float knockbackUp,
-                                   double knockbackDirX, double knockbackDirZ) {
+                                   double knockbackDirX, double knockbackDirZ,
+                                   float damageMultiplier) {
         DBCAbilityStats stats = DBCAbilityStats.fromAbility(ability);
 
         // Build the damage source based on caster type
@@ -188,8 +189,9 @@ public class DBCAbilityExtender implements IAbilityExtender {
             float calcDamage = DBCUtils.calculateAbilityAttackDamage((EntityPlayer) caster, stats);
             if (calcDamage > 0) {
                 // DBC scaling replaces the base damage; re-apply any ability-internal modifiers
-                // (e.g. Slam height scaling) so the ability's multiplier is preserved
-                outDamage = calcDamage * ability.getDamageMultiplier();
+                // (e.g. Slam height scaling) so the ability's multiplier is preserved.
+                // damageMultiplier accounts for barrier absorption (< 1.0 when projectile broke through a barrier).
+                outDamage = calcDamage * ability.getDamageMultiplier() * damageMultiplier;
             }
         }
 
