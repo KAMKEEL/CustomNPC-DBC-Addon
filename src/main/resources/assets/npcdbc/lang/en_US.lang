@@ -53,8 +53,7 @@ stats.damageType.desc.ki=DBC Ki formula + Ki Infuse bonus
 stats.damageType.desc.cnpc=Custom: Stat x Release x Weight x Multiplier
 stats.flatDamage=Flat Damage
 stats.scalingAttribute=Scaling Attribute
-stats.scalingMultiplier=Scaling Multiplier
-stats.usePlayerSettings=Use Player Settings
+stats.playerDBCStats=Player DBC Stats
 stats.cnpc.setCount=Number of Sets
 stats.section.cnpcSet1=Set 1
 stats.section.cnpcSet2=Set 2
@@ -71,9 +70,19 @@ stats.hover.cnpc.kiWeapon=Adds Ki Weapon bonus (WIL/Ki Power) to this set. Requi
 stats.hover.cnpc.kiInfuse=Multiplies this set's damage by Ki Infuse multiplier. Requires Ki Weapon skill.
 stats.cnpc.previewLine=Set
 stats.cnpc.previewTotal=Total
-stats.hover.usePlayerSettings=When enabled, respects the player's DBC skill toggles (Ki Fist, Ki Weapon, Ki Infuse). When disabled, forces all bonuses on if the player has the skill.
+stats.hover.playerDBCStats=When enabled, the player's own DBC settings (Friendly Fist, etc.) are used instead of the ability's. When disabled, the ability's configured DBC combat settings (Ignore Dex, Friendly Fist, Defense Penetration, etc.) override the player's own settings. Greyed out when DBC Stats is disabled.
 stats.damagePreview=Preview
 stats.section.universalSettings=Universal Settings
+
+stats.section.barrierScaling=Barrier Health Scaling
+stats.barrierScalingEnabled=Use DBC Health Scaling
+stats.hover.barrierScaling=When enabled, barrier health is calculated from the CNPC scaling sets below instead of the flat value. Only applies to player-cast barriers.
+
+stats.section.healing=DBC Healing
+stats.healingMode=Healing Mode
+stats.hover.healingMode=How healing is applied to DBC players. Flat: heal amount is added directly as Body HP. Percent: heal amount is used as a percentage of max Body HP. Non-DBC entities always receive vanilla healing.
+stats.healScalingEnabled=Use DBC Heal Scaling
+stats.hover.healScaling=When enabled, healing amount is calculated from CNPC scaling sets instead of the ability's base heal value. Only applies to player casters.
 
 mastery.maxLevel=Max Level
 mastery.multiFlat=Multi Flat
@@ -538,10 +547,9 @@ ability.npcdbc.god_of_destruction=God of Destruction
 
 # Condition Ki Threshold
 condition.npcdbc.ki_threshold=Ki Threshold
-condition.ki_above=Ki Above
-condition.ki_below=Ki Below
-condition.ki_equal=Ki Equal
-condition.thresholdPercent=Threshold
+
+# Condition Stamina Threshold
+condition.npcdbc.stamina_threshold=Stamina Threshold
 
 # Condition Form
 condition.npcdbc.form=Transformation
@@ -576,6 +584,20 @@ condition.class.martial_artist=Martial Artist
 condition.class.spiritualist=Spiritualist
 condition.class.warrior=Warrior
 
+# Condition DBC Effect
+condition.npcdbc.dbc_effect=DBC Effect
+condition.dbceffect_id=DBC Effect
+condition.dbceffect_type=Effect Type
+
+# Condition Skill
+condition.npcdbc.skill=Skill Unlocked
+condition.skill_id=Skill
+condition.skill_level=Skill Level
+condition.is_custom=Is Custom
+
+# Condition Locked On
+condition.npcdbc.locked_on=Is Locked On
+
 effect.healthregeneration=Health Regeneration
 effect.exhausted=Exhausted
 effect.darkness=Darkness
@@ -590,6 +612,8 @@ effect.potara=Potara
 effect.kiregeneration=Ki Regeneration
 effect.staminaregeneration=Stamina Regeneration
 effect.zenkai=Zenkai
+effect.dbc.permanent=Permanent
+effect.dbc.temporary=Temporary
 
 stats.ki=Ki
 

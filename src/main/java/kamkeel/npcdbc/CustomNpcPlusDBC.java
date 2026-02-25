@@ -11,7 +11,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.event.IDBCEvent;
 import kamkeel.npcdbc.config.LoadConfiguration;
-import kamkeel.npcdbc.constants.DBCAbilities;
+import kamkeel.npcdbc.data.ability.DBCAbilities;
 import kamkeel.npcdbc.constants.DBCAnimations;
 import kamkeel.npcdbc.constants.DBCScriptType;
 import kamkeel.npcdbc.controllers.AuraController;
@@ -45,7 +45,7 @@ public class CustomNpcPlusDBC {
 
     public static final String name = "CustomNPC+ DBC Addon";
     public static final String ID = "npcdbc";
-    public static final String version = "1.2-beta5";
+    public static final String version = "1.2-beta10";
 
     @SidedProxy(clientSide = "kamkeel.npcdbc.client.ClientProxy", serverSide = "kamkeel.npcdbc.CommonProxy")
     public static CommonProxy proxy;

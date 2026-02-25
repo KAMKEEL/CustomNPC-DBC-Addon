@@ -125,6 +125,7 @@ public class TransformController {
         if (time == 1 || !bo)
             JRMCoreH.Skll((byte) 5, bo ? (byte) 0 : 1, (byte) 1);
         if (!bo) {
+            resetTimers();
             cantTransform = false;
             transformed = false;
             transformedInto = null;

@@ -63,8 +63,15 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
             EntityPlayer player = (EntityPlayer) attackerEntity;
             DBCData data = DBCData.get(player);
             if (dbcAltered = data.Powertype == 1) {
-                // Apply Attributes and Resistances to Modified Damage
-                float modifiedDamage = DBCUtils.calculateAttackStat(player, dam.get(), damagesource);
+                float modifiedDamage;
+                if (DBCUtils.npcLastSetDamage != null) {
+                    // Ability extender already calculated DBC damage; use it directly
+                    modifiedDamage = DBCUtils.npcLastSetDamage;
+                } else {
+                    // Normal DBC damage: calculate attack stat from base damage
+                    modifiedDamage = DBCUtils.calculateAttackStat(player, dam.get(), damagesource);
+                }
+
                 // Apply Attributes
                 EntityNPCInterface npcInterface = (EntityNPCInterface) (Object) this;
                 modifiedDamage = AttributeAttackUtil.calculateDamagePlayerToNPC(player, npcInterface, modifiedDamage);
@@ -90,7 +97,8 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
      */
     @Redirect(method = "attackEntityFrom", at = @At(value = "INVOKE", target = "Lnoppes/npcs/scripted/event/NpcEvent$DamagedEvent;getDamage()F", remap = false))
     public float fixDamagedEventDBCDamage(NpcEvent.DamagedEvent instance) {
-        if (dbcAltered && DBCUtils.npcLastSetDamage == null && !instance.isCancelled()) {
+        if (dbcAltered && !instance.isCancelled()) {
+            // Always propagate the event's damage (including scripter modifications) to npcLastSetDamage
             DBCUtils.npcLastSetDamage = instance.getDamage();
         }
         dbcAltered = false;

@@ -14,6 +14,7 @@ import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -21,6 +22,7 @@ import kamkeel.npcdbc.data.form.FacePartData.Part;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.util.Utility;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelRenderer;
@@ -119,8 +121,19 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 DBCData dbcData = DBCData.get(ClientEventHandler.renderingPlayer);
 
                 Set<Part> disabledParts = dbcData.getDisabledFaceParts();
-                if (disabledParts.contains(Part.fromPartId(hair)))
+                if (disabledParts.contains(Part.fromPartId(hair))) {
                     ci.setReturnValue("");
+                    return;
+                }
+
+                // Cancel normal face rendering for oozaru forms (oozaru renders its own eyes via renderOozaru)
+                if (form.display.hairType.equals("oozaru") && !ClientConstants.renderingOozaru) {
+                    if (hair.contains("FACENOSE") || hair.contains("FACEMOUTH") || hair.contains("EYEBROW") ||
+                        hair.contains("EYEBASE") || hair.contains("EYELEFT") || hair.contains("EYERIGHT")) {
+                        ci.setReturnValue("");
+                        return;
+                    }
+                }
 
                 boolean isMonke = form.display.hasBodyFur || form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru");
                 HD = ConfigDBCClient.EnableHDTextures;
@@ -143,7 +156,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 //majin effect check
                 if (dbcData.Race == 5 && !form.display.effectMajinHair)
                     return;
-
+                
                 boolean isSSJ3 = false;
                 if (form.display.hairType.equals("ssj3") || form.display.hairType.equals("raditz")) {
                     isSSJ3 = form.display.hairType.equals("ssj3") ? true : false;
@@ -152,6 +165,13 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                         String hair1 = !isSSJ3 ? "D" : "D01";
                         Hair.set(hair1);
                     }
+                }
+
+                //render SSJ3 brows AKA "no eyebrows"
+                if (hair.contains("EYEBROW") && dbcData.Race != 3 && (isSSJ3 || !form.display.hasEyebrows)) { //bind ssj3 eyebrow texture to ssj3 hair type
+                    int gen = JRMCoreH.dnsGender(dbcData.DNS);
+                    int eyes = JRMCoreH.dnsEyes(dbcData.DNS);
+                    Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + (gen == 1 ? "f" : "") + "humw" + eyes + ".png"));
                 }
 
                 //hair color for all forms

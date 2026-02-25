@@ -2,19 +2,28 @@ package kamkeel.npcdbc.data.ability;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.client.gui.component.SubGuiSelectDBCEffect;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
-import kamkeel.npcdbc.constants.enums.AbilityDamageType;
+import kamkeel.npcdbc.client.gui.component.SubGuiSelectSkill;
+import kamkeel.npcdbc.constants.DBCSkills;
+import kamkeel.npcdbc.constants.DBCStatusEffects;
+import kamkeel.npcdbc.constants.enums.EnumAbilityDamageType;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.controllers.SkillController;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.skill.CustomSkill;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcs.controllers.data.ability.Ability;
-import kamkeel.npcs.controllers.data.ability.IAbilityFieldProvider;
+import kamkeel.npcs.controllers.data.ability.gui.IAbilityFieldProvider;
+import kamkeel.npcs.controllers.data.ability.type.AbilityEffect;
+import kamkeel.npcs.controllers.data.ability.type.energy.AbilityBarrier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.builder.FieldDef;
 
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -33,17 +42,35 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
     public void addFieldDefinitions(Ability ability, List<FieldDef> defs) {
         // DBC tab - single stats instance shared across all fields
         DBCAbilityStats stats = DBCAbilityStats.fromAbility(ability);
+        boolean isDamaging = ability.hasDamage()
+            && !(ability instanceof AbilityBarrier)
+            && !(ability instanceof AbilityEffect);
 
-        // Player Settings - always shown
-        addPlayerFields(stats, defs);
+        // Resource costs (ki/stamina) - always shown
+        addResourceCostFields(stats, defs);
 
-        // Universal Settings - only for damaging abilities
-        if (ability.hasDamage()) {
+        // Player damage configuration - only for damaging abilities
+        if (isDamaging) {
+            addPlayerDamageFields(stats, defs);
+        }
+
+        // Universal Settings (Ignore Dex, Friendly Fist, etc.) - only for damaging abilities
+        if (isDamaging) {
             addUniversalFields(stats, defs);
+        }
+
+        // Barrier Health Scaling - only for barrier abilities
+        if (ability instanceof AbilityBarrier) {
+            addBarrierFields(stats, defs);
+        }
+
+        // DBC Healing - only for effect abilities
+        if (ability instanceof AbilityEffect) {
+            addHealingFields(stats, defs);
         }
     }
 
-    private void addPlayerFields(DBCAbilityStats stats, List<FieldDef> defs) {
+    private void addResourceCostFields(DBCAbilityStats stats, List<FieldDef> defs) {
         // Player resource costs — each paired with a percent toggle via row()
         defs.add(FieldDef.section("stats.section.playerSettings")
             .tab(TAB_DBC));
@@ -71,12 +98,14 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
                 .range(0, Integer.MAX_VALUE).hover("stats.hover.staminaDrain"),
             FieldDef.boolField("stats.staminaDrainPercent", stats::isStaminaDrainPercent, stats::setStaminaDrainPercent)
         ).tab(TAB_DBC));
+    }
 
+    private void addPlayerDamageFields(DBCAbilityStats stats, List<FieldDef> defs) {
         // Player damage configuration
         defs.add(FieldDef.section("stats.section.playerDamage")
             .tab(TAB_DBC));
-        defs.add(FieldDef.enumField("stats.playerDamageType", AbilityDamageType.class,
-                () -> AbilityDamageType.fromOrdinal(stats.getPlayerDamageType()),
+        defs.add(FieldDef.enumField("stats.playerDamageType", EnumAbilityDamageType.class,
+                () -> EnumAbilityDamageType.fromOrdinal(stats.getPlayerDamageType()),
                 (val) -> stats.setPlayerDamageType(val.ordinal()))
             .tab(TAB_DBC));
 
@@ -115,24 +144,21 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
             .tab(TAB_DBC)
             .visibleWhen(() -> stats.getPlayerDamageType() == 2 || stats.getPlayerDamageType() == 3));
 
-        // Use Player Settings - visible for MELEE and KI (controls Ki Fist/Ki Weapon/Ki Infuse toggles)
-        defs.add(FieldDef.boolField("stats.usePlayerSettings", stats::getUsePlayerSettings, stats::setUsePlayerSettings)
+        // Player DBC Stats - visible for MELEE, KI, and CNPC; greyed out when Universal DBC Stats is disabled
+        defs.add(FieldDef.boolField("stats.playerDBCStats", stats::getUsePlayerSettings, stats::setUsePlayerSettings)
             .tab(TAB_DBC)
-            .hover("stats.hover.usePlayerSettings")
-            .visibleWhen(() -> stats.getPlayerDamageType() == 2 || stats.getPlayerDamageType() == 3));
+            .hover("stats.hover.playerDBCStats")
+            .visibleWhen(() -> {
+                int dt = stats.getPlayerDamageType();
+                return dt == 2 || dt == 3 || dt == 4;
+            })
+            .enabledWhen(stats::isEnabled));
 
         // ═══ CNPC Multi-Set Configuration ═══
-        defs.add(FieldDef.intField("stats.cnpc.setCount", stats::getScalingSetCount, stats::setScalingSetCount)
-            .tab(TAB_DBC).range(1, 3)
-            .visibleWhen(() -> stats.getPlayerDamageType() == 4));
+        BooleanSupplier cnpcVisible = () -> stats.getPlayerDamageType() == 4;
+        addScalingSetConfig(stats, defs, cnpcVisible);
 
-        // Add fields for each CNPC set (0, 1, 2)
-        for (int s = 0; s < 3; s++) {
-            addCNPCSetFields(stats, defs, s);
-        }
-
-        // ═══ Damage Preview ═══
-        // FLAT / MELEE / KI — single preview line
+        // ═══ Damage Preview (FLAT / MELEE / KI only — CNPC preview is in addScalingSetConfig) ═══
         defs.add(FieldDef.labelField("stats.damagePreview", () -> {
             EntityPlayer player = Minecraft.getMinecraft().thePlayer;
             if (player == null) return "";
@@ -148,34 +174,48 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
             int dt = stats.getPlayerDamageType();
             return dt >= 1 && dt <= 3;
         }));
+    }
 
-        // CNPC — per-set preview lines (one label per set)
+    /**
+     * Adds set count + per-set config fields + per-set preview lines, gated by the given visibility.
+     * Reused by Player Damage (CNPC type), Barrier Health Scaling, and DBC Healing.
+     */
+    private void addScalingSetConfig(DBCAbilityStats stats, List<FieldDef> defs,
+                                     BooleanSupplier visibleBase) {
+        defs.add(FieldDef.intField("stats.cnpc.setCount", stats::getScalingSetCount, stats::setScalingSetCount)
+            .tab(TAB_DBC).range(1, 3)
+            .visibleWhen(visibleBase));
+
+        for (int s = 0; s < 3; s++) {
+            addCNPCSetFields(stats, defs, s, visibleBase);
+        }
+
+        // Per-set preview lines
         for (int s = 0; s < 3; s++) {
             final int set = s;
             defs.add(FieldDef.labelField("stats.cnpc.previewLine", () -> {
                 EntityPlayer player = Minecraft.getMinecraft().thePlayer;
                 if (player == null) return "";
                 String line = DBCUtils.getCNPCSetPreviewLine(player, stats, set, ATTRIBUTE_NAMES, STAT_TYPE_NAMES);
-                // Append " +" if not the last active set
                 if (set < stats.getScalingSetCount() - 1) line += " +";
                 return line;
             }).tab(TAB_DBC).visibleWhen(() ->
-                stats.getPlayerDamageType() == 4 && stats.getScalingSetCount() > set));
+                visibleBase.getAsBoolean() && stats.getScalingSetCount() > set));
         }
 
-        // CNPC — total line
+        // Total value preview
         defs.add(FieldDef.labelField("stats.cnpc.previewTotal", () -> {
             EntityPlayer player = Minecraft.getMinecraft().thePlayer;
             if (player == null) return "";
-            float damage = DBCUtils.calculateAbilityAttackDamage(player, stats);
-            return damage > 0 ? String.format("= %,.0f", damage) : "N/A";
-        }).tab(TAB_DBC).visibleWhen(() -> stats.getPlayerDamageType() == 4));
+            float value = DBCUtils.calculateScalingSets(player, stats);
+            return value > 0 ? String.format("= %,.0f", value) : "N/A";
+        }).tab(TAB_DBC).visibleWhen(visibleBase));
     }
 
-    private void addCNPCSetFields(DBCAbilityStats stats, List<FieldDef> defs, int set) {
-        // Visible when CNPC is selected and this set is active
-        java.util.function.BooleanSupplier visible = () ->
-            stats.getPlayerDamageType() == 4 && stats.getScalingSetCount() > set;
+    private void addCNPCSetFields(DBCAbilityStats stats, List<FieldDef> defs, int set,
+                                   BooleanSupplier visibleBase) {
+        BooleanSupplier visible = () ->
+            visibleBase.getAsBoolean() && stats.getScalingSetCount() > set;
 
         defs.add(FieldDef.section("stats.section.cnpcSet" + (set + 1))
             .tab(TAB_DBC).visibleWhen(visible));
@@ -211,7 +251,7 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
                     }
                 })
             .tab(TAB_DBC)
-            .visibleWhen(() -> stats.getPlayerDamageType() == 4
+            .visibleWhen(() -> visibleBase.getAsBoolean()
                 && stats.getScalingSetCount() > set
                 && stats.isStatEnabledForSet(set)));
 
@@ -239,6 +279,36 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
                 (val) -> stats.setKiInfuseForSet(set, val))
             .tab(TAB_DBC).visibleWhen(visible)
             .hover("stats.hover.cnpc.kiInfuse"));
+    }
+
+    private void addBarrierFields(DBCAbilityStats stats, List<FieldDef> defs) {
+        defs.add(FieldDef.section("stats.section.barrierScaling")
+            .tab(TAB_DBC));
+
+        defs.add(FieldDef.boolField("stats.barrierScalingEnabled",
+                () -> stats.barrierScalingEnabled, (val) -> { stats.barrierScalingEnabled = val; stats.save(); })
+            .tab(TAB_DBC).hover("stats.hover.barrierScaling"));
+
+        // Scaling set config (set count + per-set fields + previews)
+        addScalingSetConfig(stats, defs, () -> stats.barrierScalingEnabled);
+    }
+
+    private void addHealingFields(DBCAbilityStats stats, List<FieldDef> defs) {
+        defs.add(FieldDef.section("stats.section.healing")
+            .tab(TAB_DBC));
+
+        String[] healingModes = {"Flat Body HP", "Percent of Max Body"};
+        defs.add(FieldDef.stringEnumField("stats.healingMode", healingModes,
+                () -> healingModes[stats.getHealingMode()],
+                (val) -> stats.setHealingMode(val.equals(healingModes[0]) ? 0 : 1))
+            .tab(TAB_DBC).hover("stats.hover.healingMode"));
+
+        defs.add(FieldDef.boolField("stats.healScalingEnabled",
+                () -> stats.healScalingEnabled, (val) -> { stats.healScalingEnabled = val; stats.save(); })
+            .tab(TAB_DBC).hover("stats.hover.healScaling"));
+
+        // Scaling set config (set count + per-set fields + previews)
+        addScalingSetConfig(stats, defs, () -> stats.healScalingEnabled);
     }
 
     private void addUniversalFields(DBCAbilityStats stats, List<FieldDef> defs) {
@@ -302,5 +372,74 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
                 return "gui.none";
             })
             .clearable(() -> idSetter.accept(-1));
+    }
+
+    public static FieldDef skillSubGui(String label,
+                                       Supplier<Integer> idGetter,    Consumer<Integer> idSetter,
+                                       Supplier<Integer> modeGetter,  Consumer<Integer> modeSetter) {
+        return FieldDef.subGuiField(label, () -> {
+                int currentId = idGetter.get();
+                int currentMode = modeGetter != null ? modeGetter.get() : SubGuiSelectSkill.MODE_DBC;
+                return new SubGuiSelectSkill(currentId, currentMode);
+            }, gui -> {
+                SubGuiSelectSkill sel = (SubGuiSelectSkill) gui;
+                if (sel.getSelectedMode() >= 0) {
+                    idSetter.accept(sel.getSelectedSkillId());
+                    if (modeSetter != null)
+                        modeSetter.accept(sel.getSelectedMode());
+                }
+            })
+            .buttonLabel(() -> {
+                int id = idGetter.get();
+                int mode = modeGetter != null ? modeGetter.get() : SubGuiSelectSkill.MODE_DBC;
+                if (id >= 0) {
+                    if (mode == SubGuiSelectSkill.MODE_DBC) {
+                        DBCSkills skill = DBCSkills.byIndex(id);
+                        String name = skill != null ? skill.name() : "";
+                        return !name.isEmpty() ? "[DBC] (ID: " + id + ") " + name : "[DBC] ID: " + id;
+                    } else {
+                        CustomSkill skill = SkillController.Instance != null
+                            ? SkillController.Instance.customSkills.get(id) : null;
+                        String name = skill != null ? skill.stringLiteralId : "";
+                        return !name.isEmpty() ? "[Custom] (ID: " + id + ") " + name : "[Custom] ID: " + id;
+                    }
+                }
+                return "gui.none";
+            })
+            .clearable(() -> {
+                idSetter.accept(-1);
+                if (modeSetter != null)
+                    modeSetter.accept(SubGuiSelectSkill.MODE_DBC);
+            });
+    }
+
+    public static FieldDef statusEffectSubGui(String label,
+                                              Supplier<Integer> ordinalGetter, Consumer<Integer> ordinalSetter,
+                                              Supplier<Integer> modeGetter,    Consumer<Integer> modeSetter) {
+        return FieldDef.subGuiField(label, () -> {
+                int currentOrdinal = ordinalGetter.get();
+                int currentMode = modeGetter != null ? modeGetter.get() : SubGuiSelectDBCEffect.MODE_PERMANENT;
+                return new SubGuiSelectDBCEffect(currentOrdinal, currentMode);
+            }, gui -> {
+                if (gui.getSelectedMode() >= 0) {
+                    ordinalSetter.accept(gui.getSelectedOrdinal());
+                    if (modeSetter != null)
+                        modeSetter.accept(gui.getSelectedMode());
+                }
+            })
+            .buttonLabel(() -> {
+                int ordinal = ordinalGetter.get();
+                if (ordinal >= 0) {
+                    DBCStatusEffects effect = DBCStatusEffects.byOrdinal(ordinal);
+                    String name = effect != null ? effect.name() : "";
+                    return !name.isEmpty() ? name : "ID: " + ordinal;
+                }
+                return "gui.none";
+            })
+            .clearable(() -> {
+                ordinalSetter.accept(-1);
+                if (modeSetter != null)
+                    modeSetter.accept(SubGuiSelectDBCEffect.MODE_PERMANENT);
+            });
     }
 }

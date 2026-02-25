@@ -37,6 +37,7 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
             mixins.add("npc.client.MixinModelLegs");
             mixins.add("npc.client.MixinModelScaleRenderer");
             mixins.add("dbc.client.ClientMixinEntityEnergyAtt");
+            mixins.add("dbc.client.MixinJRMCoreCliTicH");
 
             mixins.add("dbc.MixinDBCKiTech");
             mixins.add("dbc.MixinJRMCoreCliTickH");

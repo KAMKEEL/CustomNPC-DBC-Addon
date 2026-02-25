@@ -1,5 +1,7 @@
 package kamkeel.npcdbc.data.ability.conditions;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.enums.EnumDBCRaces;
 import kamkeel.npcdbc.api.form.IForm;
@@ -10,7 +12,7 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
-import kamkeel.npcs.controllers.data.ability.UserType;
+import kamkeel.npcs.controllers.data.ability.enums.UserType;
 import kamkeel.npcs.controllers.data.ability.conditions.AbilityCondition;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -73,6 +75,7 @@ public class ConditionForm extends AbilityCondition {
         return true;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void getConditionDefinitions(List<FieldDef> defs) {
         defs.add(DBCAbilityFieldProvider.formSubGui("condition.form_id", this::getFormID, this::setFormID));
@@ -88,9 +91,10 @@ public class ConditionForm extends AbilityCondition {
 //            .range(0, 5).visibleWhen(this::isDBC));
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public String getConditionSummary() {
-        String filterLabel = StatCollector.translateToLocal("condition.filter." + getFilter().name().toLowerCase());
+        String filterLabel = StatCollector.translateToLocal(getFilter().toString());
         String formName = "None";
         if (formID > 0) {
             if (!isDBC) {

@@ -25,7 +25,7 @@ public class SubGuiFormFaceParts extends SubGuiInterface {
 
         this.xSize = 176;
         this.ySize = 222;
-        setBackground("smallbg.png");
+        setBackground("menubg.png");
 
         drawNpc = true;
         xOffsetNpc = 230;

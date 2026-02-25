@@ -1,9 +1,9 @@
 package kamkeel.npcdbc.data.ability.toggle;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcs.controllers.data.ability.AbilityIconData;
+import kamkeel.npcs.controllers.data.ability.data.AbilityIconData;
 import kamkeel.npcs.controllers.data.ability.Ability;
-import kamkeel.npcs.controllers.data.ability.UserType;
+import kamkeel.npcs.controllers.data.ability.enums.UserType;
 import kamkeel.npcs.controllers.data.telegraph.TelegraphType;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,7 +24,8 @@ public class DBCToggleAbility extends Ability {
 
     public DBCToggleAbility(DBCToggle toggle) {
         configureAsBuiltIn("npcdbc:" + toggle.key);
-        this.name = toggle.displayName;
+        this.name = toggle.displayName.replace(" ", "_");
+        this.displayName = toggle.displayName;
         this.toggleStates = toggle.getToggleStates();
         this.telegraphType = TelegraphType.NONE;
         this.showTelegraph = false;
@@ -37,8 +38,8 @@ public class DBCToggleAbility extends Ability {
         }
 
         this.setIconTexture(CustomNpcPlusDBC.ID + ":textures/gui/ability_icons.png");
-        this.setIconWidth(48);
-        this.setIconHeight(48);
+        this.setIconWidth(toggle.width);
+        this.setIconHeight(toggle.height);
         this.setIconScale(1.5f);
         this.setIconX(toggle.iconX);
         this.setIconY(toggle.iconY);

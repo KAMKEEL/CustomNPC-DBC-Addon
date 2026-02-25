@@ -1,7 +1,9 @@
 package kamkeel.npcdbc.data.ability.conditions;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcs.controllers.data.ability.UserType;
+import kamkeel.npcs.controllers.data.ability.enums.UserType;
 import kamkeel.npcs.controllers.data.ability.conditions.AbilityCondition;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -69,12 +71,14 @@ public class ConditionDBCLevel extends AbilityCondition {
         return compareType.test(playerLevel, level);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void getConditionDefinitions(List<FieldDef> defs) {
         defs.add(FieldDef.intField("condition.level", this::getLevel, this::setLevel).min(1));
         defs.add(FieldDef.enumField("condition.compare_type", CompareType.class, this::getCompareType, this::setCompareType));
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public String getConditionSummary() {
         String filterLabel = StatCollector.translateToLocal("condition.filter." + getFilter().name().toLowerCase());

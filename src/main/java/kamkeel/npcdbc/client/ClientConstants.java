@@ -8,6 +8,7 @@ public class ClientConstants {
     public static boolean renderingGUI;
     public static boolean renderingArm;
     public static boolean renderingMajinSE;
+    public static boolean renderingOozaru;
     public static Instant startTime;
     public static boolean renderingWorld;
 }

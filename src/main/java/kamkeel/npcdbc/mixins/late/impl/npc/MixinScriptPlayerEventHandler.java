@@ -31,7 +31,8 @@ public abstract class MixinScriptPlayerEventHandler {
     @Redirect(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "FIELD", target = "Lnet/minecraftforge/event/entity/living/LivingAttackEvent;ammount:F", opcode = Opcodes.GETFIELD, ordinal = 0))
     public float attackedEvent(LivingAttackEvent instance) {
         if (DBCUtils.abilityDamageHandled) {
-            return instance.ammount;
+            // Use the actual ability damage instead of the 1.0f dummy value
+            return DBCUtils.abilityDamageAmount != null ? DBCUtils.abilityDamageAmount : instance.ammount;
         }
 
         EntityPlayer player = npcdbc$getAttackingPlayer(instance.source);
@@ -52,7 +53,8 @@ public abstract class MixinScriptPlayerEventHandler {
     @Redirect(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "FIELD", target = "Lnet/minecraftforge/event/entity/living/LivingAttackEvent;ammount:F", opcode = Opcodes.GETFIELD, ordinal = 1))
     public float attackEvent(LivingAttackEvent instance) {
         if (DBCUtils.abilityDamageHandled) {
-            return instance.ammount;
+            // Use the actual ability damage instead of the 1.0f dummy value
+            return DBCUtils.abilityDamageAmount != null ? DBCUtils.abilityDamageAmount : instance.ammount;
         }
 
         EntityPlayer player = npcdbc$getAttackingPlayer(instance.source);

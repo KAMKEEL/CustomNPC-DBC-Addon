@@ -39,6 +39,10 @@ public interface IDBCAddon extends IDBCPlayer {
      */
     void setLockOnTarget(IEntityLivingBase lockOnTarget);
 
+    IEntityLivingBase getLockOnTarget();
+
+    boolean hasLockOnTarget();
+
     /**
      * This will only work if the player has the ki fist skill
      *
@@ -211,6 +215,8 @@ public interface IDBCAddon extends IDBCPlayer {
      * @return True if player is charging a ki attack
      */
     boolean isChargingKi();
+
+    boolean hasSkill(String skillname);
 
     /**
      * @param skillname Acceptable skill names:

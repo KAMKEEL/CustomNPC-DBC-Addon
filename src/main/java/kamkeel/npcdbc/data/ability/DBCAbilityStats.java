@@ -45,11 +45,19 @@ public class DBCAbilityStats implements IDBCAbility {
     public int scalingAttribute = 0;       // DBCAttribute index: 0=STR, 1=DEX, 2=CON, 3=WIL, 4=MND, 5=SPI
     public float scalingMultiplier = 1.0f;
     public int flatDamage = 100;
-    public boolean usePlayerSettings = true; // When true, respects player DBC toggles (Ki Fist, Ki Weapon, Ki Infuse)
+    public boolean usePlayerSettings = true; // When true, use the player's own DBC settings (Friendly Fist, etc.) instead of the ability's
     // CNPC multi-set scaling
     public int scalingSetCount = 1;
     private static final int MAX_SETS = 3;
     private CNPCScalingSet[] cnpcSets = newSetsArray();
+
+    // Barrier health scaling (for AbilityBarrier types)
+    // When enabled, barrier max health is calculated from the existing CNPC scaling sets above
+    public boolean barrierScalingEnabled = false;
+
+    // Healing configuration (for AbilityEffect types)
+    public int healingMode = 0; // 0=FLAT (direct body HP), 1=PERCENT (% of max body)
+    public boolean healScalingEnabled = false;
 
     // Not exposed in GUI - kept at defaults for IDBCStats compatibility
     private byte release = 100;
@@ -120,6 +128,11 @@ public class DBCAbilityStats implements IDBCAbility {
             setList.appendTag(setTag);
         }
         nbt.setTag("ScalingSets", setList);
+        // Barrier scaling
+        nbt.setBoolean("BarrierScalingEnabled", barrierScalingEnabled);
+        // Healing
+        nbt.setInteger("HealingMode", healingMode);
+        nbt.setBoolean("HealScalingEnabled", healScalingEnabled);
     }
 
     public void readFromNBT(NBTTagCompound nbt) {
@@ -157,6 +170,11 @@ public class DBCAbilityStats implements IDBCAbility {
                 cnpcSets[i].readFromNBT(setList.getCompoundTagAt(i));
             }
         }
+        // Barrier scaling
+        barrierScalingEnabled = nbt.getBoolean("BarrierScalingEnabled");
+        // Healing
+        healingMode = nbt.getInteger("HealingMode");
+        healScalingEnabled = nbt.getBoolean("HealScalingEnabled");
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -500,6 +518,19 @@ public class DBCAbilityStats implements IDBCAbility {
 
     public void setKiInfuseForSet(int set, boolean v) {
         cnpcSets[clampSet(set)].kiInfuse = v;
+        save();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // HEALING ACCESSORS
+    // ═══════════════════════════════════════════════════════════════════
+
+    public int getHealingMode() {
+        return healingMode;
+    }
+
+    public void setHealingMode(int mode) {
+        this.healingMode = ValueUtil.clamp(mode, 0, 1);
         save();
     }
 

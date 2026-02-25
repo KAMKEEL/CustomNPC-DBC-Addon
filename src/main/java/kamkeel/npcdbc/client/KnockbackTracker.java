@@ -44,6 +44,12 @@ public class KnockbackTracker {
      */
     private static long beforeTick = -1;
 
+    /**
+     * Previous Y position — used to distinguish step-ups from real wall hits.
+     * moveEntity sets isCollidedHorizontally on both, but step-ups increase posY.
+     */
+    private static double prevY = Double.NaN;
+
     private static final double MIN_THRESHOLD = 0.001;
     private static final double MAX_EXTERNAL = 3.0;
 
@@ -72,7 +78,12 @@ public class KnockbackTracker {
             // misinterprets the collision as a huge backward external force, causing
             // the player to bounce off walls. Reset dbcOutput per-axis when the wall
             // absorbed it (DBC was outputting significant motion but current is ~0).
-            if (player.isCollidedHorizontally) {
+            //
+            // Skip when the player stepped up (posY increased) — moveEntity also sets
+            // isCollidedHorizontally during stair/slab step-ups even though movement
+            // succeeded. Resetting dbcOutput on step-ups causes a velocity spike.
+            boolean steppedUp = !Double.isNaN(prevY) && player.posY > prevY + 0.01;
+            if (player.isCollidedHorizontally && !steppedUp) {
                 if (Math.abs(dbcOutputX) > MIN_THRESHOLD && Math.abs(player.motionX) < MIN_THRESHOLD) {
                     dbcOutputX = 0;
                 }
@@ -97,6 +108,7 @@ public class KnockbackTracker {
         }
 
         lastActiveTick = currentTick;
+        prevY = player.posY;
     }
 
     /**
@@ -132,9 +144,14 @@ public class KnockbackTracker {
 
     /**
      * Horizontal friction factor from vanilla's moveEntityWithHeading.
+     * Water and lava use their own drag (0.8 / 0.5) instead of normal friction.
      * Air: 0.91, Ground: blockSlipperiness * 0.91 (0.546 for normal blocks).
      */
     private static float getHorizontalFriction(EntityPlayer player) {
+        // Fluids apply their own drag in moveEntityWithHeading, replacing normal friction
+        if (player.isInWater()) return 0.8F;
+        if (player.handleLavaMovement()) return 0.5F;
+
         if (!player.onGround) return 0.91F;
 
         int x = MathHelper.floor_double(player.posX);
@@ -150,5 +167,6 @@ public class KnockbackTracker {
         savedMotionX = savedMotionZ = 0;
         lastActiveTick = -2;
         beforeTick = -1;
+        prevY = Double.NaN;
     }
 }

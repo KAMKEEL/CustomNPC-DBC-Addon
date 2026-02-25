@@ -34,7 +34,9 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import noppes.npcs.client.ClientCacheHandler;
 import noppes.npcs.client.ClientProxy;
+import noppes.npcs.client.renderer.ImageData;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.client.model.util.ModelScaleRenderer;
 import noppes.npcs.constants.EnumAnimation;
@@ -345,7 +347,10 @@ public class ModelDBC extends ModelBase {
             return false;
 
         try {
-            Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(texture));
+            ImageData imageData = ClientCacheHandler.getImageData(texture);
+            if (!imageData.imageLoaded())
+                return false;
+            imageData.bindTexture();
             return true;
         } catch (Exception exception) {
             return false;

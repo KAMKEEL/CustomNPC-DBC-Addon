@@ -1,15 +1,25 @@
-package kamkeel.npcdbc.constants;
+package kamkeel.npcdbc.data.ability;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcs.controllers.data.ability.AbilityIconData;
+import kamkeel.npcdbc.constants.Effects;
+import kamkeel.npcdbc.constants.enums.EnumDBCRaces;
+import kamkeel.npcdbc.data.ability.conditions.ConditionRace;
+import kamkeel.npcs.controllers.data.ability.data.effect.AbilityCustomEffect;
+import kamkeel.npcs.controllers.data.ability.data.AbilityIconData;
 import kamkeel.npcdbc.data.ability.toggle.DBCToggle;
 import kamkeel.npcdbc.data.ability.toggle.DBCToggleAbility;
-import kamkeel.npcs.controllers.data.ability.*;
+import kamkeel.npcs.controllers.data.ability.conditions.ConditionFilter;
+import kamkeel.npcs.controllers.data.ability.Ability;
+import kamkeel.npcs.controllers.data.ability.AbilityVariant;
+import kamkeel.npcs.controllers.data.ability.enums.AnchorPoint;
+import kamkeel.npcs.controllers.data.ability.enums.LockMode;
+import kamkeel.npcs.controllers.data.ability.enums.RotationMode;
+import kamkeel.npcs.controllers.data.ability.enums.TargetingMode;
 import kamkeel.npcs.controllers.data.ability.type.AbilityEffect;
 import kamkeel.npcs.controllers.data.ability.type.energy.AbilityBeam;
 import kamkeel.npcs.controllers.data.ability.type.energy.AbilityDisc;
 import kamkeel.npcs.controllers.data.ability.type.energy.AbilityDome;
-import kamkeel.npcs.controllers.data.ability.type.energy.AbilityLaserShot;
+import kamkeel.npcs.controllers.data.ability.type.energy.AbilityLaser;
 import kamkeel.npcs.controllers.data.ability.type.energy.AbilityOrb;
 import kamkeel.npcs.util.Register;
 
@@ -98,7 +108,7 @@ public class DBCAbilities {
         a.setDisplayName("&eFinish Breaker");
         a.setPerAbilityCooldown(true);
         a.setWindUpTicks(30);
-        a.setLockMovement(LockMovementType.ACTIVE);
+        a.setLockMovement(LockMode.ACTIVE);
         a.setShowTelegraph(false);
         a.setMaxRange(75.0f);
         a.setBurstEnabled(true);
@@ -225,7 +235,7 @@ public class DBCAbilities {
         a.setPerAbilityCooldown(true);
         a.setWindUpTicks(150);
         a.setMaxRange(100.0f);
-        a.setLockMovement(LockMovementType.WINDUP_AND_ACTIVE);
+        a.setLockMovement(LockMode.WINDUP_AND_ACTIVE);
         a.setShowTelegraph(false);
         a.setWindUpAnimationName("LargeSpiritBomb_Windup");
         a.setActiveAnimationName("LargeSpiritBomb_Active");
@@ -251,7 +261,7 @@ public class DBCAbilities {
         a.setPerAbilityCooldown(true);
         a.setWindUpTicks(250);
         a.setMaxRange(100.0f);
-        a.setLockMovement(LockMovementType.WINDUP_AND_ACTIVE);
+        a.setLockMovement(LockMode.WINDUP_AND_ACTIVE);
         a.setShowTelegraph(false);
         orb.setHoming(true);
         orb.setHomingStrength(0.05f);
@@ -302,7 +312,7 @@ public class DBCAbilities {
         a.setWindUpTicks(30);
         a.setShowTelegraph(false);
         a.setRotationMode(RotationMode.LOCKED);
-        a.setRotationPhase(LockMovementType.ACTIVE);
+        a.setRotationPhase(LockMode.ACTIVE);
         a.setWindUpAnimationName("EnergyGeneric_Windup");
         a.setActiveAnimationName("EnergyGeneric_Charge");
         beam.setBeamWidth(1.0f);
@@ -324,7 +334,7 @@ public class DBCAbilities {
         a.setWindUpTicks(60);
         a.setShowTelegraph(false);
         a.setRotationMode(RotationMode.LOCKED);
-        a.setRotationPhase(LockMovementType.ACTIVE);
+        a.setRotationPhase(LockMode.ACTIVE);
         a.setWindUpSound("DBC4.cbeam4s");
         a.setActiveSound("DBC4.fbeam4s");
         a.setWindUpAnimationName("Kamehameha_Windup");
@@ -346,7 +356,7 @@ public class DBCAbilities {
         a.setWindUpTicks(40);
         a.setShowTelegraph(false);
         a.setRotationMode(RotationMode.LOCKED);
-        a.setRotationPhase(LockMovementType.ACTIVE);
+        a.setRotationPhase(LockMode.ACTIVE);
         a.setWindUpAnimationName("Masenko_Windup");
         a.setActiveAnimationName("Masenko_Active");
         beam.setBeamWidth(1.5f);
@@ -369,7 +379,7 @@ public class DBCAbilities {
         a.setWindUpTicks(40);
         a.setShowTelegraph(false);
         a.setRotationMode(RotationMode.LOCKED);
-        a.setRotationPhase(LockMovementType.ACTIVE);
+        a.setRotationPhase(LockMode.ACTIVE);
         a.setWindUpAnimationName("GalickGun_Windup");
         a.setActiveAnimationName("GalickGun_Active");
         beam.setBeamWidth(2.0f);
@@ -392,7 +402,7 @@ public class DBCAbilities {
         a.setWindUpTicks(30);
         a.setShowTelegraph(false);
         a.setRotationMode(RotationMode.LOCKED);
-        a.setRotationPhase(LockMovementType.ACTIVE);
+        a.setRotationPhase(LockMode.ACTIVE);
         a.setWindUpAnimationName("DoubleSunday_Windup");
         a.setActiveAnimationName("DoubleSunday_Active");
         beam.setProjectileCount(2);
@@ -422,7 +432,7 @@ public class DBCAbilities {
         a.setWindUpTicks(80);
         a.setShowTelegraph(false);
         a.setRotationMode(RotationMode.LOCKED);
-        a.setRotationPhase(LockMovementType.ACTIVE);
+        a.setRotationPhase(LockMode.ACTIVE);
         a.setWindUpAnimationName("FinalFlash_Windup");
         a.setActiveAnimationName("FinalFlash_Active");
         beam.setProjectileCount(2);
@@ -447,14 +457,14 @@ public class DBCAbilities {
 
     // Laser Variants
     public static final AbilityVariant SPECIAL_BEAM_CANNON = ABILITIES.registerVariant(LASER, "ability.npcdbc.special_beam_cannon", GROUP, a -> {
-        AbilityLaserShot laser = (AbilityLaserShot) a;
+        AbilityLaser laser = (AbilityLaser) a;
         a.setName("Special Beam Cannon");
         a.setDisplayName("&dSpecial &eBeam &dCannon");
         a.setPerAbilityCooldown(true);
         a.setWindUpTicks(80);
         a.setShowTelegraph(false);
         a.setRotationMode(RotationMode.LOCKED);
-        a.setRotationPhase(LockMovementType.ACTIVE);
+        a.setRotationPhase(LockMode.ACTIVE);
         a.setWindUpAnimationName("SpecialBeamCannon_Windup");
         a.setActiveAnimationName("SpecialBeamCannon_Active");
         laser.setLaserWidth(0.2f);
@@ -471,19 +481,18 @@ public class DBCAbilities {
     });
 
     public static final AbilityVariant TRIBEAM = ABILITIES.registerVariant(LASER, "ability.npcdbc.tribeam", GROUP, a -> {
-        AbilityLaserShot laser = (AbilityLaserShot) a;
+        AbilityLaser laser = (AbilityLaser) a;
         a.setName("Tri-Beam");
         a.setDisplayName("&6Tri-Beam");
         a.setPerAbilityCooldown(true);
         a.setWindUpTicks(50);
         a.setShowTelegraph(false);
         a.setRotationMode(RotationMode.LOCKED);
-        a.setRotationPhase(LockMovementType.ACTIVE);
+        a.setRotationPhase(LockMode.ACTIVE);
         a.setWindUpAnimationName("TriBeam_Windup");
         a.setActiveAnimationName("TriBeam_Active");
         laser.setLaserWidth(1.5f);
         laser.setExpansionSpeed(2.0f);
-        laser.setLingerTicks(4);
         laser.setMaxDistance(150.0f);
         laser.setInnerColor(0xFCAE47);
         laser.setOuterColor(0xFF8800);
@@ -498,7 +507,7 @@ public class DBCAbilities {
         a.setDisplayName("&6Destructo &eDisc");
         a.setPerAbilityCooldown(true);
         a.setShowTelegraph(false);
-        a.setLockMovement(LockMovementType.WINDUP_AND_ACTIVE);
+        a.setLockMovement(LockMode.WINDUP_AND_ACTIVE);
         disc.setSpeed(1.5f);
         disc.setOuterColor(0xFFDD00);
         disc.setInnerColor(0xFFFF00);
@@ -517,7 +526,7 @@ public class DBCAbilities {
         a.setDisplayName("&cDeath &dSaucer");
         a.setPerAbilityCooldown(true);
         a.setShowTelegraph(false);
-        a.setLockMovement(LockMovementType.WINDUP_AND_ACTIVE);
+        a.setLockMovement(LockMode.WINDUP_AND_ACTIVE);
         a.setWindUpAnimationName("Ability_DiscDual_Windup");
         a.setActiveAnimationName("Ability_DiscDual_Active");
         disc.setProjectileCount(2);
@@ -544,7 +553,7 @@ public class DBCAbilities {
         a.setDisplayName("&aAndroid Barrier");
         a.setPerAbilityCooldown(true);
         a.setShowTelegraph(false);
-        a.setLockMovement(LockMovementType.WINDUP_AND_ACTIVE);
+        a.setLockMovement(LockMode.WINDUP_AND_ACTIVE);
         a.setWindUpAnimationName("AndroidBarrier");
         a.setActiveAnimationName("AndroidBarrier");
         a.setWindUpTicks(10);
@@ -565,6 +574,12 @@ public class DBCAbilities {
         a.setWindUpAnimationName("NamekRegen");
         a.setTargetingMode(TargetingMode.SELF);
         effect.setIncludeSelf(true);
+
+        ConditionRace condition = new ConditionRace();
+        condition.setRace(EnumDBCRaces.NAMEKIAN);
+        condition.setFilter(ConditionFilter.CASTER);
+
+        a.addCondition(condition);
 
         List<AbilityCustomEffect> list = new ArrayList<>();
         list.add(new AbilityCustomEffect(Effects.NAMEK_REGEN, 60, (byte) 1, 1));

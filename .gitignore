@@ -2,6 +2,7 @@
 .settings
 /.idea/
 /.vscode/
+/.github/
 /run/
 /build/
 /eclipse/
@@ -43,5 +44,6 @@ addon.late.local.gradle.kts
 layout.json
 debug.log
 AGENTS.md
+/.sisyphus/
 nul
 ability-branch

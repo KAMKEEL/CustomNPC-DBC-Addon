@@ -24,7 +24,6 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -59,6 +58,14 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     public void setLockOnTarget(IEntityLivingBase lockOnTarget) {
         this.dbcData.setLockOnTarget(lockOnTarget == null ? null : lockOnTarget.getMCEntity());
+    }
+
+    public IEntityLivingBase getLockOnTarget() {
+        return this.dbcData.getLockOnTarget();
+    }
+
+    public boolean hasLockOnTarget() {
+        return this.dbcData.hasLockOnTarget();
     }
 
     @Override
@@ -497,17 +504,20 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     /**
      * @param skillname Check JRMCoreH.DBCSkillNames
+     * @return returns true if player has skill, returns false otherwise
+     */
+    @Override
+    public boolean hasSkill(String skillname) {
+        return dbcData.hasSkill(skillname);
+    }
+
+    /**
+     * @param skillname Check JRMCoreH.DBCSkillNames
      * @return skill level from 1 to 10
      */
     @Override
     public int getSkillLevel(String skillname) {
-        int skillIndex = DBCUtils.getDBCSkillIndex(skillname);
-        if (skillIndex == -1) {
-            throw new CustomNPCsException("Skill name not recognized");
-        }
-        String playerSkillString = nbt.getString("jrmcSSlts");
-
-        return JRMCoreH.SklLvl(skillIndex, playerSkillString.split(","));
+        return dbcData.getSkillLevel(skillname);
     }
 
     /**
