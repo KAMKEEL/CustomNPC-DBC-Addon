@@ -598,4 +598,47 @@ public class PostProcessing {
 
         glBindTexture(GL_TEXTURE_2D, 0);
     }
+
+    private static class IrisHelper {
+        private static ToIntFunction<Framebuffer> bufferTypeSupplier;
+        private static ToIntFunction<Framebuffer> bufferPointerSupplier;
+
+
+        public static int getDepthBufferType(Framebuffer buffer) {
+            return bufferTypeSupplier.applyAsInt(buffer);
+        }
+
+        public static int getDepthBufferPointer(Framebuffer buffer) {
+            return bufferPointerSupplier.applyAsInt(buffer);
+        }
+
+        @SuppressWarnings({"unchecked"})
+        public static void init() {
+            try {
+                Field irisDepthField = Framebuffer.class.getField("iris$depthTextureId");
+
+                irisDepthField.setAccessible(true);
+
+                MethodHandles.Lookup lookup = MethodHandles.lookup();
+                MethodHandle getter = lookup.unreflectGetter(irisDepthField);
+
+                CallSite site = LambdaMetafactory.metafactory(
+                    lookup,
+                    "applyAsInt",
+                    MethodType.methodType(ToIntFunction.class),
+                    MethodType.methodType(int.class, Object.class), // erased SAM
+                    getter,
+                    getter.type()                                   // (T) -> int
+                );
+
+                bufferPointerSupplier = (ToIntFunction<Framebuffer>) site.getTarget().invokeExact();
+                bufferTypeSupplier = (buffer) -> GL_TEXTURE_2D;
+            } catch (NoSuchFieldException ignored) {
+                bufferPointerSupplier = (buffer) -> buffer.depthBuffer;
+                bufferTypeSupplier = (buffer) -> OpenGlHelper.field_153199_f;
+            } catch (Throwable e) {
+                throw new RuntimeException("We fucked up creating a lambda", e);
+            }
+        }
+    }
 }
