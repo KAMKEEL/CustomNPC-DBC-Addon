@@ -119,6 +119,11 @@ public class SimplifiedDBCData implements ISimpleDBCData {
     }
 
     @Override
+    public int getLevel() {
+        return dbcData.getPlayerLevel();
+    }
+
+    @Override
     public int[] getAllAttributes() {
         return dbcData.stats.getAllAttributes();
     }
