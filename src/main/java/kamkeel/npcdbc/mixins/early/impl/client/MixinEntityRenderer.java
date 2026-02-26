@@ -64,15 +64,6 @@ public class MixinEntityRenderer {
 
     @Inject(method = "updateCameraAndRender", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/OpenGlHelper;shadersSupported:Z", shift = At.Shift.BEFORE))
     private void post(float p_78480_1_, CallbackInfo ci) {
-        try {
-            Class<?> api = Class.forName("net.irisshaders.iris.api.v0.IrisApi");
-            Object instance = api.getMethod("getInstance").invoke(null);
-            Object inUse = api.getMethod("isShaderPackInUse").invoke(instance);
-            if (Boolean.TRUE.equals(inUse)) {
-                return;
-            }
-        } catch (Throwable ignored) {
-        }
         PostProcessing.postProcess();
     }
 
