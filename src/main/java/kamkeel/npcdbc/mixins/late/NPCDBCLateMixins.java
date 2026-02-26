@@ -59,6 +59,10 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
             mixins.add("dbc.MixinJRMCoreGui");
             mixins.add("dbc.MixinEntityAura2");
             mixins.add("dbc.MixinEntityAuraRing");
+
+            if (loadedMods.contains("angelica")) {
+                mixins.add("compat.angelica.MixinIrisFinalPassRenderer");
+            }
         }
         mixins.add("npc.MixinDBCStats");
         mixins.add("npc.MixinPlayerData");
