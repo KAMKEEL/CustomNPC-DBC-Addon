@@ -184,7 +184,7 @@ public class PostProcessing {
         if (!bloomSupported)
             return;
 
-        boolean capture = false && Keyboard.isKeyDown(Keyboard.KEY_P);
+        boolean debug = Keyboard.isKeyDown(Keyboard.KEY_P);
         
         isScissorEnabled = GL11.glIsEnabled(GL_SCISSOR_TEST);
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
@@ -249,13 +249,13 @@ public class PostProcessing {
             glDisable(GL_BLEND);
         }
         //bloomBuffers[0]
-        if (capture) {
+        if (debug) {
             saveTextureToPNG(bloomTextures[0], "1. FINAL BLOOM BEFORE COMBINE MAIN FBO");
             saveTextureToPNG(MAIN.framebufferTexture, "2. MAIN FBO BEFORE COMBINE MAIN FBO");
         }
 
         // Combine into main game buffer
-        if (capture)
+        if (debug)
             printDebug("before MAIN bindFramebuffer");
 
         // [kamkeel.npcdbc.client.shader.PostProcessing:printDebug:336]: [npcdbc.combine] before MAIN bindFramebuffer 
@@ -263,7 +263,7 @@ public class PostProcessing {
         
         MAIN.bindFramebuffer(false);
         // GLStateManager.glBindFramebuffer(GL_FRAMEBUFFER, MAIN.framebufferObject);
-        if (capture)
+        if (debug)
             printDebug("after MAIN bindFramebuffer");
 
         //[kamkeel.npcdbc.client.shader.PostProcessing:printDebug:336]: [npcdbc.combine] after MAIN bindFramebuffer
@@ -275,11 +275,11 @@ public class PostProcessing {
             uniformTexture("bloomTexture", 2, bloomTextures[0]);
             uniform1f("exposure", lightExposure);
         });
-        if (capture)
+        if (debug)
             printDebug("afterCombine beforeRenderQuad");
         renderQuad(MAIN.framebufferTexture, 0, 0, width, height);
         releaseShader();
-        if (capture) {
+        if (debug) {
             saveTextureToPNG(bloomTextures[0], "3. FINAL BLOOM AFTER COMBINE");
             saveTextureToPNG(MAIN.framebufferTexture, "4. FINAL MAIN FBO AFTER COMBINE");
 

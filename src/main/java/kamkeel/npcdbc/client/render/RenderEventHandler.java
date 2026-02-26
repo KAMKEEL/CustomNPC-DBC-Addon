@@ -159,7 +159,7 @@ public class RenderEventHandler {
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
         EntityAura aura = data.auraEntity;
 
-        boolean capture = false && Keyboard.isKeyDown(Keyboard.KEY_P);
+        boolean debug =  Keyboard.isKeyDown(Keyboard.KEY_P);
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Outline
@@ -169,7 +169,7 @@ public class RenderEventHandler {
             glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);  // Test stencil value
             glStencilMask(0xff);
             OutlineRenderer.renderOutline(render, outline, player, partialTicks, isArm);
-            if (capture) {
+            if (debug) {
                 saveTextureToPNG(MAIN_BLOOM_TEXTURE, "0. RAW AFTER OUTLINE RENDER");
                 printDebug("AFTER OUTLINE RENDER");
             }
