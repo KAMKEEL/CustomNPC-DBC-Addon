@@ -49,6 +49,7 @@ dependencies {
     implementation(files("lib/standalone-JaninoLoader-1.0.2-ALPHA.jar"))
     implementation(files("lib/crystalgraphics-1.0.0.jar"))
 
+    compileOnly(files("lib/angelica-2.0.0-alpha23-MINIFIED-FOR-SPECIFIC-INTERFACE.jar"))
 //    implementation(files(customNpcJar))
 
     // Make sure to comment this out if you're using an actual copy of EDE.
