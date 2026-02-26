@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.shader;
 
+import com.gtnewhorizons.angelica.glsm.GLStateManager;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CommonProxy;
@@ -15,6 +16,7 @@ import net.minecraft.client.shader.Framebuffer;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL20;
@@ -126,6 +128,10 @@ public class PostProcessing {
             glClear(GL_COLOR_BUFFER_BIT);
         }
 
+        // MAIN_BLOOM_BUFFER is attached to COLOR_ATTACHMENT2
+        // MAIN GAME FRAMEBUFFER TEXTURE is attached to MAIN_BLOOM_BUFFER'S COLOR_ATTACHMENT0
+
+
         drawToBuffers(0, 2);
         processBloom = true;
     }
@@ -178,6 +184,8 @@ public class PostProcessing {
         if (!bloomSupported)
             return;
 
+        boolean capture = false && Keyboard.isKeyDown(Keyboard.KEY_P);
+        
         isScissorEnabled = GL11.glIsEnabled(GL_SCISSOR_TEST);
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
         if (!processBloom)
@@ -240,16 +248,43 @@ public class PostProcessing {
             renderQuad(lowerUpscaled, 0, 0, width, height);
             glDisable(GL_BLEND);
         }
+        //bloomBuffers[0]
+        if (capture) {
+            saveTextureToPNG(bloomTextures[0], "1. FINAL BLOOM BEFORE COMBINE MAIN FBO");
+            saveTextureToPNG(MAIN.framebufferTexture, "2. MAIN FBO BEFORE COMBINE MAIN FBO");
+        }
 
-        // Combine into default buffer
+        // Combine into main game buffer
+        if (capture)
+            printDebug("before MAIN bindFramebuffer");
+
+        // [kamkeel.npcdbc.client.shader.PostProcessing:printDebug:336]: [npcdbc.combine] before MAIN bindFramebuffer 
+        // bound=5 expectedMain=1 bloomBuffer0=5 isMain=false prog=0 vp=427x240 drawBufs=[36064,0,0,0] bloomTex=17 mainTex=4
+        
         MAIN.bindFramebuffer(false);
+        // GLStateManager.glBindFramebuffer(GL_FRAMEBUFFER, MAIN.framebufferObject);
+        if (capture)
+            printDebug("after MAIN bindFramebuffer");
+
+        //[kamkeel.npcdbc.client.shader.PostProcessing:printDebug:336]: [npcdbc.combine] after MAIN bindFramebuffer
+        // bound=5 expectedMain=1 bloomBuffer0=5 isMain=false prog=0 vp=427x240 drawBufs=[36064,0,0,0] bloomTex=17 mainTex=4
+        
+        
         glViewport(0, 0, width, height);
         useShader(additiveCombine, () -> {
             uniformTexture("bloomTexture", 2, bloomTextures[0]);
             uniform1f("exposure", lightExposure);
         });
+        if (capture)
+            printDebug("afterCombine beforeRenderQuad");
         renderQuad(MAIN.framebufferTexture, 0, 0, width, height);
         releaseShader();
+        if (capture) {
+            saveTextureToPNG(bloomTextures[0], "3. FINAL BLOOM AFTER COMBINE");
+            saveTextureToPNG(MAIN.framebufferTexture, "4. FINAL MAIN FBO AFTER COMBINE");
+
+            printDebug("afterCombine afterRenderQuad");
+        }
 
         glEnable(GL_DEPTH_TEST);
         glDepthMask(true);
@@ -277,6 +312,41 @@ public class PostProcessing {
         processBloom = false;
     }
 
+    public static void printDebug(String message) {
+        int bound = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
+        int expectedMain = MAIN == null ? -1 : MAIN.framebufferObject;
+        int program = glGetInteger(GL20.GL_CURRENT_PROGRAM);
+
+        IntBuffer vp = BufferUtils.createIntBuffer(16);
+        GL11.glGetInteger(GL11.GL_VIEWPORT, vp);
+
+        boolean scissor = GL11.glIsEnabled(GL11.GL_SCISSOR_TEST);
+        IntBuffer scissorBox = BufferUtils.createIntBuffer(16);
+        GL11.glGetInteger(GL11.GL_SCISSOR_BOX, scissorBox);
+
+        ByteBuffer colorMask = BufferUtils.createByteBuffer(16);
+        GL11.glGetBoolean(GL11.GL_COLOR_WRITEMASK, colorMask);
+
+        int draw0 = glGetInteger(GL20.GL_DRAW_BUFFER0);
+        int draw1 = glGetInteger(GL20.GL_DRAW_BUFFER1);
+        int draw2 = glGetInteger(GL20.GL_DRAW_BUFFER2);
+        int draw3 = glGetInteger(GL20.GL_DRAW_BUFFER3);
+
+        System.out.println("[npcdbc.combine] " + message 
+                        + " bound=" + bound 
+                        + " expectedMain=" + expectedMain 
+                        + " mainBloomFbo=" + MAIN_BLOOM_BUFFER 
+                        + " bloomBuffer0=" + bloomBuffers[0] 
+                        + " isMain=" + (bound == expectedMain) 
+                        + " prog=" + program 
+                        + " vp=" + vp.get(2) + "x" + vp.get(3)
+                        //   + " scissor=" + scissor
+                        //   + " scissorBox=[" + scissorBox.get(0) + "," + scissorBox.get(1) + "," + scissorBox.get(
+                        //  2) + "," + scissorBox.get(3) + "]"
+                        //   + " colorMask=[" + (colorMask.get(0) != 0) + "," + (colorMask.get(1) != 0) + "," + (colorMask.get(
+                        //   2) != 0) + "," + (colorMask.get(3) != 0) + "]"
+                        + " drawBufs=[" + draw0 + "," + draw1 + "," + draw2 + "," + draw3 + "]" + " bloomTex=" + bloomTextures[0] + " mainTex=" + (MAIN == null ? -1 : MAIN.framebufferTexture));
+    }
     public static void captureSceneDepth() {
         Framebuffer buff = getMainBuffer();
         int width = mc.displayWidth, height = mc.displayHeight;
@@ -544,6 +614,10 @@ public class PostProcessing {
     }
 
     public static void saveTextureToPNG(int textureID) {
+        saveTextureToPNG(textureID, null);
+    }
+
+    public static void saveTextureToPNG(int textureID, String name) {
         if (Minecraft.getMinecraft().isGamePaused())
             return;
 
@@ -567,8 +641,9 @@ public class PostProcessing {
             }
         }
 
-        String desktopPath = System.getProperty("user.home") + "/Desktop/image/";
-        String filename = desktopPath + new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date()) + "_" + textureID + ".png";
+        String desktopPath = System.getProperty("user.home") + "/Desktop/bloom_debug/";
+        String filename = desktopPath + (name != null ? name : new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(
+                new Date()) + "_" + textureID) + ".png";
         File file = new File(filename);
 
         try {

@@ -37,36 +37,13 @@ import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import noppes.npcs.client.renderer.RenderCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
+import org.lwjgl.input.Keyboard;
 
 import java.nio.FloatBuffer;
 import java.util.Iterator;
 
-import static kamkeel.npcdbc.client.shader.PostProcessing.DEFAULT_MODELVIEW;
-import static kamkeel.npcdbc.client.shader.PostProcessing.DEFAULT_PROJECTION;
-import static kamkeel.npcdbc.client.shader.PostProcessing.endBlooming;
-import static kamkeel.npcdbc.client.shader.PostProcessing.mc;
-import static kamkeel.npcdbc.client.shader.PostProcessing.startBlooming;
-import static org.lwjgl.opengl.GL11.GL_ALWAYS;
-import static org.lwjgl.opengl.GL11.GL_EQUAL;
-import static org.lwjgl.opengl.GL11.GL_GREATER;
-import static org.lwjgl.opengl.GL11.GL_KEEP;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_NOTEQUAL;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.GL_REPLACE;
-import static org.lwjgl.opengl.GL11.GL_STENCIL_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_STENCIL_TEST;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glDepthMask;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glLoadMatrix;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glStencilFunc;
-import static org.lwjgl.opengl.GL11.glStencilMask;
-import static org.lwjgl.opengl.GL11.glStencilOp;
+import static kamkeel.npcdbc.client.shader.PostProcessing.*;
+import static org.lwjgl.opengl.GL11.*;
 
 public class RenderEventHandler {
 
@@ -182,6 +159,7 @@ public class RenderEventHandler {
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
         EntityAura aura = data.auraEntity;
 
+        boolean capture = false && Keyboard.isKeyDown(Keyboard.KEY_P);
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Outline
@@ -191,6 +169,11 @@ public class RenderEventHandler {
             glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);  // Test stencil value
             glStencilMask(0xff);
             OutlineRenderer.renderOutline(render, outline, player, partialTicks, isArm);
+            if (capture) {
+                saveTextureToPNG(MAIN_BLOOM_TEXTURE, "0. RAW AFTER OUTLINE RENDER");
+                printDebug("AFTER OUTLINE RENDER");
+            }
+
             endBlooming();
         }
 

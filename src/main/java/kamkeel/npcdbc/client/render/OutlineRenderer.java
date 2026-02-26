@@ -17,7 +17,6 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.util.DBCUtils;
-
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -27,20 +26,7 @@ import noppes.npcs.entity.EntityCustomNpc;
 import org.lwjgl.opengl.GL11;
 
 import static kamkeel.npcdbc.client.render.RenderEventHandler.disableStencilWriting;
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.GL_LIGHTING;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.glDepthMask;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glScaled;
-import static org.lwjgl.opengl.GL11.glScalef;
-import static org.lwjgl.opengl.GL11.glTranslatef;
+import static org.lwjgl.opengl.GL11.*;
 
 public class OutlineRenderer {
 
@@ -54,7 +40,11 @@ public class OutlineRenderer {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glDisable(GL_LIGHTING);
-        glDisable(GL_TEXTURE_2D);
+        
+        // ANGELICA INTERCEPTS ALL THE TEXTURE CALLS WHEN IRIS SHADERS ARE USED, BINDING A DIFFERENT FRAMEBUFFER
+        // THAN THE MAIN_BLOOM_BUFFER WE JUST BOUND IN RenderEventHandler, BREAKING THE BLOOMING.
+        
+        // glDisable(GL_TEXTURE_2D); 
         glDepthMask(true);
         glPushMatrix();
 
@@ -170,7 +160,7 @@ public class OutlineRenderer {
         glPopMatrix();
         GL11.glEnable(GL_LIGHTING);
         GL11.glDisable(GL_BLEND);
-        GL11.glEnable(GL_TEXTURE_2D);
+        //  GL11.glEnable(GL_TEXTURE_2D);
         ClientConstants.renderingOutline = false;
     }
 
