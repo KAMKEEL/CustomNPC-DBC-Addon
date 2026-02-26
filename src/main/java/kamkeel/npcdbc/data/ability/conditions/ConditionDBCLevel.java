@@ -66,8 +66,7 @@ public class ConditionDBCLevel extends AbilityCondition {
         if (!(entity instanceof EntityPlayer)) return true;
 
         EntityPlayer player = (EntityPlayer) entity;
-        DBCData data = DBCData.get(player);
-        int playerLevel = getPlayerLevel(data.STR + data.DEX + data.CON + data.WIL + data.MND + data.SPI);
+        int playerLevel = DBCData.get(player).getPlayerLevel();
         return compareType.test(playerLevel, level);
     }
 
