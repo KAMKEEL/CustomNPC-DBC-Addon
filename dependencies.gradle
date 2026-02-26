@@ -47,7 +47,7 @@ dependencies {
 
 //    implementation(files("janino/build/libs/standalone-JaninoLoader-1.0.1-ALPHA.jar"))
     implementation(files("lib/standalone-JaninoLoader-1.0.2-ALPHA.jar"))
-    implementation(files("lib/crystalgraphics-1.0.0.jar"))
+    devOnlyNonPublishable(rfg.deobf(project.files("lib/crystalgraphics-1.0.0.jar")))
 
     compileOnly(files("lib/angelica-2.0.0-alpha23-MINIFIED-FOR-SPECIFIC-INTERFACE.jar"))
     // Angelica (Iris shader packs)
