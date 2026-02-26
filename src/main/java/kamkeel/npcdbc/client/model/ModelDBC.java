@@ -502,12 +502,13 @@ public class ModelDBC extends ModelBase {
         boolean oozaru = ctx.hairType("oozaru");
         boolean pupils = ctx.pupils();
         boolean eyebrows = ctx.eyebrows();
+        boolean saiyan = DBCRace.isSaiyan(ctx.race());
 
         /* ───────── Fur / Body Overlays ───────── */
         if (oozaru)
             chains.add(OOZARU_FUR);
 
-        if (ssj4 || ctx.hasFur()) {
+        if (DBCRace.isSaiyan(ctx.race()) && (ssj4 || ctx.hasFur())) {
             chains.add(SSJ4_FUR);
 
             if (savior) {
@@ -516,7 +517,7 @@ public class ModelDBC extends ModelBase {
         }
 
         /* ───────── Face Overlays ───────── */
-        if (HD()) {
+        if (HD() && saiyan) {
             if (!oozaru && pupils) {
                 if (ssj4 && !savior)
                     chains.add(SSJ4_FACE);
@@ -528,7 +529,7 @@ public class ModelDBC extends ModelBase {
                 chains.add(SSJ3_FACE); // SSJ3 unique face
             }
         } else {
-            if (!eyebrows || ssj3) {
+            if (saiyan && (!eyebrows || (ssj3))) {
                 chains.add(NO_EYEBROWS);
             }
         }

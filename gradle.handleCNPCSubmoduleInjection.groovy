@@ -152,10 +152,17 @@ tasks.named("runClient").configure {
 // Create a separate task that generates to CNPC+'s own resources directory
 
 tasks.register("generateTypeScriptDefinitionsCNPC", tasks.named("generateTypeScriptDefinitions").get().class) {
-    sourceDirectories = ['CustomNPC-Plus/src/api/java']
+    sourceDirectories = ['CustomNPC-Plus/src/api/java', 'CustomNPC-Plus/src/main/java']
     outputDirectory = "CustomNPC-Plus/src/main/resources/assets/customnpcs/api"
     apiPackages = ['noppes.npcs.api','net.minecraft'] as Set
     cleanOutputFirst = true
+    implementationPackages = [
+        'noppes.npcs.scripted',
+        'noppes.npcs.controllers.data',
+        'noppes.npcs.entity.data',
+        'noppes.npcs.quests',
+        'kamkeel.npcs.controllers.data'
+    ] as Set
 }
 
 // Make the main TypeScript task depend on CNPC+ generation

@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.render;
 
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.form.FacePartData.Part;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
 import kamkeel.npcdbc.data.overlay.OverlayContext;
@@ -38,7 +39,7 @@ public class DBCOverlays {
 //        NO_EYEBROWS.disable(Part.Eyebrows);
 
 
-        SSJ4_FUR.add(ALL, Fur, ctx -> path("ssj4/ss4b" + ctx.furType() + ".png"));
+        SSJ4_FUR.add(ALL, Fur, ctx -> path("ssj4/ss4b" + ctx.furType() + ".png")).condition(ctx -> DBCRace.isSaiyan(ctx.race()));
 
 
         OOZARU_FUR.add(ALL, BodyCM, path("oozaru/oozaru1.png", "jinryuudragonbc:cc/oozaru1.png"));
