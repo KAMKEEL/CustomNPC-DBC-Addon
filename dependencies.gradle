@@ -50,6 +50,10 @@ dependencies {
     implementation(files("lib/crystalgraphics-1.0.0.jar"))
 
     compileOnly(files("lib/angelica-2.0.0-alpha23-MINIFIED-FOR-SPECIFIC-INTERFACE.jar"))
+    // Angelica (Iris shader packs)
+    // Note: UniMixins is auto-injected by the GTNH convention plugin when `usesMixins=true`.
+    implementation("com.github.GTNewHorizons:GTNHLib:0.9.10:dev")
+    implementation("com.github.GTNewHorizons:Angelica:2.0.0-alpha23:dev")
 //    implementation(files(customNpcJar))
 
     // Make sure to comment this out if you're using an actual copy of EDE.
