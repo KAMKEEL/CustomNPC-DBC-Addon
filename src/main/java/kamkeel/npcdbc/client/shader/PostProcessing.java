@@ -6,11 +6,14 @@ import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.gui.hud.formWheel.HUDFormWheel;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import net.coderbot.iris.rendertarget.IRenderTargetExt;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.shader.Framebuffer;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -26,6 +29,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.function.ToIntFunction;
 
 import static kamkeel.npcdbc.client.shader.ShaderHelper.additiveCombine;
 import static kamkeel.npcdbc.client.shader.ShaderHelper.blur;
@@ -344,6 +348,14 @@ public class PostProcessing {
     }
 
     public static void setupDepthAndStencil() {
+        int BUFFER_ATTACHMENT_TYPE = IrisHelper.getDepthBufferType(MAIN);
+
+        if (BUFFER_ATTACHMENT_TYPE == GL_TEXTURE_2D) {
+            setupIrisStencil(IrisHelper.getDepthBufferPointer(MAIN));
+            return;
+        }
+
+
         OpenGlHelper.func_153176_h(OpenGlHelper.field_153199_f, MAIN.depthBuffer);
         if (net.minecraftforge.client.MinecraftForgeClient.getStencilBits() == 0) {
             OpenGlHelper.func_153186_a(OpenGlHelper.field_153199_f, 33190,
@@ -360,6 +372,14 @@ public class PostProcessing {
             OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e,
                 org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT,
                 OpenGlHelper.field_153199_f, MAIN.depthBuffer);
+        }
+    }
+
+    private static void setupIrisStencil(int depthBufferPointer) {
+        OpenGlHelper.func_153188_a(GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBufferPointer, 0);
+
+        if (MinecraftForgeClient.getStencilBits() != 0) {
+            OpenGlHelper.func_153188_a(GL_FRAMEBUFFER, GL30.GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthBufferPointer, 0);
         }
     }
 
@@ -597,5 +617,32 @@ public class PostProcessing {
         tessellator.draw();
 
         glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    public static class IrisHelper {
+        private static ToIntFunction<Framebuffer> bufferTypeSupplier;
+        private static ToIntFunction<Framebuffer> bufferPointerSupplier;
+
+
+        public static int getDepthBufferType(Framebuffer buffer) {
+            return bufferTypeSupplier.applyAsInt(buffer);
+        }
+
+        public static int getDepthBufferPointer(Framebuffer buffer) {
+            return bufferPointerSupplier.applyAsInt(buffer);
+        }
+
+        public static void init() {
+            try {
+                Class.forName("net.coderbot.iris.rendertarget.IRenderTargetExt");
+
+                bufferPointerSupplier = (buffer) -> ((IRenderTargetExt) buffer).iris$getDepthTextureId();
+                bufferTypeSupplier = (buffer) -> GL_TEXTURE_2D;
+
+            } catch (ClassNotFoundException ignored) {
+                bufferPointerSupplier = (buffer) -> buffer.depthBuffer;
+                bufferTypeSupplier = (buffer) -> OpenGlHelper.field_153199_f;
+            }
+        }
     }
 }
