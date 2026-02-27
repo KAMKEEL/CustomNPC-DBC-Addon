@@ -501,10 +501,6 @@ hotbar.vertical=Vertical Hotbar
 hotbar.horizontal=Horizontal Hotbar
 hotbar.switchHotbar=Switch Hotbar
 
-ability.icon.section.uv=UV Coordinates
-ability.icon.x=Icon X
-ability.icon.y=Icon Y
-
 ability.npcdbc.ki_blast=Energy Blast
 ability.npcdbc.ki_blast_volley=Energy Blast Volley
 ability.npcdbc.finish_breaker=Finish Breaker

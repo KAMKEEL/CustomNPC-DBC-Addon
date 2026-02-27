@@ -14,24 +14,33 @@ import net.minecraft.entity.player.EntityPlayer;
  * Adding a new toggle = adding one enum entry + one register line in DBCAbilities.
  */
 public enum DBCToggle {
-    FRIENDLY_FIST("friendly_fist", "Friendly Fist", DBCSettings.FRIENDLY_FIST, 0, 0),
-    SWOOP("swoop", "Swoop", DBCSettings.DODGE_ENABLED, 48, 0),
-    KAIOKEN("kaioken", "Kaioken", DBCSettings.KAIOKEN_ENABLED, 0, 48),
-    FUSION("fusion", "Fusion", DBCSettings.FUSION_ENABLED, 144, 0, 64, 48),
-    KI_FIST("ki_fist", "Ki Fist", DBCSettings.KI_FIST, 192, 0),
-    KI_PROTECTION("ki_protection", "Ki Protection", DBCSettings.KI_PROTECTION, 240, 0),
-    KI_WEAPON("ki_weapon", "Ki Weapon", DBCSettings.KI_WEAPON_TOGGLE, 288, 0, 48, 48,
+    FRIENDLY_FIST("friendly_fist", "Friendly Fist", DBCSettings.FRIENDLY_FIST,
+        "npcdbc:textures/gui/ability/friendly_fist.png"),
+    SWOOP("swoop", "Swoop", DBCSettings.DODGE_ENABLED,
+        "npcdbc:textures/gui/ability/swoop.png"),
+    KAIOKEN("kaioken", "Kaioken", DBCSettings.KAIOKEN_ENABLED,
+        "npcdbc:textures/gui/ability/kaioken.png"),
+    FUSION("fusion", "Fusion", DBCSettings.FUSION_ENABLED,
+        "npcdbc:textures/gui/ability/fusion.png", 64, 48),
+    KI_FIST("ki_fist", "Ki Fist", DBCSettings.KI_FIST,
+        "npcdbc:textures/gui/ability/ki_fist.png"),
+    KI_PROTECTION("ki_protection", "Ki Protection", DBCSettings.KI_PROTECTION,
+        "npcdbc:textures/gui/ability/ki_protection.png"),
+    KI_WEAPON("ki_weapon", "Ki Weapon", DBCSettings.KI_WEAPON_TOGGLE,
+        "npcdbc:textures/gui/ability/ki_weapon.png", 48, 48,
         new int[]{0, 1}, new String[]{"Ki Blade", "Ki Scythe"},
-        new int[][]{{288, 0}, {336, 0}}),
-    POTENTIAL_UNLEASHED("potential_unleashed", "Potential Unleashed", DBCSettings.POTENTIAL_UNLEASHED, 48, 48),
-    ULTRA_INSTINCT("ultra_instinct", "Ultra Instinct", DBCSettings.ULTRA_INSTINCT, 96, 48),
-    GOD_OF_DESTRUCTION("god_of_destruction", "God of Destruction", DBCSettings.GOD_OF_DESTRUCTION, 144, 48);
+        new String[]{"npcdbc:textures/gui/ability/ki_weapon_blade.png", "npcdbc:textures/gui/ability/ki_weapon_scythe.png"}),
+    POTENTIAL_UNLEASHED("potential_unleashed", "Potential Unleashed", DBCSettings.POTENTIAL_UNLEASHED,
+        "npcdbc:textures/gui/ability/potential_unleashed.png"),
+    ULTRA_INSTINCT("ultra_instinct", "Ultra Instinct", DBCSettings.ULTRA_INSTINCT,
+        "npcdbc:textures/gui/ability/ultra_instinct.png"),
+    GOD_OF_DESTRUCTION("god_of_destruction", "God of Destruction", DBCSettings.GOD_OF_DESTRUCTION,
+        "npcdbc:textures/gui/ability/god_of_destruction.png");
 
     public final String key;
     public final String displayName;
     public final int setting;
-    public final int iconX;
-    public final int iconY;
+    public final String iconTexture;
     public final int width;
     public final int height;
 
@@ -41,31 +50,31 @@ public enum DBCToggle {
     /** Display labels per state (null for simple binary toggles). */
     public final String[] stateLabels;
 
-    /** Per-state icon UV overrides as {iconX, iconY} pairs (null for simple toggles). */
-    public final int[][] stateIcons;
+    /** Per-state icon textures (null for simple toggles). */
+    public final String[] stateIconTextures;
 
-    DBCToggle(String key, String displayName, int setting, int iconX, int iconY) {
-        this(key, displayName, setting, iconX, iconY, 48, 48, null, null, null);
+    /** Simple binary toggle with default 48x48 icon. */
+    DBCToggle(String key, String displayName, int setting, String iconTexture) {
+        this(key, displayName, setting, iconTexture, 48, 48, null, null, null);
     }
 
-    /** Simple binary toggle (1 state = on/off). */
-    DBCToggle(String key, String displayName, int setting, int iconX, int iconY, int width, int height) {
-        this(key, displayName, setting, iconX, iconY, width, height, null, null, null);
+    /** Simple binary toggle with custom icon dimensions. */
+    DBCToggle(String key, String displayName, int setting, String iconTexture, int width, int height) {
+        this(key, displayName, setting, iconTexture, width, height, null, null, null);
     }
 
-    /** Multi-state toggle with per-state DBC modes, labels, and icon overrides. */
-    DBCToggle(String key, String displayName, int setting, int iconX, int iconY, int width, int height,
-              int[] modes, String[] stateLabels, int[][] stateIcons) {
+    /** Multi-state toggle with per-state DBC modes, labels, and icon textures. */
+    DBCToggle(String key, String displayName, int setting, String iconTexture, int width, int height,
+              int[] modes, String[] stateLabels, String[] stateIconTextures) {
         this.key = key;
         this.displayName = displayName;
         this.setting = setting;
-        this.iconX = iconX;
-        this.iconY = iconY;
+        this.iconTexture = iconTexture;
         this.width = width;
         this.height = height;
         this.modes = modes;
         this.stateLabels = stateLabels;
-        this.stateIcons = stateIcons;
+        this.stateIconTextures = stateIconTextures;
     }
 
     /**
