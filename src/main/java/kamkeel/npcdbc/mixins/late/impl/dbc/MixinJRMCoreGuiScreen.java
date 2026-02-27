@@ -248,7 +248,6 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
 
     @Unique
     private void customNPC_DBC_Addon$drawSliderIfNoSkills() {
-        System.out.println("Chuj ci w pizde");
         int sw = DBCData.getClient().customSkills.size();
         float cool = 5.0F;
         int wpy = 10;
