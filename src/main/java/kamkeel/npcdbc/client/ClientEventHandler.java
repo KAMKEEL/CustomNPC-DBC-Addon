@@ -230,7 +230,6 @@ public class ClientEventHandler {
     @SubscribeEvent
     public void logoutEvent(FMLNetworkEvent.ClientDisconnectionFromServerEvent event) {
         ClientCache.clientDataCache.clear();
-        KnockbackTracker.clear();
     }
 
     @SubscribeEvent

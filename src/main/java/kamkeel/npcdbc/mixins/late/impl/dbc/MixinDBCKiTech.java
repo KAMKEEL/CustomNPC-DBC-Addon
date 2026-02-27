@@ -9,7 +9,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientCache;
-import kamkeel.npcdbc.client.KnockbackTracker;
+import kamkeel.npcdbc.client.DBCMoveHelper;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -51,14 +51,10 @@ import static kamkeel.npcdbc.constants.DBCForm.UltraInstinct;
 public abstract class MixinDBCKiTech {
 
     @Shadow
-    public static void mv(float strafe, float frward, EntityPlayer var4, float add) {
-
-    }
+    public static void mv(float strafe, float frward, EntityPlayer var4, float add) {}
 
     @Shadow
-    public static void setThrowableHeading(Entity e, double par1, double par3, double par5, float par7, float par8) {
-
-    }
+    public static void setThrowableHeading(Entity e, double par1, double par3, double par5, float par7, float par8) {}
 
     @Redirect(method = "Ascend", at = @At(value = "FIELD", target = "Lnet/minecraft/client/entity/EntityClientPlayerMP;rotationPitch:F", remap = true, ordinal = 0))
     private static float disableOozaruTransformInCustomForm(EntityClientPlayerMP instance) {
@@ -81,128 +77,39 @@ public abstract class MixinDBCKiTech {
         if (ClientCache.kiRevamp)
             ci.cancel();
     }
-//
-//    @ModifyArgs(method = "DashKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
-//    private static void changeSprintSpeed(Args args) {
-//        float speed = args.get(3);
-//        args.set(3, speed * DBCData.getClient().getSprintSpeed());
-//    }
+
+    @Inject(method = "DashKi", at = @At("HEAD"), cancellable = true)
+    private static void enhancedDashKi(boolean sprint, CallbackInfo ci) {
+        if (ClientCache.enhancedMovement) {
+            DBCMoveHelper.DashKi(sprint);
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "FloatKi", at = @At("HEAD"), cancellable = true)
+    private static void enhancedFloatKi(KeyBinding kiFlight, KeyBinding keyBindJump, KeyBinding keyBindSneak, CallbackInfo ci) {
+        if (ClientCache.enhancedMovement) {
+            DBCMoveHelper.FloatKi(kiFlight, keyBindJump, keyBindSneak);
+            ci.cancel();
+        }
+    }
 
     @Redirect(method = "DashKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
     private static void changeSprintSpeed(float f4, float f5, EntityPlayer pitch, float speedY) {
         speedY *= DBCData.getClient().getSprintSpeed();
-        speedY *= getSpeedModifier(pitch);
         mv(f4, f5, pitch, speedY);
     }
 
-    //    @ModifyArgs(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
-//    private static void changeBaseSpeed(Args args) {
-//        float speed = args.get(3);
-//        args.set(3, speed * DBCData.getClient().getBaseFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100);
-//
-//    }
     @Redirect(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
     private static void changeBaseSpeed(float f4, float f5, EntityPlayer pitch, float speedY) {
         speedY *= DBCData.getClient().getBaseFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100f;
-        speedY *= getSpeedModifier(pitch);
         mv(f4, f5, pitch, speedY);
     }
-
-//    @ModifyArgs(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;setThrowableHeading(Lnet/minecraft/entity/Entity;DDDFF)V"))
-//    private static void changeDynamic(Args args) {
-//        float speed = args.get(4);
-//        args.set(4, speed * DBCData.getClient().getDynamicFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100);
-//
-//    }
 
     @Redirect(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;setThrowableHeading(Lnet/minecraft/entity/Entity;DDDFF)V"))
     private static void changeDynamic(Entity e, double par1, double par3, double par5, float par7, float par8) {
         par7 *= DBCData.getClient().getDynamicFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100f;
-        if (e instanceof EntityPlayer) {
-            par7 *= getSpeedModifier((EntityPlayer) e);
-        }
         setThrowableHeading(e, par1, par3, par5, par7, par8);
-    }
-
-    /**
-     * Preserve external velocity (knockback, explosions, etc.) across DBC's DashKi.
-     * HEAD captures pre-DBC motion state, TAIL restores external velocity after DBC sets its own.
-     */
-    @Inject(method = "DashKi", at = @At("HEAD"))
-    private static void npcdbc$beforeDashKi(boolean sprint, CallbackInfo ci) {
-        if (sprint && !DBCKiTech.floating) {
-            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-            if (player != null) {
-                KnockbackTracker.beforeDBCMovement(player);
-            }
-        }
-    }
-
-    @Inject(method = "DashKi", at = @At("TAIL"))
-    private static void npcdbc$afterDashKi(boolean sprint, CallbackInfo ci) {
-        if (sprint && !DBCKiTech.floating) {
-            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-            if (player != null) {
-                KnockbackTracker.afterDBCMovement(player);
-            }
-        }
-    }
-
-    /**
-     * Preserve external velocity across DBC's FloatKi.
-     * HEAD is conditional on floating; if flight toggles on mid-method,
-     * afterDBCMovement detects the unpaired call and handles it as a first tick.
-     */
-    @Inject(method = "FloatKi", at = @At("HEAD"))
-    private static void npcdbc$beforeFloatKi(KeyBinding kiFlight, KeyBinding keyBindJump, KeyBinding keyBindSneak, CallbackInfo ci) {
-        if (DBCKiTech.floating) {
-            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-            if (player != null) {
-                KnockbackTracker.beforeDBCMovement(player);
-            }
-        }
-    }
-
-    @Inject(method = "FloatKi", at = @At("TAIL"))
-    private static void npcdbc$afterFloatKi(KeyBinding kiFlight, KeyBinding keyBindJump, KeyBinding keyBindSneak, CallbackInfo ci) {
-        if (DBCKiTech.floating) {
-            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-            if (player != null) {
-                KnockbackTracker.afterDBCMovement(player);
-            }
-        }
-    }
-
-    /**
-     * Vanilla sprint modifier UUID — excluded since DBC handles sprint speed separately
-     */
-    private static final UUID SPRINT_MODIFIER_UUID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
-
-    /**
-     * Speed modifier from the entity's movementSpeed attribute.
-     * Captures all sources: Speed/Slowness potions, equipment, custom modifiers.
-     * Excludes the vanilla sprint modifier to avoid double-counting with DBC's own sprint speed.
-     */
-    private static float getSpeedModifier(EntityPlayer player) {
-        if (!ClientCache.turboSpeedFix) return 1.0F;
-
-        IAttributeInstance attr = player.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
-        double base = attr.getBaseValue();
-        if (base <= 0) return 1.0F;
-
-        double value = attr.getAttributeValue();
-
-        // Exclude sprint modifier — DBC already handles sprint speed via getSprintSpeed()
-        AttributeModifier sprintMod = attr.getModifier(SPRINT_MODIFIER_UUID);
-        if (sprintMod != null) {
-            value /= (1.0 + sprintMod.getAmount());
-        }
-
-        float ratio = (float) (value / base);
-        // Apply multiplier: scales how much the deviation from normal speed affects turbo
-        // e.g. ratio=1.4, multiplier=0.5 → 1.0 + 0.4*0.5 = 1.2
-        ratio = 1.0F + (ratio - 1.0F) * ClientCache.turboSpeedMultiplier;
-        return Math.max(ratio, 0.0F);
     }
 
     @Inject(method = "FloatKi", at = @At(value = "FIELD", target = "LJinRyuu/DragonBC/common/DBCKiTech;floating:Z", ordinal = 7, shift = At.Shift.AFTER))
@@ -281,7 +188,7 @@ public abstract class MixinDBCKiTech {
         }
     }
 
-    @Redirect(method = "Ascend", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;StusEfctsMe(I)Z"))
+    @Redirect(method = "Ascend", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;StusEfctsMe(I)Z", ordinal = 2))
     private static boolean fixSomeFormsNotAscendingProperly5(int ste, @Local(name = "useUltraInstinct2") LocalBooleanRef useUltraInstinct2) {
         PlayerDBCInfo dbc = PlayerDataUtil.getClientDBCInfo();
         int id = dbc.selectedDBCForm;

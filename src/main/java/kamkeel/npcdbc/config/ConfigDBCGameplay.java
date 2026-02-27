@@ -59,7 +59,7 @@ public class ConfigDBCGameplay {
     public static boolean DodgeCameraLock = true;
 
     public final static String Fixes = "Fixes";
-    public static boolean TurboKnockbackFix = true;
+    public static boolean EnhancedMovement = true;
     public static boolean TurboSpeedFix = true;
     public static float TurboSpeedMultiplier = 1.0f;
 
@@ -134,9 +134,10 @@ public class ConfigDBCGameplay {
             DodgeTeleport = config.get(Combat, "Teleport on UI Dodge", true, "True or false whether UI Dodge teleports to the target").getBoolean(true);
             DodgeCameraLock = config.get(Combat, "camera Turn on UI dodge", true, "True or false whether UI Dodge Turns camera").getBoolean(true);
 
-            TurboKnockbackFix = config.get(Fixes, "Turbo Knockback Fix", true,
-                "Fixes DBC's turbo and flight movement overwriting external velocity.\n" +
-                    "Preserves knockback, explosions, and other forces during turbo/flight.").getBoolean(true);
+            EnhancedMovement = config.get(Fixes, "Enhanced Movement", true,
+                "Enables the enhanced movement system for turbo sprint and flight.\n" +
+                    "Fixes knockback being destroyed during DBC movement by using additive acceleration\n" +
+                    "instead of velocity assignment. Preserves knockback, explosions, and other forces.").getBoolean(true);
             TurboSpeedFix = config.get(Fixes, "Turbo Speed Fix", true,
                 "Makes the entity's movement speed attribute affect turbo and flight speed.\n" +
                     "Speed/Slowness potions, equipment modifiers, and custom attributes will scale turbo/flight.").getBoolean(true);

@@ -24,7 +24,7 @@ public class ClientCache {
     public static HashMap<Integer, HashMap<String, Boolean>> divineApplicableForms = new HashMap<>();
     public static int maxAbsorptionLevel = JGConfigRaces.CONFIG_MAJIN_ABSORPTON_MAX_LEVEL;
 
-    public static boolean turboKnockbackFix = true;
+    public static boolean enhancedMovement = true;
     public static boolean turboSpeedFix = true;
     public static float turboSpeedMultiplier = 1.0f;
 
