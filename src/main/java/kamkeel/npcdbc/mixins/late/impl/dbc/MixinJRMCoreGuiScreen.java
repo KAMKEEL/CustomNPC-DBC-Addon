@@ -157,6 +157,22 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
         skillsDrawnAlready++;
     }
 
+    // Who needs readability with DBC, am I right? It's not like I have to use 5 different compilers
+    // before JRMCoreGuiScreen#drawScreen finally decompiles into SOMEWHAT readable chunks of code.
+    //
+    // I'm a big fan of 3k line functions with 10000 different if-branches.
+    // I love that this is all in a rendering function too and that the components are being
+    // constantly updated.
+    //
+    // My favourite so far was the fact that the decompiled functions reuse the same variable names which is SUPERRR easy to track.
+    // But truth be told this is probably some kind of compiler optimization, reusing registers and what not.
+    // So I can't be mad at Jin for that.
+    //      -Sincerely, Hussar
+    //
+    //
+    //
+    // VERY IMPORTANT: If this method breaks again, and you are not sure of what it does just ping me to not break it
+    //      -Hussar, again... in the same commit as my love letter to Jin...
     @Inject(method = "drawScreen", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawString(Ljava/lang/String;III)I", remap = true, ordinal = 81))
     private void drawCustomSkills(int x, int y, float f, CallbackInfo ci) {
         if (JRMCoreH.PlyrSkills == null)
@@ -164,10 +180,47 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
 
         DBCData data = DBCData.getClient();
         SkillContainer[] customSkills = data.customSkills.values().toArray(new SkillContainer[0]);
-        int condition = Math.min(customSkills.length, 10 - skillsDrawnAlready);
-        for (int i = 0; i < condition ; ++i) {
+
+        final int maximumSpaceForCustomSkills = 10 - skillsDrawnAlready;
+
+        int skillStartIndex = 0;
+        int skillEndIndex = maximumSpaceForCustomSkills;
+
+        // I'm not inlining this ;p
+        // This makes it an actually readable if-branch condition.
+        boolean noDBCSkillsOnScreen = skillsDrawnAlready == 0;
+        if (noDBCSkillsOnScreen) {
+
+            // Even though skillsDrawnAlready is 0, this doesn't mean that the scroll
+            // is not being inflated by DBC Skills.
+            // The skills can be null or an array of length 0. Still gotta check
+            int dbcSkillScrollOffset = JRMCoreH.PlyrSkills != null
+                ? JRMCoreH.PlyrSkills.length
+                : 0;
+
+            // Again, not inlining this!
+            // Same reasoning as the branch condition.
+            // The meaning of the variable becomes foggy.
+            final int scrollWithoutDBC = this.scroll - dbcSkillScrollOffset;
+
+            skillStartIndex = scrollWithoutDBC;
+            skillEndIndex = Math.max(
+                maximumSpaceForCustomSkills,
+                scrollWithoutDBC + 10
+            );
+        }
+
+        final int cappedCondition = Math.min(customSkills.length, skillEndIndex);
+
+        for (int i = skillStartIndex; i < cappedCondition ; ++i) {
             SkillContainer skill = customSkills[i];
+
+            // Can't remove this.
             skillsDrawnAlready++;
+            // Offset needs to be relative to last drawn skill, not current skill index;
+            //
+            // Otherwise I'd have to normalize index by keeping "scrollWithoutDBC" around for longer in the scope
+            // and would make the code even more unreadable.
             int offset = skillsDrawnAlready + 1;
             String skillDescription = skill.getSkill().getDescription();
             int level = skill.getLevel();
@@ -190,8 +243,6 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
             }
             String sideMessage = level < skill.getSkill().getMaxLevel() ? (tpReq == -1 ? JRMCoreH.trl("jrmc", "UpgradeLocked") : "TP: " + JRMCoreH.numSep(tpReq) + " M: " + JRMCoreH.numSep(mindReq)) : JRMCoreH.trl("jrmc", "Maxed");
             enhancedGUIdrawString(fontRender, sideMessage, guiLeft + 240 - fontRender.getStringWidth(sideMessage), guiTop + 20 + offset * 10, 0);
-
-
         }
     }
 
