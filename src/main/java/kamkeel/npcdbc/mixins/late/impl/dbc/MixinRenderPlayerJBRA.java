@@ -19,6 +19,7 @@ import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.ColorMode;
+import kamkeel.npcdbc.client.model.Headpiece;
 import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.client.render.OverlayModelRenderer;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
@@ -399,7 +400,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     public boolean fixPotaraHair(@Local(name = "abstractClientPlayer") AbstractClientPlayer abstractClientPlayer) {
         ItemStack item = abstractClientPlayer.getCurrentArmor(3);
 
-        if (item != null && item.getItem() instanceof ItemPotara)
+        if (item != null && (item.getItem() instanceof Headpiece))
             return false;
 
         return JRMCoreConfig.HHWHO;

@@ -21,6 +21,12 @@ public class ModItems {
 
     public static Item Potaras;
 
+    public static Item ControlCrown;
+
+    public static Item ShockCollar;
+
+    public static Item EvilThirdEye;
+
     /**
      * Declare and register items. Do NOT add recipes here!
      */
@@ -54,5 +60,15 @@ public class ModItems {
 
         Potaras = new ItemPotara();
         GameRegistry.registerItem(Potaras, "potara");
+
+        ControlCrown = new ItemControlCrown().setTextureName(LocalizationHelper.MOD_PREFIX + "controlcrown");
+        GameRegistry.registerItem(ControlCrown, ControlCrown.getUnlocalizedName());
+
+        ShockCollar = new ItemShockCollar().setTextureName(LocalizationHelper.MOD_PREFIX + "shockcollar");
+        GameRegistry.registerItem(ShockCollar, ShockCollar.getUnlocalizedName());
+
+        EvilThirdEye = new ItemEvilThirdEye().setTextureName(LocalizationHelper.MOD_PREFIX + "evilthirdeye");
+        GameRegistry.registerItem(EvilThirdEye, EvilThirdEye.getUnlocalizedName());
+
     }
 }

@@ -97,6 +97,18 @@ public class ConfigDBCEffects {
     public static int MAX_THRESHOLD_EXCEED = 5; // Maximum amount above threshold before triggering Bloated effect
     public static int BLOATED_TIME = 300; // Duration of the Bloated effect in seconds (5 minutes)
 
+    public final static String Controlled = "CONTROLLED";
+    public static int CONTROLLED_DEBUFF = 1500;
+    public static int CONTROLLED_RATE = 60;
+
+    public final static String EvilThirdEye = "EVIL THIRD EYE";
+    public static double ThirdEyeSizeFactor = 0.25;
+    public static int ThirdEyeSizeMultiplier = 25;
+    public static double ThirdEyeDexBoostPercent = 50;
+    public static double ThirdEyeWilBoostPercent = 50;
+    public static double ThirdEyeStrBoostPercent = 50;
+    public static int ThirdEyeBoostMultiplier = 25;
+
     /**
      * Ugly, roundabout way of persisting configs between multiplayer and singleplayer.
      *
@@ -263,6 +275,12 @@ public class ConfigDBCEffects {
                         "\nExample: Setting to 300 means the effect lasts for 5 minutes (300 seconds).")
                 .getInt(300);
 
+            config.addCustomCategoryComment(Controlled, "Controlled throws the player into a different custom form while having this effect.");
+            CONTROLLED_DEBUFF = config.get(Controlled, "Controlled Stat Decrement", 1500, "Amount of stats that will be decremented from the player under 'Controlled' effect").getInt(1500);
+            CONTROLLED_RATE = config.get(Controlled, "Control Crown Break Rate", 60, "Amount of ticks it takes for the Control Crown to receive 1 damage" +
+                    "\nIt   is recommended to keep this value above 10")
+                .getInt(60);
+
             config.addCustomCategoryComment(DIVINE,
                 "Forms can now benefit from an additional multi" +
                     "\n" +
@@ -291,6 +309,21 @@ public class ConfigDBCEffects {
                 "Additional percent boost to Dexterity provided by Human Spirit.").getDouble(20);
             HumanSpiritLength = config.get(HumanSpirit, "Effect Length", 360,
                 "Duration of the Human Spirit effect in seconds.").getInt(360);
+
+            ThirdEyeSizeFactor = config.get(EvilThirdEye, "Evil Third Eye Size Modifier", 0.25,
+                "Additional size amount added to the player").getDouble(0.25);
+            ThirdEyeSizeMultiplier = config.get(EvilThirdEye, "Evil Third Eye Size Increase Percentage", 25,
+                "Size percent increase per level for Evil Third Eye.").getInt(25);
+
+            ThirdEyeWilBoostPercent = config.get(EvilThirdEye, "Wil Boost Percent", 50,
+                "Additional percent boost to Willpower provided by Evil Third Eye.").getDouble(50);
+            ThirdEyeStrBoostPercent = config.get(EvilThirdEye, "Str Boost Percent", 50,
+                "Additional percent boost to Strength provided by Evil Third Eye.").getDouble(50);
+            ThirdEyeDexBoostPercent = config.get(EvilThirdEye, "Dex Boost Percent", 50,
+                "Additional percent boost to Dexterity provided by Evil Third Eye.").getDouble(50);
+            ThirdEyeBoostMultiplier = config.get(EvilThirdEye, "Evil Third Eye Boosts Increase Percentage", 25,
+                "Percent increase per level for all Evil Third Eye boosts.").getInt(25);
+
 
             String[][] defaultDivineRaces = new String[][]{
                 {"God"},

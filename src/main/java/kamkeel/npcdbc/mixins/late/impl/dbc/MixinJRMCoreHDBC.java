@@ -5,8 +5,11 @@ import com.llamalad7.mixinextras.sugar.Local;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ClientCache;
+import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.items.ItemEvilThirdEye;
+import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -64,12 +67,29 @@ public class MixinJRMCoreHDBC {
         if (CommonProxy.getCurrentJRMCTickPlayer() != null) {
             float sz = size;
             Form form = DBCData.get(CommonProxy.getCurrentJRMCTickPlayer()).getForm();
+            boolean isThirdEye = DBCData.get(CommonProxy.getCurrentJRMCTickPlayer()).hasThirdEye();
 
             if (form != null) {
+                double thirdEyeFactor = isThirdEye ? ConfigDBCEffects.ThirdEyeSizeFactor : 0;
+
+                if (isThirdEye) {
+                    ItemStack stack = CommonProxy.getCurrentJRMCTickPlayer().getEquipmentInSlot(4);
+                    int level = ItemEvilThirdEye.getLevel(stack);
+                    double multiplier = ConfigDBCEffects.ThirdEyeSizeMultiplier <= 0 ? (double) ConfigDBCEffects.ThirdEyeSizeMultiplier / 100 : 1;
+
+                    thirdEyeFactor = thirdEyeFactor * (1 + level * multiplier);
+                }
+
+                float realSize = (float) (form.display.formSize + thirdEyeFactor);
+
                 if (form.display.keepOriginalSize && form.stackable.vanillaStackable) {
-                    cir.setReturnValue(sz *= form.display.formSize);
+                    cir.setReturnValue(sz *= realSize);
                 } else {
-                    cir.setReturnValue(sz = form.display.formSize);
+                    cir.setReturnValue(sz = realSize);
+                }
+            } else {
+                if (isThirdEye) {
+                    cir.setReturnValue(sz += (float) ConfigDBCEffects.ThirdEyeSizeFactor);
                 }
             }
 

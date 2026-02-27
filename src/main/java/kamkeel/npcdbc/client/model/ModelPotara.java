@@ -54,7 +54,7 @@ public class ModelPotara extends ModelBipedBody {
         ModelRenderer dangle1_r1 = new ModelRenderer(this);
         dangle1_r1.setRotationPoint(-6.5F, -2.5F, -0.5F);
         earringRight.addChild(dangle1_r1);
-        setRotationAngle(dangle1_r1, 0.0F, -0.7854F, 0.0F);
+        setRotationAngle(dangle1_r1, 0.0F, 0.7854F, 0.0F);
         dangle1_r1.cubeList.add(new ModelBox(dangle1_r1, 0, 0, -0.5F, -0.5F, 0.0F, 1, 1, 0, 0.0F));
 
         earringLeft = new ModelRenderer(this);
@@ -63,12 +63,14 @@ public class ModelPotara extends ModelBipedBody {
         earringLeft.cubeList.add(new ModelBox(earringLeft, 0, 2, 6.0F, -2.0F, -1.0F, 1, 1, 1, 0.0F));
 
         ModelRenderer dangle2_r2 = new ModelRenderer(this);
+        dangle2_r2.mirror = true;
         dangle2_r2.setRotationPoint(6.5F, -2.5F, -0.5F);
         earringLeft.addChild(dangle2_r2);
-        setRotationAngle(dangle2_r2, 0.0F, 0.7854F, 0.0F);
+        setRotationAngle(dangle2_r2, 0.0F, -0.7854F, 0.0F);
         dangle2_r2.cubeList.add(new ModelBox(dangle2_r2, 0, 0, -0.5F, -0.5F, 0.0F, 1, 1, 0, 0.0F));
 
         ModelRenderer dangle1_r2 = new ModelRenderer(this);
+        dangle1_r2.mirror = true;
         dangle1_r2.setRotationPoint(6.5F, -2.5F, -0.5F);
         earringLeft.addChild(dangle1_r2);
         setRotationAngle(dangle1_r2, 0.0F, -0.7854F, 0.0F);

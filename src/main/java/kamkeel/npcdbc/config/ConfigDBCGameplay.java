@@ -58,6 +58,12 @@ public class ConfigDBCGameplay {
     public static boolean DodgeTeleport = true;
     public static boolean DodgeCameraLock = true;
 
+    public final static String ControlCrown = "ControlCrown";
+    public static int ControlCrownDurability = 1500;
+
+    public final static String EvilThirdEye = "Evil_Third_Eye";
+    public static int ThirdEyeBlindLevel = 4;
+
     public final static String Fixes = "Fixes";
     public static boolean TurboKnockbackFix = true;
     public static boolean TurboSpeedFix = true;
@@ -124,6 +130,12 @@ public class ConfigDBCGameplay {
 
             FruitOfMightStackSize = config.get(FruitOfMight, "Fruit of Might Stack Size", 5).getInt(5);
             FruitOfMightStackSize = ValueUtil.clamp(FruitOfMightStackSize, 1, 64);
+
+            ControlCrownDurability = config.get(ControlCrown, "Control Crown Durability", 1500).getInt(1500);
+
+            ThirdEyeBlindLevel = config.get(EvilThirdEye, "Evil Third Eye Blind Level", 4,
+                "Level required for an Evil Third Eye to go blind").getInt(4);
+
 
             EnableHumanSpirit = config.get(HumanSpirit, "Enable Human Spirit", true,
                 "Human Spirit will automatically apply the Human Spirit Effect (dbc/effects.cfg), " +

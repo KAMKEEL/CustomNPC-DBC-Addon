@@ -46,12 +46,15 @@ public class FormIcon extends Gui {
         boolean isLegendary = parent.dbcData.isForm(DBCForm.Legendary);
         boolean isDivine = parent.dbcData.isForm(DBCForm.Divine);
         boolean isMajin = parent.dbcData.isForm(DBCForm.Majin);
+        boolean isControlled = parent.dbcData.isControlled();
 
         FormStackable stackable = formToCopy.stackable;
 
         FormController formController = FormController.Instance;
 
-        if (formController.has(stackable.divineID) && isDivine) {
+        if (formController.has(stackable.controlledID) && isControlled) {
+            formToCopy = (Form) formController.get(stackable.controlledID);
+        } else if (formController.has(stackable.divineID) && isDivine) {
             formToCopy = (Form) formController.get(stackable.divineID);
         } else if (formController.has(stackable.legendaryID) && isLegendary) {
             formToCopy = (Form) formController.get(stackable.legendaryID);

@@ -17,7 +17,7 @@ public class FormStackable implements IFormStackable {
     public float uiState2Factor = 1.0f;
 
     public boolean useLegendaryConfig, useDivineConfig, useMajinConfig;
-    public int legendaryID = -1, divineID = -1, majinID = -1, fusionID = -1;
+    public int legendaryID = -1, divineID = -1, majinID = -1, fusionID = -1, controlledID = -1;
 
     public FormKaiokenStackableData kaiokenData;
 
@@ -50,6 +50,7 @@ public class FormStackable implements IFormStackable {
         divineID = !stack.hasKey("divineID") ? -1 : stack.getInteger("divineID");
         majinID = !stack.hasKey("majinID") ? -1 : stack.getInteger("majinID");
         fusionID = !stack.hasKey("fusionID") ? -1 : stack.getInteger("fusionID");
+        controlledID = !stack.hasKey("controlledID") ? -1 : stack.getInteger("controlledID");
 
         kaiokenData.readFromNBT(stack);
 
@@ -79,6 +80,7 @@ public class FormStackable implements IFormStackable {
         stack.setInteger("divineID", divineID);
         stack.setInteger("majinID", majinID);
         stack.setInteger("fusionID", fusionID);
+        stack.setInteger("controlledID", controlledID);
 
         kaiokenData.saveToNBT(stack);
 
@@ -189,6 +191,32 @@ public class FormStackable implements IFormStackable {
     @Override
     public IForm getMajinForm() {
         return FormController.Instance.get(majinID);
+    }
+
+    @Override
+    public void setControlledForm(IForm form) {
+        if (form == null) {
+            controlledID = -1;
+            return;
+        }
+
+        int id = form.getID();
+        if (form.getID() == this.controlledID)
+            return;
+
+        if (id > -1) {
+            controlledID = id;
+        }
+    }
+
+    @Override
+    public int getControlledFormID() {
+        return controlledID;
+    }
+
+    @Override
+    public IForm getControlledForm() {
+        return FormController.Instance.get(controlledID);
     }
 
     @Override

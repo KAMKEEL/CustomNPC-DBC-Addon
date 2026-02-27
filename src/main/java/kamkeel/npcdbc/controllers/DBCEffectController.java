@@ -7,20 +7,7 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.effects.AddonEffect;
 import kamkeel.npcdbc.data.effects.DamageTracker;
 import kamkeel.npcdbc.data.effects.SenzuConsumptionData;
-import kamkeel.npcdbc.data.effects.types.Bloated;
-import kamkeel.npcdbc.data.effects.types.Chocolated;
-import kamkeel.npcdbc.data.effects.types.Darkness;
-import kamkeel.npcdbc.data.effects.types.Exhausted;
-import kamkeel.npcdbc.data.effects.types.FruitOfMight;
-import kamkeel.npcdbc.data.effects.types.HumanSpirit;
-import kamkeel.npcdbc.data.effects.types.Meditation;
-import kamkeel.npcdbc.data.effects.types.NamekRegen;
-import kamkeel.npcdbc.data.effects.types.Overpower;
-import kamkeel.npcdbc.data.effects.types.PotaraFusion;
-import kamkeel.npcdbc.data.effects.types.RegenHealth;
-import kamkeel.npcdbc.data.effects.types.RegenKi;
-import kamkeel.npcdbc.data.effects.types.RegenStamina;
-import kamkeel.npcdbc.data.effects.types.Zenkai;
+import kamkeel.npcdbc.data.effects.types.*;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
@@ -70,6 +57,9 @@ public class DBCEffectController implements IDBCEffectHandler {
         // standardEffects.put(Effects.KI_DEFENSE, new Exhausted()); 208
         standardEffects.put(Effects.HUMAN_SPIRIT, new HumanSpirit());
         standardEffects.put(Effects.EXHAUSTED, new Exhausted());
+        standardEffects.put(Effects.CONTROLLED, new Controlled());
+        standardEffects.put(Effects.HARNESSED, new Harnessed());
+        standardEffects.put(Effects.EVIL_THIRD_EYE, new EvilThirdEye());
 
         CustomEffectController.getInstance().registerEffectMap(DBC_EFFECT_INDEX, standardEffects);
         CustomEffectController.getInstance().registerEffectMapLabel(DBC_EFFECT_INDEX, "DBC Addon");

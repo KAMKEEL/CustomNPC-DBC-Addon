@@ -177,6 +177,19 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
         y += 23;
 
+        scrollWindow.addButton(new GuiNpcButton(11, guiLeft + 75, y, 90, 20, "general.noForm"));
+        scrollWindow.addButton(new GuiNpcButton(111, guiLeft + 167, y, 20, 20, "X"));
+        scrollWindow.addLabel(new GuiNpcLabel(112, "effect.controlled", guiLeft + 4, y + 5));
+        scrollWindow.getButton(111).enabled = stackable.controlledID != -1;
+        scrollWindow.getLabel(112).color = 0xffffff;
+
+        if (stackable.controlledID != -1) {
+            if (FormController.getInstance().has(stackable.controlledID))
+                scrollWindow.getButton(11).setDisplayText(FormController.getInstance().get(stackable.controlledID).getName());
+        }
+
+        y += 23;
+
         scrollWindow.addButton(new GuiNpcButton(6, guiLeft + 75, y, 90, 20, "general.noForm"));
         scrollWindow.addButton(new GuiNpcButton(61, guiLeft + 167, y, 20, 20, "X"));
         scrollWindow.addLabel(new GuiNpcLabel(62, "dbc.se.legendary", guiLeft + 4, y + 5));
@@ -304,6 +317,13 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
             stackable.fusionID = -1;
             initGui();
         }
+        if (button.id == 11) {
+            this.setSubGui(new SubGuiSelectForm(11, false, false));
+        }
+        if (button.id == 111) {
+            stackable.controlledID = -1;
+            initGui();
+        }
         if (button.id == 85) {
             stackable.useMajinConfig = button.getValue() == 1;
         }
@@ -370,6 +390,8 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
                         form.stackable.majinID = guiSelectForm.selectedFormID;
                     } else if (guiSelectForm.buttonID == 9) {
                         form.stackable.fusionID = guiSelectForm.selectedFormID;
+                    } else if (guiSelectForm.buttonID == 11) {
+                        form.stackable.controlledID = guiSelectForm.selectedFormID;
                     }
                 }
             }

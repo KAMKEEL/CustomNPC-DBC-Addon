@@ -14,11 +14,7 @@ import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.api.skill.ICustomSkill;
 import kamkeel.npcdbc.client.utils.SimplifiedDBCData;
 import kamkeel.npcdbc.constants.*;
-import kamkeel.npcdbc.controllers.AuraController;
-import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.controllers.OutlineController;
-import kamkeel.npcdbc.controllers.SkillController;
-import kamkeel.npcdbc.controllers.TransformController;
+import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -31,6 +27,9 @@ import kamkeel.npcdbc.data.overlay.OverlayChain;
 import kamkeel.npcdbc.data.overlay.OverlayManager;
 import kamkeel.npcdbc.data.skill.SkillContainer;
 import kamkeel.npcdbc.entity.EntityAura;
+import kamkeel.npcdbc.items.ItemControlCrown;
+import kamkeel.npcdbc.items.ItemEvilThirdEye;
+import kamkeel.npcdbc.items.ItemShockCollar;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.*;
 import kamkeel.npcdbc.util.DBCUtils;
@@ -672,6 +671,30 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         return JRMCoreH.StusEfcts(id, StatusEffects, getRawCompound(), bo);
     }
 
+    public boolean hasControlCrown() {
+        return player.getEquipmentInSlot(4) != null && player.getEquipmentInSlot(4).getItem() instanceof ItemControlCrown;
+    }
+
+    public boolean hasShockCollar() {
+        return player.getEquipmentInSlot(4) != null && player.getEquipmentInSlot(4).getItem() instanceof ItemShockCollar;
+    }
+
+    public boolean hasThirdEye() {
+        return player.getEquipmentInSlot(4) != null && player.getEquipmentInSlot(4).getItem() instanceof ItemEvilThirdEye;
+    }
+
+    public boolean isControlled() {
+        return DBCEffectController.Instance.hasEffect(player, Effects.CONTROLLED);
+    }
+
+    public boolean isHarnessed() {
+        return DBCEffectController.Instance.hasEffect(player, Effects.HARNESSED);
+    }
+
+    public boolean hasThirdEyeEffect() {
+        return DBCEffectController.Instance.hasEffect(player, Effects.EVIL_THIRD_EYE);
+    }
+
     public String setForm(int dbcForm, boolean on) {
 
         switch (dbcForm) {
@@ -873,6 +896,12 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             Form fusionForm = (Form) FormController.getInstance().get(form.stackable.fusionID);
             if (fusionForm != null && stats.isFused())
                 form = fusionForm;
+
+            if (form.stackable.controlledID != -1 && DBCEffectController.getInstance().hasEffect(player, Effects.CONTROLLED)) {
+                Form controlledForm = (Form) FormController.getInstance().get(form.stackable.controlledID);
+                if (controlledForm != null)
+                    return controlledForm;
+            }
 
             if (form.stackable.divineID != -1 && isForm(DBCForm.Divine)) {
                 Form divine = (Form) FormController.getInstance().get(form.stackable.divineID);

@@ -22,6 +22,7 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.entity.EntityAura;
+import kamkeel.npcdbc.items.ItemEvilThirdEye;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.DBCPacketHandler;
@@ -113,6 +114,26 @@ public class ServerEventHandler {
             if (player.ticksExisted % 10 == 0) {
                 // Keep the Player informed on their own data
                 DBCData dbcData = DBCData.get(player);
+
+                if (dbcData.hasControlCrown() && !dbcData.isControlled()) {
+                    DBCEffectController.Instance.applyEffect(player, Effects.CONTROLLED);
+                } else if (!dbcData.hasControlCrown() && dbcData.isControlled()) {
+                    DBCEffectController.Instance.removeEffect(player, Effects.CONTROLLED);
+                }
+
+                if (dbcData.hasShockCollar() && !dbcData.isHarnessed()) {
+                    DBCEffectController.Instance.applyEffect(player, Effects.HARNESSED);
+                } else if (!dbcData.hasShockCollar() && dbcData.isHarnessed()) {
+                    DBCEffectController.Instance.removeEffect(player, Effects.HARNESSED);
+                }
+
+                if (dbcData.hasThirdEye() && !dbcData.hasThirdEyeEffect()) {
+                    DBCEffectController.Instance.applyEffect(player, Effects.EVIL_THIRD_EYE);
+                    ItemEvilThirdEye.initEyeStack(player.getEquipmentInSlot(4));
+                } else if (!dbcData.hasThirdEye() && dbcData.hasThirdEyeEffect()) {
+                    DBCEffectController.Instance.removeEffect(player, Effects.EVIL_THIRD_EYE);
+                }
+
                 if (ConfigDBCGameplay.EnableNamekianRegen && dbcData.Race == DBCRace.NAMEKIAN)
                     dbcData.stats.applyNamekianRegen();
 
