@@ -157,22 +157,25 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
         skillsDrawnAlready++;
     }
 
-    // Who needs readability with DBC, am I right? It's not like I have to use 5 different compilers
-    // before JRMCoreGuiScreen#drawScreen finally decompiles into SOMEWHAT readable chunks of code.
-    //
-    // I'm a big fan of 3k line functions with 10000 different if-branches.
-    // I love that this is all in a rendering function too and that the components are being
-    // constantly updated.
-    //
-    // My favourite so far was the fact that the decompiled functions reuse the same variable names which is SUPERRR easy to track.
-    // But truth be told this is probably some kind of compiler optimization, reusing registers and what not.
-    // So I can't be mad at Jin for that.
-    //      -Sincerely, Hussar
-    //
-    //
-    //
-    // VERY IMPORTANT: If this method breaks again, and you are not sure of what it does just ping me to not break it
-    //      -Hussar, again... in the same commit as my love letter to Jin...
+    /*
+     Who needs readability with DBC, am I right? It's not like I have to use 5 different compilers
+     before JRMCoreGuiScreen#drawScreen finally decompiles into SOMEWHAT readable chunks of code.
+
+     I'm a big fan of 3k line functions with 10000 different if-branches.
+     I love that this is all in a rendering function too and that the components are being
+     constantly updated.
+
+     My favourite so far was the fact that the decompiled functions reuse the same variable names which is SUPERRR easy to track.
+     But truth be told this is probably some kind of compiler optimization, reusing registers and what not.
+     So I can't be mad at Jin for that.
+          -Sincerely, Hussar
+    */
+    /**
+     * <span style="font-size: 1.1em; color: orange;"><b>VERY Important: </b></span>If this method breaks again,
+     * and you are not sure of what it does just ping me to not break it
+     * <br>
+     * -Hussar
+     */
     @Inject(method = "drawScreen", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawString(Ljava/lang/String;III)I", remap = true, ordinal = 81))
     private void drawCustomSkills(int x, int y, float f, CallbackInfo ci) {
         if (JRMCoreH.PlyrSkills == null)
@@ -246,6 +249,28 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
         }
     }
 
+    @Inject(method = "updateScreen", at = @At("HEAD"), remap = true)
+    private void onUpdateScreen(CallbackInfo ci) {
+        if (this.guiID == 10 && (ConfigDBCClient.EnhancedGui || !ConfigDBCClient.EnableDebugStatSheetSwitching) && DBCData.getClient().Powertype == 1)
+            FMLCommonHandler.instance().showGuiScreen(new StatSheetGui());
+    }
+
+
+    /**
+     * If {@link JRMCoreH#PlyrSkills} was never initialized on the client,
+     * DBC doesn't even try to draw the slider. We have to fix that manually.
+     * <br>
+     * If it's not null and of length 0, {@linkplain #modifySkillCountForScrollSize our inject}
+     * still corrects for the injected size so that's fine.
+     *
+     * <h3>If this method ever breaks, all hell breaks loose.</h3>
+     * This had to be extracted from drawScreen... deeply nested inside a shit-ton of <code>if</code> branches. <br>
+     * The <span style="font-size: 1.1em; color: orange;"><b>ONLY</b></span> change is <code>int sw = DBCData.getClient().customSkills.size();</code>. <br>
+     * <br>
+     * There is a big possibility that if scrollbar rendering ever breaks, you have to fix both <span style="font-size: 1.1em; color: orange;"><b>this</b></span> function and the DBC implementation as well...<br>
+     * <br>
+     * Have fun...?
+     */
     @Unique
     private void customNPC_DBC_Addon$drawSliderIfNoSkills() {
         int sw = DBCData.getClient().customSkills.size();
@@ -279,12 +304,6 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
 
             this.buttonList.add(new JRMCoreGuiSliderX00(1000000, guiLeft + xSize / 2 + 110 + 18, guiTop + 25, this.mousePressed, scrollSide, 1.0F));
         }
-    }
-
-    @Inject(method = "updateScreen", at = @At("HEAD"), remap = true)
-    private void onUpdateScreen(CallbackInfo ci) {
-        if (this.guiID == 10 && (ConfigDBCClient.EnhancedGui || !ConfigDBCClient.EnableDebugStatSheetSwitching) && DBCData.getClient().Powertype == 1)
-            FMLCommonHandler.instance().showGuiScreen(new StatSheetGui());
     }
 
     @Inject(method = "drawDetails", at = @At("HEAD"), remap = false, cancellable = true)
