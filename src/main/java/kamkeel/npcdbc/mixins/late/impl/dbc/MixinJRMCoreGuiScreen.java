@@ -164,7 +164,8 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
 
         DBCData data = DBCData.getClient();
         SkillContainer[] customSkills = data.customSkills.values().toArray(new SkillContainer[0]);
-        for (int i = 0; i < customSkills.length; ++i) {
+        int condition = Math.min(customSkills.length, 10 - skillsDrawnAlready);
+        for (int i = 0; i < condition ; ++i) {
             SkillContainer skill = customSkills[i];
             skillsDrawnAlready++;
             int offset = skillsDrawnAlready + 1;
