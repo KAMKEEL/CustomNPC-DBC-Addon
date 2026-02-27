@@ -25,9 +25,9 @@ public class EvilThirdEye extends AddonEffect {
 
     @Override
     public void onAdded(EntityPlayer player, PlayerEffect playerEffect) {
-        float wil = (float) ConfigDBCEffects.ThirdEyeWilBoostPercent;
-        float str = (float) ConfigDBCEffects.ThirdEyeStrBoostPercent;
-        float dex = (float) ConfigDBCEffects.ThirdEyeDexBoostPercent;
+        float str = (float) ConfigDBCEffects.ThirdEyeStrBoostPercent / 100;
+        float wil = (float) ConfigDBCEffects.ThirdEyeWilBoostPercent / 100;
+        float dex = (float) ConfigDBCEffects.ThirdEyeDexBoostPercent / 100;
 
         float boostIncrease = (ConfigDBCEffects.ThirdEyeBoostMultiplier / 100f) * playerEffect.level;
 
