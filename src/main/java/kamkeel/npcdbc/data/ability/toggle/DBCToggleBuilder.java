@@ -1,7 +1,6 @@
 package kamkeel.npcdbc.data.ability.toggle;
 
 import net.minecraft.entity.player.EntityPlayer;
-import noppes.npcs.CustomNpcs;
 
 import java.util.function.*;
 
