@@ -49,6 +49,11 @@ public abstract class ModelDBCPartInterface extends ModelRenderer {
     }
 
     public void render(float par1) {
+        if (ModelDBC.isTintPass) {
+            super.render(par1);
+            return;
+        }
+
         if (!this.base.isArmor) {
             if (this.location != null) {
                 ClientProxy.bindTexture(this.location);

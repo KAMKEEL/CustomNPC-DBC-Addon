@@ -13,6 +13,8 @@ import kamkeel.npcdbc.network.packets.get.aura.DBCGetAura;
 import kamkeel.npcdbc.network.packets.get.form.DBCGetForm;
 import kamkeel.npcdbc.network.packets.get.outline.DBCGetOutline;
 import kamkeel.npcdbc.network.packets.player.*;
+import kamkeel.npcdbc.network.packets.player.ability.DBCSelectAbility;
+import kamkeel.npcdbc.network.packets.player.ability.DBCToggleAbilityAction;
 import kamkeel.npcdbc.network.packets.player.aura.DBCRequestAura;
 import kamkeel.npcdbc.network.packets.player.aura.DBCSelectAura;
 import kamkeel.npcdbc.network.packets.player.aura.DBCSetAura;
@@ -21,6 +23,7 @@ import kamkeel.npcdbc.network.packets.player.form.DBCRequestFormWheel;
 import kamkeel.npcdbc.network.packets.player.form.DBCSaveFormWheel;
 import kamkeel.npcdbc.network.packets.player.form.DBCSelectForm;
 import kamkeel.npcdbc.network.packets.player.outline.DBCRequestOutline;
+import kamkeel.npcdbc.network.packets.player.skill.CustomSkillPacket;
 import kamkeel.npcdbc.network.packets.request.aura.DBCRemoveAura;
 import kamkeel.npcdbc.network.packets.request.aura.DBCSaveAura;
 import kamkeel.npcdbc.network.packets.request.form.DBCRemoveForm;
@@ -85,8 +88,12 @@ public class DBCPacketHandler {
         PLAYER_PACKETS.registerPacket(new PingFormColorPacket());
         PLAYER_PACKETS.registerPacket(new NPCUpdateForcedColors());
         PLAYER_PACKETS.registerPacket(new LoginInfo());
-        PLAYER_PACKETS.registerPacket(new DBCUpdateLockOn());
+        PLAYER_PACKETS.registerPacket(new DBCLockOn.Update());
+        PLAYER_PACKETS.registerPacket(new DBCLockOn.Sync());
         PLAYER_PACKETS.registerPacket(new DBCSetValPacket());
+        PLAYER_PACKETS.registerPacket(new CustomSkillPacket());
+        PLAYER_PACKETS.registerPacket(new DBCSelectAbility());
+        PLAYER_PACKETS.registerPacket(new DBCToggleAbilityAction());
     }
 
     private void registerGetPackets() {

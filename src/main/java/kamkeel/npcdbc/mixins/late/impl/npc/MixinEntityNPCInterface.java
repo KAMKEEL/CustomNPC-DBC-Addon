@@ -15,13 +15,11 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.boss.IBossDisplayData;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import noppes.npcs.DataInventory;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.entity.EntityNPCInterface;
-import noppes.npcs.items.ItemLinked;
 import noppes.npcs.scripted.event.NpcEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -57,7 +55,7 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
      * If npc attacked by a DBC player (powerType ==1), I set dbcAltered  true,
      * then I set the DamagedEvent's damage to the player's DBC attack stat (pure damage player would do without any NPC defense calculations)
      */
-    @Inject(method = "attackEntityFrom", at = @At(value = "FIELD", target = "Lnoppes/npcs/entity/EntityNPCInterface;wrappedNPC:Lnoppes/npcs/api/entity/ICustomNpc;", shift = At.Shift.BEFORE))
+    @Inject(method = "attackEntityFrom", at = @At(value = "FIELD", target = "Lnoppes/npcs/entity/EntityNPCInterface;wrappedNPC:Lnoppes/npcs/api/entity/ICustomNpc;", shift = At.Shift.BEFORE, remap = false))
     public void fixDamagedEventDBCDamage(DamageSource damagesource, float amount, CallbackInfoReturnable<Boolean> cir, @Local(name = "i") LocalFloatRef dam) {
         Entity attackerEntity = NoppesUtilServer.GetDamageSource(damagesource);
 
@@ -65,14 +63,21 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
             EntityPlayer player = (EntityPlayer) attackerEntity;
             DBCData data = DBCData.get(player);
             if (dbcAltered = data.Powertype == 1) {
-                // Apply Attributes and Resistances to Modified Damage
-                float modifiedDamage = DBCUtils.calculateAttackStat(player, dam.get(), damagesource);
+                float modifiedDamage;
+                if (DBCUtils.npcLastSetDamage != null) {
+                    // Ability extender already calculated DBC damage; use it directly
+                    modifiedDamage = DBCUtils.npcLastSetDamage;
+                } else {
+                    // Normal DBC damage: calculate attack stat from base damage
+                    modifiedDamage = DBCUtils.calculateAttackStat(player, dam.get(), damagesource);
+                }
+
                 // Apply Attributes
                 EntityNPCInterface npcInterface = (EntityNPCInterface) (Object) this;
                 modifiedDamage = AttributeAttackUtil.calculateDamagePlayerToNPC(player, npcInterface, modifiedDamage);
 
                 // Apply Resistances
-                if(ConfigDBCGeneral.ALLOW_DBC_DAMAGE_RESISTANCE){
+                if (ConfigDBCGeneral.ALLOW_DBC_DAMAGE_RESISTANCE) {
                     modifiedDamage = npcInterface.stats.resistances.applyResistance(damagesource, modifiedDamage);
                 }
                 dam.set(modifiedDamage);
@@ -90,9 +95,10 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
      * Then in  {@link MixinJRMCoreEH#NPCDamaged(EntityLivingBase, DamageSource, float amount, CallbackInfo, LocalFloatRef)}
      * which always fires after this in the MC LivingHurt, I set the pure damage in the LivingHurtEvent to npcLastSetDamage then I reset it to -1
      */
-    @Redirect(method = "attackEntityFrom", at = @At(value = "INVOKE", target = "Lnoppes/npcs/scripted/event/NpcEvent$DamagedEvent;getDamage()F"))
+    @Redirect(method = "attackEntityFrom", at = @At(value = "INVOKE", target = "Lnoppes/npcs/scripted/event/NpcEvent$DamagedEvent;getDamage()F", remap = false))
     public float fixDamagedEventDBCDamage(NpcEvent.DamagedEvent instance) {
-        if (dbcAltered && DBCUtils.npcLastSetDamage == null && !instance.isCancelled()) {
+        if (dbcAltered && !instance.isCancelled()) {
+            // Always propagate the event's damage (including scripter modifications) to npcLastSetDamage
             DBCUtils.npcLastSetDamage = instance.getDamage();
         }
         dbcAltered = false;
@@ -115,7 +121,7 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
             DBCUtils.npcLastSetDamage = null;
         }
         if (ConfigDBCGeneral.MODIFIED_DAMAGE_SPEED && npcdbc$shouldResetHurtTime && cir.getReturnValueZ()) {
-            if(this.hurtResistantTime > ConfigDBCGeneral.NPC_MAX_HURT_RESISTANCE){
+            if (this.hurtResistantTime > ConfigDBCGeneral.NPC_MAX_HURT_RESISTANCE) {
                 this.hurtResistantTime = ConfigDBCGeneral.NPC_MAX_HURT_RESISTANCE;
             }
         }

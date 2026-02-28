@@ -1,0 +1,329 @@
+{
+    "Loop": -1,
+    "Speed": 1.0f,
+    "Frames": [
+        {
+            "ColorMarker": 16777215,
+            "Comment": "",
+            "Speed": 2.0f,
+            "FrameParts": [
+                {
+                    "Pivot2": -2.0f,
+                    "Part": "RIGHT_LEG",
+                    "Rotation1": 25.0f,
+                    "Rotation0": 18.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 0.0f,
+                    "Rotation2": 18.0f
+                },
+                {
+                    "Pivot2": -3.0f,
+                    "Part": "BODY",
+                    "Rotation1": 0.0f,
+                    "Rotation0": 18.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 1.0f,
+                    "Rotation2": 0.0f
+                },
+                {
+                    "Pivot2": -2.0f,
+                    "Part": "LEFT_ARM",
+                    "Rotation1": -37.0f,
+                    "Rotation0": -88.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 0.0f,
+                    "Rotation2": 69.0f
+                },
+                {
+                    "Pivot2": -3.0f,
+                    "Part": "HEAD",
+                    "Rotation1": 0.0f,
+                    "Rotation0": 50.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 1.0f,
+                    "Rotation2": 0.0f
+                },
+                {
+                    "Pivot2": -2.0f,
+                    "Part": "LEFT_LEG",
+                    "Rotation1": -25.0f,
+                    "Rotation0": 18.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 0.0f,
+                    "Rotation2": -18.0f
+                },
+                {
+                    "Pivot2": -2.0f,
+                    "Part": "RIGHT_ARM",
+                    "Rotation1": 37.0f,
+                    "Rotation0": -88.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 0.0f,
+                    "Rotation2": -69.0f
+                }
+            ],
+            "Smooth": 0b,
+            "Duration": 7
+        },
+        {
+            "ColorMarker": 16777215,
+            "Comment": "",
+            "Speed": 0.5f,
+            "FrameParts": [
+                {
+                    "Pivot2": -2.0f,
+                    "Part": "RIGHT_LEG",
+                    "Rotation1": 25.0f,
+                    "Rotation0": 18.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 0.0f,
+                    "Rotation2": 18.0f
+                },
+                {
+                    "Pivot2": -3.0f,
+                    "Part": "BODY",
+                    "Rotation1": 0.0f,
+                    "Rotation0": 18.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 1.0f,
+                    "Rotation2": 0.0f
+                },
+                {
+                    "Pivot2": -1.0f,
+                    "Part": "LEFT_ARM",
+                    "Rotation1": -50.0f,
+                    "Rotation0": -94.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 0.0f,
+                    "Rotation2": 69.0f
+                },
+                {
+                    "Pivot2": -3.0f,
+                    "Part": "HEAD",
+                    "Rotation1": 0.0f,
+                    "Rotation0": 0.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 1.0f,
+                    "Rotation2": 0.0f
+                },
+                {
+                    "Pivot2": -2.0f,
+                    "Part": "LEFT_LEG",
+                    "Rotation1": -25.0f,
+                    "Rotation0": 18.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 0.0f,
+                    "Rotation2": -18.0f
+                },
+                {
+                    "Pivot2": -1.0f,
+                    "Part": "RIGHT_ARM",
+                    "Rotation1": 50.0f,
+                    "Rotation0": -94.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 0.0f,
+                    "Rotation2": -69.0f
+                }
+            ],
+            "Smooth": 0b,
+            "Duration": 2
+        },
+        {
+            "ColorMarker": 16777215,
+            "Comment": "",
+            "Speed": 1.0f,
+            "FrameParts": [
+                {
+                    "Pivot2": -2.0f,
+                    "Part": "RIGHT_LEG",
+                    "Rotation1": 25.0f,
+                    "Rotation0": 18.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 0.0f,
+                    "Rotation2": 18.0f
+                },
+                {
+                    "Pivot2": -3.0f,
+                    "Part": "BODY",
+                    "Rotation1": 0.0f,
+                    "Rotation0": 18.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 1.0f,
+                    "Rotation2": 0.0f
+                },
+                {
+                    "Pivot2": -1.0f,
+                    "Part": "LEFT_ARM",
+                    "Rotation1": -50.0f,
+                    "Rotation0": -94.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 0.0f,
+                    "Rotation2": 69.0f
+                },
+                {
+                    "Pivot2": -3.0f,
+                    "Part": "HEAD",
+                    "Rotation1": 0.0f,
+                    "Rotation0": 0.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 1.0f,
+                    "Rotation2": 0.0f
+                },
+                {
+                    "Pivot2": -2.0f,
+                    "Part": "LEFT_LEG",
+                    "Rotation1": -25.0f,
+                    "Rotation0": 18.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 0.0f,
+                    "Rotation2": -18.0f
+                },
+                {
+                    "Pivot2": -1.0f,
+                    "Part": "RIGHT_ARM",
+                    "Rotation1": 50.0f,
+                    "Rotation0": -94.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 0.0f,
+                    "Rotation2": -69.0f
+                }
+            ],
+            "Smooth": 0b,
+            "Duration": 2
+        },
+        {
+            "ColorMarker": 16777215,
+            "Comment": "",
+            "Speed": 1.5f,
+            "FrameParts": [
+                {
+                    "Pivot2": -2.0f,
+                    "Part": "RIGHT_LEG",
+                    "Rotation1": 25.0f,
+                    "Rotation0": 18.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 0.0f,
+                    "Rotation2": 18.0f
+                },
+                {
+                    "Pivot2": -3.0f,
+                    "Part": "BODY",
+                    "Rotation1": 0.0f,
+                    "Rotation0": 18.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 1.0f,
+                    "Rotation2": 0.0f
+                },
+                {
+                    "Pivot2": -1.0f,
+                    "Part": "LEFT_ARM",
+                    "Rotation1": -50.0f,
+                    "Rotation0": -94.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 0.0f,
+                    "Rotation2": 69.0f
+                },
+                {
+                    "Pivot2": -3.0f,
+                    "Part": "HEAD",
+                    "Rotation1": 0.0f,
+                    "Rotation0": 0.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 1.0f,
+                    "Rotation2": 0.0f
+                },
+                {
+                    "Pivot2": -2.0f,
+                    "Part": "LEFT_LEG",
+                    "Rotation1": -25.0f,
+                    "Rotation0": 18.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 0.0f,
+                    "Rotation2": -18.0f
+                },
+                {
+                    "Pivot2": -1.0f,
+                    "Part": "RIGHT_ARM",
+                    "Rotation1": 50.0f,
+                    "Rotation0": -94.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 0.0f,
+                    "Rotation2": -69.0f
+                }
+            ],
+            "Smooth": 0b,
+            "Duration": 2
+        },
+        {
+            "ColorMarker": 16777215,
+            "Comment": "",
+            "Speed": 2.0f,
+            "FrameParts": [
+                {
+                    "Pivot2": -2.0f,
+                    "Part": "RIGHT_LEG",
+                    "Rotation1": 25.0f,
+                    "Rotation0": 18.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 0.0f,
+                    "Rotation2": 18.0f
+                },
+                {
+                    "Pivot2": -3.0f,
+                    "Part": "BODY",
+                    "Rotation1": 0.0f,
+                    "Rotation0": 18.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 1.0f,
+                    "Rotation2": 0.0f
+                },
+                {
+                    "Pivot2": -1.0f,
+                    "Part": "LEFT_ARM",
+                    "Rotation1": -50.0f,
+                    "Rotation0": -94.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 0.0f,
+                    "Rotation2": 69.0f
+                },
+                {
+                    "Pivot2": -3.0f,
+                    "Part": "HEAD",
+                    "Rotation1": 0.0f,
+                    "Rotation0": 0.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 1.0f,
+                    "Rotation2": 0.0f
+                },
+                {
+                    "Pivot2": -2.0f,
+                    "Part": "LEFT_LEG",
+                    "Rotation1": -25.0f,
+                    "Rotation0": 18.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 0.0f,
+                    "Rotation2": -18.0f
+                },
+                {
+                    "Pivot2": -1.0f,
+                    "Part": "RIGHT_ARM",
+                    "Rotation1": 50.0f,
+                    "Rotation0": -94.0f,
+                    "Pivot0": 0.0f,
+                    "Pivot1": 0.0f,
+                    "Rotation2": -69.0f
+                }
+            ],
+            "Smooth": 0b,
+            "Duration": 2
+        }
+    ],
+    "CurrentFrameTime": 0,
+    "CurrentFrame": 4,
+    "Smooth": 0b,
+    "ID": 13,
+    "WhileAttacking": 1b,
+    "WhileWalking": 1b,
+    "Name": "MouthLaser_Windup",
+    "WhileStanding": 1b
+}

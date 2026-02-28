@@ -1,13 +1,58 @@
 //version: 1707058017
-
 plugins {
     id 'com.gtnewhorizons.gtnhconvention'
+    id 'dts.typescript-generator'
 }
 
+var BUILD_USING_CNPC_SOURCE = !(project.hasProperty("useCNPCJar") && project.useCNPCJar == 'true')
+
+if (BUILD_USING_CNPC_SOURCE)
+    apply from: 'gradle.handleCNPCSubmoduleInjection.groovy'
+
 group= "kamkeel.npcdbc"
+version = "1.2-beta11"
+group= "kamkeel.npcdbc"
+archivesBaseName = "npcdbc"
+
+def findJarBySubstring = { part ->
+    def matches = configurations.runtimeClasspath.filter { it.name.contains(part) }
+
+    if (matches.isEmpty()) {
+        throw new GradleException("Cannot find JAR containing '${part}' in runtimeClasspath")
+    }
+
+    return matches.first() // valid in old Gradle
+}
 
 tasks.runServer { setWorkingDir(file("run/server")) }
 
-version = "1.1.5"
-group= "kamkeel.npcdbc"
-archivesBaseName = "npcdbc"
+tasks.named("runClient").configure {
+    def agent = findJarBySubstring("unimixins")
+    extraJvmArgs.addAll("-javaagent:${agent.absolutePath}")
+
+}
+
+// ============================================================================
+// TypeScript Definition Generation Task
+// Generates .d.ts files from Java API sources for scripting IDE support
+// ============================================================================
+// TypeScript plugin is applied above in the main plugins block
+
+tasks.named("generateTypeScriptDefinitions").configure {
+    sourceDirectories = ['src/main/java']
+    outputDirectory = "src/main/resources/assets/${project.property("modId")}/api"
+    apiPackages = ['kamkeel.npcdbc.api'] as Set
+    cleanOutputFirst = true  // Clean old generated files before regenerating
+    patchesDirectory = "dts-patches"
+    // Limit enrichment scanning to actual implementation packages (exclude kamkeel.npcdbc.api)
+    implementationPackages = [
+        'kamkeel.npcdbc.controllers',
+        'kamkeel.npcdbc.data',
+        'kamkeel.npcdbc.scripted',
+        'kamkeel.npcdbc.client.utils'
+    ] as Set
+}
+processResources.dependsOn generateTypeScriptDefinitions
+sourcesJar.dependsOn generateTypeScriptDefinitions
+
+

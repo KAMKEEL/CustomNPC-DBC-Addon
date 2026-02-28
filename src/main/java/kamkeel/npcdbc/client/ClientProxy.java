@@ -12,8 +12,10 @@ import kamkeel.npcdbc.client.render.PotaraItemRenderer;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
+import kamkeel.npcdbc.data.ability.DBCAbilityFieldProvider;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.items.ModItems;
+import kamkeel.npcs.controllers.AbilityController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -24,6 +26,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
+import noppes.npcs.CustomNpcs;
+import noppes.npcs.entity.EntityCustomNpc;
 
 import java.lang.reflect.Field;
 import java.time.Duration;
@@ -33,6 +37,7 @@ import java.util.Collection;
 
 public class ClientProxy extends CommonProxy {
     public static int lastRendererGUIPlayerID = -1;
+    public static EntityCustomNpc currentlyDrawnNPC = null;
 
     public static void eventsInit() {
         FMLCommonHandler.instance().bus().register(new ClientEventHandler());
@@ -46,12 +51,18 @@ public class ClientProxy extends CommonProxy {
     public void preInit(FMLPreInitializationEvent ev) {
         super.preInit(ev);
         forceStencilEnable();
+        CustomNpcs.addClassesToClientClassFilter(filter -> {
+            filter.addRegexes("kamkeel\\.npcdbc\\.api\\..*");
+        });
     }
 
     public void init(FMLInitializationEvent ev) {
         super.init(ev);
         eventsInit();
         KeyHandler.registerKeys();
+
+        // Register DBC ability field providers for GUI tab injection
+        AbilityController.Instance.registerFieldProvider(new DBCAbilityFieldProvider());
         RenderingRegistry.registerEntityRenderingHandler(EntityAura.class, new AuraRenderer());
         MinecraftForgeClient.registerItemRenderer(ModItems.Potaras, new PotaraItemRenderer());
         ShaderHelper.loadShaders(false);
@@ -61,6 +72,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     public void postInit(FMLPostInitializationEvent ev) {
+        PostProcessing.IrisHelper.init();
         PostProcessing.init(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
         //  ModernModels.loadModels();
 

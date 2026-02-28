@@ -1,9 +1,14 @@
 package kamkeel.npcdbc.client;
 
-import JinRyuu.JBRA.*;
+import JinRyuu.JBRA.DBC_GiTurtleMdl;
+import JinRyuu.JBRA.GiTurtleMdl;
+import JinRyuu.JBRA.JBRAH;
+import JinRyuu.JBRA.ModelBipedDBC;
+import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
+import JinRyuu.JRMCore.entity.ModelBipedBody;
 import JinRyuu.JRMCore.i.ExtendedPlayer;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
@@ -13,7 +18,11 @@ import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -46,7 +55,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED_FIRST_PERSON;
 
@@ -56,7 +69,7 @@ public class CNPCAnimationHelper {
     private static final HashSet<Object> processedModels = new HashSet<>();
 
     public static void setOriginalValues(ModelBase mainModel) {
-        if(mainModel == null)
+        if (mainModel == null)
             return;
 
         if (!processedModels.contains(mainModel)) {
@@ -219,21 +232,26 @@ public class CNPCAnimationHelper {
     }
 
     private static EnumAnimationPart getDBCPartType(ModelBase model, ModelRenderer renderer) {
+        if (model instanceof ModelBipedBody) {
+            ModelBipedBody modelBipedBody = (ModelBipedBody) model;
+            if (isAny(renderer,
+                modelBipedBody.B, modelBipedBody.B1, modelBipedBody.B2, modelBipedBody.B3,
+                modelBipedBody.B4, modelBipedBody.B5, modelBipedBody.B7, modelBipedBody.B9,
+                modelBipedBody.Bbreast, modelBipedBody.Bbreast2,
+                modelBipedBody.body, modelBipedBody.hip, modelBipedBody.waist,
+                modelBipedBody.bottom, modelBipedBody.hip2, modelBipedBody.bottom2)) {
+                return EnumAnimationPart.BODY;
+            }
+        }
         if (model instanceof ModelBipedDBC) {
             ModelBipedDBC modelBipedDBC = (ModelBipedDBC) model;
-            if (renderer == modelBipedDBC.face1 || renderer == modelBipedDBC.face2
-                || renderer == modelBipedDBC.face3 || renderer == modelBipedDBC.face4
-                || renderer == modelBipedDBC.face5 || renderer == modelBipedDBC.face6
-                //
-                || renderer == modelBipedDBC.SaiO
-                //
-                || renderer == modelBipedDBC.Nam
-                //
-                || renderer == modelBipedDBC.Fro5 || renderer == modelBipedDBC.Fro
-                || renderer == modelBipedDBC.Fro0 || renderer == modelBipedDBC.Fro1 || renderer == modelBipedDBC.Fro2) {
+            if (isAny(renderer,
+                modelBipedDBC.face1, modelBipedDBC.face2, modelBipedDBC.face3, modelBipedDBC.face4,
+                modelBipedDBC.face5, modelBipedDBC.face6, modelBipedDBC.SaiO, modelBipedDBC.Nam,
+                modelBipedDBC.Fro5, modelBipedDBC.Fro, modelBipedDBC.Fro0, modelBipedDBC.Fro1, modelBipedDBC.Fro2)) {
                 return EnumAnimationPart.HEAD;
             }
-            if (renderer == modelBipedDBC.Fro5b || renderer == modelBipedDBC.WShell) {
+            if (isAny(renderer, modelBipedDBC.Fro5b, modelBipedDBC.WShell)) {
                 return EnumAnimationPart.BODY;
             }
         }
@@ -258,43 +276,62 @@ public class CNPCAnimationHelper {
     }
 
     private static EnumAnimationPart getPartType(ModelRenderer renderer) {
-        String rendererName = getModelRendererName(renderer);
+        Class<?> renderClass = renderer.baseModel.getClass();
+        Object model = renderer.baseModel;
         Set<Map.Entry<EnumAnimationPart, String[]>> entrySet = noppes.npcs.client.ClientEventHandler.partNames.entrySet();
-        for (Map.Entry<EnumAnimationPart, String[]> entry : entrySet) {
-            String[] names = entry.getValue();
-            for (String partName : names) {
-                if (partName.equals(rendererName)) {
-                    return entry.getKey();
+
+        while (renderClass != Object.class) {
+            Field[] declared = getDeclaredFieldsCached(renderClass);
+
+            for (Field f : declared) {
+                f.setAccessible(true);
+                Object value;
+                try {
+                    value = f.get(model);
+                } catch (IllegalAccessException ignored) {
+                    continue;
+                }
+                if (value != renderer) {
+                    continue;
+                }
+
+                for (Map.Entry<EnumAnimationPart, String[]> entry : entrySet) {
+                    if (containsAlias(entry.getValue(), f.getName())) {
+                        return entry.getKey();
+                    }
                 }
             }
+            renderClass = renderClass.getSuperclass();
         }
+
         return null;
     }
 
-    private static String getModelRendererName(ModelRenderer renderer) {
-        Class<?> RenderClass = renderer.baseModel.getClass();
-        Object model = renderer.baseModel;
-
-        while (RenderClass != Object.class) {
-            Field[] declared;
-            if (noppes.npcs.client.ClientEventHandler.declaredFieldCache.containsKey(RenderClass)) {
-                declared = noppes.npcs.client.ClientEventHandler.declaredFieldCache.get(RenderClass);
-            } else {
-                declared = RenderClass.getDeclaredFields();
-                noppes.npcs.client.ClientEventHandler.declaredFieldCache.put(RenderClass, declared);
-            }
-            for (Field f : declared) {
-                f.setAccessible(true);
-                try {
-                    if (renderer == f.get(model)) {
-                        return f.getName();
-                    }
-                } catch (IllegalAccessException ignored) {
-                }
-            }
-            RenderClass = RenderClass.getSuperclass();
+    private static Field[] getDeclaredFieldsCached(Class<?> renderClass) {
+        if (noppes.npcs.client.ClientEventHandler.declaredFieldCache.containsKey(renderClass)) {
+            return noppes.npcs.client.ClientEventHandler.declaredFieldCache.get(renderClass);
         }
-        return null;
+        Field[] declared = renderClass.getDeclaredFields();
+        noppes.npcs.client.ClientEventHandler.declaredFieldCache.put(renderClass, declared);
+        return declared;
+    }
+
+    private static boolean containsAlias(String[] aliases, String fieldName) {
+        for (String alias : aliases) {
+            if (alias.equals(fieldName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isAny(ModelRenderer renderer, ModelRenderer... candidates) {
+        for (ModelRenderer candidate : candidates) {
+            if (renderer == candidate) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void playerFullModel_head(Entity p_78088_1_, CallbackInfo callbackInfo) {

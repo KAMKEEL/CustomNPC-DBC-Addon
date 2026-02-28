@@ -34,6 +34,9 @@ public final class LoginInfo extends AbstractPacket {
     private final boolean kiRevamp;
     private final float divineMulti;
     private final int maxAbsorptionLevel;
+    private final boolean enhancedMovement;
+    private final boolean turboSpeedFix;
+    private final float turboSpeedMultiplier;
     private final String discordURL;
 
     public LoginInfo() {
@@ -47,6 +50,9 @@ public final class LoginInfo extends AbstractPacket {
         this.kiRevamp = ConfigDBCGameplay.RevampKiCharging;
         this.divineMulti = ConfigDBCEffects.getDivineMulti();
         this.maxAbsorptionLevel = JGConfigRaces.CONFIG_MAJIN_ABSORPTON_MAX_LEVEL;
+        this.enhancedMovement = ConfigDBCGameplay.EnhancedMovement;
+        this.turboSpeedFix = ConfigDBCGameplay.TurboSpeedFix;
+        this.turboSpeedMultiplier = ConfigDBCGameplay.TurboSpeedMultiplier;
         this.discordURL = ConfigDBCGeneral.getDiscordURL();
     }
 
@@ -76,6 +82,9 @@ public final class LoginInfo extends AbstractPacket {
 
         out.writeFloat(this.divineMulti);
         out.writeInt(this.maxAbsorptionLevel);
+        out.writeBoolean(this.enhancedMovement);
+        out.writeBoolean(this.turboSpeedFix);
+        out.writeFloat(this.turboSpeedMultiplier);
         ByteBufUtils.writeUTF8String(out, discordURL);
 
         HashMap<Integer, HashMap<String, Boolean>> divineRaces = ConfigDBCEffects.getDivineApplicableForms();
@@ -120,6 +129,9 @@ public final class LoginInfo extends AbstractPacket {
             ClientCache.divineMulti = in.readFloat();
             ClientCache.maxAbsorptionLevel = in.readInt();
 
+            ClientCache.enhancedMovement = in.readBoolean();
+            ClientCache.turboSpeedFix = in.readBoolean();
+            ClientCache.turboSpeedMultiplier = in.readFloat();
             ClientCache.discordURL = ByteBufUtils.readUTF8String(in);
 
             ClientCache.divineApplicableForms.clear();

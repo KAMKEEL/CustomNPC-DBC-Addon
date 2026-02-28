@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = ItemSenzu.class)
 public class MixinItemSenzu {
 
-    @Inject(method = "onPlayerStoppedUsing", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/server/JGPlayerMP;getAttributes()[I", shift = At.Shift.BEFORE), cancellable = true)
+    @Inject(method = "onPlayerStoppedUsing", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/server/JGPlayerMP;getAttributes()[I", shift = At.Shift.BEFORE, remap = false), cancellable = true)
     public void callSenzuEvent(ItemStack itemStack, World world, EntityPlayer entityPlayer, int par4, CallbackInfo ci) {
         if (DBCEventHooks.onSenzuUsedEvent(new DBCPlayerEvent.SenzuUsedEvent(PlayerDataUtil.getIPlayer(entityPlayer))))
             ci.cancel();

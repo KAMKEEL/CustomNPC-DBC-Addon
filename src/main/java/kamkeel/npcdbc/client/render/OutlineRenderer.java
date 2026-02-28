@@ -23,8 +23,24 @@ import noppes.npcs.entity.EntityCustomNpc;
 import org.lwjgl.opengl.GL11;
 
 import static kamkeel.npcdbc.client.render.RenderEventHandler.disableStencilWriting;
-import static kamkeel.npcdbc.client.shader.ShaderHelper.*;
-import static org.lwjgl.opengl.GL11.*;
+import static kamkeel.npcdbc.client.shader.ShaderHelper.releaseShader;
+import static kamkeel.npcdbc.client.shader.ShaderHelper.uniform1f;
+import static kamkeel.npcdbc.client.shader.ShaderHelper.uniformTexture;
+import static kamkeel.npcdbc.client.shader.ShaderHelper.useShader;
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_LIGHTING;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glDepthMask;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glScaled;
+import static org.lwjgl.opengl.GL11.glScalef;
+import static org.lwjgl.opengl.GL11.glTranslatef;
 
 public class OutlineRenderer {
     public static void renderOutline(RenderPlayerJBRA render, Outline outline, EntityPlayer player, float partialTicks, boolean isArm) {
@@ -201,7 +217,7 @@ public class OutlineRenderer {
         //Left
         if (npc.modelData.hideArms != 1) {
             glPushMatrix();
-            glTranslatef(-.0375f, -0.0275f, 0);
+            glTranslatef(0, -0.0275f, 0);
             glScaled(1.05, 1.03, 1.05);
             model.renderArms(npc, 0.0625f, false);
             glPopMatrix();

@@ -11,6 +11,8 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormCustomStackable;
+import kamkeel.npcdbc.data.form.FormStack;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.network.DBCPacketHandler;
@@ -42,10 +44,11 @@ public class TransformController {
     public static DBCData dbcData;
     public static Form transformedInto;
 
-    //////////////////////////////////////////////////
-    //////////////////////////////////////////////////
-    // Client  side handling
+    public static int FULL_DESCEND = -10;
 
+    /// ///////////////////////////////////////////////
+    /// ///////////////////////////////////////////////
+    // Client  side handling
     @SideOnly(Side.CLIENT)
     public static void Ascend(Form form) {
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
@@ -65,21 +68,15 @@ public class TransformController {
         JRMCoreH.TransSaiCurRg = (byte) rage;
         DBCPacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage));
 
-        if (time >= 6) { //increments rage meter and drain ki cost every 6 ticks
-            time = 0;
-            int cost = JRMCoreH.maxEnergy / 50;
-            if (JRMCoreH.curEnergy < cost)
-                return;
-            JRMCoreH.Cost(cost);
-        }
-        //        if (player.ticksExisted % 5 == 0) { //increments rage meter and drain ki cost every 6 ticks
-        //            float toDrain = form.mastery.kiDrain * form.mastery.calculateMulti("kiDrain", formLevel);
-        //
-        //            dbcData.stats.restoreKiPercent(-toDrain / form.mastery.kiDrainTimer * 10);
-        //            PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcEnrgy", (int) dbcData.Ki));
-        //
-        //
-        //        }
+        //DUMBASS FEATURE WHY DOES THIS EXIST
+//        if (time >= 6) { //increments rage meter and drain ki cost every 6 ticks
+//            time = 0;
+//            int cost = JRMCoreH.maxEnergy / 50;
+//            if (JRMCoreH.curEnergy < cost)
+//                return;
+//            JRMCoreH.Cost(cost);
+//        }
+
         if (JRMCoreH.curRelease < 50 && releaseTime >= 10) { //if release is less than 50%, increment it until it is so
             float en = 100.0F / JRMCoreH.maxEnergy * JRMCoreH.curEnergy;
             float re = JRMCoreH.curRelease;
@@ -128,6 +125,7 @@ public class TransformController {
         if (time == 1 || !bo)
             JRMCoreH.Skll((byte) 5, bo ? (byte) 0 : 1, (byte) 1);
         if (!bo) {
+            resetTimers();
             cantTransform = false;
             transformed = false;
             transformedInto = null;
@@ -155,10 +153,24 @@ public class TransformController {
         return 0;
     }
 
-    //////////////////////////////////////////////////
-    //////////////////////////////////////////////////
-    // NPC transformation handling
+    private static Form getStackForm(Form current, Form selected) {
+        if (selected == null || current == null)
+            return null;
+        FormCustomStackable stackable = current.customStackable;
+        int selectedId = selected.id;
 
+        for (FormStack stack : stackable.formStacks.values()) {
+            if (stack.fromForm.id == selectedId) {
+                return stack.toForm;
+            }
+        }
+
+        return null;
+    }
+
+    /// ///////////////////////////////////////////////
+    /// ///////////////////////////////////////////////
+    // NPC transformation handling
     public static void npcAscend(EntityNPCInterface npc, Form form) {
         DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
 
@@ -211,27 +223,30 @@ public class TransformController {
     }
 
 
-    //////////////////////////////////////////////////
-    //////////////////////////////////////////////////
+    /// ///////////////////////////////////////////////
+    /// ///////////////////////////////////////////////
     // Server side handling
-
     public static void handleFormAscend(EntityPlayer player, int formID) {
         Form form = (Form) FormController.getInstance().get(formID);
         if (form == null)
             return;
 
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+        DBCData data = DBCData.getData(player);
 
+        int originalForm = formData.currentForm;
         if (!formData.hasForm(form)) {
             LogWriter.error(String.format("Potential exploiting: %s tried to transform into a form they don't have unlocked (\"%s\" - ID: %d)",
                 player.getCommandSenderName(), form.getName(), formID));
             return;
         }
 
+        Form stackedForm = getStackForm(data.getForm(), form);
+        if (stackedForm != null)
+            form = stackedForm;
+
         if (formData.currentForm != formID) {
             DBCData dbcData = DBCData.get(player);
-
-
             boolean allowBypass = form.mastery.canInstantTransform(formData.getFormLevel(form.id)) && ConfigDBCGameplay.InstantTransform;
             if (!allowBypass) {
                 // Check for in Required DBC Form before Transforming
@@ -246,7 +261,7 @@ public class TransformController {
             }
 
             int prevID = formData.currentForm != 1 ? formData.currentForm : dbcData.State;
-            if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), formData.currentForm != 1, prevID, true, formID)))
+            if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), formData.currentForm != 1, prevID, true, form.id)))
                 return;
 
             PlaySound.play(new SoundSource(form.getAscendSound(), player));
@@ -270,15 +285,19 @@ public class TransformController {
             if (!form.stackable.kaiokenStackable && dbcData.isForm(DBCForm.Kaioken))
                 dbcData.setForm(DBCForm.Kaioken, false);
 
-            formData.currentForm = formID;
-            if (formData.getForm(formID).hasTimer())
-                formData.addTimer(formID, formData.getForm(formID).getTimer());
+            formData.lastFormBeforeStack = originalForm;
+
+            formData.currentForm = form.id;
+
+            if (form.hasTimer())
+                formData.addTimer(form.id, form.getTimer());
 
             formData.updateClient();
+            LogWriter.info(form.getMenuName());
             NetworkUtility.sendInfoMessage(player, "§a", "npcdbc.transform", "§r ", form.getMenuName());
             dbcData.saveNBTData(true);
 
-            if(ConfigMain.AttributesEnabled){
+            if (ConfigMain.AttributesEnabled) {
                 PlayerAttributeTracker tracker = AttributeController.getTracker(player);
                 tracker.recalcAttributes(player);
             }
@@ -290,7 +309,6 @@ public class TransformController {
         if (formData.isInCustomForm()) {
             Form form = formData.getCurrentForm();
             DBCData dbcData = DBCData.get(player);
-
 
             Form parent = (Form) form.getParent();
             boolean intoParent = parent != null && formData.hasFormUnlocked(form.getParentID());
@@ -311,14 +329,22 @@ public class TransformController {
                 dbcData.Pain = (int) (form.mastery.painTime * 60 / 5 * form.mastery.calculateMulti("pain", formData.getCurrentLevel()) * heatRatio);
                 dbcData.addonCurrentHeat = 0;
             }
-            if (formID == -10) {
+            if (formID == FULL_DESCEND) {
                 formData.currentForm = -1;
             } else if (form.requiredForm.containsKey((int) dbcData.Race)) {
                 formData.currentForm = -1;
                 NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descend", "§r ", form.getMenuName());
                 dbcData.State = form.requiredForm.get((int) dbcData.Race);
             } else {
-                if (intoParent) {
+                int realStackedFrom = formData.lastFormBeforeStack;
+
+                if (realStackedFrom != -1) {
+                    Form previousForm = (Form) FormController.Instance.get(realStackedFrom);
+                    NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descend", "§r ", previousForm.getMenuName());
+                    formData.currentForm = realStackedFrom;
+
+                    formData.lastFormBeforeStack = -1;
+                } else if (intoParent) {
                     NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descend", "§r ", form.getParent().getMenuName());
                     formData.currentForm = form.getParentID();
                 } else if (formData.getTimer(form.id) == 0) {
@@ -333,7 +359,7 @@ public class TransformController {
             JRMCoreH.setByte(0, player, "jrmcSaiRg");
             dbcData.saveNBTData(true);
 
-            if(ConfigMain.AttributesEnabled){
+            if (ConfigMain.AttributesEnabled) {
                 PlayerAttributeTracker tracker = AttributeController.getTracker(player);
                 tracker.recalcAttributes(player);
             }

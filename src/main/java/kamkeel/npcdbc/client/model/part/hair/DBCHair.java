@@ -404,6 +404,12 @@ public class DBCHair extends ModelHairRenderer {
         if (!display.enabled)
             return;
 
+        if (ModelDBC.isTintPass) {
+            this.renderHairs(display);
+            this.base.currentlyPlayerTexture = false;
+            return;
+        }
+
         GL11.glPushAttrib(GL11.GL_CURRENT_BIT);
         ClientProxy.bindTexture(hairResource);
         TintData tintData = this.entity.display.tintData;
@@ -471,21 +477,21 @@ public class DBCHair extends ModelHairRenderer {
 
         float headAngleX = base.bipedHead.rotateAngleX;
         this.bipedHeadradl.rotateAngleY = base.bipedBody.rotateAngleY;
-        this.bipedHeadradl.rotateAngleX = base.bipedBody.rotateAngleX / 1.2F - headAngleX/1.5F;
+        this.bipedHeadradl.rotateAngleX = base.bipedBody.rotateAngleX / 1.2F - headAngleX / 1.5F;
         this.bipedHeadradl.rotationPointX = base.bipedBody.rotationPointX;
         this.bipedHeadradl.rotationPointY = base.bipedBody.rotationPointY;
         this.bipedHeadradl.rotationPointZ = (float) Math.abs(Math.sin(base.bipedBody.rotateAngleX)) * 5;
         this.bipedHeadradl.render(0.0625f);
 
         this.bipedHeadradl2.rotateAngleY = base.bipedBody.rotateAngleY;
-        this.bipedHeadradl2.rotateAngleX = base.bipedBody.rotateAngleX / 5.0F - headAngleX/5F;
+        this.bipedHeadradl2.rotateAngleX = base.bipedBody.rotateAngleX / 5.0F - headAngleX / 5F;
         this.bipedHeadradl2.rotationPointX = base.bipedBody.rotationPointX;
         this.bipedHeadradl2.rotationPointY = base.bipedBody.rotationPointY;
         this.bipedHeadradl2.rotationPointZ = 0;
         this.bipedHeadradl2.render(0.0625f);
 
         this.bipedHeadradl2.rotateAngleY = base.bipedBody.rotateAngleY;
-        this.bipedHeadradl2.rotateAngleX = base.bipedBody.rotateAngleX / 1.2F - headAngleX/2;
+        this.bipedHeadradl2.rotateAngleX = base.bipedBody.rotateAngleX / 1.2F - headAngleX / 2;
         this.bipedHeadradl2.rotationPointX = base.bipedBody.rotationPointX;
         this.bipedHeadradl2.rotationPointY = base.bipedBody.rotationPointY;
         this.bipedHeadradl2.rotationPointZ = (float) Math.abs(Math.sin(base.bipedBody.rotateAngleX)) * 2F;
@@ -520,7 +526,7 @@ public class DBCHair extends ModelHairRenderer {
         boolean isSSJ3 = false, isRaditz = false;
         boolean effectMajinHair = true;
 
-        if ((display.hairCode.equalsIgnoreCase("bald") || display.hairType.equals("oozaru")) && isSaiyan)
+        if ((display.hairCode.equalsIgnoreCase("bald") || display.hairType.equals("oozaru")))
             return;
 
 
@@ -564,7 +570,7 @@ public class DBCHair extends ModelHairRenderer {
                 if (form.display.bodyColors.bodyCM != -1)
                     hairColor = form.display.bodyColors.bodyCM;
             } else {
-                if ((d.hairCode.equalsIgnoreCase("bald") || d.hairType.equals("oozaru")) && isSaiyan)
+                if ((d.hairCode.equalsIgnoreCase("bald") || d.hairType.equals("oozaru")))
                     return;
                 else if (d.hairCode.length() > 3)
                     hairCode = d.hairCode;
@@ -590,10 +596,12 @@ public class DBCHair extends ModelHairRenderer {
         }
         //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////
-        ColorMode.applyModelColor(hairColor, this.base.alpha, ModelDBC.isHurt);
         String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
         boolean HD = ConfigDBCClient.EnableHDTextures;
-        ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:gui/") + "normall.png"));
+        if (!ModelDBC.isTintPass) {
+            ColorMode.applyModelColor(hairColor, this.base.alpha, ModelDBC.isHurt);
+            ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:gui/") + "normall.png"));
+        }
         if ((isRaditz || isSSJ3) && effectMajinHair) {
             renderSSJ3Hair(isSSJ3);
             return;

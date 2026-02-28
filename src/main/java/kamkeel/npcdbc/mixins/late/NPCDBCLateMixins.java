@@ -22,10 +22,6 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
     public List<String> getMixins(Set<String> loadedMods) {
         List<String> mixins = new ArrayList<>();
         if (side == MixinEnvironment.Side.CLIENT) {
-            mixins.add("npc.client.MixinGuiScriptPlayers");
-            mixins.add("npc.client.MixinGuiNPCEventScripts");
-            mixins.add("npc.client.MixinGuiScriptAllNPCs");
-            mixins.add("npc.client.MixinGuiScript");
             mixins.add("npc.client.MixinDBCClient");
             mixins.add("npc.client.MixinModelMPM");
             mixins.add("npc.client.MixinGuiCreationScreen");
@@ -38,16 +34,24 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
             mixins.add("npc.client.MixinRenderCustomNpc");
             mixins.add("npc.client.MixinGuiSoundSelection");
             mixins.add("npc.client.MixinSubGuiNPCResistanceProperties");
+            mixins.add("npc.client.MixinModelLegs");
+            mixins.add("npc.client.MixinModelScaleRenderer");
             mixins.add("dbc.client.ClientMixinEntityEnergyAtt");
+            mixins.add("dbc.client.MixinJRMCoreCliTicH");
 
             mixins.add("dbc.MixinDBCKiTech");
             mixins.add("dbc.MixinJRMCoreCliTickH");
             mixins.add("dbc.MixinJRMCoreGuiBars");
             mixins.add("dbc.MixinJRMCoreGuiScreen");
             mixins.add("dbc.MixinModelBipedDBC");
+            mixins.add("dbc.MixinModelBipedBody");
             mixins.add("dbc.MixinRenderAura2");
             mixins.add("dbc.MixinRenderCusPar");
             mixins.add("dbc.MixinRenderPlayerJBRA");
+
+            mixins.add("dbc.client.MixinJRMCoreHJBRA");
+            mixins.add("dbc.client.MixinGiTurtleBase");
+            mixins.add("dbc.client.MixinModelBipedBody");
 
             mixins.add("dbc.recolor.MixinJRMCoreGuiButtons");
             mixins.add("dbc.recolor.MixinJRMCoreGuiScreenColor");
@@ -68,6 +72,7 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
         mixins.add("dbc.MixinEntityCusPar");
         mixins.add("dbc.MixinEntityEnergyAtt");
         mixins.add("dbc.MixinEntityEnergyAttNaN");
+        mixins.add("dbc.MixinEntityEnergyAttBarrier");
         mixins.add("dbc.MixinJGPlayerMP");
         mixins.add("dbc.MixinJRMCoreComTickH");
         mixins.add("dbc.MixinJRMCoreEH");
@@ -76,6 +81,7 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
         mixins.add("dbc.MixinJGConfigUltraInstinct");
         mixins.add("dbc.MixinJRMCorePacHanC");
         mixins.add("dbc.MixinJRMCPacketHandlerServer");
+        mixins.add("dbc.MixinJRMCorePacHanS");
 
         mixins.add("dbc.MixinItemSenzu");
 

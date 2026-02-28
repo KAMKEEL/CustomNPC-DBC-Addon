@@ -20,15 +20,17 @@ import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.form.FacePartData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
+import kamkeel.npcdbc.data.overlay.OverlayChain;
+import kamkeel.npcdbc.data.overlay.OverlayManager;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCStats;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.NPCUpdateForcedColors;
-import kamkeel.npcdbc.network.packets.player.PingFormColorPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,11 +41,12 @@ import noppes.npcs.entity.data.ModelData;
 import noppes.npcs.entity.data.ModelPartData;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
-import org.lwjgl.opencl.CL;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class DBCDisplay implements IDBCDisplay, IAuraData {
 
@@ -58,9 +61,10 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public boolean useSkin = false;
     public int bodyType = 0;
     public int bodyCM = 0xffffff, bodyC1 = 0xffffff, bodyC2 = 0xffffff, bodyC3 = 0xffffff;
-    public boolean hasArcoMask = false, hasEyebrows = true;
+    public boolean hasArcoMask = false, hasEyebrows = true, hasPupils = false;
     public int furColor = -1;
     public boolean hasFur = false;
+    public int furType = 0;
     public byte tailState;
     // Face Display //
     public int eyeColor = 0;
@@ -72,6 +76,27 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public int formID = -1, selectedForm = -1, rage;
     public float formLevel = 0;
     public boolean isTransforming, isKaioken;
+    private boolean isFemale = false;
+    public int breastSize = 1;
+
+
+    public boolean isFemale() {
+        return isFemale;
+    }
+
+    public boolean isFemaleInternal() {
+        boolean isFormOozaru = false;
+        Form form = getForm();
+        if (form != null) {
+            isFormOozaru = form.display.hairType.equals("oozaru");
+        }
+        isFormOozaru = isFormOozaru && DBCRace.isSaiyan(race);
+        return isFemale && !isFormOozaru;
+    }
+
+    public void setFemale(boolean isFemale) {
+        this.isFemale = isFemale;
+    }
 
     // Outline
     public int outlineID;
@@ -91,17 +116,24 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public KiWeaponData kiWeaponRight = new KiWeaponData();
     public KiWeaponData kiWeaponLeft = new KiWeaponData();
 
+    public OverlayManager overlayManager = new OverlayManager();
+    /**
+     * ALL overlay chains that were drawn this tick, forms and everything
+     */
+    public List<OverlayChain> cachedOverlays = new ArrayList<>();
+
     public DBCDisplay(EntityNPCInterface npc) {
         this.npc = npc;
     }
 
     public FormDisplay.BodyColor formColor = new FormDisplay.BodyColor();
+    public FacePartData faceData = new FacePartData();
 
     public NBTTagCompound writeToNBT(NBTTagCompound comp) {
         comp.setBoolean("DBCDisplayEnabled", enabled);
         if (enabled) {
             NBTTagCompound dbcDisplay = new NBTTagCompound();
-
+            dbcDisplay.setBoolean("DBCFemale", isFemale);
             dbcDisplay.setString("DBCHair", hairCode);
             dbcDisplay.setInteger("DBCHairColor", hairColor);
             dbcDisplay.setInteger("DBCEyeColor", eyeColor);
@@ -112,6 +144,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             dbcDisplay.setInteger("DBCNoseType", noseType);
             dbcDisplay.setInteger("DBCBodyType", bodyType);
             dbcDisplay.setByte("DBCTailState", tailState);
+            dbcDisplay.setInteger("DBCFurType", furType);
 
             dbcDisplay.setInteger("DBCRace", race);
             dbcDisplay.setBoolean("DBCUseSkin", useSkin);
@@ -125,6 +158,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             dbcDisplay.setBoolean("DBCArcoMask", hasArcoMask);
             dbcDisplay.setBoolean("DBCFur", hasFur);
             dbcDisplay.setBoolean("DBCHasEyebrows", hasEyebrows);
+            dbcDisplay.setBoolean("DBCHasPupils", hasPupils);
 
             dbcDisplay.setInteger("DBCRage", rage);
             dbcDisplay.setBoolean("DBCIsTransforming", isTransforming);
@@ -138,9 +172,15 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
             dbcDisplay.setInteger("DBCOutlineID", outlineID);
 
+            dbcDisplay.setInteger("DBCFemaleBreastSize", breastSize);
+
 
             kiWeaponLeft.saveToNBT(dbcDisplay, "kiWeaponLeft");
             kiWeaponRight.saveToNBT(dbcDisplay, "kiWeaponRight");
+
+            faceData.writeToNBT(dbcDisplay, true);
+
+            comp.setTag("DBCOverlayManager", overlayManager.writeToNBT());
 
             comp.setTag("DBCDisplay", dbcDisplay);
         } else {
@@ -153,7 +193,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         enabled = comp.getBoolean("DBCDisplayEnabled");
         if (enabled) {
             NBTTagCompound dbcDisplay = comp.getCompoundTag("DBCDisplay");
-
+            isFemale = dbcDisplay.getBoolean("DBCFemale");
 
             race = dbcDisplay.getByte("DBCRace");
             auraID = dbcDisplay.getInteger("DBCAuraID");
@@ -168,6 +208,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             noseType = dbcDisplay.getInteger("DBCNoseType");
             bodyType = dbcDisplay.getInteger("DBCBodyType");
             tailState = dbcDisplay.getByte("DBCTailState");
+            furType = dbcDisplay.getInteger("DBCFurType");
 
             hairColor = dbcDisplay.getInteger("DBCHairColor");
             eyeColor = dbcDisplay.getInteger("DBCEyeColor");
@@ -181,6 +222,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             hasArcoMask = dbcDisplay.getBoolean("DBCArcoMask");
             hasFur = dbcDisplay.getBoolean("DBCFur");
             hasEyebrows = !dbcDisplay.hasKey("DBCHasEyebrows") || dbcDisplay.getBoolean("DBCHasEyebrows");
+            hasPupils = dbcDisplay.getBoolean("DBCHasPupils");
 
             auraID = dbcDisplay.getInteger("DBCAuraID");
 
@@ -192,10 +234,18 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             formID = dbcDisplay.getInteger("DBCFormID");
             selectedForm = dbcDisplay.getInteger("DBCSelectedForm");
 
+            if (dbcDisplay.hasKey("DBCFemaleBreastSize"))
+                breastSize = dbcDisplay.getInteger("DBCFemaleBreastSize");
+
             if (dbcDisplay.hasKey("kiWeaponLeft"))
                 kiWeaponLeft.readFromNBT(dbcDisplay, "kiWeaponLeft");
             if (dbcDisplay.hasKey("kiWeaponRight"))
                 kiWeaponRight.readFromNBT(dbcDisplay, "kiWeaponRight");
+
+            faceData.readFromNBT(dbcDisplay, true);
+
+            if (dbcDisplay.hasKey("DBCOverlayManager"))
+                overlayManager.readFromNBT(dbcDisplay.getCompoundTag("DBCOverlayManager"));
         } else {
             comp.removeTag("DBCDisplay");
         }
@@ -232,22 +282,27 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
     public boolean hasColor(String type) {
         Form form = this.getForm();
-        boolean inF = form != null;
+        if (form != null) {
+            boolean formCol = form.display.hasColor(type);
+            if (formCol)
+                return true;
+        }
+
         switch (type.toLowerCase()) {
             case "hair":
-                return (inF ? form.display.bodyColors.hairColor : hairColor) != -1;
+                return hairColor != -1;
             case "eye":
-                return (inF ? form.display.bodyColors.eyeColor : eyeColor) != -1;
+                return eyeColor != -1;
             case "bodycm":
-                return (inF ? form.display.bodyColors.bodyCM : bodyCM) != -1;
+                return bodyCM != -1;
             case "bodyc1":
-                return (inF ? form.display.bodyColors.bodyC1 : bodyC1) != -1;
+                return bodyC1 != -1;
             case "bodyc2":
-                return (inF ? form.display.bodyColors.bodyC2 : bodyC2) != -1;
+                return bodyC2 != -1;
             case "bodyc3":
-                return (inF ? form.display.bodyColors.bodyC3 : bodyC3) != -1;
+                return bodyC3 != -1;
             case "fur":
-                return (inF ? form.display.bodyColors.furColor : furColor) != -1;
+                return furColor != -1;
         }
         throw new CustomNPCsException("Invalid type! Legal types: hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
     }
@@ -255,22 +310,28 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     @Override
     public int getColor(String type) {
         Form form = this.getForm();
-        boolean inF = form != null;
+
+        if (form != null) {
+            int formCol = form.display.getColor(type);
+            if (formCol != -1)
+                return formCol;
+        }
+
         switch (type.toLowerCase()) {
             case "hair":
-                return inF ? form.display.bodyColors.hairColor : hairColor;
+                return hairColor;
             case "eye":
-                return inF ? form.display.bodyColors.eyeColor : eyeColor;
+                return eyeColor;
             case "bodycm":
-                return inF ? form.display.bodyColors.bodyCM : bodyCM;
+                return bodyCM;
             case "bodyc1":
-                return inF ? form.display.bodyColors.bodyC1 : bodyC1;
+                return bodyC1;
             case "bodyc2":
-                return inF ? form.display.bodyColors.bodyC2 : bodyC2;
+                return bodyC2;
             case "bodyc3":
-                return inF ? form.display.bodyColors.bodyC3 : bodyC3;
+                return bodyC3;
             case "fur":
-                return inF ? form.display.bodyColors.furColor : furColor;
+                return furColor;
         }
         throw new CustomNPCsException("Invalid type! Legal types: hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
     }
@@ -311,6 +372,9 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+        if (!enabled) {
+            isFemale = false;
+        }
     }
 
     @Override
@@ -375,6 +439,10 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         return hairType;
     }
 
+    public int getFurType() {
+        return furType;
+    }
+
     @Override
     public boolean hasCoolerMask() {
         return hasArcoMask;
@@ -405,8 +473,31 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         this.hasFur = hasFur;
     }
 
-    /////////////////////////////////////////////
-    /////////////////////////////////////////////
+    public void setFurType(int furType) {
+        this.furType = Math.max(0, Math.min(2, furType));
+    }
+
+    /// //////////////////////////////////////////
+    /// //////////////////////////////////////////
+    // FacePartData
+    public Set<FacePartData.Part> getDisabledFaceParts() {
+        return FacePartData.getDisabledParts(faceData, getForm(), cachedOverlays, eyeType);
+    }
+
+    /// //////////////////////////////////////////
+    /// //////////////////////////////////////////
+    // Overlays
+    public List<OverlayChain> getOverlayChains() {
+        List<OverlayChain> chains = new ArrayList<>();
+
+        if (overlayManager.enabled)
+            chains.addAll(overlayManager.getChains());
+
+        return chains;
+    }
+
+    /// //////////////////////////////////////////
+    /// //////////////////////////////////////////
     // Auras
     @Override
     public boolean hasAura() {
@@ -492,10 +583,9 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         return (Aura) AuraController.getInstance().get(auraID);
     }
 
-    /////////////////////////////////////////////
-    /////////////////////////////////////////////
+    /// //////////////////////////////////////////
+    /// //////////////////////////////////////////
     // Forms
-
     @Override
     public void transform(int id) {
         if (FormController.Instance.has(id)) {

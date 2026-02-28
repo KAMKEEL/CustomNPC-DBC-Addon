@@ -12,7 +12,8 @@ public enum EnumPacketPlayer {
     OutlineList,
     Flight,
     SetVal,
-    LockOn,
+    LockOnUpdate,
+    LockOnSync,
     LoginInfo,
     PingPacket,
     PingFormColorPacket,
@@ -21,5 +22,9 @@ public enum EnumPacketPlayer {
     SendChat,
     StopSound,
     Transform,
-    NPCPingForm, Turbo
+    NPCPingForm,
+    CustomSkill,
+    Turbo,
+    AbilitySelect,
+    AbilityToggle
 }

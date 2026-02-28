@@ -17,7 +17,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW_MATRIX;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION_MATRIX;
+import static org.lwjgl.opengl.GL11.glGetFloat;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
 
 @Mixin(EntityRenderer.class)
 public class MixinEntityRendererOptifine {
@@ -58,7 +61,7 @@ public class MixinEntityRendererOptifine {
         PostProcessing.bloom(1.5f, true);
     }
 
-    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lshadersmod/client/Shaders;endRender()V", shift = At.Shift.AFTER))
+    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lshadersmod/client/Shaders;endRender()V", shift = At.Shift.AFTER, remap = false))
     private void processEntities(float partialTick, long idk, CallbackInfo info) {
         OptifineHelper.process();
     }

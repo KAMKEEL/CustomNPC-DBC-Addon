@@ -6,7 +6,13 @@ import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
 import net.minecraft.client.gui.GuiButton;
 import noppes.npcs.client.gui.select.GuiSoundSelection;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.GuiNpcTextField;
+import noppes.npcs.client.gui.util.GuiSelectionListener;
+import noppes.npcs.client.gui.util.ISubGuiListener;
+import noppes.npcs.client.gui.util.ITextfieldListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 
 public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener, ITextfieldListener {
     private final GuiNPCManageForms parent;
@@ -150,14 +156,6 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
         }
     }
 
-    @Override
-    public void keyTyped(char c, int i) {
-        super.keyTyped(c, i);
-        if (i == 1)
-            menu.close();
-
-    }
-
     private int getRaceButton(int button) {
         switch (button) {
             case 0:
@@ -299,5 +297,6 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
     }
 
     public void save() {
+        menu.save();
     }
 }

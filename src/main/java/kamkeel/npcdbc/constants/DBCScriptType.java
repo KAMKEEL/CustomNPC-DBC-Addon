@@ -7,7 +7,8 @@ public enum DBCScriptType {
     CAPSULEUSED("dbcCapsuleUsed"),
     SENZUUSED("dbcSenzuUsed"),
     REVIVED("dbcRevived"),
-    KNOCKOUT("dbcKnockout");
+    KNOCKOUT("dbcKnockout"),
+    SKILL_EVENT("dbcSkillSlotEvent");
 
     public String function;
 

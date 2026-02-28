@@ -19,14 +19,33 @@ import net.minecraft.entity.EntityLivingBase;
 import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.SubGuiColorSelector;
 import noppes.npcs.client.gui.select.GuiSoundSelection;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiButtonBiDirectional;
+import noppes.npcs.client.gui.util.GuiNPCInterface;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcButtonYesNo;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.GuiNpcTextField;
+import noppes.npcs.client.gui.util.GuiScrollWindow;
+import noppes.npcs.client.gui.util.GuiSelectionListener;
+import noppes.npcs.client.gui.util.ISubGuiListener;
+import noppes.npcs.client.gui.util.ITextfieldListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import static kamkeel.npcdbc.client.ClientEventHandler.spawnAura;
 import static kamkeel.npcdbc.client.ClientEventHandler.spawnKaiokenAura;
-import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.*;
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.Base;
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.GoD;
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.None;
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.SaiyanBlue;
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.SaiyanBlueEvo;
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.SaiyanGod;
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.SaiyanRose;
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.SaiyanRoseEvo;
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.UI;
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.UltimateArco;
 
 public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListener, GuiSelectionListener, ITextfieldListener {
     public static boolean useGUIAura;
