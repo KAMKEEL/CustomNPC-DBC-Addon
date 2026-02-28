@@ -594,12 +594,12 @@ public class DBCAbilities {
         effect.setCustomEffects(list);
 
         AbilityIconData icon = AbilityIconData.fromAbility(effect);
-        icon.setTexture(CustomNpcPlusDBC.ID + ":textures/gui/ability_icons.png");
+        icon.setLayerTexture(0, CustomNpcPlusDBC.ID + ":textures/gui/ability_icons.png");
         icon.setWidth(48);
         icon.setHeight(48);
         icon.setScale(2.0f);
-        icon.setIconX(384);
-        icon.setIconY(0);
+        icon.setLayerIconX(0, 384);
+        icon.setLayerIconY(0, 0);
     });
 
     public static void register() {

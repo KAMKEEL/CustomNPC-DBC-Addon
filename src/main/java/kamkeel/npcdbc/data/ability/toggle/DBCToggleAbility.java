@@ -33,11 +33,12 @@ public class DBCToggleAbility extends Ability {
             this.setToggleStateLabels(toggle.stateLabels);
         }
 
-        // Default icon via the base Ability system
-        this.defaultIconTexture = toggle.iconTexture;
+        // Default icon via the base Ability layer system
         this.defaultIconWidth = toggle.width;
         this.defaultIconHeight = toggle.height;
-        this.defaultIconStateTextures = toggle.stateIconTextures;
+        this.defaultIconLayers = new DefaultIconLayer[]{
+            new DefaultIconLayer(toggle.iconTexture, toggle.stateIconTextures, null)
+        };
     }
 
     public DBCToggle getToggle() {
