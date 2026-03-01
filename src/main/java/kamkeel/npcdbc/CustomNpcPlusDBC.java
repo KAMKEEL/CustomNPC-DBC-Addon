@@ -86,6 +86,8 @@ public class CustomNpcPlusDBC {
 
         // Register DBC player hooks so handler-based GUIs include them
         if (ScriptHookController.Instance != null) {
+            ScriptContext.PLAYER.addNamespace("IDBCEvent");
+
             ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.FORMCHANGE.function, IDBCEvent.FormChangeEvent.class);
             ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.DAMAGED.function, IDBCEvent.DamagedEvent.class);
             ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.CAPSULEUSED.function, IDBCEvent.CapsuleUsedEvent.class);
