@@ -25,8 +25,8 @@ public class ClientCache {
     public static int maxAbsorptionLevel = JGConfigRaces.CONFIG_MAJIN_ABSORPTON_MAX_LEVEL;
 
     public static boolean enhancedMovement = true;
-    public static boolean turboSpeedFix = true;
-    public static float turboSpeedMultiplier = 1.0f;
+    public static boolean allowSpeedModifierTurboFlight = true;
+    public static float speedModifierTurboFlight = 0.3f;
 
     public static String discordURL = null;
 

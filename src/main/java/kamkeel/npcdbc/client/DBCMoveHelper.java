@@ -83,7 +83,7 @@ public class DBCMoveHelper {
      * Excludes sprint modifier. Returns multiplier relative to base speed.
      */
     private static float getSpeedModifier(EntityPlayer player) {
-        if (!ClientCache.turboSpeedFix) return 1.0f;
+        if (!ClientCache.allowSpeedModifierTurboFlight) return 1.0f;
 
         IAttributeInstance attr = player.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
         double totalSpeed = attr.getAttributeValue();
@@ -97,7 +97,7 @@ public class DBCMoveHelper {
         if (baseSpeed <= 0) return 1.0f;
 
         float ratio = (float) (totalSpeed / baseSpeed);
-        return 1.0f + (ratio - 1.0f) * ClientCache.turboSpeedMultiplier;
+        return 1.0f + (ratio - 1.0f) * ClientCache.speedModifierTurboFlight;
     }
 
     /**
