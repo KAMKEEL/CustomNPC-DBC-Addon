@@ -27,6 +27,9 @@ public class MixinJRMCoreEH {
     @Inject(method = "damageEntity(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/util/DamageSource;F)V", at = @At("HEAD"), cancellable = true)
     public void NPCDamaged(EntityLivingBase targetEntity, DamageSource source, float amount, CallbackInfo ci, @Local(ordinal = 0) LocalFloatRef dam) {
         if (targetEntity instanceof EntityNPCInterface) {
+
+            EntityNPCInterface npc = (EntityNPCInterface) targetEntity;
+
             DBCUtils.damageEntityCalled = true;
 
             if (DBCUtils.npcLastSetDamage != null) {
@@ -34,9 +37,9 @@ public class MixinJRMCoreEH {
                 DBCUtils.npcLastSetDamage = null;
             }
 
-            Form form = PlayerDataUtil.getForm(targetEntity);
+            Form form = PlayerDataUtil.getForm(npc);
             if (form != null) {
-                float formLevel = PlayerDataUtil.getFormLevel(targetEntity);
+                float formLevel = PlayerDataUtil.getFormLevel(npc);
                 if (form.mastery.hasDamageNegation()) {
                     float damage = dam.get();
                     float damageNegation = form.mastery.damageNegation * form.mastery.calculateMulti("damageNegation", formLevel);
@@ -48,7 +51,7 @@ public class MixinJRMCoreEH {
             // DBC bypasses EntityNPCInterface.damageEntity() by calling setHealth() directly,
             // so the NPC's combat handler is never notified. Manually notify it here so that
             // ability interrupts, aggressor tracking, and hit-count conditions work with DBC damage.
-            ((EntityNPCInterface) targetEntity).combatHandler.damage(source, dam.get());
+            npc.combatHandler.damage(source, dam.get());
         }
     }
 
