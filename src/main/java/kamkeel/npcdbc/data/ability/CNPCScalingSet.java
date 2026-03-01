@@ -6,7 +6,8 @@ import noppes.npcs.util.ValueUtil;
 /**
  * One set in the CNPC+ multi-set damage formula.
  * Each set defines an attribute/stat combination with a multiplier,
- * plus optional Ki Fist, Ki Weapon, and Ki Infuse bonus toggles.
+ * plus gates that allow Ki Fist, Ki Weapon, and Ki Infuse bonuses
+ * to contribute (still respects the player's own DBC toggle settings).
  */
 public class CNPCScalingSet {
     public int attribute = 0;        // 0-5 (STR/DEX/CON/WIL/MND/SPI)
