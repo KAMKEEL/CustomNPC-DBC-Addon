@@ -58,6 +58,9 @@ public final class DBCToggleAbilityAction extends AbstractPacket {
         PlayerData playerData = PlayerData.get(player);
         if (playerData == null || playerData.abilityData == null) return;
 
+        // Verify the player has unlocked this ability
+        if (!playerData.abilityData.hasUnlockedAbility(key)) return;
+
         int newState = playerData.abilityData.toggleAbility(key);
 
         String displayName = ability.getDisplayName();

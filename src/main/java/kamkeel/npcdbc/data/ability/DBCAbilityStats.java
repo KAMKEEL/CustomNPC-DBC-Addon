@@ -155,7 +155,7 @@ public class DBCAbilityStats implements IDBCAbility {
         scalingMultiplier = nbt.getFloat("ScalingMultiplier");
         if (scalingMultiplier <= 0) scalingMultiplier = 1.0f;
         flatDamage = nbt.getInteger("FlatDamage");
-        usePlayerSettings = nbt.getBoolean("UsePlayerSettings");
+        usePlayerSettings = nbt.hasKey("UsePlayerSettings") ? nbt.getBoolean("UsePlayerSettings") : true;
         scalingSetCount = nbt.getInteger("ScalingSetCount");
         if (scalingSetCount < 1) scalingSetCount = 1;
         if (scalingSetCount > MAX_SETS) scalingSetCount = MAX_SETS;
@@ -404,7 +404,7 @@ public class DBCAbilityStats implements IDBCAbility {
 
     @Override
     public void setScalingMultiplier(float mult) {
-        this.scalingMultiplier = Math.max(0.0f, mult);
+        this.scalingMultiplier = Math.max(0.01f, mult);
         save();
     }
 

@@ -237,7 +237,11 @@ public class DBCAbilityExtender implements IAbilityExtender {
         } else if (target instanceof EntityNPCInterface) {
             // NPC target: set npcLastSetDamage for the Mixin to pick up
             DBCUtils.npcLastSetDamage = outDamage;
-            target.attackEntityFrom(source, outDamage);
+            try {
+                target.attackEntityFrom(source, outDamage);
+            } finally {
+                DBCUtils.npcLastSetDamage = null;
+            }
         } else {
             // Other entities: direct damage
             target.attackEntityFrom(source, outDamage);
@@ -294,6 +298,7 @@ public class DBCAbilityExtender implements IAbilityExtender {
     @Override
     public Boolean onCheckConditionForPlayer(AbilityCondition condition, EntityLivingBase player) {
         if (condition instanceof ConditionHPThreshold) {
+            if (!(player instanceof EntityPlayer)) return null;
             return handleConditionHPThreshold((ConditionHPThreshold) condition, (EntityPlayer) player);
         }
 

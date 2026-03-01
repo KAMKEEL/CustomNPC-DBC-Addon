@@ -13,7 +13,6 @@ import kamkeel.npcdbc.network.packets.get.aura.DBCGetAura;
 import kamkeel.npcdbc.network.packets.get.form.DBCGetForm;
 import kamkeel.npcdbc.network.packets.get.outline.DBCGetOutline;
 import kamkeel.npcdbc.network.packets.player.*;
-import kamkeel.npcdbc.network.packets.player.ability.DBCSelectAbility;
 import kamkeel.npcdbc.network.packets.player.ability.DBCToggleAbilityAction;
 import kamkeel.npcdbc.network.packets.player.aura.DBCRequestAura;
 import kamkeel.npcdbc.network.packets.player.aura.DBCSelectAura;
@@ -92,7 +91,6 @@ public class DBCPacketHandler {
         PLAYER_PACKETS.registerPacket(new DBCLockOn.Sync());
         PLAYER_PACKETS.registerPacket(new DBCSetValPacket());
         PLAYER_PACKETS.registerPacket(new CustomSkillPacket());
-        PLAYER_PACKETS.registerPacket(new DBCSelectAbility());
         PLAYER_PACKETS.registerPacket(new DBCToggleAbilityAction());
         PLAYER_PACKETS.registerPacket(new KiAttackColorSyncPacket());
     }

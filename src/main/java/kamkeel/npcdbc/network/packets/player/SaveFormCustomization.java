@@ -35,7 +35,7 @@ public class SaveFormCustomization extends AbstractPacket {
 
     @Override
     public Enum getType() {
-        return EnumPacketPlayer.FormSaveCustiomization;
+        return EnumPacketPlayer.FormSaveCustomization;
     }
 
     @Override

@@ -17,19 +17,19 @@ public class ConditionStaminaThreshold extends ConditionThreshold {
 
     @Override
     protected float getEntityValue(EntityLivingBase entity) {
-        if (entity instanceof EntityNPCInterface) return 0;
+        if (!(entity instanceof EntityPlayer)) return 0;
         return DBCData.get((EntityPlayer) entity).Stamina;
     }
 
     @Override
     protected float getEntityMaxValue(EntityLivingBase entity) {
-        if (entity instanceof EntityNPCInterface) return 1;
+        if (!(entity instanceof EntityPlayer)) return 1;
         return DBCData.get((EntityPlayer) entity).stats.getMaxStamina();
     }
 
     @Override
     protected boolean checkEntity(EntityLivingBase entity) {
-        if (entity instanceof EntityNPCInterface) return false;
+        if (!(entity instanceof EntityPlayer)) return false;
         return super.checkEntity(entity);
     }
 
