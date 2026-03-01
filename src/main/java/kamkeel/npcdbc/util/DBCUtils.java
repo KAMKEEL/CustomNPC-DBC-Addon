@@ -92,6 +92,10 @@ public class DBCUtils {
     public static boolean damageEntityCalled = false;
     public static boolean abilityDamageHandled = false;
     public static Float abilityDamageAmount = null; // Actual ability damage for player script events
+    /** True while inside EntityNPCInterface.attackEntityFrom(), where Guard is already applied. */
+    public static boolean insideAttackEntityFrom = false;
+    /** Pre-calculated DBC attack damage from the current attacker (set at HEAD of attackEntityFrom). */
+    public static Float preCalculatedAttackerDamage = null;
 
     public static String[] CONFIG_UI_NAME;
     public static String[] cCONFIG_UI_NAME;

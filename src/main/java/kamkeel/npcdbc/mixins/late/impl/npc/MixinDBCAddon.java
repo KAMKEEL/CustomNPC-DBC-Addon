@@ -92,6 +92,7 @@ public class MixinDBCAddon {
             // Calculate DBC Damage
             DamageSource damageSource = new NpcDamageSource("mob", npc);
             DBCDamageCalc damageCalc = DBCUtils.calculateDBCStatDamage(player, (int) attackStrength, dbcStats, damageSource);
+
             DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(player, damageCalc, damageSource, DBCDamageSource.NPC);
             if (DBCEventHooks.onDBCDamageEvent(damagedEvent))
                 return;
@@ -102,8 +103,21 @@ public class MixinDBCAddon {
             damageCalc.ko = damagedEvent.getFinalKO();
             DBCUtils.lastSetDamage = damageCalc;
             damageCalc.processExtras();
+
             DBCUtils.doDBCDamage(player, damageCalc.damage, dbcStats, damageSource);
         }
+    }
+
+    /**
+     * @author Kamkeel
+     * @reason Returns pre-calculated DBC attack damage of the current attacker
+     */
+    @Overwrite(remap = false)
+    public float getAttackerDBCDamage(float vanillaDamage) {
+        if (DBCUtils.preCalculatedAttackerDamage != null) {
+            return DBCUtils.preCalculatedAttackerDamage;
+        }
+        return vanillaDamage;
     }
 
     /**

@@ -53,20 +53,23 @@ public class MixinJRMCoreEH {
                 }
             }
 
-            // Defend abilities (DBC damage bypasses attackEntityFrom, so check here)
-            AbilityDefend defend = npc.abilities != null ? npc.abilities.getActiveDefend() : null;
-            if (defend != null) {
-                EntityLivingBase attacker = source.getEntity() instanceof EntityLivingBase ? (EntityLivingBase) source.getEntity() : null;
-                // Dodge & Counter: cancel DBC damage entirely
-                if (defend instanceof AbilityDodge || defend instanceof AbilityCounter) {
-                    float result = defend.onDefend(attacker, source, dam.get());
-                    if (result != dam.get()) {
-                        ci.cancel();
-                        return;
+            // Defend abilities: only check here when DBC damage bypasses attackEntityFrom.
+            // When inside attackEntityFrom, guard/dodge/counter was already applied in fixDamagedEventDBCDamage.
+            if (!DBCUtils.insideAttackEntityFrom) {
+                AbilityDefend defend = npc.abilities != null ? npc.abilities.getActiveDefend() : null;
+                if (defend != null) {
+                    EntityLivingBase attacker = source.getEntity() instanceof EntityLivingBase ? (EntityLivingBase) source.getEntity() : null;
+                    // Dodge & Counter: cancel DBC damage entirely
+                    if (defend instanceof AbilityDodge || defend instanceof AbilityCounter) {
+                        float result = defend.onDefend(attacker, source, dam.get());
+                        if (result != dam.get()) {
+                            ci.cancel();
+                            return;
+                        }
+                    } else {
+                        // Guard: reduce DBC damage
+                        dam.set(defend.onDefend(attacker, source, dam.get()));
                     }
-                } else {
-                    // Guard: reduce DBC damage
-                    dam.set(defend.onDefend(attacker, source, dam.get()));
                 }
             }
 

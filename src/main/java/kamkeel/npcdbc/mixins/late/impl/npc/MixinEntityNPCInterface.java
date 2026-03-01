@@ -7,6 +7,8 @@ import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.mixins.late.impl.dbc.MixinJRMCoreEH;
 import kamkeel.npcdbc.util.DBCUtils;
+import kamkeel.npcs.controllers.data.ability.type.AbilityDefend;
+import kamkeel.npcs.controllers.data.ability.type.AbilityGuard;
 import kamkeel.npcs.util.AttributeAttackUtil;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -67,9 +69,12 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
                 if (DBCUtils.npcLastSetDamage != null) {
                     // Ability extender already calculated DBC damage; use it directly
                     modifiedDamage = DBCUtils.npcLastSetDamage;
+                } else if (DBCUtils.preCalculatedAttackerDamage != null) {
+                    // Reuse the DBC damage pre-calculated at HEAD of attackEntityFrom
+                    modifiedDamage = DBCUtils.preCalculatedAttackerDamage;
                 } else {
-                    // Normal DBC damage: calculate attack stat from base damage
-                    modifiedDamage = DBCUtils.calculateAttackStat(player, dam.get(), damagesource);
+                    // Fallback: calculate from the clean vanilla base
+                    modifiedDamage = DBCUtils.calculateAttackStat(player, amount, damagesource);
                 }
 
                 // Apply Attributes
@@ -80,6 +85,16 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
                 if (ConfigDBCGeneral.ALLOW_DBC_DAMAGE_RESISTANCE) {
                     modifiedDamage = npcInterface.stats.resistances.applyResistance(damagesource, modifiedDamage);
                 }
+
+                // Apply Guard to the FULL DBC-calculated damage (not just the vanilla base).
+                // Guard already ran earlier in attackEntityFrom() for hitCount tracking,
+                // but only reduced the vanilla base — negligible vs DBC stat damage.
+                // Per-tick dedup in onDefend() prevents double hitCount/signalCompletion.
+                AbilityDefend defend = npcInterface.abilities != null ? npcInterface.abilities.getActiveDefend() : null;
+                if (defend instanceof AbilityGuard) {
+                    modifiedDamage = defend.onDefend(player, damagesource, modifiedDamage);
+                }
+
                 dam.set(modifiedDamage);
             }
         }
@@ -108,11 +123,19 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
     @Inject(method = "attackEntityFrom", at = @At("HEAD"))
     public void resetDamageEntityCalled(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         npcdbc$shouldResetHurtTime = false;
+        DBCUtils.preCalculatedAttackerDamage = null;
         Entity attackerEntity = NoppesUtilServer.GetDamageSource(source);
         if (attackerEntity instanceof EntityPlayer) {
             npcdbc$shouldResetHurtTime = true;
+            // Pre-calculate the attacker's full DBC damage so Counter/Dodge can use it
+            EntityPlayer player = (EntityPlayer) attackerEntity;
+            DBCData data = DBCData.get(player);
+            if (data.Powertype == 1) {
+                DBCUtils.preCalculatedAttackerDamage = DBCUtils.calculateAttackStat(player, amount, source);
+            }
         }
         DBCUtils.damageEntityCalled = false;
+        DBCUtils.insideAttackEntityFrom = true;
     }
 
     @Inject(method = "attackEntityFrom", at = @At("RETURN"))
@@ -126,5 +149,7 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
             }
         }
         npcdbc$shouldResetHurtTime = false;
+        DBCUtils.insideAttackEntityFrom = false;
+        DBCUtils.preCalculatedAttackerDamage = null;
     }
 }
