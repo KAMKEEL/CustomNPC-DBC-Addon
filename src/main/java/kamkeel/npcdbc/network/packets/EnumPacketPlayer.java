@@ -26,5 +26,6 @@ public enum EnumPacketPlayer {
     CustomSkill,
     Turbo,
     AbilitySelect,
-    AbilityToggle
+    AbilityToggle,
+    KiAttackColorSync
 }

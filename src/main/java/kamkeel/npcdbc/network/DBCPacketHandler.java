@@ -94,6 +94,7 @@ public class DBCPacketHandler {
         PLAYER_PACKETS.registerPacket(new CustomSkillPacket());
         PLAYER_PACKETS.registerPacket(new DBCSelectAbility());
         PLAYER_PACKETS.registerPacket(new DBCToggleAbilityAction());
+        PLAYER_PACKETS.registerPacket(new KiAttackColorSyncPacket());
     }
 
     private void registerGetPackets() {
