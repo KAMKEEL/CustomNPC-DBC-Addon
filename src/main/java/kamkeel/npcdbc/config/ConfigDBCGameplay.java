@@ -58,10 +58,10 @@ public class ConfigDBCGameplay {
     public static boolean DodgeTeleport = true;
     public static boolean DodgeCameraLock = true;
 
-    public final static String Fixes = "Fixes";
-    public static boolean TurboKnockbackFix = true;
-    public static boolean TurboSpeedFix = true;
-    public static float TurboSpeedMultiplier = 1.0f;
+    public final static String FixesMovement = "Fixes.Movement";
+    public static boolean EnhancedMovement = true;
+    public static boolean AllowSpeedModifierTurboFlight = true;
+    public static float SpeedModifierTurboFlight = 0.3f;
 
 
     public static void init(File configFile) {
@@ -134,17 +134,21 @@ public class ConfigDBCGameplay {
             DodgeTeleport = config.get(Combat, "Teleport on UI Dodge", true, "True or false whether UI Dodge teleports to the target").getBoolean(true);
             DodgeCameraLock = config.get(Combat, "camera Turn on UI dodge", true, "True or false whether UI Dodge Turns camera").getBoolean(true);
 
-            TurboKnockbackFix = config.get(Fixes, "Turbo Knockback Fix", true,
-                "Fixes DBC's turbo and flight movement overwriting external velocity.\n" +
-                    "Preserves knockback, explosions, and other forces during turbo/flight.").getBoolean(true);
-            TurboSpeedFix = config.get(Fixes, "Turbo Speed Fix", true,
-                "Makes the entity's movement speed attribute affect turbo and flight speed.\n" +
-                    "Speed/Slowness potions, equipment modifiers, and custom attributes will scale turbo/flight.").getBoolean(true);
-            TurboSpeedMultiplier = (float) config.get(Fixes, "Turbo Speed Multiplier", 1.0,
+            config.setCategoryPropertyOrder(FixesMovement, new ArrayList<>(Arrays.asList(
+                "Enhanced Movement", "Allow Speed Modifier Turbo-Flight", "Speed Modifier Turbo-Flight")));
+            EnhancedMovement = config.get(FixesMovement, "Enhanced Movement", true,
+                "Enables the enhanced movement system for turbo sprint and flight.\n" +
+                    "Fixes knockback being destroyed during DBC movement by using additive acceleration\n" +
+                    "instead of velocity assignment. Preserves knockback, explosions, and other forces.").getBoolean(true);
+            AllowSpeedModifierTurboFlight = config.get(FixesMovement, "Allow Speed Modifier Turbo-Flight", true,
+                "Enables movement speed modifiers to affect turbo sprint and flight.\n" +
+                    "When enabled, external speed changes (e.g. from effects or attributes) are\n" +
+                    "scaled by the Speed Modifier Turbo-Flight value below.").getBoolean(true);
+            SpeedModifierTurboFlight = (float) config.get(FixesMovement, "Speed Modifier Turbo-Flight", 0.3,
                 "Scales how much movement speed changes affect turbo and flight.\n" +
-                    "1.0 = full effect, 0.5 = half effect, 0.0 = no effect.\n" +
-                    "Requires Turbo Speed Fix to be enabled.").getDouble(1.0);
-            TurboSpeedMultiplier = Math.max(0.0f, TurboSpeedMultiplier);
+                    "0.3 = 30% effect (default), 1.0 = full effect, 0.0 = no effect.\n" +
+                    "Requires Allow Speed Modifier Turbo-Flight to be enabled.").getDouble(0.3);
+            SpeedModifierTurboFlight = Math.max(0.0f, SpeedModifierTurboFlight);
 
 
         } catch (Exception e) {

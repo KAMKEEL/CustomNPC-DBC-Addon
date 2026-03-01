@@ -18,13 +18,13 @@ public enum EnumPacketPlayer {
     PingPacket,
     PingFormColorPacket,
     PlaySound,
-    FormSaveCustiomization,
+    FormSaveCustomization,
     SendChat,
     StopSound,
     Transform,
     NPCPingForm,
     CustomSkill,
     Turbo,
-    AbilitySelect,
-    AbilityToggle
+    AbilityToggle,
+    KiAttackColorSync
 }

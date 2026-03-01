@@ -55,13 +55,13 @@ public class ConditionDBCStat extends ConditionThreshold {
 
     @Override
     protected float getEntityMaxValue(EntityLivingBase entity) {
-        // Stats don't have a meaningful max, return flat value for percentage calc
-        return getEntityValue(entity);
+        // DBC stats don't have a meaningful max; percent mode is forced off
+        return 1;
     }
 
     @Override
     protected boolean checkEntity(EntityLivingBase entity) {
-        if (entity instanceof EntityNPCInterface) return true;
+        if (!(entity instanceof EntityPlayer)) return true;
         return super.checkEntity(entity);
     }
 
@@ -69,7 +69,10 @@ public class ConditionDBCStat extends ConditionThreshold {
     @Override
     public void getConditionDefinitions(List<FieldDef> defs) {
         defs.add(FieldDef.enumField("condition.stat_type", StatType.class, this::getStatType, this::setStatType));
-        super.getConditionDefinitions(defs);
+        // Only show flat threshold -- DBC stats have no meaningful max for percent mode
+        defs.add(FieldDef.floatField("condition.threshold_flat", this::getThresholdFlat, this::setThresholdFlat).min(0));
+        defs.add(FieldDef.enumField("condition.threshold_type", ThresholdType.class,
+            this::getThresholdType, this::setThresholdType));
     }
 
     @Override

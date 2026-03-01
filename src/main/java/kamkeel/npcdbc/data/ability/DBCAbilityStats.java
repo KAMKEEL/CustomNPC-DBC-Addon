@@ -7,13 +7,8 @@ import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.util.ValueUtil;
 
 /**
- * DBC combat stats for abilities, implementing {@link IDBCAbility} so the
- * existing {@code calculateDBCStatDamage} and {@code doDBCDamage} methods
- * can be used directly.
- * <p>
+ * DBC combat stats for abilities, implementing {@link IDBCAbility}.
  * Stored in the ability's customData NBT under the "DBCAbilityStats" tag.
- * Fields like release, dodgeChance, and canBeLockedOn are kept at defaults
- * (not exposed in the GUI) since they are NPC-level concerns, not ability-level.
  */
 public class DBCAbilityStats implements IDBCAbility {
     private static final String NBT_KEY = "DBCAbilityStats";
@@ -160,7 +155,7 @@ public class DBCAbilityStats implements IDBCAbility {
         scalingMultiplier = nbt.getFloat("ScalingMultiplier");
         if (scalingMultiplier <= 0) scalingMultiplier = 1.0f;
         flatDamage = nbt.getInteger("FlatDamage");
-        usePlayerSettings = nbt.getBoolean("UsePlayerSettings");
+        usePlayerSettings = nbt.hasKey("UsePlayerSettings") ? nbt.getBoolean("UsePlayerSettings") : true;
         scalingSetCount = nbt.getInteger("ScalingSetCount");
         if (scalingSetCount < 1) scalingSetCount = 1;
         if (scalingSetCount > MAX_SETS) scalingSetCount = MAX_SETS;
@@ -409,7 +404,7 @@ public class DBCAbilityStats implements IDBCAbility {
 
     @Override
     public void setScalingMultiplier(float mult) {
-        this.scalingMultiplier = Math.max(0.0f, mult);
+        this.scalingMultiplier = Math.max(0.01f, mult);
         save();
     }
 
@@ -534,7 +529,6 @@ public class DBCAbilityStats implements IDBCAbility {
         save();
     }
 
-    // Not exposed in GUI - defaults for IDBCStats compatibility
     @Override
     public byte getRelease() {
         return release;

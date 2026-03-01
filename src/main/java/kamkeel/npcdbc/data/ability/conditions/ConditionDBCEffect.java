@@ -29,7 +29,7 @@ public class ConditionDBCEffect extends AbilityCondition {
 
     @Override
     protected boolean checkEntity(EntityLivingBase entity) {
-        if (entity instanceof EntityNPCInterface) return false;
+        if (!(entity instanceof EntityPlayer)) return false;
         if (!isEffectValid(effectId)) return true;
 
         DBCStatusEffects effect = DBCStatusEffects.byOrdinal(effectId);

@@ -48,6 +48,8 @@ public interface ISimpleDBCData {
 
     int getMaxStamina();
 
+    int getLevel();
+
     int[] getAllAttributes();
 
     int getFullAttribute(int id);

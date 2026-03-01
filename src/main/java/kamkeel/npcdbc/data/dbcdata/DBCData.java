@@ -1140,6 +1140,10 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         activeAuraColor = color;
     }
 
+    public int getPlayerLevel() {
+        return JRMCoreH.getPlayerLevel(STR + DEX + CON + WIL + MND + SPI);
+    }
+
     public int getUsedMind() {
         int[][] rSklsMR = (int[][]) null;
         int[][] cSklsMR = (int[][]) null;

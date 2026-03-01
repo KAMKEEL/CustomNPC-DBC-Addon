@@ -32,7 +32,7 @@ public class ConditionSkill extends AbilityCondition {
 
     @Override
     protected boolean checkEntity(EntityLivingBase entity) {
-        if (entity instanceof EntityNPCInterface) return false;
+        if (!(entity instanceof EntityPlayer)) return false;
         if (!isSkillValid(getSkillId())) return false;
 
         EntityPlayer player = (EntityPlayer) entity;
@@ -49,7 +49,7 @@ public class ConditionSkill extends AbilityCondition {
         if (id <= 0) return false;
 
         if (isCustom()) {
-            return SkillController.Instance.getSkill(id) != null;
+            return SkillController.Instance != null && SkillController.Instance.getSkill(id) != null;
         } else {
             return id < DBCSkills.values().length;
         }

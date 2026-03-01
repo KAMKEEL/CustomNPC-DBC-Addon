@@ -157,6 +157,25 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
         skillsDrawnAlready++;
     }
 
+    /*
+     Who needs readability with DBC, am I right? It's not like I have to use 5 different compilers
+     before JRMCoreGuiScreen#drawScreen finally decompiles into SOMEWHAT readable chunks of code.
+
+     I'm a big fan of 3k line functions with 10000 different if-branches.
+     I love that this is all in a rendering function too and that the components are being
+     constantly updated.
+
+     My favourite so far was the fact that the decompiled functions reuse the same variable names which is SUPERRR easy to track.
+     But truth be told this is probably some kind of compiler optimization, reusing registers and what not.
+     So I can't be mad at Jin for that.
+          -Sincerely, Hussar
+    */
+    /**
+     * <span style="font-size: 1.1em; color: orange;"><b>VERY Important: </b></span>If this method breaks again,
+     * and you are not sure of what it does just ping me to not break it
+     * <br>
+     * -Hussar
+     */
     @Inject(method = "drawScreen", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawString(Ljava/lang/String;III)I", remap = true, ordinal = 81))
     private void drawCustomSkills(int x, int y, float f, CallbackInfo ci) {
         if (JRMCoreH.PlyrSkills == null)
@@ -164,9 +183,47 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
 
         DBCData data = DBCData.getClient();
         SkillContainer[] customSkills = data.customSkills.values().toArray(new SkillContainer[0]);
-        for (int i = 0; i < Math.min(customSkills.length, 10 - skillsDrawnAlready); ++i) {
+
+        final int maximumSpaceForCustomSkills = 10 - skillsDrawnAlready;
+
+        int skillStartIndex = 0;
+        int skillEndIndex = maximumSpaceForCustomSkills;
+
+        // I'm not inlining this ;p
+        // This makes it an actually readable if-branch condition.
+        boolean noDBCSkillsOnScreen = skillsDrawnAlready == 0;
+        if (noDBCSkillsOnScreen) {
+
+            // Even though skillsDrawnAlready is 0, this doesn't mean that the scroll
+            // is not being inflated by DBC Skills.
+            // The skills can be null or an array of length 0. Still gotta check
+            int dbcSkillScrollOffset = JRMCoreH.PlyrSkills != null
+                ? JRMCoreH.PlyrSkills.length
+                : 0;
+
+            // Again, not inlining this!
+            // Same reasoning as the branch condition.
+            // The meaning of the variable becomes foggy.
+            final int scrollWithoutDBC = this.scroll - dbcSkillScrollOffset;
+
+            skillStartIndex = scrollWithoutDBC;
+            skillEndIndex = Math.max(
+                maximumSpaceForCustomSkills,
+                scrollWithoutDBC + 10
+            );
+        }
+
+        final int cappedCondition = Math.min(customSkills.length, skillEndIndex);
+
+        for (int i = skillStartIndex; i < cappedCondition ; ++i) {
             SkillContainer skill = customSkills[i];
+
+            // Can't remove this.
             skillsDrawnAlready++;
+            // Offset needs to be relative to last drawn skill, not current skill index;
+            //
+            // Otherwise I'd have to normalize index by keeping "scrollWithoutDBC" around for longer in the scope
+            // and would make the code even more unreadable.
             int offset = skillsDrawnAlready + 1;
             String skillDescription = skill.getSkill().getDescription();
             int level = skill.getLevel();
@@ -189,14 +246,33 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
             }
             String sideMessage = level < skill.getSkill().getMaxLevel() ? (tpReq == -1 ? JRMCoreH.trl("jrmc", "UpgradeLocked") : "TP: " + JRMCoreH.numSep(tpReq) + " M: " + JRMCoreH.numSep(mindReq)) : JRMCoreH.trl("jrmc", "Maxed");
             enhancedGUIdrawString(fontRender, sideMessage, guiLeft + 240 - fontRender.getStringWidth(sideMessage), guiTop + 20 + offset * 10, 0);
-
-
         }
     }
 
+    @Inject(method = "updateScreen", at = @At("HEAD"), remap = true)
+    private void onUpdateScreen(CallbackInfo ci) {
+        if (this.guiID == 10 && (ConfigDBCClient.EnhancedGui || !ConfigDBCClient.EnableDebugStatSheetSwitching) && DBCData.getClient().Powertype == 1)
+            FMLCommonHandler.instance().showGuiScreen(new StatSheetGui());
+    }
+
+
+    /**
+     * If {@link JRMCoreH#PlyrSkills} was never initialized on the client,
+     * DBC doesn't even try to draw the slider. We have to fix that manually.
+     * <br>
+     * If it's not null and of length 0, {@linkplain #modifySkillCountForScrollSize our inject}
+     * still corrects for the injected size so that's fine.
+     *
+     * <h3>If this method ever breaks, all hell breaks loose.</h3>
+     * This had to be extracted from drawScreen... deeply nested inside a shit-ton of <code>if</code> branches. <br>
+     * The <span style="font-size: 1.1em; color: orange;"><b>ONLY</b></span> change is <code>int sw = DBCData.getClient().customSkills.size();</code>. <br>
+     * <br>
+     * There is a big possibility that if scrollbar rendering ever breaks, you have to fix both <span style="font-size: 1.1em; color: orange;"><b>this</b></span> function and the DBC implementation as well...<br>
+     * <br>
+     * Have fun...?
+     */
     @Unique
     private void customNPC_DBC_Addon$drawSliderIfNoSkills() {
-        System.out.println("Chuj ci w pizde");
         int sw = DBCData.getClient().customSkills.size();
         float cool = 5.0F;
         int wpy = 10;
@@ -228,12 +304,6 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
 
             this.buttonList.add(new JRMCoreGuiSliderX00(1000000, guiLeft + xSize / 2 + 110 + 18, guiTop + 25, this.mousePressed, scrollSide, 1.0F));
         }
-    }
-
-    @Inject(method = "updateScreen", at = @At("HEAD"), remap = true)
-    private void onUpdateScreen(CallbackInfo ci) {
-        if (this.guiID == 10 && (ConfigDBCClient.EnhancedGui || !ConfigDBCClient.EnableDebugStatSheetSwitching) && DBCData.getClient().Powertype == 1)
-            FMLCommonHandler.instance().showGuiScreen(new StatSheetGui());
     }
 
     @Inject(method = "drawDetails", at = @At("HEAD"), remap = false, cancellable = true)

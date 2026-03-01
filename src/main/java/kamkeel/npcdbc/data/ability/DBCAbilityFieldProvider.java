@@ -261,7 +261,7 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
                 (val) -> stats.setMultiplierForSet(set, val))
             .tab(TAB_DBC).range(0.0f, 500.0f).visibleWhen(visible));
 
-        // Ki bonus toggles
+        // Ki bonus gates — allows the player's Ki bonus to contribute to this set
         defs.add(FieldDef.boolField("stats.cnpc.kiFist",
                 () -> stats.isKiFistForSet(set),
                 (val) -> stats.setKiFistForSet(set, val))

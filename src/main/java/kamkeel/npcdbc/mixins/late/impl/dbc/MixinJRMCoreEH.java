@@ -5,6 +5,10 @@ import JinRyuu.JRMCore.entity.EntityEnergyAtt;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+import kamkeel.npcs.controllers.data.ability.type.AbilityCounter;
+import kamkeel.npcs.controllers.data.ability.type.AbilityDefend;
+import kamkeel.npcs.controllers.data.ability.type.AbilityDodge;
+import kamkeel.npcs.controllers.data.ability.type.AbilityGuard;
 import kamkeel.npcdbc.constants.DBCDamageSource;
 import kamkeel.npcdbc.data.DBCDamageCalc;
 import kamkeel.npcdbc.data.form.Form;
@@ -16,6 +20,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,6 +32,9 @@ public class MixinJRMCoreEH {
     @Inject(method = "damageEntity(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/util/DamageSource;F)V", at = @At("HEAD"), cancellable = true)
     public void NPCDamaged(EntityLivingBase targetEntity, DamageSource source, float amount, CallbackInfo ci, @Local(ordinal = 0) LocalFloatRef dam) {
         if (targetEntity instanceof EntityNPCInterface) {
+
+            EntityNPCInterface npc = (EntityNPCInterface) targetEntity;
+
             DBCUtils.damageEntityCalled = true;
 
             if (DBCUtils.npcLastSetDamage != null) {
@@ -34,9 +42,9 @@ public class MixinJRMCoreEH {
                 DBCUtils.npcLastSetDamage = null;
             }
 
-            Form form = PlayerDataUtil.getForm(targetEntity);
+            Form form = PlayerDataUtil.getForm(npc);
             if (form != null) {
-                float formLevel = PlayerDataUtil.getFormLevel(targetEntity);
+                float formLevel = PlayerDataUtil.getFormLevel(npc);
                 if (form.mastery.hasDamageNegation()) {
                     float damage = dam.get();
                     float damageNegation = form.mastery.damageNegation * form.mastery.calculateMulti("damageNegation", formLevel);
@@ -45,10 +53,30 @@ public class MixinJRMCoreEH {
                 }
             }
 
+            // Defend abilities: only check here when DBC damage bypasses attackEntityFrom.
+            // When inside attackEntityFrom, guard/dodge/counter was already applied in fixDamagedEventDBCDamage.
+            if (!DBCUtils.insideAttackEntityFrom) {
+                AbilityDefend defend = npc.abilities != null ? npc.abilities.getActiveDefend() : null;
+                if (defend != null) {
+                    EntityLivingBase attacker = source.getEntity() instanceof EntityLivingBase ? (EntityLivingBase) source.getEntity() : null;
+                    // Dodge & Counter: cancel DBC damage entirely
+                    if (defend instanceof AbilityDodge || defend instanceof AbilityCounter) {
+                        float result = defend.onDefend(attacker, source, dam.get());
+                        if (result != dam.get()) {
+                            ci.cancel();
+                            return;
+                        }
+                    } else {
+                        // Guard: reduce DBC damage
+                        dam.set(defend.onDefend(attacker, source, dam.get()));
+                    }
+                }
+            }
+
             // DBC bypasses EntityNPCInterface.damageEntity() by calling setHealth() directly,
             // so the NPC's combat handler is never notified. Manually notify it here so that
             // ability interrupts, aggressor tracking, and hit-count conditions work with DBC damage.
-            ((EntityNPCInterface) targetEntity).combatHandler.damage(source, dam.get());
+            npc.combatHandler.damage(source, dam.get());
         }
     }
 
@@ -69,6 +97,17 @@ public class MixinJRMCoreEH {
         }
 
         DBCDamageCalc damageCalc = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), dam.get(), source);
+
+        // Guard: reduce DBC damage for players
+        PlayerData pData = PlayerData.get(targetPlayer.get());
+        if (pData != null && pData.abilityData != null) {
+            AbilityDefend defend = pData.abilityData.getActiveDefend();
+            if (defend instanceof AbilityGuard) {
+                EntityLivingBase attacker = source.getEntity() instanceof EntityLivingBase ? (EntityLivingBase) source.getEntity() : null;
+                damageCalc.damage = defend.onDefend(attacker, source, damageCalc.damage);
+            }
+        }
+
         DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(targetPlayer.get(), damageCalc, source, dbcDamageSource);
         if (DBCEventHooks.onDBCDamageEvent(damagedEvent)) {
             ci.cancel();
@@ -100,6 +139,17 @@ public class MixinJRMCoreEH {
         }
 
         DBCDamageCalc damageCalc = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), dam.get(), source);
+
+        // Guard: reduce DBC damage for players
+        PlayerData pData = PlayerData.get(targetPlayer.get());
+        if (pData != null && pData.abilityData != null) {
+            AbilityDefend defend = pData.abilityData.getActiveDefend();
+            if (defend instanceof AbilityGuard) {
+                EntityLivingBase attacker = source.getEntity() instanceof EntityLivingBase ? (EntityLivingBase) source.getEntity() : null;
+                damageCalc.damage = defend.onDefend(attacker, source, damageCalc.damage);
+            }
+        }
+
         DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(targetPlayer.get(), damageCalc, source, dbcDamageSource);
         if (DBCEventHooks.onDBCDamageEvent(damagedEvent)) {
             ci.cancel();

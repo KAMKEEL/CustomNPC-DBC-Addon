@@ -1,9 +1,12 @@
 package kamkeel.npcdbc.data.ability;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.constants.enums.EnumDBCRaces;
 import kamkeel.npcdbc.data.ability.conditions.ConditionRace;
+import kamkeel.npcs.controllers.data.ability.conditions.ConditionHPThreshold;
+import kamkeel.npcs.controllers.data.ability.conditions.ConditionThreshold;
 import kamkeel.npcs.controllers.data.ability.data.effect.AbilityCustomEffect;
 import kamkeel.npcs.controllers.data.ability.data.AbilityIconData;
 import kamkeel.npcdbc.data.ability.toggle.DBCToggle;
@@ -575,23 +578,28 @@ public class DBCAbilities {
         a.setTargetingMode(TargetingMode.SELF);
         effect.setIncludeSelf(true);
 
-        ConditionRace condition = new ConditionRace();
-        condition.setRace(EnumDBCRaces.NAMEKIAN);
-        condition.setFilter(ConditionFilter.CASTER);
+        ConditionRace conditionRace = new ConditionRace();
+        conditionRace.setRace(EnumDBCRaces.NAMEKIAN);
+        conditionRace.setFilter(ConditionFilter.CASTER);
 
-        a.addCondition(condition);
+        ConditionHPThreshold conditionHP = new ConditionHPThreshold();
+        conditionHP.setThresholdPercent(ConfigDBCGameplay.NamekianRegenMin);
+        conditionHP.setThresholdType(ConditionThreshold.ThresholdType.BELOW);
+
+        a.addCondition(conditionRace);
+        a.addCondition(conditionHP);
 
         List<AbilityCustomEffect> list = new ArrayList<>();
         list.add(new AbilityCustomEffect(Effects.NAMEK_REGEN, 60, (byte) 1, 1));
         effect.setCustomEffects(list);
 
         AbilityIconData icon = AbilityIconData.fromAbility(effect);
-        icon.setTexture(CustomNpcPlusDBC.ID + ":textures/gui/ability_icons.png");
+        icon.setLayerTexture(0, CustomNpcPlusDBC.ID + ":textures/gui/ability_icons.png");
         icon.setWidth(48);
         icon.setHeight(48);
         icon.setScale(2.0f);
-        icon.setIconX(384);
-        icon.setIconY(0);
+        icon.setLayerIconX(0, 384);
+        icon.setLayerIconY(0, 0);
     });
 
     public static void register() {

@@ -188,9 +188,7 @@ public class DBCAbilityExtender implements IAbilityExtender {
         if (caster instanceof EntityPlayer) {
             float calcDamage = DBCUtils.calculateAbilityAttackDamage((EntityPlayer) caster, stats);
             if (calcDamage > 0) {
-                // DBC scaling replaces the base damage; re-apply any ability-internal modifiers
-                // (e.g. Slam height scaling) so the ability's multiplier is preserved.
-                // damageMultiplier accounts for barrier absorption (< 1.0 when projectile broke through a barrier).
+                // DBC scaling replaces base damage; preserve ability and barrier multipliers
                 outDamage = calcDamage * ability.getDamageMultiplier() * damageMultiplier;
             }
         }
@@ -223,10 +221,7 @@ public class DBCAbilityExtender implements IAbilityExtender {
                 DBCUtils.abilityDamageAmount = null;
             }
 
-            // Player DBC Stats: when enabled AND usePlayerSettings is false, the ability's
-            // configured ignore flags (IgnoreDex, FriendlyFist, etc.) override the player's own settings.
-            // When usePlayerSettings is true, the player's own DBC settings (Friendly Fist, etc.) are used.
-            // For NPC casters, usePlayerSettings is irrelevant — always use ability stats when enabled.
+            // Use ability's DBC stats unless usePlayerSettings is true (player's own settings apply)
             boolean useAbilityStats = stats.isEnabled();
             if (caster instanceof EntityPlayer && stats.getUsePlayerSettings()) {
                 useAbilityStats = false;
@@ -242,7 +237,11 @@ public class DBCAbilityExtender implements IAbilityExtender {
         } else if (target instanceof EntityNPCInterface) {
             // NPC target: set npcLastSetDamage for the Mixin to pick up
             DBCUtils.npcLastSetDamage = outDamage;
-            target.attackEntityFrom(source, outDamage);
+            try {
+                target.attackEntityFrom(source, outDamage);
+            } finally {
+                DBCUtils.npcLastSetDamage = null;
+            }
         } else {
             // Other entities: direct damage
             target.attackEntityFrom(source, outDamage);
@@ -251,10 +250,7 @@ public class DBCAbilityExtender implements IAbilityExtender {
         return true; // Always handled when DBC Addon is installed
     }
 
-    /**
-     * Apply damage to a player through the DBC damage system with ability's universal settings.
-     * Uses calculateDBCStatDamage which respects the ability's ignore flags.
-     */
+    /** Apply damage using the ability's DBC ignore flags. */
     private void applyDBCDamageToPlayer(EntityPlayer player, float damage, DBCAbilityStats stats, DamageSource source) {
         DBCDamageCalc damageCalc = DBCUtils.calculateDBCStatDamage(player, (int) damage, stats, source);
 
@@ -276,12 +272,7 @@ public class DBCAbilityExtender implements IAbilityExtender {
         DBCUtils.doDBCDamage(player, damageCalc.damage, stats, source);
     }
 
-    /**
-     * Apply damage to a player through the DBC damage system with default defender reduction.
-     * Uses calculateDBCDamageFromSource which applies generic DEX/blocking/ki protection.
-     * Friendly fist is handled by calculateDBCDamageFromSource (from the attacker's own toggles),
-     * so we pass null for stats to avoid the ability's friendly fist overriding the player's settings.
-     */
+    /** Apply damage using default DBC defender reduction (player's own settings). */
     private void applyDBCDamageToPlayerDefault(EntityPlayer player, float damage, DBCAbilityStats stats, DamageSource source) {
         DBCDamageCalc damageCalc = DBCUtils.calculateDBCDamageFromSource(player, damage, source);
 
@@ -300,13 +291,14 @@ public class DBCAbilityExtender implements IAbilityExtender {
         DBCUtils.lastSetDamage = damageCalc;
         damageCalc.processExtras();
 
-        // Pass null for stats — player's own settings are used (friendly fist already handled above)
+        // null stats = use player's own DBC settings
         DBCUtils.doDBCDamage(player, damageCalc.damage, null, source);
     }
 
     @Override
     public Boolean onCheckConditionForPlayer(AbilityCondition condition, EntityLivingBase player) {
         if (condition instanceof ConditionHPThreshold) {
+            if (!(player instanceof EntityPlayer)) return null;
             return handleConditionHPThreshold((ConditionHPThreshold) condition, (EntityPlayer) player);
         }
 
