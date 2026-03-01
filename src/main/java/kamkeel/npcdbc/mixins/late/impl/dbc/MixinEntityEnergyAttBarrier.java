@@ -2,7 +2,7 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 
 import JinRyuu.JRMCore.entity.EntityEnergyAtt;
 import JinRyuu.JRMCore.entity.EntityEnAttacks;
-import kamkeel.npcs.entity.EntityAbilityBarrier;
+import kamkeel.npcs.entity.EntityEnergyBarrier;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -48,8 +48,8 @@ public abstract class MixinEntityEnergyAttBarrier extends EntityEnAttacks {
 
         int ownerEntityId = this.shootingEntity != null ? this.shootingEntity.getEntityId() : -1;
 
-        List<EntityAbilityBarrier> barriers = EntityAbilityBarrier.getActiveBarriers(this.worldObj);
-        for (EntityAbilityBarrier barrier : barriers) {
+        List<EntityEnergyBarrier> barriers = EntityEnergyBarrier.getActiveBarriers(this.worldObj);
+        for (EntityEnergyBarrier barrier : barriers) {
             if (barrier.isDead) continue;
 
             // Quick distance pre-filter
