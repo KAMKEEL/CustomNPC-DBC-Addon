@@ -98,8 +98,6 @@ public enum DBCToggle {
         })
     );
 
-    public final DBCToggleBuilder builder;
-
     public final String key;
     public final String displayName;
     public final int setting;
@@ -118,19 +116,17 @@ public enum DBCToggle {
 
     public final BiConsumer<EntityPlayer, Integer> onStateChanged;
 
-    DBCToggle(DBCToggleBuilder builder) {
-        this.builder = builder;
-
-        this.key = this.builder.key;
-        this.displayName = this.builder.displayName;
-        this.setting = this.builder.setting;
-        this.iconTexture = this.builder.iconTexture;
-        this.width = this.builder.width;
-        this.height = this.builder.height;
-        this.modes = this.builder.modes;
-        this.stateLabels = this.builder.stateLabels;
-        this.stateIconTextures = this.builder.stateIconTextures;
-        this.onStateChanged = this.builder.onStateChanged;
+    DBCToggle(DBCToggleBuilder b) {
+        this.key = b.key;
+        this.displayName = b.displayName;
+        this.setting = b.setting;
+        this.iconTexture = b.iconTexture;
+        this.width = b.width;
+        this.height = b.height;
+        this.modes = b.modes;
+        this.stateLabels = b.stateLabels;
+        this.stateIconTextures = b.stateIconTextures;
+        this.onStateChanged = b.onStateChanged;
     }
 
     /**

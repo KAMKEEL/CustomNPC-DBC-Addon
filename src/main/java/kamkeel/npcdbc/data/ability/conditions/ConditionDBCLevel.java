@@ -14,8 +14,6 @@ import noppes.npcs.entity.EntityNPCInterface;
 
 import java.util.List;
 
-import static JinRyuu.JRMCore.JRMCoreH.getPlayerLevel;
-
 public class ConditionDBCLevel extends AbilityCondition {
 
     public enum CompareType {
