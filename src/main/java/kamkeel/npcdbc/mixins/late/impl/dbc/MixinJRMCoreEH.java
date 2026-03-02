@@ -80,19 +80,17 @@ public class MixinJRMCoreEH {
                 if (defend != null) {
                     EntityLivingBase attacker = resolveAttacker(source);
                     if (attacker != null) {
-                        DamageSource meleeSrc = (attacker instanceof EntityPlayer)
-                            ? DamageSource.causePlayerDamage((EntityPlayer) attacker)
-                            : DamageSource.causeMobDamage(attacker);
-                        // Dodge & Counter: cancel DBC damage entirely
+                        // Pass the original DamageSource so each ability's isValidDamageSource filter
+                        // decides correctly: Guard accepts all types, Counter/Dodge reject non-melee.
                         if (defend instanceof AbilityDodge || defend instanceof AbilityCounter) {
-                            float result = defend.onDefend(attacker, meleeSrc, dam.get());
+                            float result = defend.onDefend(attacker, source, dam.get());
                             if (result != dam.get()) {
                                 ci.cancel();
                                 return;
                             }
                         } else {
                             // Guard: reduce DBC damage
-                            dam.set(defend.onDefend(attacker, meleeSrc, dam.get()));
+                            dam.set(defend.onDefend(attacker, source, dam.get()));
                         }
                     }
                 }
@@ -124,18 +122,14 @@ public class MixinJRMCoreEH {
         DBCDamageCalc damageCalc = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), dam.get(), source);
 
         // Guard: reduce DBC damage for players.
-        // Use a clean melee DamageSource so AbilityDefend's physical-only filter passes,
-        // and resolve the actual attacker through EntityEnergyAtt.shootingEntity for ki attacks.
+        // Guard's isValidDamageSource accepts all types, so the original source works directly.
         PlayerData pData = PlayerData.get(targetPlayer.get());
         if (pData != null && pData.abilityData != null) {
             AbilityDefend defend = pData.abilityData.getActiveDefend();
             if (defend instanceof AbilityGuard) {
                 EntityLivingBase attacker = resolveAttacker(source);
                 if (attacker != null) {
-                    DamageSource meleeSrc = (attacker instanceof EntityPlayer)
-                        ? DamageSource.causePlayerDamage((EntityPlayer) attacker)
-                        : DamageSource.causeMobDamage(attacker);
-                    damageCalc.damage = defend.onDefend(attacker, meleeSrc, damageCalc.damage);
+                    damageCalc.damage = defend.onDefend(attacker, source, damageCalc.damage);
                 }
             }
         }
@@ -172,17 +166,14 @@ public class MixinJRMCoreEH {
 
         DBCDamageCalc damageCalc = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), dam.get(), source);
 
-        // Guard: reduce DBC damage for players (same approach as dbcAttackFromPlayer above)
+        // Guard: reduce DBC damage for players.
         PlayerData pData = PlayerData.get(targetPlayer.get());
         if (pData != null && pData.abilityData != null) {
             AbilityDefend defend = pData.abilityData.getActiveDefend();
             if (defend instanceof AbilityGuard) {
                 EntityLivingBase attacker = resolveAttacker(source);
                 if (attacker != null) {
-                    DamageSource meleeSrc = (attacker instanceof EntityPlayer)
-                        ? DamageSource.causePlayerDamage((EntityPlayer) attacker)
-                        : DamageSource.causeMobDamage(attacker);
-                    damageCalc.damage = defend.onDefend(attacker, meleeSrc, damageCalc.damage);
+                    damageCalc.damage = defend.onDefend(attacker, source, damageCalc.damage);
                 }
             }
         }
