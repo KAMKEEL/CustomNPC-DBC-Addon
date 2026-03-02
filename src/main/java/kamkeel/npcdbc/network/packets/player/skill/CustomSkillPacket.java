@@ -6,7 +6,7 @@ import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.api.skill.ICustomSkill;
 import kamkeel.npcdbc.controllers.SkillController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.data.skill.SkillContainer;
+import kamkeel.npcdbc.data.skill.CustomSkillContainer;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.PacketChannel;
@@ -80,7 +80,7 @@ public final class CustomSkillPacket extends AbstractPacket {
 
                 break;
             case UPGRADE:
-                SkillContainer container = data.customSkills.get(skillID);
+                CustomSkillContainer container = data.customSkills.get(skillID);
                 if (container == null)
                     return;
                 if (container.getLevel() >= skill.getMaxLevel())

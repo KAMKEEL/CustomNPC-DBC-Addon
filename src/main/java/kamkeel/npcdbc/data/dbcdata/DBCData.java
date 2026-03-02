@@ -29,7 +29,7 @@ import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
 import kamkeel.npcdbc.data.overlay.OverlayManager;
-import kamkeel.npcdbc.data.skill.SkillContainer;
+import kamkeel.npcdbc.data.skill.CustomSkillContainer;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.*;
@@ -153,7 +153,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     // Some servers tend to repeat one tick multiple times (up to 3-4 times in under a second)
     public int lastTicked = -1;
 
-    public Map<Integer, SkillContainer> customSkills = new HashMap<>();
+    public Map<Integer, CustomSkillContainer> customSkills = new HashMap<>();
 
     public final SimplifiedDBCData simplifiedDBCData = new SimplifiedDBCData(this);
 
@@ -323,7 +323,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         isFnPressed = c.getBoolean("DBCIsFnPressed");
 
         if (c.hasKey("customSkills"))
-            this.customSkills = NBTHelper.javaIntegerObjectMap(c.getTagList("customSkills", Constants.NBT.TAG_COMPOUND), tag -> SkillContainer.fromNBT(this, tag));
+            this.customSkills = NBTHelper.javaIntegerObjectMap(c.getTagList("customSkills", Constants.NBT.TAG_COMPOUND), tag -> CustomSkillContainer.fromNBT(this, tag));
     }
 
     /**
@@ -711,7 +711,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             return false;
         }
 
-        return Skills.contains(skill.id());
+        return Skills.contains(skill.getStringId());
     }
 
     public boolean hasSkill(int index) {
@@ -721,7 +721,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             return false;
         }
 
-        return Skills.contains(skill.id());
+        return Skills.contains(skill.getStringId());
     }
 
     public int getSkillLevel(String skillName) {
@@ -733,7 +733,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             return 0;
         }
 
-        return getSkillLevel(skill.index());
+        return getSkillLevel(skill.getId());
     }
 
     public int getSkillLevel(int index) {
@@ -748,7 +748,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public int getCustomSkillLevel(int id) {
         if (!hasCustomSkill(id)) return 0;
 
-        SkillContainer container = customSkills.get(id);
+        CustomSkillContainer container = customSkills.get(id);
         return container.getLevel();
     }
 
@@ -1185,7 +1185,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
                 mindBonus -= form.getMindRequirement();
         }
 
-        for (SkillContainer container : customSkills.values()) {
+        for (CustomSkillContainer container : customSkills.values()) {
             ICustomSkill skill = SkillController.Instance.getSkill(container.getSkillID());
             if (skill != null)
                 mindBonus -= skill.getTotalMindCost(container.getLevel());

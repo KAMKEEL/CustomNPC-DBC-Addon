@@ -4,7 +4,7 @@ import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.api.skill.ICustomSkill;
-import kamkeel.npcdbc.api.skill.ISkillContainer;
+import kamkeel.npcdbc.api.skill.ICustomSkillContainer;
 import noppes.npcs.api.entity.IDBCPlayer;
 import noppes.npcs.api.entity.IEntityLivingBase;
 import noppes.npcs.api.entity.IPlayer;
@@ -752,13 +752,13 @@ public interface IDBCAddon extends IDBCPlayer {
      * @param skillID ID of the skill
      * @return Data of the custom skill progression or <code>null</code> if player doesn't have it.
      */
-    ISkillContainer getCustomSkillData(int skillID);
+    ICustomSkillContainer getCustomSkillData(int skillID);
 
     /**
      * @param skill Skill object
      * @return Data of the custom skill progression or <code>null</code> if player doesn't have it
      */
-    ISkillContainer getCustomSkillData(ICustomSkill skill);
+    ICustomSkillContainer getCustomSkillData(ICustomSkill skill);
 
     /**
      * Sets dbcPlayer to a Koed state

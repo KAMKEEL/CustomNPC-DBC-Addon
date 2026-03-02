@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.data.skill;
 
 import kamkeel.npcdbc.api.skill.ICustomSkill;
-import kamkeel.npcdbc.api.skill.ISkillContainer;
+import kamkeel.npcdbc.api.skill.ICustomSkillContainer;
 import kamkeel.npcdbc.controllers.SkillController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
@@ -10,25 +10,25 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.api.entity.IPlayer;
 
-public class SkillContainer implements ISkillContainer {
+public class CustomSkillContainer implements ICustomSkillContainer {
 
     private final DBCData data;
     private ICustomSkill skill;
     private int level;
     private boolean finishedSettingUp;
 
-    public SkillContainer(DBCData data, ICustomSkill skill, int level) {
+    public CustomSkillContainer(DBCData data, ICustomSkill skill, int level) {
         this(data);
         this.skill = skill;
         setLevel(level);
     }
 
-    private SkillContainer(DBCData data) {
+    private CustomSkillContainer(DBCData data) {
         this.data = data;
     }
 
-    public static SkillContainer fromNBT(DBCData data, NBTTagCompound comp) {
-        SkillContainer container = new SkillContainer(data);
+    public static CustomSkillContainer fromNBT(DBCData data, NBTTagCompound comp) {
+        CustomSkillContainer container = new CustomSkillContainer(data);
         container.skill = SkillController.Instance.getSkill(comp.getInteger("id"));
         container.setLevel(comp.getInteger("lvl"));
         container.finishedSettingUp = true;

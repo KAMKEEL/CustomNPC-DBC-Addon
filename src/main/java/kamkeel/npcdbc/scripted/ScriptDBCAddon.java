@@ -11,7 +11,7 @@ import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormMastery;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.api.skill.ICustomSkill;
-import kamkeel.npcdbc.api.skill.ISkillContainer;
+import kamkeel.npcdbc.api.skill.ICustomSkillContainer;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCSettings;
@@ -1427,12 +1427,12 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
-    public ISkillContainer getCustomSkillData(int skillID) {
+    public ICustomSkillContainer getCustomSkillData(int skillID) {
         return getCustomSkillData(SkillController.Instance.getSkill(skillID));
     }
 
     @Override
-    public ISkillContainer getCustomSkillData(ICustomSkill skill) {
+    public ICustomSkillContainer getCustomSkillData(ICustomSkill skill) {
         if (skill == null)
             return null;
         return dbcData.customSkills.get(skill.getId());

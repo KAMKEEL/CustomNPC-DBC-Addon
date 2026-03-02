@@ -1,9 +1,11 @@
 package kamkeel.npcdbc.constants;
 
+import kamkeel.npcdbc.api.skill.ISkill;
 import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.api.entity.IPlayer;
 
-public enum DBCSkills {
+public enum DBCSkills implements ISkill {
     Fusion("FZ"),
     Jump("JP"),
     Dash("DS"),
@@ -32,7 +34,7 @@ public enum DBCSkills {
 
     public static DBCSkills byIndex(int index) {
         for (DBCSkills skill : values())
-            if (index == skill.index())
+            if (index == skill.getId())
                 return skill;
 
         return null;
@@ -40,7 +42,7 @@ public enum DBCSkills {
 
     public static DBCSkills byId(String id) {
         for (DBCSkills skill : values())
-            if (id.equals(skill.id()))
+            if (id.equals(skill.getStringId()))
                 return skill;
 
         return null;
@@ -54,44 +56,74 @@ public enum DBCSkills {
         return null;
     }
 
-    public int index() {
+    @Override
+    public int getId() {
         return DBCUtils.getDBCSkillIndex(name());
     }
 
-    public String id() {
+    @Override
+    public String getStringId() {
         return stringId;
     }
 
-    public int tpCost(int level) {
-        return DBCUtils.calculateDBCSkillTPCost(index(), level);
+    @Override
+    public int getTPCost(int level) {
+        return DBCUtils.calculateDBCSkillTPCost(getId(), level);
     }
 
-    public int tpCostRecursive(int level) {
-        return DBCUtils.calculateDBCSkillTPCostRecursively(index(), level);
+    @Override
+    public int getTotalTPCost(int level) {
+        return DBCUtils.calculateDBCSkillTPCostRecursively(getId(), level);
     }
 
-    public int tpCost() {
-        return tpCost(1);
+    @Override
+    public int getMindCost(int level) {
+        return DBCUtils.calculateDBCSkillMindCost(getId(), level);
     }
 
-    public int tpCostRecursive() {
-        return tpCostRecursive(1);
+    @Override
+    public int getMaxLevel() {
+        return DBCUtils.getMaxSkillLevel(getId());
     }
 
-    public int mindCost(int level) {
-        return DBCUtils.calculateDBCSkillMindCost(index(), level);
+    @Override
+    public int getTotalMindCost(int level) {
+        return DBCUtils.calculateDBCSkillMindCostRecursively(getId(), level);
     }
 
-    public int mindCostRecursive(int level) {
-        return DBCUtils.calculateDBCSkillMindCostRecursively(index(), level);
+    @Override
+    public boolean doesPlayerHaveSkill(IPlayer player, int level) {
+        if (true) throw new RuntimeException("Not implemented yet");
+        return false;
     }
 
-    public int mindCost() {
-        return mindCost(1);
+
+    @Override
+    public void teachPlayerSkill(IPlayer player, int level, boolean postEvent) {
+        if (true) throw new RuntimeException("Not implemented yet");
     }
 
-    public int mindCostRecursive() {
-        return mindCostRecursive(1);
+
+    @Override
+    public void unlearnSkill(IPlayer player, boolean postEvent) {
+        if (true) throw new RuntimeException("Not implemented yet");
+    }
+
+    @Override
+    public boolean tryToProgressLevel(IPlayer player, boolean postEvent) {
+        if (true) throw new RuntimeException("Not implemented yet");
+        return false;
+    }
+
+    @Override
+    public int getLevel(IPlayer player) {
+        if (true) throw new RuntimeException("Not implemented yet");
+        return 0;
+    }
+
+    @Override
+    public void setLevel(IPlayer player, int level) {
+        if (true) throw new RuntimeException("Not implemented yet");
     }
 
     public NBTTagCompound writeToNBT() {
@@ -101,4 +133,5 @@ public enum DBCSkills {
 
         return comp;
     }
+
 }
