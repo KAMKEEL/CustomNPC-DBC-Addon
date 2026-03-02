@@ -135,24 +135,24 @@ public enum DBCSkills implements ISkill {
         if (true) throw new RuntimeException("Not implemented yet");
 
         final int currentLevel = this.getLevel(player);
-        if (currentLevel == 0) return false;
+//        if (currentLevel == 0) return false;
 
         if (currentLevel == this.getMaxLevel()) return false;
 
 
-        IDBCAddon addon = (IDBCAddon) player.getDBCPlayer();
-        final int currentMind = addon.getAvailableMind();
-        final int currentTP = addon.getTP();
-
-        final int newMindCost = this.getMindCost(currentLevel+1);
-        final int newTPCost = this.getTPCost(currentLevel+1);
-
-        boolean canAfford = currentTP >= newTPCost && currentMind >= newMindCost;
-
-        if (!canAfford) return false;
-
-        if (postEvent)
-            throw new RuntimeException("Remember to post the skill event");
+//        IDBCAddon addon = (IDBCAddon) player.getDBCPlayer();
+//        final int currentMind = addon.getAvailableMind();
+//        final int currentTP = addon.getTP();
+//
+//        final int newMindCost = this.getMindCost(currentLevel+1);
+//        final int newTPCost = this.getTPCost(currentLevel+1);
+//
+//        boolean canAfford = currentTP >= newTPCost && currentMind >= newMindCost;
+//
+//        if (!canAfford) return false;
+//
+//        if (postEvent)
+//            throw new RuntimeException("Remember to post the skill event");
 
 
 //        this.setLevel(player, currentLevel+1);
