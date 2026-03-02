@@ -24,6 +24,8 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.player.DBCSetAllowFlight;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -641,6 +643,18 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void setAllowFlight(boolean allowFlight) {
         dbcData.flightEnabled = allowFlight;
+
+        // If disabling flight while player is currently flying, also stop flight
+        if (!allowFlight && dbcData.isFlying) {
+            dbcData.setFlight(false);
+        }
+
+        // Sync flightEnabled to client
+        DBCPacketHandler.Instance.sendToPlayer(
+            new DBCSetAllowFlight(allowFlight),
+            (EntityPlayerMP) player
+        );
+
         dbcData.saveNBTData(false);
     }
 
@@ -675,6 +689,13 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         dbcData.flightEnabled = true;
         dbcData.flightSpeedRelease = 100;
         dbcData.flightGravity = true;
+
+        // Sync flightEnabled to client
+        DBCPacketHandler.Instance.sendToPlayer(
+            new DBCSetAllowFlight(true),
+            (EntityPlayerMP) player
+        );
+
         dbcData.saveNBTData(false);
     }
 
