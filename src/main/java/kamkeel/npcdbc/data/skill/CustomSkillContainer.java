@@ -86,13 +86,18 @@ public class CustomSkillContainer implements ICustomSkillContainer {
         int tpCost = getSkill().getTPCost(newLevel);
         int mindCost = getSkill().getMindCost(newLevel);
 
-        if (data.TP < tpCost || mindCost < data.getAvailableMind())
+        if (data.getAvailableMind() < mindCost)
             return false;
 
         DBCPlayerEvent.SkillEvent.Upgrade event = new DBCPlayerEvent.SkillEvent.Upgrade(getPlayer(), 2, getSkillID(), tpCost, newLevel);
         if (postEvent && DBCEventHooks.onSkillEvent(event))
             return false;
 
+        if (data.TP < event.getCost())
+            return false;
+
+        data.TP -= event.getCost();
+        data.getRawCompound().setInteger("jrmcTP", data.TP);
         level = newLevel;
 
         return true;
