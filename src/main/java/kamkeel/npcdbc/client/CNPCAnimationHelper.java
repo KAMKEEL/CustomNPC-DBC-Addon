@@ -109,6 +109,7 @@ public class CNPCAnimationHelper {
             return false;
         }
 
+        boolean isNpcDBC = false;
         AnimationData animData = null;
         if (ClientEventHandler.renderingPlayer != null) {
             ClientEventHandler.playerModel = modelRenderer.baseModel;
@@ -116,7 +117,8 @@ public class CNPCAnimationHelper {
                 animData = ClientCacheHandler.playerAnimations.get(ClientEventHandler.renderingPlayer.getUniqueID());
             }
         } else if (ClientEventHandler.renderingNpc.display instanceof INPCDisplay) {
-            return false;
+            animData = ClientEventHandler.renderingNpc.display.animationData;
+            isNpcDBC = true;
         }
 
         ModelBase model = modelRenderer.baseModel;
@@ -126,7 +128,20 @@ public class CNPCAnimationHelper {
                 parentParts.add(modelRenderer);
             }
             if (childParts.contains(modelRenderer) || isPartIgnored(model, modelRenderer)) {
-                return false;
+                if (isNpcDBC && childParts.contains(modelRenderer)) {
+                    // Save child's default rotation (e.g. rightarm's 0.122173 Z) for restoration
+                    if (!noppes.npcs.client.ClientEventHandler.originalValues.containsKey(modelRenderer)) {
+                        FramePart p = new FramePart();
+                        p.pivot = new float[]{modelRenderer.rotationPointX, modelRenderer.rotationPointY, modelRenderer.rotationPointZ};
+                        p.rotation = new float[]{modelRenderer.rotateAngleX, modelRenderer.rotateAngleY, modelRenderer.rotateAngleZ};
+                        noppes.npcs.client.ClientEventHandler.originalValues.put(modelRenderer, p);
+                    }
+                    // Zero child rotation so parent's animation is the sole source of rotation
+                    modelRenderer.rotateAngleX = 0;
+                    modelRenderer.rotateAngleY = 0;
+                    modelRenderer.rotateAngleZ = 0;
+                }
+                return isNpcDBC;
             }
 
             EnumAnimationPart partType = getDBCPartType(model, modelRenderer);
@@ -158,8 +173,23 @@ public class CNPCAnimationHelper {
                     modelRenderer.rotationPointZ = originalPart.pivot[2] + part.prevPivots[2];
                 }
             }
+        } else if (isNpcDBC) {
+            // Animation ended - restore original values so they don't persist
+            FramePart originalPart = noppes.npcs.client.ClientEventHandler.originalValues.remove(modelRenderer);
+            if (originalPart != null) {
+                modelRenderer.rotationPointX = originalPart.pivot[0];
+                modelRenderer.rotationPointY = originalPart.pivot[1];
+                modelRenderer.rotationPointZ = originalPart.pivot[2];
+                // Restore rotation angles for child parts (e.g. rightarm's default 0.122173 Z rotation)
+                // setRotationAngles never touches child parts directly, so we must restore manually
+                if (childParts.contains(modelRenderer)) {
+                    modelRenderer.rotateAngleX = originalPart.rotation[0];
+                    modelRenderer.rotateAngleY = originalPart.rotation[1];
+                    modelRenderer.rotateAngleZ = originalPart.rotation[2];
+                }
+            }
         }
-        return false;
+        return isNpcDBC;
     }
 
     private static EnumAnimationPart getPlayerPartType(ModelRenderer renderer) {
@@ -234,6 +264,12 @@ public class CNPCAnimationHelper {
     private static EnumAnimationPart getDBCPartType(ModelBase model, ModelRenderer renderer) {
         if (model instanceof ModelBipedBody) {
             ModelBipedBody modelBipedBody = (ModelBipedBody) model;
+            if (renderer == modelBipedBody.Brightarm) {
+                return EnumAnimationPart.RIGHT_ARM;
+            }
+            if (renderer == modelBipedBody.Bleftarm) {
+                return EnumAnimationPart.LEFT_ARM;
+            }
             if (isAny(renderer,
                 modelBipedBody.B, modelBipedBody.B1, modelBipedBody.B2, modelBipedBody.B3,
                 modelBipedBody.B4, modelBipedBody.B5, modelBipedBody.B7, modelBipedBody.B9,

@@ -16,11 +16,14 @@ import kamkeel.npcs.controllers.data.ability.conditions.ConditionHPThreshold;
 import kamkeel.npcs.controllers.data.ability.conditions.ConditionThreshold;
 import kamkeel.npcs.controllers.data.ability.enums.AbilityPhase;
 import kamkeel.npcs.controllers.data.ability.extender.IAbilityExtender;
+import kamkeel.npcs.controllers.data.ability.type.AbilityDefend;
+import kamkeel.npcs.controllers.data.ability.type.AbilityGuard;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
 import noppes.npcs.NpcDamageSource;
+import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.entity.EntityNPCInterface;
 
 /**
@@ -229,10 +232,10 @@ public class DBCAbilityExtender implements IAbilityExtender {
 
             if (useAbilityStats) {
                 // Use ability's configured ignore flags for defender reduction
-                applyDBCDamageToPlayer((EntityPlayer) target, outDamage, stats, source);
+                applyDBCDamageToPlayer((EntityPlayer) target, outDamage, stats, source, caster);
             } else {
                 // Use player's own DBC combat settings (generic defender reduction)
-                applyDBCDamageToPlayerDefault((EntityPlayer) target, outDamage, stats, source);
+                applyDBCDamageToPlayerDefault((EntityPlayer) target, outDamage, stats, source, caster);
             }
         } else if (target instanceof EntityNPCInterface) {
             // NPC target: set npcLastSetDamage for the Mixin to pick up
@@ -251,8 +254,9 @@ public class DBCAbilityExtender implements IAbilityExtender {
     }
 
     /** Apply damage using the ability's DBC ignore flags. */
-    private void applyDBCDamageToPlayer(EntityPlayer player, float damage, DBCAbilityStats stats, DamageSource source) {
+    private void applyDBCDamageToPlayer(EntityPlayer player, float damage, DBCAbilityStats stats, DamageSource source, EntityLivingBase attacker) {
         DBCDamageCalc damageCalc = DBCUtils.calculateDBCStatDamage(player, (int) damage, stats, source);
+        damageCalc.damage = applyGuardReduction(player, attacker, source, damageCalc.damage);
 
         DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(
             player, damageCalc, source, DBCDamageSource.NPC
@@ -273,8 +277,9 @@ public class DBCAbilityExtender implements IAbilityExtender {
     }
 
     /** Apply damage using default DBC defender reduction (player's own settings). */
-    private void applyDBCDamageToPlayerDefault(EntityPlayer player, float damage, DBCAbilityStats stats, DamageSource source) {
+    private void applyDBCDamageToPlayerDefault(EntityPlayer player, float damage, DBCAbilityStats stats, DamageSource source, EntityLivingBase attacker) {
         DBCDamageCalc damageCalc = DBCUtils.calculateDBCDamageFromSource(player, damage, source);
+        damageCalc.damage = applyGuardReduction(player, attacker, source, damageCalc.damage);
 
         DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(
             player, damageCalc, source, DBCDamageSource.PLAYER
@@ -293,6 +298,23 @@ public class DBCAbilityExtender implements IAbilityExtender {
 
         // null stats = use player's own DBC settings
         DBCUtils.doDBCDamage(player, damageCalc.damage, null, source);
+    }
+
+    private float applyGuardReduction(EntityPlayer player, EntityLivingBase attacker, DamageSource source, float damage) {
+        if (attacker == null) {
+            return damage;
+        }
+
+        PlayerData pData = PlayerData.get(player);
+        if (pData == null || pData.abilityData == null) {
+            return damage;
+        }
+
+        AbilityDefend defend = pData.abilityData.getActiveDefend();
+        if (defend instanceof AbilityGuard) {
+            return defend.onDefend(attacker, source, damage);
+        }
+        return damage;
     }
 
     @Override

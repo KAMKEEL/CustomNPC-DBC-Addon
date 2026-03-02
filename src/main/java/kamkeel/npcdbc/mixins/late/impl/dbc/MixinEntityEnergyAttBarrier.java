@@ -55,7 +55,7 @@ public abstract class MixinEntityEnergyAttBarrier extends EntityEnAttacks {
 
     // ==================== MAIN INJECTION ====================
 
-    @Inject(method = "onUpdate", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "onUpdate", at = @At("HEAD"), cancellable = true, remap = true)
     private void checkBarrierCollision(CallbackInfo ci) {
         if (this.worldObj.isRemote || this.isDead) return;
 
