@@ -1,7 +1,10 @@
 package kamkeel.npcdbc.constants;
 
+import kamkeel.npcdbc.api.IDBCAddon;
 import kamkeel.npcdbc.api.skill.ISkill;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.util.DBCUtils;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.api.entity.IPlayer;
 
@@ -93,37 +96,81 @@ public enum DBCSkills implements ISkill {
 
     @Override
     public boolean doesPlayerHaveSkill(IPlayer player, int level) {
-        if (true) throw new RuntimeException("Not implemented yet");
-        return false;
+        level = Math.min(level, this.getMaxLevel());
+        return this.getLevel(player) == level;
     }
 
 
     @Override
     public void teachPlayerSkill(IPlayer player, int level, boolean postEvent) {
         if (true) throw new RuntimeException("Not implemented yet");
+        level = Math.min(level, this.getMaxLevel());
+
+        final int currentLevel = this.getLevel(player);
+        if (currentLevel >= level) return;
+
+        if (currentLevel == 0 && postEvent) {
+            throw new RuntimeException("Remember to post the skill");
+        }
+        setLevel(player, level);
     }
 
 
     @Override
     public void unlearnSkill(IPlayer player, boolean postEvent) {
         if (true) throw new RuntimeException("Not implemented yet");
+
+        final int currentLevel = this.getLevel(player);
+        if (currentLevel == 0) return;
+
+        if (postEvent) {
+            throw new RuntimeException("Remember to post the skill");
+        }
+
+        setLevel(player, 0);
     }
 
     @Override
     public boolean tryToProgressLevel(IPlayer player, boolean postEvent) {
         if (true) throw new RuntimeException("Not implemented yet");
-        return false;
+
+        final int currentLevel = this.getLevel(player);
+        if (currentLevel == 0) return false;
+
+        if (currentLevel == this.getMaxLevel()) return false;
+
+
+        IDBCAddon addon = (IDBCAddon) player.getDBCPlayer();
+        final int currentMind = addon.getAvailableMind();
+        final int currentTP = addon.getTP();
+
+        final int newMindCost = this.getMindCost(currentLevel+1);
+        final int newTPCost = this.getTPCost(currentLevel+1);
+
+        boolean canAfford = currentTP >= newTPCost && currentMind >= newMindCost;
+
+        if (!canAfford) return false;
+
+        if (postEvent)
+            throw new RuntimeException("Remember to post the skill event");
+
+
+//        this.setLevel(player, currentLevel+1);
+
+        return true;
     }
 
     @Override
     public int getLevel(IPlayer player) {
-        if (true) throw new RuntimeException("Not implemented yet");
-        return 0;
+        DBCData data = DBCData.get((EntityPlayer) player.getMCEntity());
+        return data.getSkillLevel(getId());
     }
 
     @Override
     public void setLevel(IPlayer player, int level) {
-        if (true) throw new RuntimeException("Not implemented yet");
+        level = Math.min(level, getMaxLevel());
+        DBCData data = DBCData.get((EntityPlayer) player.getMCEntity());
+        data.setSkillLevel(getId(), level);
     }
 
     public NBTTagCompound writeToNBT() {

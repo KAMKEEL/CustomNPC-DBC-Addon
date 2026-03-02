@@ -1260,4 +1260,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         DBCPacketHandler.Instance.sendTracking(new PingFormColorPacket(this, dataNeededOnClient), player);
     }
+
+    public void setSkillLevel(int id, int level) {
+        throw new RuntimeException("NOT IMPLEMENTED YET GEEZ");
+    }
 }
