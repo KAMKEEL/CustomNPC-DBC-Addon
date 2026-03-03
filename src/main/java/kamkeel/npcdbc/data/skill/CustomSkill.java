@@ -161,7 +161,7 @@ public class CustomSkill implements ICustomSkill {
         CustomSkillContainer container = data.customSkills.get(id);
 
         if (container == null) {
-            if (DBCEventHooks.onSkillEvent(
+            if (postEvent && DBCEventHooks.onSkillEvent(
                 new DBCPlayerEvent.SkillEvent.Learn(player, 2, getId(), 0))) {
                 return;
             }

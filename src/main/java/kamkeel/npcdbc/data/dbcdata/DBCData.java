@@ -52,13 +52,7 @@ import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.scripted.NpcAPI;
 import noppes.npcs.util.ValueUtil;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static kamkeel.npcdbc.constants.DBCForm.ArcoGod;
 import static kamkeel.npcdbc.constants.DBCForm.BlueEvo;
@@ -1262,6 +1256,45 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public void setSkillLevel(int id, int level) {
-        throw new RuntimeException("NOT IMPLEMENTED YET GEEZ");
+        DBCSkills skill = DBCSkills.byIndex(id);
+        level--;
+        if (skill == null) {
+            return;
+        }
+        String stringID = skill.getStringId();
+
+        if (level == -1) {
+            // Remove skill
+            String[] parts = Skills.equals(",") ? new String[0] : Skills.split(",");
+            List<String> list = new ArrayList<>(Arrays.asList(parts));
+            list.removeIf(s -> s.startsWith(stringID));
+            Skills = list.isEmpty() ? "," : String.join(",", list);
+        } else {
+            // Update or add skill
+            String newEntry = stringID + level;
+            if (Skills.equals(",") || Skills.isEmpty()) {
+                Skills = newEntry;
+            } else {
+                String[] parts = Skills.split(",");
+                List<String> list = new ArrayList<>(Arrays.asList(parts));
+                boolean found = false;
+                for (int i = 0; i < list.size(); i++) {
+                    if (list.get(i).startsWith(stringID)) {
+                        list.set(i, newEntry);
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) list.add(newEntry);
+                Skills = String.join(",", list);
+            }
+        }
+
+        if (Skills.length() < 3 && !Skills.equals(",")) {
+            // Single skill - valid, do nothing; but if somehow empty, reset
+            if (Skills.isEmpty()) Skills = ",";
+        }
+
+        saveNBTData(true);
     }
 }
