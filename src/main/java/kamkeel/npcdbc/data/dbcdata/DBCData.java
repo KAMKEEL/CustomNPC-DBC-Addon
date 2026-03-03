@@ -111,6 +111,18 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public int addonFormID = -1, auraID = -1, outlineID = -1;
     public float addonFormLevel = 0, addonCurrentHeat = 0;
 
+    /** Sets addon heat and writes directly to NBT so DBC picks it up immediately. */
+    public void setAddonHeat(float heat) {
+        this.addonCurrentHeat = heat;
+        getRawCompound().setFloat("addonCurrentHeat", heat);
+    }
+
+    /** Sets pain duration and writes directly to NBT so DBC's native pain handler ticks it down. */
+    public void setAddonPain(int pain) {
+        this.Pain = pain;
+        getRawCompound().setInteger("jrmcGyJ7dp", pain);
+    }
+
     public EntityLivingBase LockOn;
 
     /**

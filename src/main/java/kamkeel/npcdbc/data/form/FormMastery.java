@@ -35,6 +35,7 @@ public class FormMastery implements IFormMastery {
 
     public int painTime = 0; //in minutes
     public float painMultiFlat = 1.0f, painMultiPerLevel = -0.01f, painMultiMinOrMax = 0f; //0 min so form doesn't generate pain at max level
+    public int painThreshold = 25; // Minimum heat % before pain applies on manual descend (0-100)
 
     public float dodgeChance = 0f;
     public float dodgeMultiFlat = 1.0f, dodgeMultiPerLevel = 0.01f, dodgeMultiMinOrMax = 2f;
@@ -94,6 +95,16 @@ public class FormMastery implements IFormMastery {
     @Override
     public boolean hasHeat() {
         return maxHeat > 1;
+    }
+
+    @Override
+    public int getPainThreshold() {
+        return painThreshold;
+    }
+
+    @Override
+    public void setPainThreshold(int threshold) {
+        this.painThreshold = ValueUtil.clamp(threshold, 0, 100);
     }
 
     @Override
@@ -623,6 +634,7 @@ public class FormMastery implements IFormMastery {
         dodgeChance = formMastery.getFloat("dodgeChance");
         damageNegation = formMastery.getFloat("damageNegation");
         painTime = formMastery.getInteger("painTime");
+        painThreshold = formMastery.hasKey("painThreshold") ? formMastery.getInteger("painThreshold") : 25;
         maxHeat = formMastery.getInteger("maxHeat");
         movementSpeed = formMastery.getFloat("movementSpeed");
         tailCutChance = formMastery.getFloat("tailCutChance");
@@ -745,6 +757,7 @@ public class FormMastery implements IFormMastery {
         formMastery.setFloat("damageNegation", damageNegation);
         formMastery.setInteger("maxHeat", maxHeat);
         formMastery.setInteger("painTime", painTime);
+        formMastery.setInteger("painThreshold", painThreshold);
         formMastery.setFloat("movementSpeed", movementSpeed);
         formMastery.setFloat("tailCutChance", tailCutChance);
 

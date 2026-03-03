@@ -619,12 +619,12 @@ public abstract class MixinJRMCoreH {
 
         Form form = dbcData.getForm();
         if (form != null && form.mastery.hasHeat()) {
+            // In form: show heat as percentage of form's max heat
             float currentHeat = ValueUtil.clamp(dbcData.addonCurrentHeat, 0, form.mastery.maxHeat);
             cir.setReturnValue(currentHeat / form.mastery.maxHeat * 100);
-        }
-        if(form == null && dbcData.addonCurrentHeat >0){
-            float currentHeat = dbcData.addonCurrentHeat;
-            cir.setReturnValue(currentHeat);
+        } else if (dbcData.addonCurrentHeat > 0) {
+            // Out of form: show residual heat decaying, clamped to 100 for display
+            cir.setReturnValue(Math.min(dbcData.addonCurrentHeat, 100f));
         }
     }
 
