@@ -23,12 +23,14 @@ import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.controllers.SkillController;
 import kamkeel.npcdbc.data.DBCProfileData;
 import kamkeel.npcdbc.data.ability.DBCAbilityExtender;
+import kamkeel.npcdbc.data.energy.DBCEnergyHandler;
 import kamkeel.npcdbc.data.ability.DBCConditions;
 import kamkeel.npcdbc.data.attribute.DBCItemAttributes;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.items.ModItems;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcs.controllers.AbilityController;
+import kamkeel.npcs.controllers.EnergyController;
 import kamkeel.npcs.controllers.ProfileController;
 import noppes.npcs.constants.ScriptContext;
 import noppes.npcs.controllers.ScriptHookController;
@@ -77,6 +79,9 @@ public class CustomNpcPlusDBC {
 
         // Register ability extender for DBC damage routing and lifecycle hooks
         AbilityController.Instance.registerExtender(new DBCAbilityExtender());
+
+        // Register energy handler for DBC damage routing on script-created energy entities
+        EnergyController.Instance.registerHandler(new DBCEnergyHandler());
 
         // Register DBC flight checker so abilities don't pull flying players down
         AbilityController.Instance.registerFlightChecker(player -> {
