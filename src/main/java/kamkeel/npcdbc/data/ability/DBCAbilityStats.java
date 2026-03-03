@@ -83,6 +83,19 @@ public class DBCAbilityStats implements IDBCAbility {
     }
 
     /**
+     * Create a DBCAbilityStats instance from a raw NBT compound (e.g. energy entity damageData).
+     * The compound is treated as the parent container; DBC stats are stored under the "DBCAbilityStats" sub-tag.
+     * Calling setters will save back to this compound.
+     */
+    public static DBCAbilityStats fromNBT(NBTTagCompound parentData) {
+        DBCAbilityStats stats = new DBCAbilityStats(parentData);
+        if (parentData.hasKey(NBT_KEY)) {
+            stats.readFromNBT(parentData.getCompoundTag(NBT_KEY));
+        }
+        return stats;
+    }
+
+    /**
      * Write current state back to the customData NBT.
      */
     public void save() {
