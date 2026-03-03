@@ -88,6 +88,8 @@ public class DBCUtils {
     // lastSetDamage works with player's DBCDamagedEvent
     public static Float npcLastSetDamage = null;
     public static DBCDamageCalc lastSetDamage = null;
+    /** Pre-calculated attribute damage (with crit) for vanilla/modded mob targets. Set in LivingAttackEvent, consumed in damageEntity. */
+    public static Float entityLastSetDamage = null;
 
     public static boolean damageEntityCalled = false;
     public static boolean abilityDamageHandled = false;

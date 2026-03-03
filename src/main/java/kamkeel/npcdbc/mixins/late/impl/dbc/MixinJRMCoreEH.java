@@ -16,6 +16,9 @@ import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcs.controllers.AttributeController;
+import kamkeel.npcs.controllers.data.attribute.tracker.PlayerAttributeTracker;
+import kamkeel.npcs.util.AttributeAttackUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -100,6 +103,29 @@ public class MixinJRMCoreEH {
             // so the NPC's combat handler is never notified. Manually notify it here so that
             // ability interrupts, aggressor tracking, and hit-count conditions work with DBC damage.
             npc.combatHandler.damage(source, dam.get());
+        } else if (!(targetEntity instanceof EntityPlayer)) {
+            // Vanilla/modded mobs: apply player's outgoing attribute bonuses.
+            // CustomNPC+ disables its own attribute handling when DBC Addon is loaded,
+            // so we must apply it here for non-NPC, non-Player targets.
+            EntityLivingBase attacker = resolveAttacker(source);
+            if (attacker instanceof EntityPlayer) {
+                EntityPlayer attackPlayer = (EntityPlayer) attacker;
+                if (DBCUtils.entityLastSetDamage != null) {
+                    // Use the pre-calculated value (includes crit) from the LivingAttackEvent
+                    dam.set(DBCUtils.entityLastSetDamage);
+                    DBCUtils.entityLastSetDamage = null;
+                } else {
+                    // Fallback for attacks that bypass LivingAttackEvent (e.g. ki blasts)
+                    float outgoing = AttributeAttackUtil.calculateOutgoing(attackPlayer, dam.get());
+                    PlayerAttributeTracker tracker = AttributeController.getTracker(attackPlayer);
+                    if (tracker != null)
+                        outgoing = AttributeAttackUtil.applyCrit(outgoing, tracker);
+                    dam.set(outgoing);
+                }
+            } else {
+                // Non-player attacker: clear any stale value, don't apply attributes
+                DBCUtils.entityLastSetDamage = null;
+            }
         }
     }
 
