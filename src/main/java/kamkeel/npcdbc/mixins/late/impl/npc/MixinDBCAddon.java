@@ -11,6 +11,8 @@ import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcs.addon.DBCAddon;
+import kamkeel.npcs.controllers.data.ability.type.AbilityDefend;
+import kamkeel.npcs.controllers.data.ability.type.AbilityGuard;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -92,6 +94,8 @@ public class MixinDBCAddon {
             // Calculate DBC Damage
             DamageSource damageSource = new NpcDamageSource("mob", npc);
             DBCDamageCalc damageCalc = DBCUtils.calculateDBCStatDamage(player, (int) attackStrength, dbcStats, damageSource);
+            damageCalc.damage = applyGuardReduction(player, npc, damageSource, damageCalc.damage);
+
             DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(player, damageCalc, damageSource, DBCDamageSource.NPC);
             if (DBCEventHooks.onDBCDamageEvent(damagedEvent))
                 return;
@@ -102,8 +106,38 @@ public class MixinDBCAddon {
             damageCalc.ko = damagedEvent.getFinalKO();
             DBCUtils.lastSetDamage = damageCalc;
             damageCalc.processExtras();
+
             DBCUtils.doDBCDamage(player, damageCalc.damage, dbcStats, damageSource);
         }
+    }
+
+    private float applyGuardReduction(EntityPlayer player, EntityLivingBase attacker, DamageSource source, float damage) {
+        if (attacker == null) {
+            return damage;
+        }
+
+        PlayerData pData = PlayerData.get(player);
+        if (pData == null || pData.abilityData == null) {
+            return damage;
+        }
+
+        AbilityDefend defend = pData.abilityData.getActiveDefend();
+        if (defend instanceof AbilityGuard) {
+            return defend.onDefend(attacker, source, damage);
+        }
+        return damage;
+    }
+
+    /**
+     * @author Kamkeel
+     * @reason Returns pre-calculated DBC attack damage of the current attacker
+     */
+    @Overwrite(remap = false)
+    public float getAttackerDBCDamage(float vanillaDamage) {
+        if (DBCUtils.preCalculatedAttackerDamage != null) {
+            return DBCUtils.preCalculatedAttackerDamage;
+        }
+        return vanillaDamage;
     }
 
     /**

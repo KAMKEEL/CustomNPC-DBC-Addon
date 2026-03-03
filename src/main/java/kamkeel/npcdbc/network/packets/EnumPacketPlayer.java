@@ -12,13 +12,20 @@ public enum EnumPacketPlayer {
     OutlineList,
     Flight,
     SetVal,
-    LockOn,
+    LockOnUpdate,
+    LockOnSync,
     LoginInfo,
     PingPacket,
+    PingFormColorPacket,
     PlaySound,
-    FormSaveCustiomization,
+    FormSaveCustomization,
     SendChat,
     StopSound,
     Transform,
-    Turbo
+    NPCPingForm,
+    CustomSkill,
+    Turbo,
+    AbilityToggle,
+    KiAttackColorSync,
+    AllowFlight
 }

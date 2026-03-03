@@ -4,8 +4,10 @@ import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.outline.Outline;
+import kamkeel.npcdbc.data.skill.CustomSkill;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
+import kamkeel.npcdbc.util.NBTHelper;
 import kamkeel.npcs.network.enums.EnumSyncAction;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -42,6 +44,11 @@ public class DBCSyncController {
         }
         compound.setTag("Data", list);
         DBCPacketHandler.Instance.sendToPlayer(new DBCInfoSyncPacket(DBCSyncType.OUTLINE, EnumSyncAction.RELOAD, -1, compound), player);
+
+        list = NBTHelper.nbtIntegerObjectMap(SkillController.Instance.customSkills, s -> s.writeToNBT());
+        compound = new NBTTagCompound();
+        compound.setTag("Data", list);
+        DBCPacketHandler.Instance.sendToPlayer(new DBCInfoSyncPacket(DBCSyncType.SKILL, EnumSyncAction.RELOAD, -1, compound), player);
     }
 
     public static void clientSync(int synctype, NBTTagCompound compound) {
@@ -75,7 +82,18 @@ public class DBCSyncController {
 
             OutlineController.getInstance().customOutlines = OutlineController.getInstance().customOutlinesSync;
             OutlineController.getInstance().customOutlinesSync = new HashMap<>();
+        } else if (synctype == DBCSyncType.SKILL) {
+            NBTTagList list = compound.getTagList("Data", 10);
+            SkillController.Instance.customSkillsSync = NBTHelper.javaIntegerObjectMap(list, t -> {
+                CustomSkill skill = new CustomSkill();
+                skill.readFromNBT(t);
+                return skill;
+            });
+
+            SkillController.Instance.customSkills = SkillController.Instance.customSkillsSync;
+            SkillController.Instance.customSkillsSync = new HashMap<>();
         }
+
     }
 
     public static void clientSyncUpdate(int synctype, NBTTagCompound compound) {
@@ -91,6 +109,10 @@ public class DBCSyncController {
             Outline outline = new Outline();
             outline.readFromNBT(compound);
             OutlineController.getInstance().customOutlines.put(outline.id, outline);
+        } else if (synctype == DBCSyncType.SKILL) {
+            CustomSkill skill = new CustomSkill();
+            skill.readFromNBT(compound);
+            SkillController.Instance.customSkills.put(skill.id, skill);
         }
     }
 
@@ -101,6 +123,8 @@ public class DBCSyncController {
             Aura aura = AuraController.Instance.customAuras.remove(id);
         } else if (synctype == DBCSyncType.OUTLINE) {
             Outline outline = OutlineController.Instance.customOutlines.remove(id);
+        } else if (synctype == DBCSyncType.SKILL) {
+            SkillController.Instance.customSkills.remove(id);
         }
     }
 }

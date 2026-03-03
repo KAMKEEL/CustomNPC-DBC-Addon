@@ -9,6 +9,7 @@ import kamkeel.npcdbc.data.effects.DamageTracker;
 import kamkeel.npcdbc.data.effects.SenzuConsumptionData;
 import kamkeel.npcdbc.data.effects.types.*;
 import kamkeel.npcdbc.network.NetworkUtility;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.api.entity.IPlayer;
@@ -59,6 +60,7 @@ public class DBCEffectController implements IDBCEffectHandler {
         standardEffects.put(Effects.EXHAUSTED, new Exhausted());
 
         CustomEffectController.getInstance().registerEffectMap(DBC_EFFECT_INDEX, standardEffects);
+        CustomEffectController.getInstance().registerEffectMapLabel(DBC_EFFECT_INDEX, "DBC Addon");
     }
 
     public boolean hasEffect(EntityPlayer player, int id) {
@@ -86,15 +88,15 @@ public class DBCEffectController implements IDBCEffectHandler {
     }
 
     public void clearDBCEffects(EntityPlayer player) {
-        Map<EffectKey, PlayerEffect> map = CustomEffectController.getInstance().getPlayerEffects(player);
-        map.keySet().removeIf(key -> key.getIndex() == DBC_EFFECT_INDEX);
+        if (player == null)
+            return;
+
+        CustomEffectController.getInstance().clearEffects(PlayerDataUtil.getIPlayer(player), DBC_EFFECT_INDEX);
     }
 
     public void removeEffect(EntityPlayer player, int id) {
-        Map<EffectKey, PlayerEffect> map = CustomEffectController.getInstance().getPlayerEffects(player);
-        map.keySet().removeIf(key -> key.getIndex() == DBC_EFFECT_INDEX && key.getId() == id);
+        CustomEffectController.getInstance().removeEffect(player, id, DBC_EFFECT_INDEX);
     }
-
 
     public int getEffectDuration(EntityPlayer player, int id) {
         return CustomEffectController.getInstance().getEffectDuration(player, id, DBC_EFFECT_INDEX);
@@ -228,11 +230,7 @@ public class DBCEffectController implements IDBCEffectHandler {
 
     @Override
     public void clearDBCEffects(IPlayer player) {
-        if (player == null || !(player.getMCEntity() instanceof EntityPlayer))
-            return;
-
-        EntityPlayer entityPlayer = (EntityPlayer) player.getMCEntity();
-        clearDBCEffects(entityPlayer);
+        CustomEffectController.getInstance().clearEffects(player, DBC_EFFECT_INDEX);
     }
 
     @Override

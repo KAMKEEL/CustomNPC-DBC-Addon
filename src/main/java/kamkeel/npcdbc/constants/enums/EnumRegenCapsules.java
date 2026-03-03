@@ -2,7 +2,33 @@ package kamkeel.npcdbc.constants.enums;
 
 import kamkeel.npcdbc.constants.Effects;
 
-import static kamkeel.npcdbc.config.ConfigCapsules.*;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenHPBaseCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenHPBaseStrength;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenHPBaseUseTime;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenHPMegaCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenHPMegaStrength;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenHPMegaUseTime;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenHPSuperCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenHPSuperStrength;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenHPSuperUseTime;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenKiBaseCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenKiBaseStrength;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenKiBaseUseTime;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenKiMegaCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenKiMegaStrength;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenKiMegaUseTime;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenKiSuperCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenKiSuperStrength;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenKiSuperUseTime;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenStaminaBaseCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenStaminaBaseStrength;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenStaminaBaseUseTime;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenStaminaMegaCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenStaminaMegaStrength;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenStaminaMegaUseTime;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenStaminaSuperCooldown;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenStaminaSuperStrength;
+import static kamkeel.npcdbc.config.ConfigCapsules.RegenStaminaSuperUseTime;
 
 
 public enum EnumRegenCapsules {

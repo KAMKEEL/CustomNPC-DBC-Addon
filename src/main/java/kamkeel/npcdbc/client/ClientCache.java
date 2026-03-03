@@ -24,6 +24,10 @@ public class ClientCache {
     public static HashMap<Integer, HashMap<String, Boolean>> divineApplicableForms = new HashMap<>();
     public static int maxAbsorptionLevel = JGConfigRaces.CONFIG_MAJIN_ABSORPTON_MAX_LEVEL;
 
+    public static boolean enhancedMovement = true;
+    public static boolean allowSpeedModifierTurboFlight = true;
+    public static float speedModifierTurboFlight = 0.3f;
+
     public static String discordURL = null;
 
     public static DBCData getClientData(EntityPlayer player) {

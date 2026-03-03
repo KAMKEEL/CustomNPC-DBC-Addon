@@ -5,13 +5,18 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcdbc.controllers.*;
+import kamkeel.npcdbc.controllers.AuraController;
+import kamkeel.npcdbc.controllers.BonusController;
+import kamkeel.npcdbc.controllers.DBCEffectController;
+import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.data.form.FormMasteryLinkData;
+import kamkeel.npcdbc.data.overlay.OverlayManager;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.util.NBTHelper;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -38,6 +43,7 @@ public class PlayerDBCInfo {
 
     public int currentForm = -1;
     public int selectedForm = -1, selectedDBCForm = -1, tempSelectedDBCForm = -1;
+    public int lastFormBeforeStack = -1;
 
     public int currentAura = -1;
     public int selectedAura = -1;
@@ -49,11 +55,14 @@ public class PlayerDBCInfo {
     public HashMap<Integer, FormDisplay.BodyColor> configuredFormColors = new HashMap<>();
     public FormWheelData[] formWheel = new FormWheelData[6];
 
+    public OverlayManager overlayManager = new OverlayManager();
+
     public PlayerDBCInfo(PlayerData parent) {
         this.parent = parent;
 
         for (int i = 0; i < formWheel.length; i++)
             formWheel[i] = new FormWheelData(i);
+
     }
 
     public void addForm(Form form) {
@@ -66,7 +75,7 @@ public class PlayerDBCInfo {
     }
 
     public void addFormWheel(int wheelSlot, FormWheelData data) {
-        if (wheelSlot > 5)
+        if (wheelSlot < 0 || wheelSlot > 5)
             return;
         formWheel[wheelSlot].readFromNBT(data.writeToNBT(new NBTTagCompound()));
     }
@@ -101,6 +110,7 @@ public class PlayerDBCInfo {
         if (wheelSlot <= 5 && wheelSlot >= 0)
             formWheel[wheelSlot].reset();
     }
+
 
 
     public Form getForm(int id) {
@@ -183,8 +193,8 @@ public class PlayerDBCInfo {
         for (FormWheelData formWheelData : formWheel) formWheelData.reset();
     }
 
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
+    /// /////////////////////////////////////////////
+    /// /////////////////////////////////////////////
     // Form mastery stuff
     public void updateCurrentFormMastery(String gainType) {
         updateFormMastery(currentForm, gainType);
@@ -273,8 +283,8 @@ public class PlayerDBCInfo {
         return getFormLevel(currentForm);
     }
 
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
+    /// /////////////////////////////////////////////
+    /// /////////////////////////////////////////////
     // Form timer stuff
     public void addTimer(int formid, int timeInTicks) {
         if (!formTimers.containsKey(formid))
@@ -310,11 +320,9 @@ public class PlayerDBCInfo {
 
     }
 
-
-    ///////////////////////////////////////////
-    ///////////////////////////////////////////
+    /// ////////////////////////////////////////
+    /// ////////////////////////////////////////
     // Aura stuff
-
     public void addAura(Aura aura) {
         if (aura == null)
             return;
@@ -390,8 +398,8 @@ public class PlayerDBCInfo {
         selectedAura = -1;
     }
 
-    ///////////////////////////////////////////
-    ///////////////////////////////////////////
+    /// ////////////////////////////////////////
+    /// ////////////////////////////////////////
     // Data handler
     public void resetChar() {
         resetChar(ConfigDBCGeneral.FORMS_CLEAR_ON_RESET, ConfigDBCGeneral.FORM_MASTERIES_CLEAR_ON_RESET);
@@ -419,6 +427,7 @@ public class PlayerDBCInfo {
         dbcCompound.setInteger("CurrentForm", currentForm);
         dbcCompound.setInteger("SelectedForm", selectedForm);
         dbcCompound.setInteger("SelectedDBCForm", selectedDBCForm);
+        dbcCompound.setInteger("LastFormBeforeStack", lastFormBeforeStack);
         dbcCompound.setTag("UnlockedForms", NBTTags.nbtIntegerSet(unlockedForms));
         dbcCompound.setTag("FormMastery", NBTTags.nbtIntegerFloatMap(formLevels));
         dbcCompound.setTag("FormTimers", NBTTags.nbtIntegerIntegerMap(formTimers));
@@ -432,10 +441,13 @@ public class PlayerDBCInfo {
         for (int i = 0; i < formWheel.length; i++)
             formWheel[i].writeToNBT(dbcCompound);
 
+
         dbcCompound.setInteger("CurrentAura", currentAura);
         dbcCompound.setInteger("SelectedAura", selectedAura);
         dbcCompound.setTag("UnlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
         saveBonuses(dbcCompound);
+
+        dbcCompound.setTag("OverlayManager", overlayManager.writeToNBT());
         compound.setTag("DBCInfo", dbcCompound);
     }
 
@@ -445,12 +457,14 @@ public class PlayerDBCInfo {
         currentForm = dbcCompound.getInteger("CurrentForm");
         selectedForm = dbcCompound.hasKey("SelectedForm") ? dbcCompound.getInteger("SelectedForm") : -1;
         selectedDBCForm = dbcCompound.hasKey("SelectedDBCForm") ? dbcCompound.getInteger("SelectedDBCForm") : -1;
+        lastFormBeforeStack = dbcCompound.hasKey("LastFormBeforeStack") ? dbcCompound.getInteger("LastFormBeforeStack") : -1;
         unlockedForms = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedForms", 10));
         formLevels = NBTTags.getIntegerFloatMap(dbcCompound.getTagList("FormMastery", 10));
         formTimers = NBTTags.getIntegerIntegerMap(dbcCompound.getTagList("FormTimers", 10));
 
         for (int i = 0; i < formWheel.length; i++)
             formWheel[i].readFromNBT(dbcCompound.getCompoundTag("FormWheel" + i));
+
 
         currentAura = dbcCompound.getInteger("CurrentAura");
         selectedAura = dbcCompound.getInteger("SelectedAura");
@@ -470,7 +484,11 @@ public class PlayerDBCInfo {
             );
 
         loadBonuses(dbcCompound);
+
+        if (dbcCompound.hasKey("OverlayManager"))
+            overlayManager.readFromNBT(dbcCompound.getCompoundTag("OverlayManager"));
     }
+
 
     private void loadBonuses(NBTTagCompound dbcCompound) {
         if (FMLCommonHandler.instance().getEffectiveSide().isClient() || this.parent.player == null)

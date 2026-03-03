@@ -2,8 +2,8 @@ package kamkeel.npcdbc.data.dbcdata;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
-import kamkeel.npcdbc.controllers.BonusController;
 import kamkeel.npcdbc.constants.DBCAttribute;
+import kamkeel.npcdbc.controllers.BonusController;
 import kamkeel.npcdbc.data.PlayerBonus;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;

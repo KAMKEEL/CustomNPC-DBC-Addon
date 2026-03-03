@@ -41,7 +41,8 @@ public final class PingPacket extends AbstractPacket {
     @Override
     public void sendData(ByteBuf out) throws IOException {
         ByteBufUtils.writeUTF8String(out, this.data.player.getCommandSenderName());
-        ByteBufUtils.writeNBT(out, this.data.saveFromNBT(new NBTTagCompound()));
+        NBTTagCompound comp = this.data.saveFromNBT(new NBTTagCompound());
+        ByteBufUtils.writeNBT(out, comp);
         ByteBufUtils.writeNBT(out, this.clientData);
     }
 
@@ -51,7 +52,8 @@ public final class PingPacket extends AbstractPacket {
         EntityPlayer sendingPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(playerName);
         if (sendingPlayer != null) {
             DBCData dbcData = DBCData.get(sendingPlayer);
-            dbcData.loadFromNBT(ByteBufUtils.readNBT(in));
+            NBTTagCompound comp = ByteBufUtils.readNBT(in);
+            dbcData.loadFromNBT(comp);
             dbcData.loadClientSideData(ByteBufUtils.readNBT(in));
         }
     }

@@ -23,7 +23,14 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import noppes.npcs.client.CustomNpcResourceListener;
 import noppes.npcs.client.gui.player.inventory.GuiCNPCInventory;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiCustomScroll;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.GuiNpcTextField;
+import noppes.npcs.client.gui.util.ICustomScrollListener;
+import noppes.npcs.client.gui.util.IGuiData;
+import noppes.npcs.client.gui.util.IScrollData;
+import noppes.npcs.client.gui.util.ITextfieldListener;
 import noppes.npcs.constants.EnumScrollData;
 import org.lwjgl.opengl.GL11;
 import tconstruct.client.tabs.AbstractTab;
@@ -96,11 +103,11 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         guiScroll.guiLeft = guiLeft + 4;
         guiScroll.guiTop = guiTop + 26;
 
-        GuiNpcButton selectButton = new GuiNpcButton(1, guiLeft + 5, guiTop + ySize - 11, "form.select");
+        GuiNpcButton selectButton = new GuiNpcButton(1, guiLeft + 5, guiTop + ySize - 11, "gui.select");
         selectButton.width = 65;
         this.addButton(selectButton);
 
-        GuiNpcButton clearButton = new GuiNpcButton(2, guiLeft + 75, guiTop + ySize - 11, "form.clear");
+        GuiNpcButton clearButton = new GuiNpcButton(2, guiLeft + 75, guiTop + ySize - 11, "gui.clear");
         clearButton.width = 65;
         this.addButton(clearButton);
 

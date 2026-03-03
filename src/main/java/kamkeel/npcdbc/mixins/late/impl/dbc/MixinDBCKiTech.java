@@ -9,6 +9,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientCache;
+import kamkeel.npcdbc.client.DBCMoveHelper;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -28,6 +29,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.input.Keyboard;
 import org.spongepowered.asm.mixin.Mixin;
@@ -37,20 +41,20 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.UUID;
+
+import noppes.npcs.client.ClientAbilityState;
+
 import static kamkeel.npcdbc.constants.DBCForm.UltraInstinct;
 
 @Mixin(value = DBCKiTech.class, remap = false)
 public abstract class MixinDBCKiTech {
 
     @Shadow
-    public static void mv(float strafe, float frward, EntityPlayer var4, float add) {
-
-    }
+    public static void mv(float strafe, float frward, EntityPlayer var4, float add) {}
 
     @Shadow
-    public static void setThrowableHeading(Entity e, double par1, double par3, double par5, float par7, float par8) {
-
-    }
+    public static void setThrowableHeading(Entity e, double par1, double par3, double par5, float par7, float par8) {}
 
     @Redirect(method = "Ascend", at = @At(value = "FIELD", target = "Lnet/minecraft/client/entity/EntityClientPlayerMP;rotationPitch:F", remap = true, ordinal = 0))
     private static float disableOozaruTransformInCustomForm(EntityClientPlayerMP instance) {
@@ -73,12 +77,22 @@ public abstract class MixinDBCKiTech {
         if (ClientCache.kiRevamp)
             ci.cancel();
     }
-//
-//    @ModifyArgs(method = "DashKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
-//    private static void changeSprintSpeed(Args args) {
-//        float speed = args.get(3);
-//        args.set(3, speed * DBCData.getClient().getSprintSpeed());
-//    }
+
+    @Inject(method = "DashKi", at = @At("HEAD"), cancellable = true)
+    private static void enhancedDashKi(boolean sprint, CallbackInfo ci) {
+        if (ClientCache.enhancedMovement) {
+            DBCMoveHelper.DashKi(sprint);
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "FloatKi", at = @At("HEAD"), cancellable = true)
+    private static void enhancedFloatKi(KeyBinding kiFlight, KeyBinding keyBindJump, KeyBinding keyBindSneak, CallbackInfo ci) {
+        if (ClientCache.enhancedMovement) {
+            DBCMoveHelper.FloatKi(kiFlight, keyBindJump, keyBindSneak);
+            ci.cancel();
+        }
+    }
 
     @Redirect(method = "DashKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
     private static void changeSprintSpeed(float f4, float f5, EntityPlayer pitch, float speedY) {
@@ -86,24 +100,11 @@ public abstract class MixinDBCKiTech {
         mv(f4, f5, pitch, speedY);
     }
 
-    //    @ModifyArgs(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
-//    private static void changeBaseSpeed(Args args) {
-//        float speed = args.get(3);
-//        args.set(3, speed * DBCData.getClient().getBaseFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100);
-//
-//    }
     @Redirect(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
     private static void changeBaseSpeed(float f4, float f5, EntityPlayer pitch, float speedY) {
         speedY *= DBCData.getClient().getBaseFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100f;
         mv(f4, f5, pitch, speedY);
     }
-
-//    @ModifyArgs(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;setThrowableHeading(Lnet/minecraft/entity/Entity;DDDFF)V"))
-//    private static void changeDynamic(Args args) {
-//        float speed = args.get(4);
-//        args.set(4, speed * DBCData.getClient().getDynamicFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100);
-//
-//    }
 
     @Redirect(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;setThrowableHeading(Lnet/minecraft/entity/Entity;DDDFF)V"))
     private static void changeDynamic(Entity e, double par1, double par3, double par5, float par7, float par8) {
@@ -113,13 +114,10 @@ public abstract class MixinDBCKiTech {
 
     @Inject(method = "FloatKi", at = @At(value = "FIELD", target = "LJinRyuu/DragonBC/common/DBCKiTech;floating:Z", ordinal = 7, shift = At.Shift.AFTER))
     private static void isFlying(KeyBinding kiFlight, KeyBinding keyBindJump, KeyBinding keyBindSneak, CallbackInfo ci) {
-
         if (DBCData.getClient().isFlying != DBCKiTech.floating) {
             DBCData.getClient().isFlying = DBCKiTech.floating;
             DBCPacketHandler.Instance.sendToServer(new DBCSetValPacket(DBCData.getClient().player, EnumNBTType.BOOLEAN, "DBCisFlying", DBCKiTech.floating));
         }
-
-
     }
 
     @Redirect(method = "FloatKi", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;PlayerFlyingDragDownOn:Z"))
@@ -135,6 +133,9 @@ public abstract class MixinDBCKiTech {
         if (!DBCData.getClient().flightEnabled)
             ci.cancel();
 
+        // Suppress DBC flight during abilities that control movement (e.g. Slam)
+        if (ClientAbilityState.hasAbilityMovement && ClientAbilityState.activePhase)
+            ci.cancel();
     }
 
 
@@ -187,7 +188,7 @@ public abstract class MixinDBCKiTech {
         }
     }
 
-    @Redirect(method = "Ascend", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;StusEfctsMe(I)Z"))
+    @Redirect(method = "Ascend", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;StusEfctsMe(I)Z", ordinal = 2))
     private static boolean fixSomeFormsNotAscendingProperly5(int ste, @Local(name = "useUltraInstinct2") LocalBooleanRef useUltraInstinct2) {
         PlayerDBCInfo dbc = PlayerDataUtil.getClientDBCInfo();
         int id = dbc.selectedDBCForm;
@@ -310,7 +311,7 @@ public abstract class MixinDBCKiTech {
 
 
             if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
-                DBCPacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -10, false));
+                DBCPacketHandler.Instance.sendToServer(new TransformPacket(-10, false));
             else {
                 if (form.requiredForm.containsKey((int) JRMCoreH.Race)) {
                     int id = dbcData.stats.getJRMCPlayerID();
@@ -318,7 +319,7 @@ public abstract class MixinDBCKiTech {
                     JRMCoreH.data2[id] = JRMCoreH.State + ";" + JRMCoreH.data2[id].split(";")[1];
                 }
 
-                DBCPacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -1, false));
+                DBCPacketHandler.Instance.sendToServer(new TransformPacket(-1, false));
             }
             ci.cancel();
 

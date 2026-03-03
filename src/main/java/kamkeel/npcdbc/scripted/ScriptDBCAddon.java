@@ -10,21 +10,23 @@ import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormMastery;
 import kamkeel.npcdbc.api.outline.IOutline;
+import kamkeel.npcdbc.api.skill.ICustomSkill;
+import kamkeel.npcdbc.api.skill.ISkillContainer;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
+import kamkeel.npcdbc.controllers.SkillController;
 import kamkeel.npcdbc.data.KiAttack;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.util.DBCUtils;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.player.DBCSetAllowFlight;
 import kamkeel.npcdbc.util.PlayerDataUtil;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -36,8 +38,6 @@ import noppes.npcs.util.ValueUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import static JinRyuu.JRMCore.JRMCoreH.getInt;
 
 // Implemented by Kam, Ported from Goatee Design
 @SuppressWarnings({"rawtypes", "unused"})
@@ -60,6 +60,14 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     public void setLockOnTarget(IEntityLivingBase lockOnTarget) {
         this.dbcData.setLockOnTarget(lockOnTarget == null ? null : lockOnTarget.getMCEntity());
+    }
+
+    public IEntityLivingBase getLockOnTarget() {
+        return this.dbcData.getLockOnTarget();
+    }
+
+    public boolean hasLockOnTarget() {
+        return this.dbcData.hasLockOnTarget();
     }
 
     @Override
@@ -119,7 +127,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public boolean isTurboOn() {
-        return dbcData.containsSE(3);
+        return dbcData.simplifiedDBCData.isTurboOn();
     }
 
     @Override
@@ -133,7 +141,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public int getMaxBody() {
-        return dbcData.stats.getMaxBody();
+        return dbcData.simplifiedDBCData.getMaxBody();
     }
 
     /**
@@ -149,7 +157,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public float getBodyPercentage() {
-        return dbcData.stats.getCurrentBodyPercentage();
+        return dbcData.simplifiedDBCData.getBodyPercentage();
     }
 
     /**
@@ -157,7 +165,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public int getMaxKi() {
-        return dbcData.stats.getMaxKi();
+        return dbcData.simplifiedDBCData.getMaxKi();
     }
 
     /**
@@ -165,7 +173,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public int getMaxStamina() {
-        return dbcData.stats.getMaxStamina();
+        return dbcData.simplifiedDBCData.getMaxStamina();
     }
 
     /**
@@ -173,7 +181,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public int[] getAllAttributes() {
-        return dbcData.stats.getAllAttributes();
+        return dbcData.simplifiedDBCData.getAllAttributes();
     }
 
     /**
@@ -300,12 +308,12 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public int getFullAttribute(int attributeID) {
-        return dbcData.stats.getFullAttribute(attributeID);
+        return dbcData.simplifiedDBCData.getFullAttribute(attributeID);
     }
 
     @Override
     public int[] getAllFullAttributes() {
-        return dbcData.stats.getAllFullAttributes();
+        return dbcData.simplifiedDBCData.getAllFullAttributes();
     }
 
     @Override
@@ -323,10 +331,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public String getRaceName() {
-        if (this.getRace() >= 0 && this.getRace() <= 5) {
-            return JRMCoreH.Races[this.getRace()];
-        }
-        return null;
+        return dbcData.simplifiedDBCData.getRaceName();
     }
 
     /**
@@ -334,9 +339,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public String getCurrentDBCFormName() {
-        int race = this.getRace();
-        int form = this.getForm();
-        return DBCAPI.Instance().getFormName(race, form);
+        return dbcData.simplifiedDBCData.getCurrentDBCFormName();
     }
 
     /**
@@ -498,7 +501,16 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public boolean isChargingKi() {
-        return dbcData.stats.isChargingKiAttack();
+        return dbcData.simplifiedDBCData.isChargingKiAttack();
+    }
+
+    /**
+     * @param skillname Check JRMCoreH.DBCSkillNames
+     * @return returns true if player has skill, returns false otherwise
+     */
+    @Override
+    public boolean hasSkill(String skillname) {
+        return dbcData.hasSkill(skillname);
     }
 
     /**
@@ -507,13 +519,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public int getSkillLevel(String skillname) {
-        int skillIndex = DBCUtils.getDBCSkillIndex(skillname);
-        if (skillIndex == -1) {
-            throw new CustomNPCsException("Skill name not recognized");
-        }
-        String playerSkillString = nbt.getString("jrmcSSlts");
-
-        return JRMCoreH.SklLvl(skillIndex, playerSkillString.split(","));
+        return dbcData.getSkillLevel(skillname);
     }
 
     /**
@@ -522,7 +528,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public int getMaxStat(int statID) {
-        return dbcData.stats.getMaxStat(statID);
+        return dbcData.simplifiedDBCData.getMaxStat(statID);
     }
 
     /**
@@ -531,7 +537,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public int getCurrentStat(int statID) {
-        return dbcData.stats.getCurrentStat(statID);
+        return dbcData.simplifiedDBCData.getCurrentStat(statID);
     }
 
     /**
@@ -544,12 +550,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public int getMajinAbsorptionRace() {
-        if (getRace() != 5)
-            return 0;
-        String s = nbt.getString("jrmcMajinAbsorptionData");
-        String[] data = s.split(",");
-        String value = data.length >= 3 ? data[1] : "0";
-        return Integer.parseInt(value);
+        return dbcData.simplifiedDBCData.getMajinAbsorptionRace();
     }
 
     @Override
@@ -568,10 +569,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public int getMajinAbsorptionPower() {
-        if (getRace() != 5)
-            return 0;
-        String s = nbt.getString("jrmcMajinAbsorptionData");
-        return JRMCoreH.getMajinAbsorptionValueS(s);
+        return dbcData.simplifiedDBCData.getMajinAbsorptionPower();
     }
 
     @Override
@@ -594,43 +592,42 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public boolean isKO() {
-        int currentKO = getInt(player, "jrmcHar4va");
-        return currentKO > 0;
+        return dbcData.simplifiedDBCData.isKO();
     }
 
     /**
      * @return True if either MUI or UI Omen
      */
     public boolean isUI() {
-        return dbcData.isForm(DBCForm.UltraInstinct);
+        return dbcData.simplifiedDBCData.isUI();
     }
 
     public boolean isMUI() {
-        return dbcData.isForm(DBCForm.MasteredUltraInstinct);
+        return dbcData.simplifiedDBCData.isMUI();
     }
 
     public boolean isMystic() {
-        return dbcData.isForm(DBCForm.Mystic);
+        return dbcData.simplifiedDBCData.isMystic();
     }
 
     public boolean isKaioken() {
-        return dbcData.isForm(DBCForm.Kaioken);
+        return dbcData.simplifiedDBCData.isKaioken();
     }
 
     public boolean isGOD() {
-        return dbcData.isForm(DBCForm.GodOfDestruction);
+        return dbcData.simplifiedDBCData.isGOD();
     }
 
     public boolean isLegendary() {
-        return dbcData.isForm(DBCForm.Legendary);
+        return dbcData.simplifiedDBCData.isLegendary();
     }
 
     public boolean isDivine() {
-        return dbcData.isForm(DBCForm.Divine);
+        return dbcData.simplifiedDBCData.isDivine();
     }
 
     public boolean isMajin() {
-        return dbcData.isForm(DBCForm.Majin);
+        return dbcData.simplifiedDBCData.isMajin();
     }
 
     @Override
@@ -640,12 +637,24 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public boolean isFlying() {
-        return dbcData.isFlying;
+        return dbcData.simplifiedDBCData.isFlying();
     }
 
     @Override
     public void setAllowFlight(boolean allowFlight) {
         dbcData.flightEnabled = allowFlight;
+
+        // If disabling flight while player is currently flying, also stop flight
+        if (!allowFlight && dbcData.isFlying) {
+            dbcData.setFlight(false);
+        }
+
+        // Sync flightEnabled to client
+        DBCPacketHandler.Instance.sendToPlayer(
+            new DBCSetAllowFlight(allowFlight),
+            (EntityPlayerMP) player
+        );
+
         dbcData.saveNBTData(false);
     }
 
@@ -680,6 +689,13 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         dbcData.flightEnabled = true;
         dbcData.flightSpeedRelease = 100;
         dbcData.flightGravity = true;
+
+        // Sync flightEnabled to client
+        DBCPacketHandler.Instance.sendToPlayer(
+            new DBCSetAllowFlight(true),
+            (EntityPlayerMP) player
+        );
+
         dbcData.saveNBTData(false);
     }
 
@@ -688,10 +704,10 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         dbcData.sprintSpeed = ValueUtil.clamp(speed, 1, 20);
         dbcData.saveNBTData(false);
     }
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
-    // Form stuff
 
+    /// ///////////////////////////////////////////
+    /// ///////////////////////////////////////////
+    // Form stuff
     @Override
     public boolean hasCustomForm(String formName) {
         Form form = FormController.getInstance().getFormFromName(formName);
@@ -755,7 +771,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public IForm getSelectedForm() {
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
-        if(c.selectedForm == -1)
+        if (c.selectedForm == -1)
             return null;
 
         return FormController.getInstance().get(c.selectedForm);
@@ -807,28 +823,20 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     public boolean isInCustomForm() {
-        return PlayerDataUtil.getDBCInfo(player).isInCustomForm();
+        return dbcData.simplifiedDBCData.isInCustomForm();
     }
 
     @Override
     public boolean isInCustomForm(IForm form) {
-        return dbcData.addonFormID == form.getID();
+        return dbcData.simplifiedDBCData.isInCustomForm(form);
     }
 
     public boolean isInCustomForm(int formID) {
-        return PlayerDataUtil.getDBCInfo(player).isInForm(formID);
+        return dbcData.simplifiedDBCData.isInCustomForm(formID);
     }
 
     public IForm getCurrentForm() {
-        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
-        if (info != null) {
-            Form current = info.getCurrentForm();
-            if (current != null) {
-                return current;
-            }
-        }
-
-        return dbcData.getForm();
+        return dbcData.simplifiedDBCData.getCurrentForm();
     }
 
     public void setCustomForm(int formID) {
@@ -900,8 +908,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         setCustomForm(formName, false);
     }
 
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
+    /// ///////////////////////////////////////////
+    /// ///////////////////////////////////////////
     // Form Mastery stuff
     @Override
     public void setCustomMastery(int formID, float value) {
@@ -991,10 +999,9 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
 
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
+    /// ///////////////////////////////////////////
+    /// ///////////////////////////////////////////
     // Aura stuff
-
     @Override
     public boolean hasAura(String auraName) {
         Aura aura = AuraController.getInstance().getAuraFromName(auraName);
@@ -1114,7 +1121,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     public IAura getAura() {
-        return dbcData.getAura();
+        return dbcData.simplifiedDBCData.getAura();
     }
 
     @Override
@@ -1169,27 +1176,26 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public boolean isInAura() {
-        return PlayerDataUtil.getDBCInfo(player).isInCustomAura();
+        return dbcData.simplifiedDBCData.isInAura();
     }
 
     @Override
     public boolean isInAura(IAura aura) {
-        if (aura == null)
-            return dbcData.auraID == -1;
-        return aura.getID() == dbcData.auraID;
+        return dbcData.simplifiedDBCData.isInAura(aura);
     }
 
     @Override
     public boolean isInAura(String auraName) {
-        return isInAura(AuraController.getInstance().get(auraName));
+        return dbcData.simplifiedDBCData.isInAura(auraName);
     }
 
     @Override
     public boolean isInAura(int auraID) {
-        return auraID == dbcData.auraID;
+        return dbcData.simplifiedDBCData.isInAura(auraID);
     }
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
+
+    /// ///////////////////////////////////////////
+    /// ///////////////////////////////////////////
 
 
     @Override
@@ -1216,7 +1222,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setOutline(int outlineID) {
-        if(outlineID == -1){
+        if (outlineID == -1) {
             dbcData.setOutline(null);
             return;
         }
@@ -1230,7 +1236,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public IOutline getOutline() {
-        return dbcData.getOutline();
+        return dbcData.simplifiedDBCData.getOutline();
     }
 
     @Override
@@ -1351,34 +1357,35 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
+    public boolean isTransforming() {
+        return dbcData.containsSE(1);
+    }
+
+    @Override
     public boolean isReleasing() {
-        return (dbcData.StatusEffects.contains(JRMCoreH.StusEfcts[4]));
+        return dbcData.containsSE(4);
     }
 
     @Override
     public boolean isMeditating() {
         if (dbcData.Skills.contains("MD")) {
-            return (dbcData.StatusEffects.contains(JRMCoreH.StusEfcts[4]));
+            return isReleasing();
         } else return false;
     }
 
     @Override
     public boolean isSuperRegen() {
-        if (dbcData.stats.getCurrentBodyPercentage() < 100f && dbcData.getRace() == DBCRace.MAJIN && Integer.parseInt(dbcData.RacialSkills.replace("TR", "")) > 0)
-            return isReleasing();
-        return false;
+        return dbcData.simplifiedDBCData.isSuperRegen();
     }
-
 
     @Override
     public boolean isSwooping() {
-        return (dbcData.StatusEffects.contains(JRMCoreH.StusEfcts[7]));
+        return dbcData.containsSE(7);
     }
 
     @Override
     public boolean isInMedicalLiquid() {
-        Block block = player.worldObj.getBlock((int) Math.floor(player.posX), (int) Math.floor(player.posY), (int) Math.floor(player.posZ));
-        return (block == Block.getBlockFromName("jinryuudragonblockc:tile.BlockHealingPods"));
+        return dbcData.simplifiedDBCData.isInMedicalLiquid();
     }
 
     @Override
@@ -1386,16 +1393,16 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         String[] tech = new String[0];
         switch (slot) {
             case 1:
-                tech = this.nbt.getString("jrmcTech1").replace(";",",").split(",");
+                tech = this.nbt.getString("jrmcTech1").replace(";", ",").split(",");
                 break;
             case 2:
-                tech = this.nbt.getString("jrmcTech2").replace(";",",").split(",");
+                tech = this.nbt.getString("jrmcTech2").replace(";", ",").split(",");
                 break;
             case 3:
-                tech = this.nbt.getString("jrmcTech3").replace(";",",").split(",");
+                tech = this.nbt.getString("jrmcTech3").replace(";", ",").split(",");
                 break;
             case 4:
-                tech = this.nbt.getString("jrmcTech4").replace(";",",").split(",");
+                tech = this.nbt.getString("jrmcTech4").replace(";", ",").split(",");
                 break;
         }
 
@@ -1420,7 +1427,24 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
+    public ISkillContainer getCustomSkillData(int skillID) {
+        return getCustomSkillData(SkillController.Instance.getSkill(skillID));
+    }
+
+    @Override
+    public ISkillContainer getCustomSkillData(ICustomSkill skill) {
+        if (skill == null)
+            return null;
+        return dbcData.customSkills.get(skill.getId());
+    }
+
+    @Override
     public void setKo(int KoTime) {
-        nbt.setInteger("jrmcHar4va",KoTime);
+        nbt.setInteger("jrmcHar4va", KoTime);
+    }
+
+    @Override
+    public int getLevel() {
+        return dbcData.simplifiedDBCData.getLevel();
     }
 }

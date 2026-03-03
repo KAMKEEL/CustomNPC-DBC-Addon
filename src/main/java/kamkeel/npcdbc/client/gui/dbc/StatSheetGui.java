@@ -1,7 +1,13 @@
 package kamkeel.npcdbc.client.gui.dbc;
 
 import JinRyuu.DragonBC.common.DBCConfig;
-import JinRyuu.JRMCore.*;
+import JinRyuu.JRMCore.JRMCoreClient;
+import JinRyuu.JRMCore.JRMCoreConfig;
+import JinRyuu.JRMCore.JRMCoreEH;
+import JinRyuu.JRMCore.JRMCoreGuiButtons00;
+import JinRyuu.JRMCore.JRMCoreGuiButtonsA3;
+import JinRyuu.JRMCore.JRMCoreGuiScreen;
+import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -36,9 +42,80 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import static JinRyuu.JRMCore.JRMCoreGuiScreen.kqGW3Z;
-import static JinRyuu.JRMCore.JRMCoreH.*;
-
-import java.lang.Class;
+import static JinRyuu.JRMCore.JRMCoreH.Algnmnt_Good;
+import static JinRyuu.JRMCore.JRMCoreH.Algnmnt_Neut;
+import static JinRyuu.JRMCore.JRMCoreH.ClassesDBC;
+import static JinRyuu.JRMCore.JRMCoreH.ClassesDBCDesc;
+import static JinRyuu.JRMCore.JRMCoreH.PlyrAttrbts;
+import static JinRyuu.JRMCore.JRMCoreH.PlyrSettingsB;
+import static JinRyuu.JRMCore.JRMCoreH.PlyrSkillX;
+import static JinRyuu.JRMCore.JRMCoreH.PlyrSkills;
+import static JinRyuu.JRMCore.JRMCoreH.Race;
+import static JinRyuu.JRMCore.JRMCoreH.Races;
+import static JinRyuu.JRMCore.JRMCoreH.SklLvl;
+import static JinRyuu.JRMCore.JRMCoreH.SklLvlX;
+import static JinRyuu.JRMCore.JRMCoreH.SklLvl_KiBs;
+import static JinRyuu.JRMCore.JRMCoreH.State;
+import static JinRyuu.JRMCore.JRMCoreH.State2;
+import static JinRyuu.JRMCore.JRMCoreH.StusEfctsMe;
+import static JinRyuu.JRMCore.JRMCoreH.TransFrStBnF;
+import static JinRyuu.JRMCore.JRMCoreH.TransFrStBnP;
+import static JinRyuu.JRMCore.JRMCoreH.TransHalfSaiStBnF;
+import static JinRyuu.JRMCore.JRMCoreH.TransHalfSaiStBnP;
+import static JinRyuu.JRMCore.JRMCoreH.TransHmStBnF;
+import static JinRyuu.JRMCore.JRMCoreH.TransHmStBnP;
+import static JinRyuu.JRMCore.JRMCoreH.TransMaStBnF;
+import static JinRyuu.JRMCore.JRMCoreH.TransMaStBnP;
+import static JinRyuu.JRMCore.JRMCoreH.TransNaStBnF;
+import static JinRyuu.JRMCore.JRMCoreH.TransNaStBnP;
+import static JinRyuu.JRMCore.JRMCoreH.TransSaiStBnF;
+import static JinRyuu.JRMCore.JRMCoreH.TransSaiStBnP;
+import static JinRyuu.JRMCore.JRMCoreH.Upg;
+import static JinRyuu.JRMCore.JRMCoreH.WeightOn;
+import static JinRyuu.JRMCore.JRMCoreH.acm;
+import static JinRyuu.JRMCore.JRMCoreH.algnCur;
+import static JinRyuu.JRMCore.JRMCoreH.align;
+import static JinRyuu.JRMCore.JRMCoreH.attrCst;
+import static JinRyuu.JRMCore.JRMCoreH.attrDsc;
+import static JinRyuu.JRMCore.JRMCoreH.attrLvlNext;
+import static JinRyuu.JRMCore.JRMCoreH.attrNms;
+import static JinRyuu.JRMCore.JRMCoreH.attributeMultiplier;
+import static JinRyuu.JRMCore.JRMCoreH.cct;
+import static JinRyuu.JRMCore.JRMCoreH.clbe;
+import static JinRyuu.JRMCore.JRMCoreH.cldgy;
+import static JinRyuu.JRMCore.JRMCoreH.cldr;
+import static JinRyuu.JRMCore.JRMCoreH.cllr;
+import static JinRyuu.JRMCore.JRMCoreH.curRelease;
+import static JinRyuu.JRMCore.JRMCoreH.curTP;
+import static JinRyuu.JRMCore.JRMCoreH.dns;
+import static JinRyuu.JRMCore.JRMCoreH.dnsGender;
+import static JinRyuu.JRMCore.JRMCoreH.ev_oob;
+import static JinRyuu.JRMCore.JRMCoreH.getArcRsrv;
+import static JinRyuu.JRMCore.JRMCoreH.getBonusAttributes;
+import static JinRyuu.JRMCore.JRMCoreH.getFormID;
+import static JinRyuu.JRMCore.JRMCoreH.getFormMasteryAttributeMulti;
+import static JinRyuu.JRMCore.JRMCoreH.getFormMasteryData;
+import static JinRyuu.JRMCore.JRMCoreH.getFormMasteryValue;
+import static JinRyuu.JRMCore.JRMCoreH.getMajinAbsorption;
+import static JinRyuu.JRMCore.JRMCoreH.getPlayerAttribute;
+import static JinRyuu.JRMCore.JRMCoreH.getPlayerLevel;
+import static JinRyuu.JRMCore.JRMCoreH.getTransformationName;
+import static JinRyuu.JRMCore.JRMCoreH.isFused;
+import static JinRyuu.JRMCore.JRMCoreH.isPowerTypeChakra;
+import static JinRyuu.JRMCore.JRMCoreH.lgndb;
+import static JinRyuu.JRMCore.JRMCoreH.mstc_arc;
+import static JinRyuu.JRMCore.JRMCoreH.mstc_humnam;
+import static JinRyuu.JRMCore.JRMCoreH.mstc_sai;
+import static JinRyuu.JRMCore.JRMCoreH.numSep;
+import static JinRyuu.JRMCore.JRMCoreH.rc_arc;
+import static JinRyuu.JRMCore.JRMCoreH.rc_humNam;
+import static JinRyuu.JRMCore.JRMCoreH.rc_sai;
+import static JinRyuu.JRMCore.JRMCoreH.round;
+import static JinRyuu.JRMCore.JRMCoreH.spdFrm;
+import static JinRyuu.JRMCore.JRMCoreH.stat;
+import static JinRyuu.JRMCore.JRMCoreH.statInc;
+import static JinRyuu.JRMCore.JRMCoreH.trl;
+import static JinRyuu.JRMCore.JRMCoreH.weightPerc;
 
 @SideOnly(Side.CLIENT)
 public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
@@ -456,7 +533,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             (bonusOutput > 0 ? numSep(bonusOutput) : null),
             0,
             (int) (100.0F - weightPerc(1) * 100.0F)
-        ) +  getFormAdvancedStat(DBCStatistics.Defense);
+        ) + getFormAdvancedStat(DBCStatistics.Defense);
         dynamicLabels.get("defense")
             .updateDisplay(formStatColor + numSep(longValue))
             .setTooltip(defDesc);
@@ -495,7 +572,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                     null,
                     (isReductionWorthDisplaying ? dmgReduction : 0),
                     0
-                ) +  getFormAdvancedStat(DBCStatistics.Body)
+                ) + getFormAdvancedStat(DBCStatistics.Body)
             );
 
         stat = stat(mc.thePlayer, 2, 1, 3, statVals[2], dbcClient.Race, dbcClient.Class, 0);
@@ -608,7 +685,8 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         //Button to adjust GUI
 
         if (ConfigDBCClient.EnableDebugStatSheetSwitching) {
-            String s = (!ConfigDBCClient.EnhancedGui ? "Old" : "§aModern") + " GUI";
+            String guiType = StatCollector.translateToLocal(!ConfigDBCClient.EnhancedGui ? "statsheet.old" : "statsheet.modern");
+            String s = (!ConfigDBCClient.EnhancedGui ? guiType : "§a" + guiType) + " GUI";
             int button1Width = this.fontRendererObj.getStringWidth(s) + 10;
             this.buttonList.add(new JRMCoreGuiButtons00(303030303, guiWidthOffset + 260, height / 2 - 10, button1Width + 8, 20, s, 0));
         }
@@ -837,12 +915,12 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
 
 
         if (JRMCoreEH.dt) {
-            String name = "Update vanity";
+            String name = StatCollector.translateToLocal("statsheet.updateVanity");
             int width = this.fontRendererObj.getStringWidth(name);
             UPDATE_VANITY_BUTTON = new JRMCoreGuiButtons00(100, guiWidthOffset - 78, guiHeightOffset, width + 8, 20, name, 0);
             buttonList.add(UPDATE_VANITY_BUTTON);
 
-            name = (JRMCoreEH.gk ? "Hide" : "Show") + " own vanity";
+            name = StatCollector.translateToLocal(JRMCoreEH.gk ? "statsheet.hideVanity" : "statsheet.showVanity");
             width = this.fontRendererObj.getStringWidth(name);
             buttonList.add(new JRMCoreGuiButtons00(101, guiWidthOffset - 88, guiHeightOffset + 21, width + 8, 20, name, 0));
         }
@@ -954,7 +1032,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
 
     public String getAttributeBonusDescription(int attributeID) {
         if (JRMCoreConfig.JRMCABonusOn) {
-            String description = "\nBonus Attributes:";
+            String description = "\n" + StatCollector.translateToLocal("statsheet.bonusAttributes");
             String[] bonuses = getBonusAttributes(attributeID).split("\\|");
             String[] var5 = bonuses;
             int var6 = bonuses.length;
@@ -977,9 +1055,9 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
     public String getFormAdvancedStat(int statID) {
         DBCData dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
         Form form = dbcData.getForm();
-        if(form != null && form.advanced.isStatEnabled(statID)){
+        if (form != null && form.advanced.isStatEnabled(statID)) {
             String description = "";
-            if(ConfigDBCClient.AdvancedGui){
+            if (ConfigDBCClient.AdvancedGui) {
                 description += "\n§8" + Utility.removeColorCodes(form.getMenuName()) + ":";
                 description += "§8\n> ";
                 int bonus = form.advanced.getStat(statID).getBonus();
@@ -990,7 +1068,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                 float multi = form.advanced.getStat(statID).getMultiplier();
                 String multiplier = String.format("%.2f", multi);
 
-                if(multi > 1.0f)
+                if (multi > 1.0f)
                     description += "§2";
                 else
                     description += "§4";
@@ -1005,7 +1083,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         String description = "";
         DBCData dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
         if (!dbcData.bonus.getCurrentBonuses().isEmpty()) {
-            description += "\nBonus Stats:";
+            description += "\n" + StatCollector.translateToLocal("statsheet.bonusStats");
             for (PlayerBonus playerBonus : dbcData.bonus.getCurrentBonuses().values()) {
                 float value = getBonusValue(playerBonus, attributeID);
                 if (value == 0)

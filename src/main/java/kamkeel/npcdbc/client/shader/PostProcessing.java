@@ -6,11 +6,14 @@ import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.gui.hud.formWheel.HUDFormWheel;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import net.coderbot.iris.rendertarget.IRenderTargetExt;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.shader.Framebuffer;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -26,10 +29,61 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.function.ToIntFunction;
 
-import static kamkeel.npcdbc.client.shader.ShaderHelper.*;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.*;
+import static kamkeel.npcdbc.client.shader.ShaderHelper.additiveCombine;
+import static kamkeel.npcdbc.client.shader.ShaderHelper.blur;
+import static kamkeel.npcdbc.client.shader.ShaderHelper.downsample13;
+import static kamkeel.npcdbc.client.shader.ShaderHelper.getModelView;
+import static kamkeel.npcdbc.client.shader.ShaderHelper.getProjection;
+import static kamkeel.npcdbc.client.shader.ShaderHelper.releaseShader;
+import static kamkeel.npcdbc.client.shader.ShaderHelper.uniform1f;
+import static kamkeel.npcdbc.client.shader.ShaderHelper.uniform1i;
+import static kamkeel.npcdbc.client.shader.ShaderHelper.uniformTexture;
+import static kamkeel.npcdbc.client.shader.ShaderHelper.uniformVec2;
+import static kamkeel.npcdbc.client.shader.ShaderHelper.useShader;
+import static org.lwjgl.opengl.GL11.GL_ALPHA_TEST;
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_COLOR_MATERIAL;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_DRAW_BUFFER;
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_FOG;
+import static org.lwjgl.opengl.GL11.GL_LIGHTING;
+import static org.lwjgl.opengl.GL11.GL_LINEAR;
+import static org.lwjgl.opengl.GL11.GL_NEAREST;
+import static org.lwjgl.opengl.GL11.GL_ONE;
+import static org.lwjgl.opengl.GL11.GL_READ_BUFFER;
+import static org.lwjgl.opengl.GL11.GL_RGBA;
+import static org.lwjgl.opengl.GL11.GL_RGBA8;
+import static org.lwjgl.opengl.GL11.GL_SCISSOR_TEST;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL11.GL_VIEWPORT;
+import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glColorMask;
+import static org.lwjgl.opengl.GL11.glDepthMask;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glGenTextures;
+import static org.lwjgl.opengl.GL11.glGetInteger;
+import static org.lwjgl.opengl.GL11.glGetTexImage;
+import static org.lwjgl.opengl.GL11.glLoadMatrix;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glTexImage2D;
+import static org.lwjgl.opengl.GL11.glTexParameteri;
+import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
+import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_COMPLETE;
+import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 
 @SideOnly(Side.CLIENT)
 public class PostProcessing {
@@ -88,8 +142,10 @@ public class PostProcessing {
             bloom(1.5f, false);
         }
 
-        if (bloomSupported && ShaderHelper.shadersEnabled() &&
-            mc.currentScreen instanceof HUDFormWheel && HUDFormWheel.BLUR_ENABLED) {
+        boolean isFormWheel = mc.currentScreen instanceof HUDFormWheel && HUDFormWheel.BLUR_ENABLED;
+        float blurIntensity = isFormWheel ? HUDFormWheel.BLUR_INTENSITY : 0;
+
+        if (bloomSupported && ShaderHelper.shadersEnabled() && isFormWheel) {
             Framebuffer buff = getMainBuffer();
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glLoadIdentity();
@@ -101,11 +157,11 @@ public class PostProcessing {
             drawToBuffers(0);
             disableGLState();
 
-            blurVertical(buff.framebufferTexture, HUDFormWheel.BLUR_INTENSITY, 0, 0, mc.displayWidth, mc.displayHeight);
+            blurVertical(buff.framebufferTexture, blurIntensity, 0, 0, mc.displayWidth, mc.displayHeight);
 
             buff.bindFramebuffer(false);
             disableGLState();
-            blurHorizontal(BLUR_TEXTURE, HUDFormWheel.BLUR_INTENSITY, 0, 0, mc.displayWidth, mc.displayHeight);
+            blurHorizontal(BLUR_TEXTURE, blurIntensity, 0, 0, mc.displayWidth, mc.displayHeight);
             releaseShader();
 
             glEnable(GL_DEPTH_TEST);
@@ -292,6 +348,14 @@ public class PostProcessing {
     }
 
     public static void setupDepthAndStencil() {
+        int BUFFER_ATTACHMENT_TYPE = IrisHelper.getDepthBufferType(MAIN);
+
+        if (BUFFER_ATTACHMENT_TYPE == GL_TEXTURE_2D) {
+            setupIrisStencil(IrisHelper.getDepthBufferPointer(MAIN));
+            return;
+        }
+
+
         OpenGlHelper.func_153176_h(OpenGlHelper.field_153199_f, MAIN.depthBuffer);
         if (net.minecraftforge.client.MinecraftForgeClient.getStencilBits() == 0) {
             OpenGlHelper.func_153186_a(OpenGlHelper.field_153199_f, 33190,
@@ -308,6 +372,14 @@ public class PostProcessing {
             OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e,
                 org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT,
                 OpenGlHelper.field_153199_f, MAIN.depthBuffer);
+        }
+    }
+
+    private static void setupIrisStencil(int depthBufferPointer) {
+        OpenGlHelper.func_153188_a(GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBufferPointer, 0);
+
+        if (MinecraftForgeClient.getStencilBits() != 0) {
+            OpenGlHelper.func_153188_a(GL_FRAMEBUFFER, GL30.GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthBufferPointer, 0);
         }
     }
 
@@ -545,5 +617,32 @@ public class PostProcessing {
         tessellator.draw();
 
         glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    public static class IrisHelper {
+        private static ToIntFunction<Framebuffer> bufferTypeSupplier;
+        private static ToIntFunction<Framebuffer> bufferPointerSupplier;
+
+
+        public static int getDepthBufferType(Framebuffer buffer) {
+            return bufferTypeSupplier.applyAsInt(buffer);
+        }
+
+        public static int getDepthBufferPointer(Framebuffer buffer) {
+            return bufferPointerSupplier.applyAsInt(buffer);
+        }
+
+        public static void init() {
+            try {
+                Class.forName("net.coderbot.iris.rendertarget.IRenderTargetExt");
+
+                bufferPointerSupplier = (buffer) -> ((IRenderTargetExt) buffer).iris$getDepthTextureId();
+                bufferTypeSupplier = (buffer) -> GL_TEXTURE_2D;
+
+            } catch (ClassNotFoundException ignored) {
+                bufferPointerSupplier = (buffer) -> buffer.depthBuffer;
+                bufferTypeSupplier = (buffer) -> OpenGlHelper.field_153199_f;
+            }
+        }
     }
 }

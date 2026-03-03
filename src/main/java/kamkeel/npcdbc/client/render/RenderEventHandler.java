@@ -41,8 +41,32 @@ import noppes.npcs.entity.EntityNPCInterface;
 import java.nio.FloatBuffer;
 import java.util.Iterator;
 
-import static kamkeel.npcdbc.client.shader.PostProcessing.*;
-import static org.lwjgl.opengl.GL11.*;
+import static kamkeel.npcdbc.client.shader.PostProcessing.DEFAULT_MODELVIEW;
+import static kamkeel.npcdbc.client.shader.PostProcessing.DEFAULT_PROJECTION;
+import static kamkeel.npcdbc.client.shader.PostProcessing.endBlooming;
+import static kamkeel.npcdbc.client.shader.PostProcessing.mc;
+import static kamkeel.npcdbc.client.shader.PostProcessing.startBlooming;
+import static org.lwjgl.opengl.GL11.GL_ALWAYS;
+import static org.lwjgl.opengl.GL11.GL_EQUAL;
+import static org.lwjgl.opengl.GL11.GL_GREATER;
+import static org.lwjgl.opengl.GL11.GL_KEEP;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_NOTEQUAL;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.GL_REPLACE;
+import static org.lwjgl.opengl.GL11.GL_STENCIL_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_STENCIL_TEST;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glDepthMask;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glLoadMatrix;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glStencilFunc;
+import static org.lwjgl.opengl.GL11.glStencilMask;
+import static org.lwjgl.opengl.GL11.glStencilOp;
 
 public class RenderEventHandler {
 
@@ -53,17 +77,15 @@ public class RenderEventHandler {
 
     @SubscribeEvent
     public void renderPotaraWhenFused(RenderPlayerEvent.SetArmorModel event) {
-        if (event.slot != 3 || event.stack != null)
+        if (Minecraft.getMinecraft().theWorld == null || event.slot != 3 || event.stack != null)
             return;
 
-
         DBCData dbcData = DBCData.get(event.entityPlayer);
-
         if (!dbcData.stats.isFused()) {
             return;
         }
 
-        
+
         DBCData data = DBCData.getData(event.entityPlayer);
         byte potaraFusionLevel = data.potaraFusionLevel;
         if (potaraFusionLevel == -1) {

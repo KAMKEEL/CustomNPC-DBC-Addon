@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.client.gui.hud;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.client.utils.Color;
+import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -12,11 +12,16 @@ import net.minecraft.util.ResourceLocation;
 public abstract class WheelSegment extends Gui {
 
     private static final int HOVER_TIME = 200;
-    public static ResourceLocation variant1 = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/hud/formwheel/GuiWheelVariant1.png");
-    public static ResourceLocation variant2 = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/hud/formwheel/GuiWheelVariant2.png");
+    public static ResourceLocation formVariant1 = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/hud/formwheel/GuiWheelVariant1.png");
+    public static ResourceLocation formVariant2 = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/hud/formwheel/GuiWheelVariant2.png");
 
     public static Color HOVERED = new Color(0xADD8E6, 0.65f);
     public static Color NOT_HOVERED = new Color(0xFFFFFF, 0.35f);
+
+    public static final int OPEN_TIME = 300;
+    public static final int OPEN_DELAY = 60;
+
+    public long startOpenTime = -1;
 
     public static double width = 124;
     public static double height = 124;
@@ -54,6 +59,10 @@ public abstract class WheelSegment extends Gui {
         this.index = index;
     }
 
+    public void startOpenAnimation(long baseTime) {
+        startOpenTime = baseTime + (long) index * OPEN_DELAY;
+    }
+
     public void setHoveredState(boolean newHoverState) {
 
         if (!isHovered && newHoverState) {
@@ -82,6 +91,20 @@ public abstract class WheelSegment extends Gui {
         return hoverScale;
     }
 
+    public float getOpenScale() {
+        if (startOpenTime < 0)
+            return 1;
+
+        float t = (float) (Minecraft.getSystemTime() - startOpenTime) / OPEN_TIME;
+
+        if (t <= 0)
+            return 0;
+        if (t >= 1)
+            return 1;
+
+        return (float) easeInSine(t);
+    }
+
     public void draw(FontRenderer fontRenderer) {
         currentColor = Color.lerpRGBA(NOT_HOVERED, HOVERED, hoverScale);
         currentColor.glColor();
@@ -92,12 +115,12 @@ public abstract class WheelSegment extends Gui {
     protected abstract void drawWheelItem(FontRenderer fontRenderer);
 
 
-    private void drawIndexedTexture() {
-
-        if (!ConfigDBCClient.AlteranteSelectionWheelTexture)
-            Minecraft.getMinecraft().getTextureManager().bindTexture(variant1);
-        else
-            Minecraft.getMinecraft().getTextureManager().bindTexture(variant2);
+    public void drawIndexedTexture() {
+        if (!ConfigDBCClient.AlteranteSelectionWheelTexture) {
+            Minecraft.getMinecraft().getTextureManager().bindTexture(formVariant1);
+        } else {
+            Minecraft.getMinecraft().getTextureManager().bindTexture(formVariant2);
+        }
 
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawingQuads();
@@ -106,7 +129,6 @@ public abstract class WheelSegment extends Gui {
         tessellator.addVertexWithUV(posX + width / 2, posY - (height / 2), (double) this.zLevel + 1, (index + 1) * f, 0);
         tessellator.addVertexWithUV(posX - width / 2, posY - (height / 2), (double) this.zLevel + 1, (index) * f, 0);
         tessellator.draw();
-
     }
 
 }

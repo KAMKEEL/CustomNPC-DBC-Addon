@@ -23,9 +23,19 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
+import noppes.npcs.client.ClientEventHandler;
 import noppes.npcs.client.CustomNpcResourceListener;
 import noppes.npcs.client.NoppesUtil;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiCustomScroll;
+import noppes.npcs.client.gui.util.GuiNPCInterface2;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.GuiNpcTextField;
+import noppes.npcs.client.gui.util.ICustomScrollListener;
+import noppes.npcs.client.gui.util.IGuiData;
+import noppes.npcs.client.gui.util.IScrollData;
+import noppes.npcs.client.gui.util.ISubGuiListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 import noppes.npcs.constants.EnumScrollData;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
@@ -219,7 +229,7 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
         GL11.glTranslatef(0.0F, entity.yOffset, 1F);
         RenderManager.instance.playerViewY = 180F;
 
-
+        ClientEventHandler.renderingEntityInGUI = true;
         // Render Entity
         GL11.glPushMatrix();
         try {
@@ -234,6 +244,8 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
         } catch (Exception ignored) {
         }
         GL11.glPopMatrix();
+
+        ClientEventHandler.renderingEntityInGUI = false;
 
         entity.prevRenderYawOffset = entity.renderYawOffset = f2;
         entity.prevRotationYaw = entity.rotationYaw = f3;

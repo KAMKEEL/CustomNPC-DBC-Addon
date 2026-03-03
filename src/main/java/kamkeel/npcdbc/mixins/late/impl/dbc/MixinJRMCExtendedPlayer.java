@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ExtendedPlayer.class)
 public abstract class MixinJRMCExtendedPlayer implements IExtendedEntityProperties {
 
-    @Shadow
+    @Shadow(remap = false)
     @Final
     private EntityPlayer player;
 

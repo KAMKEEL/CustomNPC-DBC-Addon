@@ -11,28 +11,30 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.outline.IOutline;
-import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcdbc.constants.DBCRace;
-import kamkeel.npcdbc.constants.DBCSettings;
-import kamkeel.npcdbc.constants.Effects;
+import kamkeel.npcdbc.api.skill.ICustomSkill;
+import kamkeel.npcdbc.client.utils.SimplifiedDBCData;
+import kamkeel.npcdbc.constants.*;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
+import kamkeel.npcdbc.controllers.SkillController;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
+import kamkeel.npcdbc.data.form.FacePartData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
+import kamkeel.npcdbc.data.overlay.OverlayChain;
+import kamkeel.npcdbc.data.overlay.OverlayManager;
+import kamkeel.npcdbc.data.skill.SkillContainer;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.network.DBCPacketHandler;
-import kamkeel.npcdbc.network.packets.player.DBCSetFlight;
-import kamkeel.npcdbc.network.packets.player.DBCUpdateLockOn;
-import kamkeel.npcdbc.network.packets.player.PingPacket;
-import kamkeel.npcdbc.network.packets.player.TurboPacket;
+import kamkeel.npcdbc.network.packets.player.*;
 import kamkeel.npcdbc.util.DBCUtils;
+import kamkeel.npcdbc.util.NBTHelper;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -42,15 +44,55 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import noppes.npcs.api.entity.IEntityLivingBase;
 import noppes.npcs.controllers.CustomEffectController;
 import noppes.npcs.controllers.data.EffectKey;
 import noppes.npcs.controllers.data.PlayerEffect;
 import noppes.npcs.scripted.CustomNPCsException;
+import noppes.npcs.scripted.NpcAPI;
 import noppes.npcs.util.ValueUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import static kamkeel.npcdbc.constants.DBCForm.*;
+import static kamkeel.npcdbc.constants.DBCForm.ArcoGod;
+import static kamkeel.npcdbc.constants.DBCForm.BlueEvo;
+import static kamkeel.npcdbc.constants.DBCForm.Divine;
+import static kamkeel.npcdbc.constants.DBCForm.FinalForm;
+import static kamkeel.npcdbc.constants.DBCForm.FirstForm;
+import static kamkeel.npcdbc.constants.DBCForm.GodOfDestruction;
+import static kamkeel.npcdbc.constants.DBCForm.HumanBuffed;
+import static kamkeel.npcdbc.constants.DBCForm.HumanFullRelease;
+import static kamkeel.npcdbc.constants.DBCForm.HumanGod;
+import static kamkeel.npcdbc.constants.DBCForm.Kaioken;
+import static kamkeel.npcdbc.constants.DBCForm.MajinEvil;
+import static kamkeel.npcdbc.constants.DBCForm.MajinFullPower;
+import static kamkeel.npcdbc.constants.DBCForm.MajinGod;
+import static kamkeel.npcdbc.constants.DBCForm.MajinPure;
+import static kamkeel.npcdbc.constants.DBCForm.MasteredSuperSaiyan;
+import static kamkeel.npcdbc.constants.DBCForm.Minimal;
+import static kamkeel.npcdbc.constants.DBCForm.Mystic;
+import static kamkeel.npcdbc.constants.DBCForm.NamekFullRelease;
+import static kamkeel.npcdbc.constants.DBCForm.NamekGiant;
+import static kamkeel.npcdbc.constants.DBCForm.NamekGod;
+import static kamkeel.npcdbc.constants.DBCForm.SecondForm;
+import static kamkeel.npcdbc.constants.DBCForm.SuperForm;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyan;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyan2;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyan3;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyan4;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyanBlue;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyanG2;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyanG3;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyanGod;
+import static kamkeel.npcdbc.constants.DBCForm.ThirdForm;
+import static kamkeel.npcdbc.constants.DBCForm.UltimateForm;
+import static kamkeel.npcdbc.constants.DBCForm.UltraInstinct;
 import static kamkeel.npcdbc.controllers.DBCEffectController.DBC_EFFECT_INDEX;
 
 public class DBCData extends DBCDataUniversal implements IAuraData {
@@ -68,6 +110,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     // Custom Form / Custom Aura
     public int addonFormID = -1, auraID = -1, outlineID = -1;
     public float addonFormLevel = 0, addonCurrentHeat = 0;
+
+    public EntityLivingBase LockOn;
 
     /**
      * Client-side bonus store. Needed for proper Battle Power calculations on the client.
@@ -92,6 +136,11 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public DBCDataStats stats = new DBCDataStats(this);
     public DBCDataBonus bonus = new DBCDataBonus(this);
 
+    /**
+     * ALL overlay chains that were drawn this tick, forms and everything
+     */
+    public List<OverlayChain> cachedOverlays = new ArrayList<>();
+
     //RENDERING DATA
     public float XZSize, YSize, age;
     public int renderingHairColor;
@@ -103,6 +152,10 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public List<EntityCusPar> particleRenderQueue = new LinkedList<>();
     // Some servers tend to repeat one tick multiple times (up to 3-4 times in under a second)
     public int lastTicked = -1;
+
+    public Map<Integer, SkillContainer> customSkills = new HashMap<>();
+
+    public final SimplifiedDBCData simplifiedDBCData = new SimplifiedDBCData(this);
 
     public DBCData() {
         this.side = Side.SERVER;
@@ -119,6 +172,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public NBTTagCompound saveFromNBT(NBTTagCompound comp) {
+//        SkillController.Instance.getSkill(1).teachPlayerSkill(PlayerDataUtil.getIPlayer(player));
+
         comp.setInteger("jrmcStrI", STR);
         comp.setInteger("jrmcDexI", DEX);
         comp.setInteger("jrmcCnsI", CON);
@@ -174,6 +229,9 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         comp.setBoolean("DBCFlightGravity", flightGravity);
 
         comp.setBoolean("DBCIsFnPressed", isFnPressed);
+
+        NBTTagList skillList = NBTHelper.nbtIntegerObjectMap(this.customSkills, skill -> skill.writeToNBT(new NBTTagCompound()), (i, skill) -> SkillController.Instance.getSkill(i) != null);
+        comp.setTag("customSkills", skillList);
         return comp;
     }
 
@@ -263,6 +321,41 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         if (!c.hasKey("DBCIsFnPressed"))
             c.setBoolean("DBCIsFnPressed", isFnPressed);
         isFnPressed = c.getBoolean("DBCIsFnPressed");
+
+        if (c.hasKey("customSkills"))
+            this.customSkills = NBTHelper.javaIntegerObjectMap(c.getTagList("customSkills", Constants.NBT.TAG_COMPOUND), tag -> SkillContainer.fromNBT(this, tag));
+    }
+
+    /**
+     * Sync a mirrored Java field from the raw NBT compound after a packet update.
+     * Called by DBCSetValPacket.receiveData to keep Java fields in sync with NBT.
+     */
+    public void syncFieldFromNBT(String tag) {
+        NBTTagCompound c = getRawCompound();
+        switch (tag) {
+            case "DBCisFlying":
+                isFlying = c.getBoolean("DBCisFlying");
+                break;
+            case "DBCIsFnPressed":
+                isFnPressed = c.getBoolean("DBCIsFnPressed");
+                break;
+            case "DBCFlightEnabled":
+                flightEnabled = c.getBoolean("DBCFlightEnabled");
+                break;
+            case "DBCFlightGravity":
+                flightGravity = c.getBoolean("DBCFlightGravity");
+                break;
+        }
+    }
+
+    public List<OverlayChain> getOverlayChains() {
+        List<OverlayChain> chains = new ArrayList<>();
+
+        OverlayManager overlays = PlayerDataUtil.getClientDBCInfo().overlayManager;
+        if (overlays.enabled)
+            chains.addAll(overlays.getChains());
+
+        return chains;
     }
 
     @SideOnly(Side.CLIENT)
@@ -283,6 +376,11 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             }
         }
 
+        loadClientSideFormColorData(c);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void loadClientSideFormColorData(NBTTagCompound c) {
         currentCustomizedColors = new FormDisplay.BodyColor();
         if (c.hasKey("CustomFormColors", Constants.NBT.TAG_COMPOUND)) {
             currentCustomizedColors.readFromNBT(c.getCompoundTag("CustomFormColors"));
@@ -604,6 +702,54 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
                 break;
         }
         return StatusEffects;
+    }
+
+    public boolean hasSkill(String skillName) {
+        DBCSkills skill = DBCSkills.byName(skillName);
+        if (skill == null) {
+//            throw new CustomNPCsException("Skill name not recognized");
+            return false;
+        }
+
+        return Skills.contains(skill.id());
+    }
+
+    public boolean hasSkill(int index) {
+        DBCSkills skill = DBCSkills.byIndex(index);
+        if (skill == null) {
+//            throw new CustomNPCsException("Skill index not recognized");
+            return false;
+        }
+
+        return Skills.contains(skill.id());
+    }
+
+    public int getSkillLevel(String skillName) {
+        if (!hasSkill(skillName)) return 0;
+
+        DBCSkills skill = DBCSkills.byName(skillName);
+        if (skill == null) {
+//            throw new CustomNPCsException("Skill name not recognized");
+            return 0;
+        }
+
+        return getSkillLevel(skill.index());
+    }
+
+    public int getSkillLevel(int index) {
+        if (!hasSkill(index)) return 0;
+        return JRMCoreH.SklLvl(index, Skills.split(","));
+    }
+
+    public boolean hasCustomSkill(int id) {
+        return customSkills.containsKey(id);
+    }
+
+    public int getCustomSkillLevel(int id) {
+        if (!hasCustomSkill(id)) return 0;
+
+        SkillContainer container = customSkills.get(id);
+        return container.getLevel();
     }
 
     public boolean settingOn(int id) {
@@ -943,11 +1089,11 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public void setLockOnTarget(EntityLivingBase lockOnTarget) {
 
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-            DBCUpdateLockOn packet;
+            DBCLockOn.Update packet;
             if (lockOnTarget == null) {
-                packet = new DBCUpdateLockOn();
+                packet = new DBCLockOn.Update();
             } else {
-                packet = new DBCUpdateLockOn(lockOnTarget.getEntityId());
+                packet = new DBCLockOn.Update(lockOnTarget.getEntityId());
             }
             DBCPacketHandler.Instance.sendToPlayer(packet, (EntityPlayerMP) player);
             return;
@@ -956,10 +1102,22 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         if (side == Side.CLIENT) {
             if (player == Minecraft.getMinecraft().thePlayer) {
-                DBCUpdateLockOn.setLockOnTarget(lockOnTarget);
+                DBCLockOn.Update.setLockOnTarget(lockOnTarget);
             }
             return;
         }
+    }
+
+    public IEntityLivingBase getLockOnTarget() {
+        if (LockOn != null) {
+            return (IEntityLivingBase) NpcAPI.Instance().getIEntity(LockOn);
+        }
+
+        return null;
+    }
+
+    public boolean hasLockOnTarget() {
+        return getLockOnTarget() != null;
     }
 
     @Override
@@ -980,6 +1138,10 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     @Override
     public void setActiveAuraColor(int color) {
         activeAuraColor = color;
+    }
+
+    public int getPlayerLevel() {
+        return JRMCoreH.getPlayerLevel(STR + DEX + CON + WIL + MND + SPI);
     }
 
     public int getUsedMind() {
@@ -1023,6 +1185,12 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
                 mindBonus -= form.getMindRequirement();
         }
 
+        for (SkillContainer container : customSkills.values()) {
+            ICustomSkill skill = SkillController.Instance.getSkill(container.getSkillID());
+            if (skill != null)
+                mindBonus -= skill.getTotalMindCost(container.getLevel());
+        }
+
         return mindBonus;
     }
 
@@ -1040,5 +1208,56 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         PlayerDBCInfo info = getDBCInfo();
         return info.configuredFormColors.get(form.id);
+    }
+
+    public int getColor(String type) {
+        int customCol = currentCustomizedColors.getColor(type);
+        if (customCol != -1)
+            return customCol;
+
+        Form form = getForm();
+        if (form != null) {
+            int formCol = form.display.getColor(type);
+            if (formCol != -1)
+                return formCol;
+        }
+
+        switch (type.toLowerCase()) {
+            case "hair":
+                return JRMCoreH.dnsHairC(DNS);
+            case "eye":
+                return JRMCoreH.dnsEyeC1(DNS);
+            case "bodycm":
+                return JRMCoreH.dnsBodyCM(DNS);
+            case "bodyc1":
+                return JRMCoreH.dnsBodyC1(DNS);
+            case "bodyc2":
+                return JRMCoreH.dnsBodyC2(DNS);
+            case "bodyc3":
+                return JRMCoreH.dnsBodyC3(DNS);
+            case "fur":
+                int oozaruFur = skinType == 1 ? JRMCoreH.dnsBodyC1(DNS) : JRMCoreH.dnsBodyC1_0(DNS);
+                if (oozaruFur != 0x632700) // 0x632700 is oozaru brown, this means is half saiyan and has custom hair/fur color
+                    return oozaruFur;
+                return 0xDA152C; //ssj4 red
+        }
+        return -1;
+    }
+
+    public Set<FacePartData.Part> getDisabledFaceParts() {
+        return FacePartData.getDisabledParts(null, getForm(), cachedOverlays, JRMCoreH.dnsEyes(DNS));
+    }
+
+    public void sendCurrentFormColorData() {
+        FormDisplay.BodyColor currentColors = getCurrentFormColorCustomization();
+        NBTTagCompound dataNeededOnClient = new NBTTagCompound();
+
+        if (currentColors != null) {
+            NBTTagCompound colorCompound = new NBTTagCompound();
+            currentColors.writeToNBT(colorCompound);
+            dataNeededOnClient.setTag("CustomFormColors", colorCompound);
+        }
+
+        DBCPacketHandler.Instance.sendTracking(new PingFormColorPacket(this, dataNeededOnClient), player);
     }
 }

@@ -142,7 +142,7 @@ public abstract class MixinEntityAura2 extends Entity implements IEntityAura {
 //        args.set(48, entity);
 //    }
 
-    @Redirect(method = "onUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntityInWorld(Lnet/minecraft/entity/Entity;)Z", ordinal = 0, remap = true))
+    @Redirect(method = "onUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntityInWorld(Lnet/minecraft/entity/Entity;)Z", ordinal = 0, remap = true), remap = true)
     private boolean setDamage(World instance, Entity particle) {
         if (particle instanceof IEntityCusPar) {
             ((IEntityCusPar) particle).setEntity(this.entity);
@@ -156,7 +156,7 @@ public abstract class MixinEntityAura2 extends Entity implements IEntityAura {
 //    }
 
 
-    @Redirect(method = "onUpdate", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_GR0:Z"))
+    @Redirect(method = "onUpdate", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_GR0:Z"), remap = true)
     private boolean fixBuiltInParticles() {
         if (type2D != null) {
             if (type2D == EnumAuraTypes2D.None)
