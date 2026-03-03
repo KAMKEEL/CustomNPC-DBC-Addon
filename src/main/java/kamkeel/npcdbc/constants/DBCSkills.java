@@ -117,7 +117,6 @@ public enum DBCSkills implements ISkill {
 
     @Override
     public void teachPlayerSkill(IPlayer player, int level, boolean postEvent) {
-        if (true) throw new RuntimeException("Not implemented yet");
         level = Math.min(level, this.getMaxLevel());
 
         if (level <= 0) {
