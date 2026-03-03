@@ -735,6 +735,15 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         return JRMCoreH.SklLvl(index, Skills.split(","));
     }
 
+    public void setSkillLevel(String skillName, int level) {
+        DBCSkills skill = DBCSkills.byName(skillName);
+        if (skill == null) {
+            return;
+        }
+
+        setSkillLevel(skill.getId(), level);
+    }
+
     public void setSkillLevel(int id, int level) {
         DBCSkills skill = DBCSkills.byIndex(id);
         level--;

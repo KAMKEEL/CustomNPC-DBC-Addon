@@ -229,6 +229,13 @@ public interface IDBCAddon extends IDBCPlayer {
     int getSkillLevel(String skillname);
 
     /**
+     *
+     * @param skillname Check getSkillLevel
+     * @param skilllevel Skill level from 1 to 10. Or 0 to remove the skill
+     */
+    void setSkillLevel(String skillname, int skilllevel);
+
+    /**
      * @param attribute 0 for Melee Dmg, 1 for Defense, 3 for Ki Power
      * @return Player's stat, NOT attributes i.e Melee Dmg, not STR
      */

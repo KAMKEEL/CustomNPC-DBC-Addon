@@ -523,6 +523,16 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     /**
+     *
+     * @param skillname Check getSkillLevel
+     * @param skilllevel Skill level from 1 to 10. Or 0 to remove the skill
+     */
+    @Override
+    public void setSkillLevel(String skillname, int skilllevel) {
+        dbcData.setSkillLevel(skillname, skilllevel);
+    }
+
+    /**
      * @param statID 0 for Melee Dmg, 1 for Defense, 3 for Ki Power
      * @return Player's stat, NOT attributes i.e Melee Dmg, not STR
      */
