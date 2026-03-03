@@ -594,6 +594,9 @@ condition.is_custom=Is Custom
 # Condition Locked On
 condition.npcdbc.locked_on=Is Locked On
 
+# Condition Fused
+condition.npcdbc.fused=Is Fused
+
 effect.healthregeneration=Health Regeneration
 effect.exhausted=Exhausted
 effect.darkness=Darkness
