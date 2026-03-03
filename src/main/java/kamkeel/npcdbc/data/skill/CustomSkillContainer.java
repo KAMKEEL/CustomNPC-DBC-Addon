@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.data.skill;
 
+import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.skill.ICustomSkill;
 import kamkeel.npcdbc.api.skill.ICustomSkillContainer;
 import kamkeel.npcdbc.controllers.SkillController;
@@ -61,7 +62,7 @@ public class CustomSkillContainer implements ICustomSkillContainer {
     public void setLevel(int level) {
         level = Math.min(Math.max(level, 1), skill.getMaxLevel());
         this.level = level;
-        if (finishedSettingUp)
+        if (finishedSettingUp && data.side == Side.SERVER)
             data.saveNBTData(false);
     }
 
@@ -97,8 +98,10 @@ public class CustomSkillContainer implements ICustomSkillContainer {
             return false;
 
         data.TP -= event.getCost();
-        data.getRawCompound().setInteger("jrmcTP", data.TP);
         level = newLevel;
+
+        if (finishedSettingUp && data.side == Side.SERVER)
+            data.saveNBTData(false);
 
         return true;
     }
@@ -113,6 +116,9 @@ public class CustomSkillContainer implements ICustomSkillContainer {
         DBCPlayerEvent.SkillEvent.Unlearn event = new DBCPlayerEvent.SkillEvent.Unlearn(getPlayer(), 2, getSkillID());
         if (postEvent && DBCEventHooks.onSkillEvent(event))
             return;
+
         data.customSkills.remove(getSkillID());
+        if (finishedSettingUp && data.side == Side.SERVER)
+            data.saveNBTData(false);
     }
 }

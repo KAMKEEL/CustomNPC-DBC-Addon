@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.constants;
 
+import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import kamkeel.npcdbc.api.IDBCAddon;
 import kamkeel.npcdbc.api.event.IDBCEvent;
 import kamkeel.npcdbc.api.skill.ISkill;
@@ -89,7 +90,17 @@ public enum DBCSkills implements ISkill {
 
     @Override
     public int getMaxLevel() {
-        return DBCUtils.getMaxSkillLevel(getId());
+        switch (this) {
+
+            case UltraInstinct:
+                return JGConfigUltraInstinct.CONFIG_UI_LEVELS;
+            case GodForm:
+                return 3;
+            case GodOfDestruction:
+                return 1;
+            default:
+                return 10;
+        }
     }
 
     @Override
@@ -106,15 +117,21 @@ public enum DBCSkills implements ISkill {
 
     @Override
     public void teachPlayerSkill(IPlayer player, int level, boolean postEvent) {
-        // TODO implement teach
         if (true) throw new RuntimeException("Not implemented yet");
         level = Math.min(level, this.getMaxLevel());
 
-        final int currentLevel = this.getLevel(player);
-        if (currentLevel >= level) return;
+        if (level <= 0) {
+            unlearnSkill(player, postEvent);
+            return;
+        }
 
-        if (currentLevel == 0 && postEvent) {
-            throw new RuntimeException("Remember to post the skill");
+        final int currentLevel = this.getLevel(player);
+
+        if (currentLevel == 0) {
+            if (postEvent && DBCEventHooks.onSkillEvent(
+                new DBCPlayerEvent.SkillEvent.Learn(player, 1, getId(), 0))) {
+                return;
+            }
         }
         setLevel(player, level);
     }
@@ -122,15 +139,12 @@ public enum DBCSkills implements ISkill {
 
     @Override
     public void unlearnSkill(IPlayer player, boolean postEvent) {
-        // TODO implement unlearn
-        if (true) throw new RuntimeException("Not implemented yet");
-
         final int currentLevel = this.getLevel(player);
         if (currentLevel == 0) return;
 
-        if (postEvent) {
-            throw new RuntimeException("Remember to post the skill");
-        }
+        DBCPlayerEvent.SkillEvent.Unlearn event = new DBCPlayerEvent.SkillEvent.Unlearn(player, 1, getId());
+        if (postEvent && DBCEventHooks.onSkillEvent(event))
+            return;
 
         setLevel(player, 0);
     }

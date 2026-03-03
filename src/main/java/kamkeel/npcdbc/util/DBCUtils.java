@@ -1314,8 +1314,6 @@ public class DBCUtils {
      * @return The Mind cost of JUST this level
      */
     public static int calculateDBCSkillMindCost(int skillIndex, int level) {
-        if (true) throw new RuntimeException("Implement getMaxSkillLevel first");
-
         if (level <= 0) {
             return 0;
         }
@@ -1339,8 +1337,6 @@ public class DBCUtils {
      * @return The TP cost of JUST this level
      */
     public static int calculateDBCSkillTPCost(int skillIndex, int level) {
-        if (true) throw new RuntimeException("Implement getMaxSkillLevel first");
-
         if (level <= 0) {
             return 0;
         }
@@ -1386,8 +1382,6 @@ public class DBCUtils {
     }
 
     public static int calculateDBCRacialSkillTPCost(int race, int level) {
-        if (true) throw new RuntimeException("Implement getMaxSkillLevel first");
-
         if (level <= 0) {
             return 0;
         }
@@ -1406,9 +1400,6 @@ public class DBCUtils {
     }
 
     public static int calculateDBCRacialSkillMindCost(int race, int level) {
-        if (true) throw new RuntimeException("Implement getMaxSkillLevel first");
-
-
         if (level <= 0) {
             return 0;
         }
@@ -1469,9 +1460,5 @@ public class DBCUtils {
             }
         }
         return false;
-    }
-
-    public static int getMaxSkillLevel(int skillID) {
-        throw new RuntimeException("Implement this plz");
     }
 }
