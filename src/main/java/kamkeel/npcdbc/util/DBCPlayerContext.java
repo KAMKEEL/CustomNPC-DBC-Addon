@@ -6,7 +6,6 @@ import kamkeel.npcdbc.constants.DBCAttribute;
 import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 
 import static JinRyuu.JRMCore.JRMCoreH.*;
 import static kamkeel.npcdbc.util.DBCUtils.*;
@@ -61,21 +60,23 @@ public class DBCPlayerContext {
         this.player = player;
         this.data = DBCData.get(player);
 
-        NBTTagCompound nbt = nbt(player, "pres");
-        this.race = nbt.getByte("jrmcRace");
-        this.state = nbt.getByte("jrmcState");
-        this.state2 = nbt.getByte("jrmcState2");
-        this.classID = nbt.getByte("jrmcClass");
-        this.powerType = nbt.getByte("jrmcPwrtyp");
-        this.release = getByte(player, "jrmcRelease");
+        // Use DBCData fields — they are correctly synced on both server (loadNBTData)
+        // and client (PingPacket). Raw nbt(player,"pres") reads from entity NBT which
+        // is NOT populated on the client side, causing all values to be 0/empty.
+        this.race = data.Race;
+        this.state = data.State;
+        this.state2 = data.State2;
+        this.classID = data.Class;
+        this.powerType = data.Powertype;
+        this.release = data.Release;
 
-        this.currentEnergy = getInt(player, "jrmcEnrgy");
-        this.currentStamina = getInt(player, "jrmcStamina");
+        this.currentEnergy = data.Ki;
+        this.currentStamina = data.Stamina;
 
-        this.racialSkills = getString(player, "jrmcSSltX");
-        this.arcReserve = getInt(player, "jrmcArcRsrv");
-        this.absorption = getString(player, "jrmcMajinAbsorptionData");
-        this.statusEffects = getString(player, "jrmcStatusEff");
+        this.racialSkills = data.RacialSkills;
+        this.arcReserve = data.ArcReserve;
+        this.absorption = data.MajinAbsorptionData;
+        this.statusEffects = data.StatusEffects;
 
         this.attributes = PlyrAttrbts(player);
         this.skills = PlyrSkills(player);
