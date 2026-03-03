@@ -118,7 +118,7 @@ public class SubGuiSelectSkill extends SubGuiInterface implements ICustomScrollL
         } else {
             for (DBCSkills skill : DBCSkills.values()) {
                 // Use the enum name as the display label, ordinal as id
-                allDisplayNameToId.put(skill.name(), skill.index());
+                allDisplayNameToId.put(skill.name(), skill.getId());
             }
         }
     }

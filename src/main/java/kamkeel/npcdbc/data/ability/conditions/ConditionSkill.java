@@ -15,7 +15,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.builder.FieldDef;
-import noppes.npcs.entity.EntityNPCInterface;
 
 import java.util.List;
 
