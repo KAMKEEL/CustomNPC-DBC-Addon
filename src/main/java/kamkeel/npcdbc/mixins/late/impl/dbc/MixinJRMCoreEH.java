@@ -60,9 +60,21 @@ public class MixinJRMCoreEH {
 
             DBCUtils.damageEntityCalled = true;
 
+            boolean isAbilityDamage = DBCUtils.npcLastSetDamage != null;
             if (DBCUtils.npcLastSetDamage != null) {
                 dam.set(DBCUtils.npcLastSetDamage); // THIS GETS DEDUCTED FROM NPC HEALTH
                 DBCUtils.npcLastSetDamage = null;
+            }
+
+            // Apply attribute + magic pipeline for regular player hits (not ability/energy).
+            // CNPC+ disables its own attribute handling when DBC Addon is loaded,
+            // so we must apply it here for Player→NPC regular attacks.
+            if (!isAbilityDamage) {
+                EntityLivingBase attacker = resolveAttacker(source);
+                if (attacker instanceof EntityPlayer) {
+                    dam.set(AttributeAttackUtil.calculateDamagePlayerToNPC(
+                        (EntityPlayer) attacker, npc, dam.get()));
+                }
             }
 
             Form form = PlayerDataUtil.getForm(npc);
@@ -129,15 +141,18 @@ public class MixinJRMCoreEH {
         }
     }
 
-    @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;a1t3(Lnet/minecraft/entity/player/EntityPlayer;)V", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
-    public void dbcAttackFromPlayer(LivingHurtEvent event, CallbackInfo ci, @Local(name = "dam") LocalFloatRef dam, @Local(name = "targetPlayer") LocalRef<EntityPlayer> targetPlayer, @Local(name = "source") LocalRef<DamageSource> damageSource) {
+    /**
+     * Shared logic for both player and non-player DBC damage to a player target.
+     * Calculates DBC damage, applies Guard, fires DamagedEvent, and processes extras.
+     *
+     * @return true if the event was cancelled (caller should cancel the mixin CI)
+     */
+    private boolean handleDBCPlayerDamage(EntityPlayer target, float damage, DamageSource source, CallbackInfo ci) {
         if (DBCUtils.abilityDamageHandled) {
             ci.cancel();
-            return;
+            return true;
         }
 
-        // Check for Damage Source Type
-        DamageSource source = damageSource.get();
         int dbcDamageSource = DBCDamageSource.UNKNOWN;
         if (source.getEntity() instanceof EntityPlayer) {
             dbcDamageSource = DBCDamageSource.PLAYER;
@@ -145,11 +160,10 @@ public class MixinJRMCoreEH {
             dbcDamageSource = DBCDamageSource.KIATTACK;
         }
 
-        DBCDamageCalc damageCalc = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), dam.get(), source);
+        DBCDamageCalc damageCalc = DBCUtils.calculateDBCDamageFromSource(target, damage, source);
 
-        // Guard: reduce DBC damage for players.
-        // Guard's isValidDamageSource accepts all types, so the original source works directly.
-        PlayerData pData = PlayerData.get(targetPlayer.get());
+        // Guard: reduce DBC damage for players
+        PlayerData pData = PlayerData.get(target);
         if (pData != null && pData.abilityData != null) {
             AbilityDefend defend = pData.abilityData.getActiveDefend();
             if (defend instanceof AbilityGuard) {
@@ -160,10 +174,10 @@ public class MixinJRMCoreEH {
             }
         }
 
-        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(targetPlayer.get(), damageCalc, source, dbcDamageSource);
+        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(target, damageCalc, source, dbcDamageSource);
         if (DBCEventHooks.onDBCDamageEvent(damagedEvent)) {
             ci.cancel();
-            return;
+            return true;
         }
 
         damageCalc.damage = damagedEvent.damage;
@@ -172,49 +186,16 @@ public class MixinJRMCoreEH {
         damageCalc.ko = damagedEvent.getFinalKO();
         DBCUtils.lastSetDamage = damageCalc;
         damageCalc.processExtras();
+        return false;
+    }
+
+    @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;a1t3(Lnet/minecraft/entity/player/EntityPlayer;)V", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
+    public void dbcAttackFromPlayer(LivingHurtEvent event, CallbackInfo ci, @Local(name = "dam") LocalFloatRef dam, @Local(name = "targetPlayer") LocalRef<EntityPlayer> targetPlayer, @Local(name = "source") LocalRef<DamageSource> damageSource) {
+        handleDBCPlayerDamage(targetPlayer.get(), dam.get(), damageSource.get(), ci);
     }
 
     @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;a1t3(Lnet/minecraft/entity/player/EntityPlayer;)V", ordinal = 1, shift = At.Shift.BEFORE), cancellable = true)
     public void dbcAttackFromNonPlayer(LivingHurtEvent event, CallbackInfo ci, @Local(name = "amount") LocalFloatRef dam, @Local(name = "targetPlayer") LocalRef<EntityPlayer> targetPlayer, @Local(name = "source") LocalRef<DamageSource> damageSource) {
-        if (DBCUtils.abilityDamageHandled) {
-            ci.cancel();
-            return;
-        }
-
-        // Check for Damage Source Type
-        DamageSource source = damageSource.get();
-        int dbcDamageSource = DBCDamageSource.UNKNOWN;
-        if (source.getEntity() instanceof EntityPlayer) {
-            dbcDamageSource = DBCDamageSource.PLAYER;
-        } else if (source.getEntity() instanceof EntityEnergyAtt) {
-            dbcDamageSource = DBCDamageSource.KIATTACK;
-        }
-
-        DBCDamageCalc damageCalc = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), dam.get(), source);
-
-        // Guard: reduce DBC damage for players.
-        PlayerData pData = PlayerData.get(targetPlayer.get());
-        if (pData != null && pData.abilityData != null) {
-            AbilityDefend defend = pData.abilityData.getActiveDefend();
-            if (defend instanceof AbilityGuard) {
-                EntityLivingBase attacker = resolveAttacker(source);
-                if (attacker != null) {
-                    damageCalc.damage = defend.onDefend(attacker, source, damageCalc.damage);
-                }
-            }
-        }
-
-        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(targetPlayer.get(), damageCalc, source, dbcDamageSource);
-        if (DBCEventHooks.onDBCDamageEvent(damagedEvent)) {
-            ci.cancel();
-            return;
-        }
-
-        damageCalc.damage = damagedEvent.damage;
-        damageCalc.stamina = damagedEvent.getStaminaReduced();
-        damageCalc.ki = damagedEvent.getKiReduced();
-        damageCalc.ko = damagedEvent.getFinalKO();
-        DBCUtils.lastSetDamage = damageCalc;
-        damageCalc.processExtras();
+        handleDBCPlayerDamage(targetPlayer.get(), dam.get(), damageSource.get(), ci);
     }
 }
