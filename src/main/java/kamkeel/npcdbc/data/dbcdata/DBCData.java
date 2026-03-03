@@ -741,6 +741,11 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         return JRMCoreH.SklLvl(index, Skills.split(","));
     }
 
+    public void setSkillLevel(int id, int level) {
+        // TODO implement
+        throw new RuntimeException("NOT IMPLEMENTED YET GEEZ");
+    }
+
     public boolean hasCustomSkill(int id) {
         return customSkills.containsKey(id);
     }
@@ -1259,9 +1264,5 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         }
 
         DBCPacketHandler.Instance.sendTracking(new PingFormColorPacket(this, dataNeededOnClient), player);
-    }
-
-    public void setSkillLevel(int id, int level) {
-        throw new RuntimeException("NOT IMPLEMENTED YET GEEZ");
     }
 }

@@ -106,6 +106,7 @@ public enum DBCSkills implements ISkill {
 
     @Override
     public void teachPlayerSkill(IPlayer player, int level, boolean postEvent) {
+        // TODO implement teach
         if (true) throw new RuntimeException("Not implemented yet");
         level = Math.min(level, this.getMaxLevel());
 
@@ -121,6 +122,7 @@ public enum DBCSkills implements ISkill {
 
     @Override
     public void unlearnSkill(IPlayer player, boolean postEvent) {
+        // TODO implement unlearn
         if (true) throw new RuntimeException("Not implemented yet");
 
         final int currentLevel = this.getLevel(player);
