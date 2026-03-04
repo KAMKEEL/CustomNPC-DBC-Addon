@@ -3,6 +3,7 @@ package kamkeel.npcdbc.data.ability.conditions;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcs.controllers.data.ability.conditions.ConditionCompare;
 import kamkeel.npcs.controllers.data.ability.enums.UserType;
 import kamkeel.npcs.controllers.data.ability.conditions.AbilityCondition;
 import net.minecraft.entity.EntityLivingBase;
@@ -14,43 +15,8 @@ import noppes.npcs.entity.EntityNPCInterface;
 
 import java.util.List;
 
-public class ConditionDBCLevel extends AbilityCondition {
-
-    public enum CompareType {
-        ABOVE {
-            @Override
-            public boolean test(int value, int threshold) {
-                return value >= threshold;
-            }
-        },
-        BELOW {
-            @Override
-            public boolean test(int value, int threshold) {
-                return value <= threshold;
-            }
-        },
-        EQUAL {
-            @Override
-            public boolean test(int value, int threshold) {
-                return value == threshold;
-            }
-        };
-
-        public abstract boolean test(int value, int threshold);
-
-        public static CompareType fromOrdinal(int ordinal) {
-            CompareType[] values = values();
-            return (ordinal >= 0 && ordinal < values.length) ? values[ordinal] : ABOVE;
-        }
-
-        @Override
-        public String toString() {
-            return "condition." + name().toLowerCase();
-        }
-    }
-
+public class ConditionDBCLevel extends ConditionCompare {
     private int level = 1;
-    private CompareType compareType = CompareType.ABOVE;
 
     public ConditionDBCLevel() {
         this.typeId = "condition.npcdbc.level";
@@ -59,20 +25,28 @@ public class ConditionDBCLevel extends AbilityCondition {
     }
 
     @Override
+    protected float getEntityValue(EntityLivingBase entity) {
+        EntityPlayer player = (EntityPlayer) entity;
+        return DBCData.get(player).getPlayerLevel();
+    }
+
+    @Override
+    protected float getThreshold() {
+        return getLevel();
+    }
+
+    @Override
     protected boolean checkEntity(EntityLivingBase entity) {
         if (entity instanceof EntityNPCInterface) return true;
         if (!(entity instanceof EntityPlayer)) return true;
 
-        EntityPlayer player = (EntityPlayer) entity;
-        int playerLevel = DBCData.get(player).getPlayerLevel();
-        return compareType.test(playerLevel, level);
+        return super.checkEntity(entity);
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void getConditionDefinitions(List<FieldDef> defs) {
+    public void getExtraDefinitions(List<FieldDef> defs) {
         defs.add(FieldDef.intField("condition.level", this::getLevel, this::setLevel).min(1));
-        defs.add(FieldDef.enumField("condition.compare_type", CompareType.class, this::getCompareType, this::setCompareType));
     }
 
     @SideOnly(Side.CLIENT)
@@ -84,13 +58,13 @@ public class ConditionDBCLevel extends AbilityCondition {
     }
 
     @Override
-    public void writeTypeNBT(NBTTagCompound nbt) {
+    public void writeExtraNBT(NBTTagCompound nbt) {
         nbt.setInteger("level", level);
         nbt.setInteger("compareType", compareType.ordinal());
     }
 
     @Override
-    public void readTypeNBT(NBTTagCompound nbt) {
+    public void readExtraNBT(NBTTagCompound nbt) {
         level = nbt.getInteger("level");
         compareType = CompareType.fromOrdinal(nbt.getInteger("compareType"));
     }
@@ -101,13 +75,5 @@ public class ConditionDBCLevel extends AbilityCondition {
 
     public void setLevel(int level) {
         this.level = Math.max(1, level);
-    }
-
-    public CompareType getCompareType() {
-        return compareType;
-    }
-
-    public void setCompareType(CompareType compareType) {
-        this.compareType = compareType;
     }
 }
