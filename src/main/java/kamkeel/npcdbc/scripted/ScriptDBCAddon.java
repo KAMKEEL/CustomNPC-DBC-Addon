@@ -26,6 +26,7 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.DBCSetAllowFlight;
+import kamkeel.npcdbc.util.DBCSettingsUtil;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -73,20 +74,14 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void setKiFistOn(boolean on) {
         if (dbcData.Skills.contains("KF")) {
-            if (!on)
-                JRMCoreH.PlyrSettingsOn(dbcData.player, DBCSettings.KI_FIST);
-            else
-                JRMCoreH.PlyrSettingsRem(dbcData.player, DBCSettings.KI_FIST);
+            DBCSettingsUtil.setKiFist(dbcData.player, on);
         }
     }
 
     @Override
     public void setKiProtectionOn(boolean on) {
         if (dbcData.Skills.contains("KP")) {
-            if (!on)
-                JRMCoreH.PlyrSettingsOn(dbcData.player, DBCSettings.KI_PROTECTION);
-            else
-                JRMCoreH.PlyrSettingsRem(dbcData.player, DBCSettings.KI_PROTECTION);
+            DBCSettingsUtil.setKiProtection(dbcData.player, on);
         }
     }
 
@@ -97,14 +92,14 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         if (type > 2)
             type = 2;
         if (dbcData.Skills.contains("KI") && dbcData.Skills.contains("KF")) {
-            JRMCoreH.PlyrSettingsSet(dbcData.player, DBCSettings.KI_WEAPON_TOGGLE, type - 1);
+            DBCSettingsUtil.setKiWeapon(dbcData.player, type - 1 != -1, type - 1);
         }
     }
 
     @Override
     public boolean kiFistOn() {
         if (dbcData.Skills.contains("KF")) {
-            return !JRMCoreH.PlyrSettingsB(dbcData.player, DBCSettings.KI_FIST);
+            return DBCSettingsUtil.isKiFist(dbcData.player);
         }
         return false;
     }
@@ -112,7 +107,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public boolean kiProtectionOn() {
         if (dbcData.Skills.contains("KP")) {
-            return !JRMCoreH.PlyrSettingsB(dbcData.player, DBCSettings.KI_PROTECTION);
+            return DBCSettingsUtil.isKiProtection(dbcData.player);
         }
         return false;
     }
@@ -120,7 +115,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public int getKiWeaponType() {
         if (dbcData.Skills.contains("KI") && dbcData.Skills.contains("KF")) {
-            return JRMCoreH.PlyrSettings(dbcData.player, DBCSettings.KI_WEAPON_TOGGLE) + 1;
+            return DBCSettingsUtil.getKiWeapon(dbcData.player) + 1;
         }
         return 0;
     }
