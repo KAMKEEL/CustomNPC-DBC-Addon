@@ -8,8 +8,8 @@ import kamkeel.npcdbc.constants.DBCSkills;
 import kamkeel.npcdbc.controllers.SkillController;
 import kamkeel.npcdbc.data.ability.DBCAbilityFieldProvider;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcs.controllers.data.ability.conditions.ConditionCompare;
 import kamkeel.npcs.controllers.data.ability.enums.UserType;
-import kamkeel.npcs.controllers.data.ability.conditions.AbilityCondition;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,7 +18,7 @@ import noppes.npcs.client.gui.builder.FieldDef;
 
 import java.util.List;
 
-public class ConditionSkill extends AbilityCondition {
+public class ConditionSkill extends ConditionCompare {
     private int skillId = -1;
     private int skillLevel = 0;
     private boolean isCustom = false;
@@ -30,6 +30,23 @@ public class ConditionSkill extends AbilityCondition {
     }
 
     @Override
+    protected float getEntityValue(EntityLivingBase entity) {
+        EntityPlayer player = (EntityPlayer) entity;
+        DBCData data = DBCData.get(player);
+
+        if (isCustom()) {
+            return data.getCustomSkillLevel(getSkillId());
+        } else {
+            return data.getSkillLevel(getSkillId());
+        }
+    }
+
+    @Override
+    protected float getThreshold() {
+        return getSkillLevel();
+    }
+
+    @Override
     protected boolean checkEntity(EntityLivingBase entity) {
         if (!(entity instanceof EntityPlayer)) return false;
         if (!isSkillValid(getSkillId())) return false;
@@ -38,10 +55,12 @@ public class ConditionSkill extends AbilityCondition {
         DBCData data = DBCData.get(player);
 
         if (isCustom()) {
-            return data.hasCustomSkill(skillId) && (skillLevel == 0 || data.getCustomSkillLevel(skillId) == skillLevel);
+            if (!data.hasCustomSkill(getSkillId())) return false;
         } else {
-            return data.hasSkill(skillId) && (skillLevel == 0 || data.getSkillLevel(skillId) == skillLevel);
+            if (!data.hasSkill(getSkillId())) return false;
         }
+
+        return getSkillLevel() == 0 || super.checkEntity(entity);
     }
 
     private boolean isSkillValid(int id) {
@@ -54,9 +73,8 @@ public class ConditionSkill extends AbilityCondition {
         }
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public void getConditionDefinitions(List<FieldDef> defs) {
+    protected void getExtraDefinitions(List<FieldDef> defs) {
         defs.add(DBCAbilityFieldProvider.skillSubGui("condition.skill_id", this::getSkillId, this::setSkillId,
             () -> isCustom() ? SubGuiSelectSkill.MODE_CUSTOM : SubGuiSelectSkill.MODE_DBC,
             mode -> setCustom(mode == SubGuiSelectSkill.MODE_CUSTOM)));
@@ -83,14 +101,14 @@ public class ConditionSkill extends AbilityCondition {
     }
 
     @Override
-    public void writeTypeNBT(NBTTagCompound nbt) {
+    protected void writeExtraNBT(NBTTagCompound nbt) {
         nbt.setInteger("skillId", skillId);
         nbt.setInteger("skillLevel", skillLevel);
         nbt.setBoolean("isCustom", isCustom);
     }
 
     @Override
-    public void readTypeNBT(NBTTagCompound nbt) {
+    protected void readExtraNBT(NBTTagCompound nbt) {
         skillId = nbt.getInteger("skillId");
         skillLevel = nbt.getInteger("skillLevel");
         isCustom = nbt.getBoolean("isCustom");
