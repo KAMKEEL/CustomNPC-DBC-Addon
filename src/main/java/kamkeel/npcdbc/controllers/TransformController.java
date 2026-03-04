@@ -260,6 +260,20 @@ public class TransformController {
                 }
             }
 
+            // Scale residual heat proportionally when ascending into a heated form
+            if (form.mastery.hasHeat() && dbcData.addonCurrentHeat > 0) {
+                Form previousForm = formData.getCurrentForm();
+                if (previousForm != null && previousForm.mastery.hasHeat() && previousForm.mastery.maxHeat > 0) {
+                    // Preserve heat percentage across forms
+                    float heatPercent = dbcData.addonCurrentHeat / previousForm.mastery.maxHeat;
+                    dbcData.setAddonHeat(heatPercent * form.mastery.maxHeat);
+                } else {
+                    // Coming from untransformed with residual heat — clamp to new form's max
+                    dbcData.setAddonHeat(Math.min(dbcData.addonCurrentHeat, form.mastery.maxHeat));
+                }
+            }
+            // If new form doesn't use heat, residual heat is kept and decays passively
+
             int prevID = formData.currentForm != 1 ? formData.currentForm : dbcData.State;
             if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), formData.currentForm != 1, prevID, true, form.id)))
                 return;
@@ -326,8 +340,18 @@ public class TransformController {
             PlaySound.play(new SoundSource(form.getDescendSound(), player));
             if (form.mastery.hasHeat() && dbcData.addonCurrentHeat > 0) {
                 float heatRatio = dbcData.addonCurrentHeat / form.mastery.maxHeat;
-                dbcData.Pain = (int) (form.mastery.painTime * 60 / 5 * form.mastery.calculateMulti("pain", formData.getCurrentLevel()) * heatRatio);
-                dbcData.addonCurrentHeat = 0;
+                float heatPercent = heatRatio * 100;
+
+                // Only apply pain if heat exceeds the form's configurable threshold
+                if (heatPercent >= form.mastery.painThreshold) {
+                    int painTime = (int) (form.mastery.painTime * 60 / 5
+                        * form.mastery.calculateMulti("pain", formData.getCurrentLevel())
+                        * heatRatio);
+                    dbcData.setAddonPain(painTime);
+                }
+
+                // Carry residual heat for passive decay
+                dbcData.setAddonHeat(dbcData.addonCurrentHeat);
             }
             if (formID == FULL_DESCEND) {
                 formData.currentForm = -1;
