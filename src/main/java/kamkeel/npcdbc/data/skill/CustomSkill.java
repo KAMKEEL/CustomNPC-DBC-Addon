@@ -138,7 +138,7 @@ public class CustomSkill implements ICustomSkill {
     @Override
     public boolean doesPlayerHaveSkill(IPlayer player, int level) {
         DBCData data = dataForIPlayer(player);
-        SkillContainer container = data.customSkills.get(id);
+        CustomSkillContainer container = data.customSkills.get(id);
         if (container == null)
             return false;
 
@@ -158,15 +158,15 @@ public class CustomSkill implements ICustomSkill {
     @Override
     public void teachPlayerSkill(IPlayer player, int level, boolean postEvent) {
         DBCData data = dataForIPlayer(player);
-        SkillContainer container = data.customSkills.get(id);
+        CustomSkillContainer container = data.customSkills.get(id);
 
         if (container == null) {
-            if (DBCEventHooks.onSkillEvent(
+            if (postEvent && DBCEventHooks.onSkillEvent(
                 new DBCPlayerEvent.SkillEvent.Learn(player, 2, getId(), 0))) {
                 return;
             }
 
-            container = new SkillContainer(data, this, level);
+            container = new CustomSkillContainer(data, this, level);
             data.customSkills.put(id, container);
             if (data.side == Side.SERVER)
                 data.saveNBTData(false);
@@ -178,6 +178,49 @@ public class CustomSkill implements ICustomSkill {
     @Override
     public void teachPlayerSkill(IPlayer player, int level) {
         teachPlayerSkill(player, level, false);
+    }
+
+    @Override
+    public void unlearnSkill(IPlayer player, boolean postEvent) {
+        DBCData data = dataForIPlayer(player);
+        CustomSkillContainer container = data.customSkills.get(id);
+
+        if (container != null) {
+            container.unlearnSkill(postEvent);
+        }
+    }
+
+    @Override
+    public boolean tryToProgressLevel(IPlayer player, boolean postEvent) {
+        DBCData data = dataForIPlayer(player);
+        CustomSkillContainer container = data.customSkills.get(id);
+
+        if (container != null) {
+            container.unlearnSkill(postEvent);
+        }
+        return false;
+    }
+
+    @Override
+    public int getLevel(IPlayer player) {
+        DBCData data = dataForIPlayer(player);
+        CustomSkillContainer container = data.customSkills.get(id);
+
+        if (container != null) {
+            return container.getLevel();
+        }
+
+        return 0;
+    }
+
+    @Override
+    public void setLevel(IPlayer player, int level) {
+        DBCData data = dataForIPlayer(player);
+        CustomSkillContainer container = data.customSkills.get(id);
+
+        if (container != null) {
+            container.setLevel(level);
+        }
     }
 
     @Override

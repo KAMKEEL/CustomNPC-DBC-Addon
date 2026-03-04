@@ -11,7 +11,7 @@ import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormMastery;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.api.skill.ICustomSkill;
-import kamkeel.npcdbc.api.skill.ISkillContainer;
+import kamkeel.npcdbc.api.skill.ICustomSkillContainer;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCSettings;
@@ -24,6 +24,8 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.player.DBCSetAllowFlight;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -521,6 +523,16 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     /**
+     *
+     * @param skillname Check getSkillLevel
+     * @param skilllevel Skill level from 1 to 10. Or 0 to remove the skill
+     */
+    @Override
+    public void setSkillLevel(String skillname, int skilllevel) {
+        dbcData.setSkillLevel(skillname, skilllevel);
+    }
+
+    /**
      * @param statID 0 for Melee Dmg, 1 for Defense, 3 for Ki Power
      * @return Player's stat, NOT attributes i.e Melee Dmg, not STR
      */
@@ -641,6 +653,18 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void setAllowFlight(boolean allowFlight) {
         dbcData.flightEnabled = allowFlight;
+
+        // If disabling flight while player is currently flying, also stop flight
+        if (!allowFlight && dbcData.isFlying) {
+            dbcData.setFlight(false);
+        }
+
+        // Sync flightEnabled to client
+        DBCPacketHandler.Instance.sendToPlayer(
+            new DBCSetAllowFlight(allowFlight),
+            (EntityPlayerMP) player
+        );
+
         dbcData.saveNBTData(false);
     }
 
@@ -675,6 +699,13 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         dbcData.flightEnabled = true;
         dbcData.flightSpeedRelease = 100;
         dbcData.flightGravity = true;
+
+        // Sync flightEnabled to client
+        DBCPacketHandler.Instance.sendToPlayer(
+            new DBCSetAllowFlight(true),
+            (EntityPlayerMP) player
+        );
+
         dbcData.saveNBTData(false);
     }
 
@@ -1406,12 +1437,12 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
-    public ISkillContainer getCustomSkillData(int skillID) {
+    public ICustomSkillContainer getCustomSkillData(int skillID) {
         return getCustomSkillData(SkillController.Instance.getSkill(skillID));
     }
 
     @Override
-    public ISkillContainer getCustomSkillData(ICustomSkill skill) {
+    public ICustomSkillContainer getCustomSkillData(ICustomSkill skill) {
         if (skill == null)
             return null;
         return dbcData.customSkills.get(skill.getId());

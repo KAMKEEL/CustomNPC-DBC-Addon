@@ -390,6 +390,15 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             scrollWindow.getTextField(404).floatsOnly = true;
             scrollWindow.getTextField(404).setMinMaxDefaultFloat(-10000f, 10000f, 0f);
             scrollWindow.getLabel(404).color = 0xffffff;
+
+            maxScroll += 23;
+            y += 23;
+            scrollWindow.addLabel(new GuiNpcLabel(405, "mastery.painThreshold", 4, y + 5));
+            scrollWindow.addTextField(new GuiNpcTextField(405, this, 135, y, 40, 20, String.valueOf(mastery.painThreshold)));
+            scrollWindow.getTextField(405).setMaxStringLength(3);
+            scrollWindow.getTextField(405).integersOnly = true;
+            scrollWindow.getTextField(405).setMinMaxDefault(0, 100, 25);
+            scrollWindow.getLabel(405).color = 0xffffff;
         }
         maxScroll += 23;
         y += 23;
@@ -904,6 +913,8 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             mastery.painMultiPerLevel = txtField.getFloat();
         } else if (txtField.id == 404) {
             mastery.painMultiMinOrMax = txtField.getFloat();
+        } else if (txtField.id == 405) {
+            mastery.painThreshold = txtField.getInteger();
         } else if (txtField.id == 501) {
             mastery.dodgeChance = txtField.getFloat();
         } else if (txtField.id == 502) {

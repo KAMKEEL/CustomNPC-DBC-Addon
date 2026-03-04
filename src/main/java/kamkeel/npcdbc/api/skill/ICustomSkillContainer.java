@@ -5,7 +5,7 @@ import noppes.npcs.api.entity.IPlayer;
 /**
  * A skill container contains data about how much a {@link IPlayer} has upgraded their {@link ICustomSkill}.
  */
-public interface ISkillContainer {
+public interface ICustomSkillContainer {
     /**
      * @return The player this skill container belongs to.
      */
@@ -23,7 +23,7 @@ public interface ISkillContainer {
 
     /**
      * Upgrade a skill to a certain level for no TP. Doesn't post events. <br>
-     * If level is set to 0, {@linkplain ISkillContainer#unlearnSkill unlearnSkill(true)} is called instead.
+     * If level is set to 0, {@linkplain ICustomSkillContainer#unlearnSkill unlearnSkill(true)} is called instead.
      *
      * @param level Level to set.
      */
@@ -35,7 +35,7 @@ public interface ISkillContainer {
     int getLevel();
 
     /**
-     * Equivalent to {@linkplain ISkillContainer#tryToProgressLevel(boolean) tryToProgressLevel(false)}.
+     * Equivalent to {@linkplain ICustomSkillContainer#tryToProgressLevel(boolean) tryToProgressLevel(false)}.
      *
      * @return If upgrade attempt finished successfully.
      */
@@ -51,7 +51,7 @@ public interface ISkillContainer {
     boolean tryToProgressLevel(boolean postEvent);
 
     /**
-     * Equivalent to {@linkplain ISkillContainer#unlearnSkill(boolean) unlearnSkill(false)}.
+     * Equivalent to {@linkplain ICustomSkillContainer#unlearnSkill(boolean) unlearnSkill(false)}.
      */
     void unlearnSkill();
 

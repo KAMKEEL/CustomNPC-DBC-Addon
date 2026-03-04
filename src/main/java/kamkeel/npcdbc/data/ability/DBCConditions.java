@@ -17,6 +17,7 @@ public class DBCConditions {
     public static final AbilityCondition CLASS = CONDITIONS.register("class", ConditionDBCClass::new);
     public static final AbilityCondition DBC_EFFECT = CONDITIONS.register("dbc_effect", ConditionDBCEffect::new);
     public static final AbilityCondition SKILL = CONDITIONS.register("skill", ConditionSkill::new);
+    public static final AbilityCondition FUSED = CONDITIONS.register("fused", ConditionFused::new);
     public static final AbilityCondition LOCKED_ON = CONDITIONS.register("locked_on", ConditionLockedOn::new);
 
     public static void register() {

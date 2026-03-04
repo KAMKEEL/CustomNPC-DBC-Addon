@@ -10,7 +10,7 @@ if (BUILD_USING_CNPC_SOURCE)
     apply from: 'gradle.handleCNPCSubmoduleInjection.groovy'
 
 group= "kamkeel.npcdbc"
-version = "1.2-beta12"
+version = "1.2-beta13"
 group= "kamkeel.npcdbc"
 archivesBaseName = "npcdbc"
 

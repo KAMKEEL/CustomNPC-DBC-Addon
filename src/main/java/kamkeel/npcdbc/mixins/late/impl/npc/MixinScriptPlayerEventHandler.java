@@ -3,6 +3,9 @@ package kamkeel.npcdbc.mixins.late.impl.npc;
 import kamkeel.npcdbc.data.DBCDamageCalc;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.util.DBCUtils;
+import kamkeel.npcs.controllers.AttributeController;
+import kamkeel.npcs.controllers.data.attribute.tracker.PlayerAttributeTracker;
+import kamkeel.npcs.util.AttributeAttackUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
@@ -44,7 +47,7 @@ public abstract class MixinScriptPlayerEventHandler {
                     this.attackedEventDamage = DBCUtils.calculateDBCDamageFromSource(instance.entityLiving, attackStat, instance.source);
                     return attackedEventDamage.getDamage();
                 } else
-                    return attackStat;
+                    return AttributeAttackUtil.calculateOutgoing(player, attackStat);
             }
         }
         return instance.ammount;
@@ -62,13 +65,20 @@ public abstract class MixinScriptPlayerEventHandler {
             DBCData data = DBCData.get(player);
             boolean isNPC = instance.entityLiving instanceof EntityNPCInterface;
             dbcAltered = data.Powertype == 1;
+            DBCUtils.entityLastSetDamage = null;
             if (dbcAltered && !isNPC) {
                 float attackStat = DBCUtils.calculateAttackStat(player, instance.ammount, instance.source);
                 if (instance.entityLiving instanceof EntityPlayer) {
                     attackEventDamage = DBCUtils.calculateDBCDamageFromSource(instance.entityLiving, attackStat, instance.source);
                     return attackEventDamage.getDamage();
-                } else
-                    return attackStat;
+                } else {
+                    float outgoing = AttributeAttackUtil.calculateOutgoing(player, attackStat);
+                    PlayerAttributeTracker tracker = AttributeController.getTracker(player);
+                    if (tracker != null)
+                        outgoing = AttributeAttackUtil.applyCrit(outgoing, tracker);
+                    DBCUtils.entityLastSetDamage = outgoing;
+                    return outgoing;
+                }
             }
         }
         return instance.ammount;

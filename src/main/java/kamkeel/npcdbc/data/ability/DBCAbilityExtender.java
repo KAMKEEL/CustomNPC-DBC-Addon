@@ -4,26 +4,21 @@ import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import cpw.mods.fml.common.FMLCommonHandler;
-import kamkeel.npcdbc.constants.DBCDamageSource;
-import kamkeel.npcdbc.data.DBCDamageCalc;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.scripted.DBCEventHooks;
-import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcs.controllers.data.ability.Ability;
+import kamkeel.npcs.util.AttributeAttackUtil;
 import kamkeel.npcs.controllers.data.ability.conditions.AbilityCondition;
 import kamkeel.npcs.controllers.data.ability.conditions.ConditionHPThreshold;
 import kamkeel.npcs.controllers.data.ability.conditions.ConditionThreshold;
 import kamkeel.npcs.controllers.data.ability.enums.AbilityPhase;
 import kamkeel.npcs.controllers.data.ability.extender.IAbilityExtender;
-import kamkeel.npcs.controllers.data.ability.type.AbilityDefend;
-import kamkeel.npcs.controllers.data.ability.type.AbilityGuard;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
 import noppes.npcs.NpcDamageSource;
-import noppes.npcs.controllers.data.PlayerData;
+import noppes.npcs.controllers.data.MagicData;
 import noppes.npcs.entity.EntityNPCInterface;
 
 /**
@@ -118,12 +113,20 @@ public class DBCAbilityExtender implements IAbilityExtender {
         if (!(caster instanceof EntityPlayer))
             return baseHealth; // NPCs always use flat health
 
-        DBCAbilityStats stats = DBCAbilityStats.fromAbility(ability);
-        if (!stats.barrierScalingEnabled)
-            return baseHealth;
+        float health = baseHealth;
 
-        float scaledHealth = DBCUtils.calculateBarrierHealth((EntityPlayer) caster, stats);
-        return scaledHealth > 0 ? scaledHealth : baseHealth;
+        // DBC barrier scaling (from DBC ability stats)
+        DBCAbilityStats stats = DBCAbilityStats.fromAbility(ability);
+        if (stats.barrierScalingEnabled) {
+            float scaledHealth = DBCUtils.calculateBarrierHealth((EntityPlayer) caster, stats);
+            if (scaledHealth > 0) health = scaledHealth;
+        }
+
+        // Gear magic boost: Thunder dome + Thunder gear boost = amplified health
+        MagicData resolved = ability.resolveMagicData(caster);
+        health = AttributeAttackUtil.applyMagicBoostToHealth((EntityPlayer) caster, resolved, health);
+
+        return health;
     }
 
     @Override
@@ -194,6 +197,14 @@ public class DBCAbilityExtender implements IAbilityExtender {
                 // DBC scaling replaces base damage; preserve ability and barrier multipliers
                 outDamage = calcDamage * ability.getDamageMultiplier() * damageMultiplier;
             }
+
+            // Apply magic pipeline (splits + gear magic boosts + interactions)
+            MagicData resolved = ability.resolveMagicData(caster);
+            outDamage = AttributeAttackUtil.calculateAbilityDamage(caster, target, outDamage, resolved);
+        } else if (caster instanceof EntityNPCInterface) {
+            // NPC caster: apply magic pipeline (splits + interactions, no gear)
+            MagicData resolved = ability.resolveMagicData(caster);
+            outDamage = AttributeAttackUtil.calculateAbilityDamage(caster, target, outDamage, resolved);
         }
 
         // Route damage to target
@@ -232,10 +243,10 @@ public class DBCAbilityExtender implements IAbilityExtender {
 
             if (useAbilityStats) {
                 // Use ability's configured ignore flags for defender reduction
-                applyDBCDamageToPlayer((EntityPlayer) target, outDamage, stats, source, caster);
+                DBCUtils.applyDBCDamageToPlayer((EntityPlayer) target, outDamage, stats, source, caster);
             } else {
                 // Use player's own DBC combat settings (generic defender reduction)
-                applyDBCDamageToPlayerDefault((EntityPlayer) target, outDamage, stats, source, caster);
+                DBCUtils.applyDBCDamageToPlayerDefault((EntityPlayer) target, outDamage, stats, source, caster);
             }
         } else if (target instanceof EntityNPCInterface) {
             // NPC target: set npcLastSetDamage for the Mixin to pick up
@@ -251,70 +262,6 @@ public class DBCAbilityExtender implements IAbilityExtender {
         }
 
         return true; // Always handled when DBC Addon is installed
-    }
-
-    /** Apply damage using the ability's DBC ignore flags. */
-    private void applyDBCDamageToPlayer(EntityPlayer player, float damage, DBCAbilityStats stats, DamageSource source, EntityLivingBase attacker) {
-        DBCDamageCalc damageCalc = DBCUtils.calculateDBCStatDamage(player, (int) damage, stats, source);
-        damageCalc.damage = applyGuardReduction(player, attacker, source, damageCalc.damage);
-
-        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(
-            player, damageCalc, source, DBCDamageSource.NPC
-        );
-        if (DBCEventHooks.onDBCDamageEvent(damagedEvent)) {
-            return;
-        }
-
-        damageCalc.damage = damagedEvent.damage;
-        damageCalc.stamina = damagedEvent.getStaminaReduced();
-        damageCalc.ki = damagedEvent.getKiReduced();
-        damageCalc.ko = damagedEvent.getFinalKO();
-
-        DBCUtils.lastSetDamage = damageCalc;
-        damageCalc.processExtras();
-
-        DBCUtils.doDBCDamage(player, damageCalc.damage, stats, source);
-    }
-
-    /** Apply damage using default DBC defender reduction (player's own settings). */
-    private void applyDBCDamageToPlayerDefault(EntityPlayer player, float damage, DBCAbilityStats stats, DamageSource source, EntityLivingBase attacker) {
-        DBCDamageCalc damageCalc = DBCUtils.calculateDBCDamageFromSource(player, damage, source);
-        damageCalc.damage = applyGuardReduction(player, attacker, source, damageCalc.damage);
-
-        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(
-            player, damageCalc, source, DBCDamageSource.PLAYER
-        );
-        if (DBCEventHooks.onDBCDamageEvent(damagedEvent)) {
-            return;
-        }
-
-        damageCalc.damage = damagedEvent.damage;
-        damageCalc.stamina = damagedEvent.getStaminaReduced();
-        damageCalc.ki = damagedEvent.getKiReduced();
-        damageCalc.ko = damagedEvent.getFinalKO();
-
-        DBCUtils.lastSetDamage = damageCalc;
-        damageCalc.processExtras();
-
-        // null stats = use player's own DBC settings
-        DBCUtils.doDBCDamage(player, damageCalc.damage, null, source);
-    }
-
-    private float applyGuardReduction(EntityPlayer player, EntityLivingBase attacker, DamageSource source, float damage) {
-        if (attacker == null) {
-            return damage;
-        }
-
-        PlayerData pData = PlayerData.get(player);
-        if (pData == null || pData.abilityData == null) {
-            return damage;
-        }
-
-        AbilityDefend defend = pData.abilityData.getActiveDefend();
-        if (defend instanceof AbilityGuard) {
-            return defend.onDefend(attacker, source, damage);
-        }
-        return damage;
     }
 
     @Override

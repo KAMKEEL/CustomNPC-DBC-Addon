@@ -22,7 +22,7 @@ import kamkeel.npcdbc.controllers.SkillController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.data.skill.SkillContainer;
+import kamkeel.npcdbc.data.skill.CustomSkillContainer;
 import kamkeel.npcdbc.mixins.late.IDBCGuiScreen;
 import kamkeel.npcdbc.network.DBCPacketClient;
 import kamkeel.npcdbc.network.packets.player.skill.CustomSkillPacket;
@@ -172,7 +172,7 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
     */
     /**
      * <span style="font-size: 1.1em; color: orange;"><b>VERY Important: </b></span>If this method breaks again,
-     * and you are not sure of what it does just ping me to not break it
+     * and you are not <i>completely</i> sure of what it does just ping me to not break it
      * <br>
      * -Hussar
      */
@@ -182,7 +182,7 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
             customNPC_DBC_Addon$drawSliderIfNoSkills();
 
         DBCData data = DBCData.getClient();
-        SkillContainer[] customSkills = data.customSkills.values().toArray(new SkillContainer[0]);
+        CustomSkillContainer[] customSkills = data.customSkills.values().toArray(new CustomSkillContainer[0]);
 
         final int maximumSpaceForCustomSkills = 10 - skillsDrawnAlready;
 
@@ -216,7 +216,7 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
         final int cappedCondition = Math.min(customSkills.length, skillEndIndex);
 
         for (int i = skillStartIndex; i < cappedCondition ; ++i) {
-            SkillContainer skill = customSkills[i];
+            CustomSkillContainer skill = customSkills[i];
 
             // Can't remove this.
             skillsDrawnAlready++;
@@ -262,12 +262,14 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
      * <br>
      * If it's not null and of length 0, {@linkplain #modifySkillCountForScrollSize our inject}
      * still corrects for the injected size so that's fine.
-     *
+     * <br> <br>
      * <h3>If this method ever breaks, all hell breaks loose.</h3>
      * This had to be extracted from drawScreen... deeply nested inside a shit-ton of <code>if</code> branches. <br>
      * The <span style="font-size: 1.1em; color: orange;"><b>ONLY</b></span> change is <code>int sw = DBCData.getClient().customSkills.size();</code>. <br>
      * <br>
-     * There is a big possibility that if scrollbar rendering ever breaks, you have to fix both <span style="font-size: 1.1em; color: orange;"><b>this</b></span> function and the DBC implementation as well...<br>
+     * There is a big possibility that if scrollbar rendering ever breaks, you have to fix both
+     * <span style="font-size: 1.1em; color: orange;"><b>this</b></span> function and the DBC implementation as well...
+     * <br>
      * <br>
      * Have fun...?
      */

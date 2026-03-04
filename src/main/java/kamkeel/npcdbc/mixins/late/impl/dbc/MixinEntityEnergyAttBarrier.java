@@ -236,8 +236,8 @@ public abstract class MixinEntityEnergyAttBarrier extends EntityEnAttacks {
         npcdbc$reflected = true;
 
         // Color shift to barrier colors
-        int newColor = DBCColorUtil.findClosestPaletteIndex(barrier.getInnerColor());
-        int newColor2 = DBCColorUtil.findClosestPaletteIndex(barrier.getOuterColor());
+        int newColor = DBCColorUtil.findClosestPaletteIndex(barrier.getOuterColor());
+        int newColor2 = DBCColorUtil.findClosestPaletteIndex(barrier.getInnerColor());
         ((IEntityEnergyAttAccessor) (Object) this).npcdbc$setColor(newColor);
         ((IEntityEnergyAttAccessor) (Object) this).npcdbc$setColor2(newColor2);
         KiAttackColorSyncPacket.sendToTracking((Entity) (Object) this, newColor, newColor2);

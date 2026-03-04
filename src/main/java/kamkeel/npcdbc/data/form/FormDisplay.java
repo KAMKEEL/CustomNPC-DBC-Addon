@@ -32,7 +32,7 @@ public class FormDisplay implements IFormDisplay {
     public boolean keepOriginalSize = true;
 
     public String hairCode = "";
-    public String hairType = "";
+    public String hairType = "base";
 
     public String bodyType = "";
 
@@ -69,6 +69,8 @@ public class FormDisplay implements IFormDisplay {
 
         hairCode = rendering.getString("hairCode");
         hairType = rendering.getString("hairType");
+        if (hairType.isEmpty())
+            hairType = "base";
 
         bodyType = rendering.getString("bodyType");
 
