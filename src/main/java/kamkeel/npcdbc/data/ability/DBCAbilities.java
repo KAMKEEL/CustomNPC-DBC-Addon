@@ -334,7 +334,7 @@ public class DBCAbilities {
         a.setName("Kamehameha");
         a.setDisplayName("&bKamehameha");
         a.setPerAbilityCooldown(true);
-        a.setWindUpTicks(60);
+        a.setWindUpTicks(55);
         a.setShowTelegraph(false);
         a.setRotationMode(RotationMode.LOCKED);
         a.setRotationPhase(LockMode.ACTIVE);
