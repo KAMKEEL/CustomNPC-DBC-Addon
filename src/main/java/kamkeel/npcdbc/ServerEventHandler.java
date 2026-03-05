@@ -28,6 +28,7 @@ import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.CapsuleInfo;
 import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
 import kamkeel.npcdbc.network.packets.player.LoginInfo;
+import kamkeel.npcdbc.data.ability.DBCAbilities;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
@@ -46,6 +47,7 @@ import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
+import noppes.npcs.scripted.event.player.PlayerEvent;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.Iterator;
@@ -63,6 +65,17 @@ public class ServerEventHandler {
         DBCPacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.STRENGTH), (EntityPlayerMP) event.player);
         DBCPacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.EFFECT_TIME), (EntityPlayerMP) event.player);
         DBCPacketHandler.Instance.sendToPlayer(new LoginInfo(), (EntityPlayerMP) event.player);
+        DBCAbilities.grantToggleAbilities(event.player);
+    }
+
+    @SubscribeEvent
+    public void onProfileChange(PlayerEvent.ProfileEvent.Changed event) {
+        if (!event.post)
+            return;
+        EntityPlayer player = (EntityPlayer) event.player.getMCEntity();
+        if (player == null || player.worldObj == null || player.worldObj.isRemote)
+            return;
+        DBCAbilities.grantToggleAbilities(player);
     }
 
     @SubscribeEvent

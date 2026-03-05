@@ -89,6 +89,9 @@ public class CustomNpcPlusDBC {
             return data != null && data.isFlying;
         });
 
+        // Prevent fusion spectators from activating any ability
+        AbilityController.Instance.registerActivationChecker(player -> !DBCData.get(player).isFusionSpectator());
+
         // Register DBC player hooks so handler-based GUIs include them
         if (ScriptHookController.Instance != null) {
             ScriptContext.PLAYER.addNamespace("IDBCEvent");

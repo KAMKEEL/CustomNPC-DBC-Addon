@@ -2,8 +2,10 @@ package kamkeel.npcdbc.data.ability;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
+import kamkeel.npcdbc.constants.DBCSkills;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.constants.enums.EnumDBCRaces;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.ability.conditions.ConditionRace;
 import kamkeel.npcs.controllers.data.ability.conditions.ConditionHPThreshold;
 import kamkeel.npcs.controllers.data.ability.conditions.ConditionThreshold;
@@ -25,6 +27,9 @@ import kamkeel.npcs.controllers.data.ability.type.energy.AbilityDome;
 import kamkeel.npcs.controllers.data.ability.type.energy.AbilityLaser;
 import kamkeel.npcs.controllers.data.ability.type.energy.AbilityOrb;
 import kamkeel.npcs.util.Register;
+import net.minecraft.entity.player.EntityPlayer;
+import noppes.npcs.controllers.PlayerDataController;
+import noppes.npcs.controllers.data.PlayerData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,15 +50,20 @@ public class DBCAbilities {
 
     // Toggle Abilities
     public static final Ability FRIENDLY_FIST = ABILITIES.register("friendly_fist", () -> new DBCToggleAbility(DBCToggle.FRIENDLY_FIST));
-    public static final Ability SWOOP = ABILITIES.register("swoop", () -> new DBCToggleAbility(DBCToggle.SWOOP));
-    public static final Ability KAIOKEN = ABILITIES.register("kaioken", () -> new DBCToggleAbility(DBCToggle.KAIOKEN));
-    public static final Ability FUSION = ABILITIES.register("fusion", () -> new DBCToggleAbility(DBCToggle.FUSION));
-    public static final Ability KI_FIST = ABILITIES.register("ki_fist", () -> new DBCToggleAbility(DBCToggle.KI_FIST));
-    public static final Ability KI_PROTECTION = ABILITIES.register("ki_protection", () -> new DBCToggleAbility(DBCToggle.KI_PROTECTION));
-    public static final Ability KI_WEAPON = ABILITIES.register("ki_weapon", () -> new DBCToggleAbility(DBCToggle.KI_WEAPON));
-    public static final Ability POTENTIAL_UNLEASHED = ABILITIES.register("potential_unleashed", () -> new DBCToggleAbility(DBCToggle.POTENTIAL_UNLEASHED));
-    public static final Ability ULTRA_INSTINCT = ABILITIES.register("ultra_instinct", () -> new DBCToggleAbility(DBCToggle.ULTRA_INSTINCT));
-    public static final Ability GOD_OF_DESTRUCTION = ABILITIES.register("god_of_destruction", () -> new DBCToggleAbility(DBCToggle.GOD_OF_DESTRUCTION));
+    public static final Ability SWOOP = ABILITIES.register("swoop", () -> withSkill(new DBCToggleAbility(DBCToggle.SWOOP), DBCSkills.Dash));
+    public static final Ability KAIOKEN = ABILITIES.register("kaioken", () -> withSkill(new DBCToggleAbility(DBCToggle.KAIOKEN), DBCSkills.Kaioken));
+    public static final Ability FUSION = ABILITIES.register("fusion", () -> withSkill(new DBCToggleAbility(DBCToggle.FUSION), DBCSkills.Fusion));
+    public static final Ability KI_FIST = ABILITIES.register("ki_fist", () -> withSkill(new DBCToggleAbility(DBCToggle.KI_FIST), DBCSkills.KiFist));
+    public static final Ability KI_PROTECTION = ABILITIES.register("ki_protection", () -> withSkill(new DBCToggleAbility(DBCToggle.KI_PROTECTION), DBCSkills.KiProtection));
+    public static final Ability KI_WEAPON = ABILITIES.register("ki_weapon", () -> withSkill(new DBCToggleAbility(DBCToggle.KI_WEAPON), DBCSkills.KiInfuse));
+    public static final Ability POTENTIAL_UNLEASHED = ABILITIES.register("potential_unleashed", () -> withSkill(new DBCToggleAbility(DBCToggle.POTENTIAL_UNLEASHED), DBCSkills.PotentialUnlock));
+    public static final Ability ULTRA_INSTINCT = ABILITIES.register("ultra_instinct", () -> withSkill(new DBCToggleAbility(DBCToggle.ULTRA_INSTINCT), DBCSkills.UltraInstinct));
+    public static final Ability GOD_OF_DESTRUCTION = ABILITIES.register("god_of_destruction", () -> withSkill(new DBCToggleAbility(DBCToggle.GOD_OF_DESTRUCTION), DBCSkills.GodOfDestruction));
+
+    private static DBCToggleAbility withSkill(DBCToggleAbility ability, DBCSkills skill) {
+        ability.setPlayerRequirement(player -> DBCData.get(player).hasSkill(skill.getId()));
+        return ability;
+    }
 
     // Ability Variants
 
@@ -601,6 +611,35 @@ public class DBCAbilities {
         icon.setLayerIconX(0, 384);
         icon.setLayerIconY(0, 0);
     });
+
+    private static final String[] TOGGLE_KEYS = {
+        "friendly_fist", "swoop", "kaioken", "fusion", "ki_fist",
+        "ki_protection", "ki_weapon", "potential_unleashed",
+        "ultra_instinct", "god_of_destruction"
+    };
+
+    /**
+     * Ensures all DBC toggle abilities are in the player's unlocked list.
+     * Visibility is handled by each ability's playerRequirement predicate.
+     */
+    public static void grantToggleAbilities(EntityPlayer player) {
+        if (player.worldObj.isRemote || PlayerDataController.Instance == null)
+            return;
+
+        PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
+        boolean changed = false;
+
+        for (String key : TOGGLE_KEYS) {
+            if (!playerData.abilityData.hasUnlockedAbility(key)) {
+                playerData.abilityData.unlockAbility(key);
+                changed = true;
+            }
+        }
+
+        if (changed) {
+            playerData.abilityData.syncToClient();
+        }
+    }
 
     public static void register() {
         ABILITIES.register();

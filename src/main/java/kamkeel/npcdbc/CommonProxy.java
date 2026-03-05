@@ -44,6 +44,7 @@ public class CommonProxy {
         ServerEventHandler handler = new ServerEventHandler();
         FMLCommonHandler.instance().bus().register(handler);
         MinecraftForge.EVENT_BUS.register(handler);
+        NpcAPI.EVENT_BUS.register(handler);
     }
 
     public void preInit(FMLPreInitializationEvent ev) {
