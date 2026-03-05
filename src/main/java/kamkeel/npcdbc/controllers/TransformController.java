@@ -307,7 +307,6 @@ public class TransformController {
                 formData.addTimer(form.id, form.getTimer());
 
             formData.updateClient();
-            LogWriter.info(form.getMenuName());
             NetworkUtility.sendInfoMessage(player, "§a", "npcdbc.transform", "§r ", form.getMenuName());
             dbcData.saveNBTData(true);
 
