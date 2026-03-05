@@ -10,6 +10,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalByteRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CommonProxy;
+import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -112,14 +113,16 @@ public class MixinDBCPacketHandler {
                 st2.set((byte) 0);
                 statusKaiokenOn.set(true);
                 isMysticAvailable.set(true);
-                stus = data.setForm(GodOfDestruction, false);
+                data.setForm(GodOfDestruction, false);
                 if (!DBCConfig.MysticKaiokenOn) {
                     data.setForm(Kaioken, false);
                 }
+
                 if (statusUltraInstinctOn.get())
                     stus = data.setForm(UltraInstinct, false);
                 else
                     stus = JRMCoreH.StusEfcts(19, stus, nbt, false);
+
                 statusUltraInstinctOn.set(false);
             } else if (selected >= Kaioken && selected <= Kaioken6) {
                 int chosen = (selected - Kaioken + 1);
@@ -152,15 +155,16 @@ public class MixinDBCPacketHandler {
             } else {
                 if (statusMysticOn.get()) {
                     statusMysticOn.set(false);
-                    data.setForm(Mystic, false);
-
+                    stus = data.setForm(Mystic, false);
                 }
                 if (statusUltraInstinctOn.get()) {
                     statusUltraInstinctOn.set(false);
-                    data.setForm(UltraInstinct, false);
-
+                    stus = data.setForm(UltraInstinct, false);
                 }
-
+                if (statusGodOfDestructionOn.get()) {
+                    statusGodOfDestructionOn.set(false);
+                    stus = data.setForm(GodOfDestruction, false);
+                }
                 if (race == DBCRace.HUMAN || race == DBCRace.NAMEKIAN) {
                     playerAscendGod.set(false);
 
@@ -169,7 +173,6 @@ public class MixinDBCPacketHandler {
                         data.setSetting(1, 0);
                         st.set((byte) 0);
                         playerAscendNormal.set(true);
-
                     }
 
                     if (selected == (human ? HumanBuffed : NamekGiant)) {
@@ -177,7 +180,6 @@ public class MixinDBCPacketHandler {
                         st.set((byte) 0);
                         playerAscendNormal.set(false);
                     }
-
 
                     if (selected == (human ? HumanGod : NamekGod)) {
                         data.setSetting(1, 1);
