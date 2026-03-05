@@ -1008,6 +1008,10 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         Form form = getForm();
         if (form != null) {
             formSpeed = form.mastery.movementSpeed * form.mastery.calculateMulti("movementspeed", addonFormLevel);
+            if (form.advanced.isStatEnabled(DBCStatistics.FlySpeed)) {
+                formSpeed *= form.advanced.getStatMulti(DBCStatistics.FlySpeed);
+                formSpeed += form.advanced.getStatBonus(DBCStatistics.FlySpeed) * 0.01f;
+            }
         }
         return baseFlightSpeed * formSpeed;
     }
@@ -1017,6 +1021,10 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         Form form = getForm();
         if (form != null) {
             formSpeed = form.mastery.movementSpeed * form.mastery.calculateMulti("movementspeed", addonFormLevel);
+            if (form.advanced.isStatEnabled(DBCStatistics.FlySpeed)) {
+                formSpeed *= form.advanced.getStatMulti(DBCStatistics.FlySpeed);
+                formSpeed += form.advanced.getStatBonus(DBCStatistics.FlySpeed) * 0.01f;
+            }
         }
         return dynamicFlightSpeed * formSpeed;
     }
@@ -1026,6 +1034,10 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         Form form = getForm();
         if (form != null) {
             formSpeed = form.mastery.movementSpeed * form.mastery.calculateMulti("movementspeed", addonFormLevel);
+            if (form.advanced.isStatEnabled(DBCStatistics.Speed)) {
+                formSpeed *= form.advanced.getStatMulti(DBCStatistics.Speed);
+                formSpeed += form.advanced.getStatBonus(DBCStatistics.Speed) * 0.01f;
+            }
         }
         return sprintSpeed * formSpeed;
     }
