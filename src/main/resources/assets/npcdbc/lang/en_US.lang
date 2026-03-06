@@ -17,6 +17,8 @@ stats.dbcsettings=DBC Settings
 inventory.extras=Extras
 
 gui.clone=Clone
+gui.addCategory=Add Category
+gui.fullscreen=FULL
 
 stats.lockOnState=Can NPC be locked onto?
 stats.dbcEnabled=DBC Damage Enabled

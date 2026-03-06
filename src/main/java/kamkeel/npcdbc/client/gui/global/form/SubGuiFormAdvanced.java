@@ -20,7 +20,7 @@ public class SubGuiFormAdvanced extends SubGuiInterface implements ISubGuiListen
     public FormAdvanced advanced;
     public GuiScrollWindow scrollWindow;
 
-    public SubGuiFormAdvanced(GuiNPCManageForms parent, Form form) {
+    public SubGuiFormAdvanced(IFormManagerGui parent, Form form) {
         this.form = form;
         this.advanced = form.advanced;
         setBackground("menubg.png");

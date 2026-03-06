@@ -12,6 +12,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.CustomNpcs;
 import noppes.npcs.LogWriter;
+import noppes.npcs.controllers.CategoryManager;
+import noppes.npcs.controllers.data.Category;
 import noppes.npcs.util.NBTJsonUtil;
 
 import java.io.BufferedInputStream;
@@ -22,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
@@ -31,6 +34,8 @@ public class AuraController implements IAuraHandler {
     public HashMap<Integer, Aura> customAuras;
     private HashMap<Integer, String> bootOrder;
     private int lastUsedID = 0;
+
+    public CategoryManager categoryManager = new CategoryManager();
 
     public AuraController() {
         Instance = this;
@@ -88,7 +93,7 @@ public class AuraController implements IAuraHandler {
 
         saveAuraLoadMap();
 
-        File dir = this.getDir();
+        File dir = categoryManager.getItemDir(customAura.getID());
         if (!dir.exists())
             dir.mkdirs();
 
@@ -109,12 +114,7 @@ public class AuraController implements IAuraHandler {
     }
 
     public void deleteAuraFile(String name) {
-        File dir = this.getDir();
-        if (!dir.exists())
-            dir.mkdirs();
-        File file2 = new File(dir, name + ".json");
-        if (file2.exists())
-            file2.delete();
+        categoryManager.deleteFile(name + ".json");
     }
 
     private void loadAuras() {
@@ -123,42 +123,60 @@ public class AuraController implements IAuraHandler {
         File dir = getDir();
         if (!dir.exists()) {
             dir.mkdir();
-        } else {
-            for (File file : dir.listFiles()) {
-                if (!file.isFile() || !file.getName().endsWith(".json"))
-                    continue;
-                try {
-                    Aura aura = new Aura();
-                    aura.readFromNBT(NBTJsonUtil.LoadFile(file));
-                    aura.name = file.getName().substring(0, file.getName().length() - 5);
+            return;
+        }
 
-                    if (aura.id == -1) {
-                        aura.id = getUnusedId();
-                    }
+        categoryManager.loadCategories(dir);
 
-                    int originalID = aura.id;
-                    int setID = aura.id;
-                    while (bootOrder.containsKey(setID) || customAuras.containsKey(setID)) {
-                        if (bootOrder.containsKey(setID))
-                            if (bootOrder.get(setID).equals(aura.name))
-                                break;
+        // Load uncategorized auras (root level)
+        loadAurasFromDir(dir, CategoryManager.UNCATEGORIZED_ID);
 
-                        setID++;
-                    }
+        // Load categorized auras (subdirectories)
+        for (Map.Entry<Integer, Category> entry : categoryManager.getCategories().entrySet()) {
+            File catDir = categoryManager.getCategoryDir(entry.getKey());
+            loadAurasFromDir(catDir, entry.getKey());
+        }
 
-                    aura.id = setID;
-                    if (originalID != setID) {
-                        LogWriter.info("Found Custom Aura ID Mismatch: " + aura.name + ", New ID: " + setID);
-                        aura.save();
-                    }
+        saveAuraLoadMap();
+    }
 
-                    customAuras.put(aura.id, aura);
-                } catch (Exception e) {
-                    LogWriter.error("Error loading: " + file.getAbsolutePath(), e);
+    private void loadAurasFromDir(File dir, int catId) {
+        File[] files = dir.listFiles();
+        if (files == null) return;
+        for (File file : files) {
+            if (!file.isFile() || !file.getName().endsWith(".json"))
+                continue;
+            try {
+                Aura aura = new Aura();
+                aura.readFromNBT(NBTJsonUtil.LoadFile(file));
+                aura.name = file.getName().substring(0, file.getName().length() - 5);
+
+                if (aura.id == -1) {
+                    aura.id = getUnusedId();
                 }
+
+                int originalID = aura.id;
+                int setID = aura.id;
+                while (bootOrder.containsKey(setID) || customAuras.containsKey(setID)) {
+                    if (bootOrder.containsKey(setID))
+                        if (bootOrder.get(setID).equals(aura.name))
+                            break;
+
+                    setID++;
+                }
+
+                aura.id = setID;
+                if (originalID != setID) {
+                    LogWriter.info("Found Custom Aura ID Mismatch: " + aura.name + ", New ID: " + setID);
+                    aura.save();
+                }
+
+                customAuras.put(aura.id, aura);
+                categoryManager.registerItem(aura.id, catId);
+            } catch (Exception e) {
+                LogWriter.error("Error loading: " + file.getAbsolutePath(), e);
             }
         }
-        saveAuraLoadMap();
     }
 
     public boolean hasName(String newName) {
@@ -169,7 +187,6 @@ public class AuraController implements IAuraHandler {
                 return true;
         return false;
     }
-
 
     public IAura get(String name) {
         return getAuraFromName(name);
@@ -193,16 +210,13 @@ public class AuraController implements IAuraHandler {
 
         Aura foundAura = this.customAuras.remove(id);
         if (foundAura != null && foundAura.name != null) {
-            File dir = this.getDir();
-            for (File file : dir.listFiles()) {
-                if (!file.isFile() || !file.getName().endsWith(".json"))
-                    continue;
-                if (file.getName().equals(foundAura.name + ".json")) {
-                    file.delete();
-                    DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.AURA, EnumSyncAction.REMOVE, foundAura.getID(), new NBTTagCompound()));
-                    break;
-                }
+            File dir = categoryManager.getItemDir(id);
+            File file = new File(dir, foundAura.name + ".json");
+            if (file.exists()) {
+                file.delete();
             }
+            categoryManager.removeItem(id);
+            DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.AURA, EnumSyncAction.REMOVE, foundAura.getID(), new NBTTagCompound()));
             saveAuraLoadMap();
         }
     }
@@ -210,20 +224,7 @@ public class AuraController implements IAuraHandler {
     public void delete(String name) {
         Aura delete = getAuraFromName(name);
         if (delete != null) {
-            Aura foundAura = this.customAuras.remove(delete.getID());
-            if (foundAura != null && foundAura.name != null) {
-                File dir = this.getDir();
-                for (File file : dir.listFiles()) {
-                    if (!file.isFile() || !file.getName().endsWith(".json"))
-                        continue;
-                    if (file.getName().equals(foundAura.name + ".json")) {
-                        file.delete();
-                        DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.AURA, EnumSyncAction.REMOVE, foundAura.getID(), new NBTTagCompound()));
-                        break;
-                    }
-                }
-                saveAuraLoadMap();
-            }
+            delete(delete.id);
         }
     }
 
@@ -271,8 +272,9 @@ public class AuraController implements IAuraHandler {
         return dir;
     }
 
-    /// /////////////////////////////////////////////////////
-    /// /////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
+    // AURA MAP
+    ////////////////////////////////////////////////////////
 
     public void readCustomAuraMap() {
         bootOrder.clear();
@@ -362,5 +364,46 @@ public class AuraController implements IAuraHandler {
         return Instance;
     }
 
+    ////////////////////////////////////////////////////////
+    // CATEGORY HELPERS
+    ////////////////////////////////////////////////////////
 
+    public Map<String, Integer> getCategoryScrollData() {
+        return categoryManager.getCategoryScrollData();
+    }
+
+    public Map<String, Integer> getItemsByCategoryScrollData(int catId) {
+        Map<String, Integer> map = new HashMap<>();
+        List<Integer> itemIds = categoryManager.getItemsInCategory(catId, customAuras.keySet());
+        for (int itemId : itemIds) {
+            Aura aura = customAuras.get(itemId);
+            if (aura != null) {
+                map.put(aura.name, aura.id);
+            }
+        }
+        return map;
+    }
+
+    public void moveItemToCategory(int itemId, int catId) {
+        Aura aura = customAuras.get(itemId);
+        if (aura == null) return;
+        categoryManager.moveItem(itemId, aura.name + ".json", catId);
+        saveAuraLoadMap();
+    }
+
+    public Category createCategory(String name) {
+        return categoryManager.createCategory(name);
+    }
+
+    public void saveCategory(Category cat) {
+        categoryManager.saveCategory(cat);
+    }
+
+    public boolean removeCategory(int catId) {
+        return categoryManager.removeCategory(catId, customAuras.keySet());
+    }
+
+    public Category getCategory(int catId) {
+        return categoryManager.getCategory(catId);
+    }
 }

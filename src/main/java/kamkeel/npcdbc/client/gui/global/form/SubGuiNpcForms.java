@@ -15,7 +15,7 @@ import noppes.npcs.client.gui.util.SubGuiInterface;
 
 public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener, ITextfieldListener {
 
-    private final GuiNPCManageForms parent;
+    private final IFormManagerGui parent;
 
     public Form form;
     boolean setAscendSound = true;
@@ -23,7 +23,7 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
     public int childForm = -1;
 
 
-    public SubGuiNpcForms(GuiNPCManageForms parent, Form form) {
+    public SubGuiNpcForms(IFormManagerGui parent, Form form) {
         this.parent = parent;
         this.form = form;
         this.parentForm = form.parentID;
@@ -156,14 +156,14 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
                 guiNpcTextField.setText("");
             else {
                 String name = guiNpcTextField.getText();
-                if (name.isEmpty() || this.parent.data.containsKey(name)) {
+                if (name.isEmpty() || this.parent.getFormData().containsKey(name)) {
                     guiNpcTextField.setText(form.name);
                 } else if (form.id >= 0) {
                     String old = form.name;
-                    this.parent.data.remove(old);
+                    this.parent.getFormData().remove(old);
                     form.name = name;
-                    this.parent.data.put(form.name, form.id);
-                    this.parent.scrollForms.replace(old, form.name);
+                    this.parent.getFormData().put(form.name, form.id);
+                    this.parent.getFormScroll().replace(old, form.name);
                 }
             }
         }

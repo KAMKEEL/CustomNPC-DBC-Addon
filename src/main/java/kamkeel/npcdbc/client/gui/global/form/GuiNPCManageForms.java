@@ -7,6 +7,7 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
+import net.minecraft.client.Minecraft;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.form.DBCGetForm;
 import kamkeel.npcdbc.network.packets.player.form.DBCRequestForm;
@@ -48,7 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
-public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScrollListener, IScrollData, IGuiData, ISubGuiListener, GuiYesNoCallback {
+public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScrollListener, IScrollData, IGuiData, ISubGuiListener, GuiYesNoCallback, IFormManagerGui {
     public GuiCustomScroll scrollForms;
     public HashMap<String, Integer> data = new HashMap<>();
     private final ArrayList<String> stackables = new ArrayList<>();
@@ -62,12 +63,14 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
     public FormDisplay display;
     public DBCDisplay visualDisplay;
     public int originalRace;
+    private EntityNPCInterface originalNpc;
 
     private float zoomed = 70, rotation;
 
 
     public GuiNPCManageForms(EntityNPCInterface npc) {
         super(npc);
+        this.originalNpc = npc;
         this.npc = DBCDisplay.setupGUINPC((EntityCustomNpc) npc);
         this.npc.display.name = "form man";
         this.npc.height = 1.62f;
@@ -89,15 +92,20 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
 
     public void initGui() {
         super.initGui();
-        addButton(new GuiNpcButton(0, guiLeft + 368, guiTop + 8, 45, 20, "gui.add"));
+        GuiNpcButton fullBtn = new GuiNpcButton(10, guiLeft + 368, guiTop + 8, 45, 20, "gui.fullscreen");
+        fullBtn.setTextColor(0x55FF55);
+        fullBtn.setHoverText("gui.fullscreen.tooltip");
+        addButton(fullBtn);
 
-        addButton(new GuiNpcButton(1, guiLeft + 368, guiTop + 32, 45, 20, "gui.remove"));
+        addButton(new GuiNpcButton(0, guiLeft + 368, guiTop + 36, 45, 20, "gui.add"));
+
+        addButton(new GuiNpcButton(1, guiLeft + 368, guiTop + 60, 45, 20, "gui.remove"));
         getButton(1).enabled = form != null && form.id != -1;
 
-        addButton(new GuiNpcButton(3, guiLeft + 368, guiTop + 56, 45, 20, "gui.clone"));
+        addButton(new GuiNpcButton(3, guiLeft + 368, guiTop + 84, 45, 20, "gui.clone"));
         getButton(3).enabled = form != null && form.id != -1;
 
-        addButton(new GuiNpcButton(2, guiLeft + 368, guiTop + 80, 45, 20, "gui.edit"));
+        addButton(new GuiNpcButton(2, guiLeft + 368, guiTop + 108, 45, 20, "gui.edit"));
         getButton(2).enabled = form != null && form.id != -1;
 
         if (scrollForms == null) {
@@ -139,6 +147,10 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
             if (data.containsKey(scrollForms.getSelected()) && form != null && form.id >= 0) {
                 setSubGui(new SubGuiFormGeneral(this, form));
             }
+        }
+        if (button.id == 10) {
+            Minecraft.getMinecraft().displayGuiScreen(new GuiFormDirectory(originalNpc));
+            return;
         }
         if (button.id == 3) {
             Form form = (Form) this.form.clone();
@@ -455,6 +467,24 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
             }
         }
     }
+
+    @Override
+    public HashMap<String, Integer> getFormData() { return data; }
+
+    @Override
+    public GuiCustomScroll getFormScroll() { return scrollForms; }
+
+    @Override
+    public EntityNPCInterface getFormNPC() { return npc; }
+
+    @Override
+    public Form getForm() { return form; }
+
+    @Override
+    public FormDisplay getFormDisplay() { return display; }
+
+    @Override
+    public DBCDisplay getFormVisualDisplay() { return visualDisplay; }
 
     @Override
     public void subGuiClosed(SubGuiInterface subgui) {

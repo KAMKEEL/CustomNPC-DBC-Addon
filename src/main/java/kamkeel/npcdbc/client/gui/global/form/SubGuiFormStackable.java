@@ -26,7 +26,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
     public FormCustomStackable customStackable;
     public GuiScrollWindow scrollWindow;
 
-    public SubGuiFormStackable(GuiNPCManageForms parent, Form form) {
+    public SubGuiFormStackable(IFormManagerGui parent, Form form) {
         this.form = form;
         this.stackable = form.stackable;
         this.customStackable = form.customStackable;

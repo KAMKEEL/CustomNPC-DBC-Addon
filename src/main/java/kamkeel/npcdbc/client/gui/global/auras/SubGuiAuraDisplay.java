@@ -51,7 +51,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
     public static boolean useGUIAura;
     public static Aura aura;
     public static int auraTicks = 1;
-    private final GuiNPCManageAuras parent;
+    private final IAuraManagerGui parent;
     private DBCDisplay visualDisplay;
     public AuraDisplay display;
     public int lastColorClicked = 0;
@@ -67,12 +67,12 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
     private int revampedAura;
     boolean setNormalSound = true;
 
-    public SubGuiAuraDisplay(GuiNPCManageAuras parent) {
-        super(parent.npc);
-        SubGuiAuraDisplay.aura = parent.aura;
-        this.display = parent.display;
+    public SubGuiAuraDisplay(IAuraManagerGui parent) {
+        super(parent.getAuraNPC());
+        SubGuiAuraDisplay.aura = parent.getAura();
+        this.display = parent.getAuraDisplay();
         this.parent = parent;
-        this.visualDisplay = parent.visualDisplay;
+        this.visualDisplay = parent.getAuraVisualDisplay();
 
         xSize = 360;
         ySize = 216;
@@ -472,7 +472,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             // Change 3D Type
             display.type = EnumAuraTypes3D.values()[button.getValue()];
             if (display.auraSound.equalsIgnoreCase("default")) {
-                parent.stopSound(parent.auraSound, false);
+                parent.stopSound(parent.getAuraSound(), false);
                 parent.playSound(true);
             }
             initGui();
@@ -499,7 +499,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             display.hasKaiokenAura = !display.hasKaiokenAura;
             if (!on) {
                 visualDisplay.isKaioken = false;
-                parent.stopSound(parent.kaiokenSound, false);
+                parent.stopSound(parent.getKaiokenSound(), false);
             }
 
             initGui();
@@ -510,8 +510,8 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
 
             if (is)
                 parent.playSound(false);
-            else if (parent.kaiokenSound != null) {
-                parent.stopSound(parent.kaiokenSound, false);
+            else if (parent.getKaiokenSound() != null) {
+                parent.stopSound(parent.getKaiokenSound(), false);
             }
 
             initGui();
@@ -540,8 +540,8 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             display.kettleModeEnabled = !display.kettleModeEnabled;
             if (display.kettleModeEnabled)
                 parent.playSound(false);
-            else if (parent.kettleSound != null) {
-                parent.stopSound(parent.kettleSound, false);
+            else if (parent.getKettleSound() != null) {
+                parent.stopSound(parent.getKettleSound(), false);
             }
             initGui();
         } else if (button.id == 670) {
@@ -582,8 +582,8 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             this.setSubGui(new SubGuiSelectAura());
         } else if (button.id == 1406) {
             aura.secondaryAuraID = -1;
-            parent.stopSound(parent.secondarySound, false);
-            parent.stopSound(parent.secondaryKettleSound, false);
+            parent.stopSound(parent.getSecondarySound(), false);
+            parent.stopSound(parent.getSecondaryKettleSound(), false);
             initGui();
         } else if (button.id == 2306) {
             this.setSubGui(new SubGuiSelectOutline());
@@ -599,7 +599,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             setSubGui(new GuiSoundSelection((getTextField(1).getText())));
         } else if (button.id == 11) {
             display.auraSound = "jinryuudragonbc:DBC.aura";
-            parent.stopSound(parent.auraSound, false);
+            parent.stopSound(parent.getAuraSound(), false);
             parent.playSound(false);
             initGui();
         } else if (button.id == 2) {
@@ -607,7 +607,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             setSubGui(new GuiSoundSelection((getTextField(2).getText())));
         } else if (button.id == 21) {
             display.kaiokenSound = "";
-            parent.stopSound(parent.kaiokenSound, false);
+            parent.stopSound(parent.getKaiokenSound(), false);
             parent.playSound(false);
             initGui();
         }
@@ -625,19 +625,19 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
     public void unFocused(GuiNpcTextField guiNpcTextField) {
         if (guiNpcTextField.id == 101) {
             String name = guiNpcTextField.getText();
-            if (!name.isEmpty() && !parent.data.containsKey(name)) {
-                String old = parent.aura.name;
-                parent.data.remove(parent.aura.name);
-                parent.aura.name = name;
-                parent.data.put(parent.aura.name, parent.aura.id);
-                parent.selected = name;
-                parent.scrollAuras.replace(old, parent.aura.name);
+            if (!name.isEmpty() && !parent.getAuraData().containsKey(name)) {
+                String old = parent.getAura().name;
+                parent.getAuraData().remove(parent.getAura().name);
+                parent.getAura().name = name;
+                parent.getAuraData().put(parent.getAura().name, parent.getAura().id);
+                parent.setAuraSelected(name);
+                parent.getAuraScroll().replace(old, parent.getAura().name);
             } else
                 guiNpcTextField.setText(aura.name);
         } else if (guiNpcTextField.id == 102) {
             String menuName = guiNpcTextField.getText();
             if (!menuName.isEmpty()) {
-                parent.aura.menuName = menuName.replaceAll("&", "§");
+                parent.getAura().menuName = menuName.replaceAll("&", "§");
             }
         }
         if (guiNpcTextField.id == 202) {
@@ -674,12 +674,12 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         } else if (guiNpcTextField.id == 1) {
             display.auraSound = guiNpcTextField.getText();
             getButton(11).enabled = !display.auraSound.equals("jinryuudragonbc:DBC.aura");
-            parent.stopSound(parent.auraSound, false);
+            parent.stopSound(parent.getAuraSound(), false);
             parent.playSound(false);
         } else if (guiNpcTextField.id == 2) {
             display.kaiokenSound = guiNpcTextField.getText();
             getButton(21).enabled = !display.kaiokenSound.isEmpty();
-            parent.stopSound(parent.kaiokenSound, false);
+            parent.stopSound(parent.getKaiokenSound(), false);
             parent.playSound(false);
         }
     }
@@ -907,15 +907,15 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
     }
 
     public void close() {
-        NoppesUtil.openGUI(player, parent);
+        parent.closeSubGui(this);
         if (visualDisplay.auraEntity != null)
             visualDisplay.auraEntity.despawn();
 
 
-        parent.visualDisplay.auraID = aura.id;
+        parent.getAuraVisualDisplay().auraID = aura.id;
 
-        parent.visualDisplay.isKaioken = false;
-        parent.stopSound(parent.kaiokenSound, false);
+        parent.getAuraVisualDisplay().isKaioken = false;
+        parent.stopSound(parent.getKaiokenSound(), false);
         aura = null;
         save();
     }

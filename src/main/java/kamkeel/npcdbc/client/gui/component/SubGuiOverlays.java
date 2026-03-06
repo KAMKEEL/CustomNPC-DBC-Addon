@@ -231,7 +231,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
                 deleteOverlay();
                 initGui();
             } else {
-                GuiYesNo guiyesno = new GuiYesNo(this.parent.parent, StatCollector.translateToLocal("gui.paste"),
+                GuiYesNo guiyesno = new GuiYesNo((GuiYesNoCallback) this.parent.parent, StatCollector.translateToLocal("gui.paste"),
                     StatCollector.translateToLocal("gui.sure"), 1);
                 this.displayGuiScreen(guiyesno);
             }
@@ -286,7 +286,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
 
         //Script
         if (buttonType == 11)
-            GuiScriptInterface.open(this.parent.parent, get(overlayID).scriptHandler);
+            GuiScriptInterface.open((net.minecraft.client.gui.GuiScreen) this.parent.parent, get(overlayID).scriptHandler);
     }
 
     public void confirmClicked(boolean flag, int i) {

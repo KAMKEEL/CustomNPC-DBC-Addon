@@ -12,6 +12,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.CustomNpcs;
 import noppes.npcs.LogWriter;
+import noppes.npcs.controllers.CategoryManager;
+import noppes.npcs.controllers.data.Category;
 import noppes.npcs.util.NBTJsonUtil;
 
 import java.io.BufferedInputStream;
@@ -22,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
@@ -31,6 +34,8 @@ public class OutlineController implements IOutlineHandler {
     public HashMap<Integer, Outline> customOutlines;
     private HashMap<Integer, String> bootOrder;
     private int lastUsedID = 0;
+
+    public CategoryManager categoryManager = new CategoryManager();
 
     public OutlineController() {
         Instance = this;
@@ -90,7 +95,7 @@ public class OutlineController implements IOutlineHandler {
 
         saveOutlineLoadMap();
 
-        File dir = this.getDir();
+        File dir = categoryManager.getItemDir(customOutline.getID());
         if (!dir.exists())
             dir.mkdirs();
 
@@ -112,12 +117,7 @@ public class OutlineController implements IOutlineHandler {
 
     @Override
     public void deleteOutlineFile(String name) {
-        File dir = this.getDir();
-        if (!dir.exists())
-            dir.mkdirs();
-        File file2 = new File(dir, name + ".json");
-        if (file2.exists())
-            file2.delete();
+        categoryManager.deleteFile(name + ".json");
     }
 
     private void loadOutlines() {
@@ -126,42 +126,60 @@ public class OutlineController implements IOutlineHandler {
         File dir = getDir();
         if (!dir.exists()) {
             dir.mkdir();
-        } else {
-            for (File file : dir.listFiles()) {
-                if (!file.isFile() || !file.getName().endsWith(".json"))
-                    continue;
-                try {
-                    Outline outline = new Outline();
-                    outline.readFromNBT(NBTJsonUtil.LoadFile(file));
-                    outline.name = file.getName().substring(0, file.getName().length() - 5);
+            return;
+        }
 
-                    if (outline.id == -1) {
-                        outline.id = getUnusedId();
-                    }
+        categoryManager.loadCategories(dir);
 
-                    int originalID = outline.id;
-                    int setID = outline.id;
-                    while (bootOrder.containsKey(setID) || customOutlines.containsKey(setID)) {
-                        if (bootOrder.containsKey(setID))
-                            if (bootOrder.get(setID).equals(outline.name))
-                                break;
+        // Load uncategorized outlines (root level)
+        loadOutlinesFromDir(dir, CategoryManager.UNCATEGORIZED_ID);
 
-                        setID++;
-                    }
+        // Load categorized outlines (subdirectories)
+        for (Map.Entry<Integer, Category> entry : categoryManager.getCategories().entrySet()) {
+            File catDir = categoryManager.getCategoryDir(entry.getKey());
+            loadOutlinesFromDir(catDir, entry.getKey());
+        }
 
-                    outline.id = setID;
-                    if (originalID != setID) {
-                        LogWriter.info("Found Custom Outline ID Mismatch: " + outline.name + ", New ID: " + setID);
-                        outline.save();
-                    }
+        saveOutlineLoadMap();
+    }
 
-                    customOutlines.put(outline.id, outline);
-                } catch (Exception e) {
-                    LogWriter.error("Error loading: " + file.getAbsolutePath(), e);
+    private void loadOutlinesFromDir(File dir, int catId) {
+        File[] files = dir.listFiles();
+        if (files == null) return;
+        for (File file : files) {
+            if (!file.isFile() || !file.getName().endsWith(".json"))
+                continue;
+            try {
+                Outline outline = new Outline();
+                outline.readFromNBT(NBTJsonUtil.LoadFile(file));
+                outline.name = file.getName().substring(0, file.getName().length() - 5);
+
+                if (outline.id == -1) {
+                    outline.id = getUnusedId();
                 }
+
+                int originalID = outline.id;
+                int setID = outline.id;
+                while (bootOrder.containsKey(setID) || customOutlines.containsKey(setID)) {
+                    if (bootOrder.containsKey(setID))
+                        if (bootOrder.get(setID).equals(outline.name))
+                            break;
+
+                    setID++;
+                }
+
+                outline.id = setID;
+                if (originalID != setID) {
+                    LogWriter.info("Found Custom Outline ID Mismatch: " + outline.name + ", New ID: " + setID);
+                    outline.save();
+                }
+
+                customOutlines.put(outline.id, outline);
+                categoryManager.registerItem(outline.id, catId);
+            } catch (Exception e) {
+                LogWriter.error("Error loading: " + file.getAbsolutePath(), e);
             }
         }
-        saveOutlineLoadMap();
     }
 
     @Override
@@ -173,7 +191,6 @@ public class OutlineController implements IOutlineHandler {
                 return true;
         return false;
     }
-
 
     @Override
     public IOutline get(String name) {
@@ -202,16 +219,13 @@ public class OutlineController implements IOutlineHandler {
 
         Outline foundOutline = this.customOutlines.remove(id);
         if (foundOutline != null && foundOutline.name != null) {
-            File dir = this.getDir();
-            for (File file : dir.listFiles()) {
-                if (!file.isFile() || !file.getName().endsWith(".json"))
-                    continue;
-                if (file.getName().equals(foundOutline.name + ".json")) {
-                    file.delete();
-                    DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.OUTLINE, EnumSyncAction.REMOVE, foundOutline.getID(), new NBTTagCompound()));
-                    break;
-                }
+            File dir = categoryManager.getItemDir(id);
+            File file = new File(dir, foundOutline.name + ".json");
+            if (file.exists()) {
+                file.delete();
             }
+            categoryManager.removeItem(id);
+            DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.OUTLINE, EnumSyncAction.REMOVE, foundOutline.getID(), new NBTTagCompound()));
             saveOutlineLoadMap();
         }
     }
@@ -220,20 +234,7 @@ public class OutlineController implements IOutlineHandler {
     public void delete(String name) {
         Outline delete = (Outline) getOutlineFromName(name);
         if (delete != null) {
-            Outline foundOutline = this.customOutlines.remove(delete.getID());
-            if (foundOutline != null && foundOutline.name != null) {
-                File dir = this.getDir();
-                for (File file : dir.listFiles()) {
-                    if (!file.isFile() || !file.getName().endsWith(".json"))
-                        continue;
-                    if (file.getName().equals(foundOutline.name + ".json")) {
-                        file.delete();
-                        DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.OUTLINE, EnumSyncAction.REMOVE, foundOutline.getID(), new NBTTagCompound()));
-                        break;
-                    }
-                }
-                saveOutlineLoadMap();
-            }
+            delete(delete.id);
         }
     }
 
@@ -284,8 +285,9 @@ public class OutlineController implements IOutlineHandler {
         return dir;
     }
 
-    /// /////////////////////////////////////////////////////
-    /// /////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
+    // OUTLINE MAP
+    ////////////////////////////////////////////////////////
 
     public void readCustomOutlineMap() {
         bootOrder.clear();
@@ -375,5 +377,46 @@ public class OutlineController implements IOutlineHandler {
         return Instance;
     }
 
+    ////////////////////////////////////////////////////////
+    // CATEGORY HELPERS
+    ////////////////////////////////////////////////////////
 
+    public Map<String, Integer> getCategoryScrollData() {
+        return categoryManager.getCategoryScrollData();
+    }
+
+    public Map<String, Integer> getItemsByCategoryScrollData(int catId) {
+        Map<String, Integer> map = new HashMap<>();
+        List<Integer> itemIds = categoryManager.getItemsInCategory(catId, customOutlines.keySet());
+        for (int itemId : itemIds) {
+            Outline outline = customOutlines.get(itemId);
+            if (outline != null) {
+                map.put(outline.name, outline.id);
+            }
+        }
+        return map;
+    }
+
+    public void moveItemToCategory(int itemId, int catId) {
+        Outline outline = customOutlines.get(itemId);
+        if (outline == null) return;
+        categoryManager.moveItem(itemId, outline.name + ".json", catId);
+        saveOutlineLoadMap();
+    }
+
+    public Category createCategory(String name) {
+        return categoryManager.createCategory(name);
+    }
+
+    public void saveCategory(Category cat) {
+        categoryManager.saveCategory(cat);
+    }
+
+    public boolean removeCategory(int catId) {
+        return categoryManager.removeCategory(catId, customOutlines.keySet());
+    }
+
+    public Category getCategory(int catId) {
+        return categoryManager.getCategory(catId);
+    }
 }

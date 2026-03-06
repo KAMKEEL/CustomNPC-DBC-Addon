@@ -53,7 +53,7 @@ import java.util.Vector;
 import static kamkeel.npcdbc.client.ClientEventHandler.spawnAura;
 import static kamkeel.npcdbc.client.ClientEventHandler.spawnKaiokenAura;
 
-public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScrollListener, IScrollData, IGuiData, ISubGuiListener, GuiYesNoCallback, ITextfieldListener {
+public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScrollListener, IScrollData, IGuiData, ISubGuiListener, GuiYesNoCallback, ITextfieldListener, IAuraManagerGui {
     public GuiCustomScroll scrollAuras;
     public HashMap<String, Integer> data = new HashMap<>();
     public AuraSound auraSound, secondarySound, kaiokenSound, kettleSound, secondaryKettleSound;
@@ -69,9 +69,11 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
     private int revampedAura;
     public static int auraTicks = 1;
     private float zoomed = 50.0F, rotation;
+    private EntityNPCInterface originalNpc;
 
     public GuiNPCManageAuras(EntityNPCInterface npc) {
         super(npc);
+        this.originalNpc = npc;
         this.npc = DBCDisplay.setupGUINPC((EntityCustomNpc) npc);
         this.npc.display.name = "aura man";
         this.npc.height = 1.62f;
@@ -89,15 +91,20 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
 
     public void initGui() {
         super.initGui();
-        addButton(new GuiNpcButton(0, guiLeft + 368, guiTop + 8, 45, 20, "gui.add"));
+        GuiNpcButton fullBtn = new GuiNpcButton(10, guiLeft + 368, guiTop + 8, 45, 20, "gui.fullscreen");
+        fullBtn.setTextColor(0x55FF55);
+        fullBtn.setHoverText("gui.fullscreen.tooltip");
+        addButton(fullBtn);
 
-        addButton(new GuiNpcButton(1, guiLeft + 368, guiTop + 32, 45, 20, "gui.remove"));
+        addButton(new GuiNpcButton(0, guiLeft + 368, guiTop + 36, 45, 20, "gui.add"));
+
+        addButton(new GuiNpcButton(1, guiLeft + 368, guiTop + 60, 45, 20, "gui.remove"));
         getButton(1).enabled = aura != null && aura.id != -1;
 
-        addButton(new GuiNpcButton(2, guiLeft + 368, guiTop + 56, 45, 20, "gui.clone"));
+        addButton(new GuiNpcButton(2, guiLeft + 368, guiTop + 84, 45, 20, "gui.clone"));
         getButton(2).enabled = aura != null && aura.id != -1;
 
-        addButton(new GuiNpcButton(3, guiLeft + 368, guiTop + 80, 45, 20, "gui.edit"));
+        addButton(new GuiNpcButton(3, guiLeft + 368, guiTop + 108, 45, 20, "gui.edit"));
         getButton(3).enabled = aura != null && aura.id != -1;
 
         if (scrollAuras == null) {
@@ -200,6 +207,10 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
     @Override
     protected void actionPerformed(GuiButton guibutton) {
         GuiNpcButton button = (GuiNpcButton) guibutton;
+        if (button.id == 10) {
+            Minecraft.getMinecraft().displayGuiScreen(new GuiAuraDirectory(originalNpc));
+            return;
+        }
         if (button.id == 0) {
             save();
             String name = "New";
@@ -478,13 +489,59 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
         }
     }
 
-    public void close() {
+    // ========== IAuraManagerGui ==========
+    @Override
+    public HashMap<String, Integer> getAuraData() { return data; }
+
+    @Override
+    public GuiCustomScroll getAuraScroll() { return scrollAuras; }
+
+    @Override
+    public EntityNPCInterface getAuraNPC() { return npc; }
+
+    @Override
+    public Aura getAura() { return aura; }
+
+    @Override
+    public AuraDisplay getAuraDisplay() { return display; }
+
+    @Override
+    public DBCDisplay getAuraVisualDisplay() { return visualDisplay; }
+
+    @Override
+    public String getAuraSelected() { return selected; }
+
+    @Override
+    public void setAuraSelected(String selected) { this.selected = selected; }
+
+    @Override
+    public AuraSound getAuraSound() { return auraSound; }
+
+    @Override
+    public AuraSound getKaiokenSound() { return kaiokenSound; }
+
+    @Override
+    public AuraSound getKettleSound() { return kettleSound; }
+
+    @Override
+    public AuraSound getSecondarySound() { return secondarySound; }
+
+    @Override
+    public AuraSound getSecondaryKettleSound() { return secondaryKettleSound; }
+
+    @Override
+    public void closeSubGui(Object obj) {
+        NoppesUtil.openGUI(player, this);
+    }
+
+    @Override
+    public void onGuiClosed() {
         stopSound(auraSound, false);
         stopSound(kaiokenSound, false);
         stopSound(secondarySound, false);
         stopSound(kettleSound, false);
         stopSound(secondaryKettleSound, false);
-        super.close();
+        super.onGuiClosed();
     }
 
     @Override

@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
-import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.SubGuiColorSelector;
 import noppes.npcs.client.gui.util.GuiNPCInterface;
 import noppes.npcs.client.gui.util.GuiNpcButton;
@@ -29,7 +28,7 @@ import org.lwjgl.opengl.GL12;
 public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiListener, GuiSelectionListener, ITextfieldListener {
     public static boolean useGUIOutline;
     public static Outline outline;
-    private final GuiNPCManageOutlines parent;
+    private final IOutlineManagerGui parent;
     private final DBCDisplay visualDisplay;
     public int lastColorClicked = 0;
     public int xOffset = 0;
@@ -41,8 +40,8 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
     private float zoomed = 60.0F;
 
 
-    public SubGuiOutlineDisplay(GuiNPCManageOutlines parent, EntityNPCInterface npc, Outline outline) {
-        super(npc);
+    public SubGuiOutlineDisplay(IOutlineManagerGui parent, Outline outline) {
+        super(parent.getOutlineNPC());
         SubGuiOutlineDisplay.outline = outline;
         this.parent = parent;
 
@@ -210,19 +209,19 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
     public void unFocused(GuiNpcTextField guiNpcTextField) {
         if (guiNpcTextField.id == 1) {
             String name = guiNpcTextField.getText();
-            if (!name.isEmpty() && !parent.data.containsKey(name)) {
-                String old = parent.outline.name;
-                parent.data.remove(parent.outline.name);
-                parent.outline.name = name;
-                parent.data.put(parent.outline.name, parent.outline.id);
-                parent.selected = name;
-                parent.scrollOutlines.replace(old, parent.outline.name);
+            if (!name.isEmpty() && !parent.getOutlineData().containsKey(name)) {
+                String old = parent.getOutline().name;
+                parent.getOutlineData().remove(parent.getOutline().name);
+                parent.getOutline().name = name;
+                parent.getOutlineData().put(parent.getOutline().name, parent.getOutline().id);
+                parent.setOutlineSelected(name);
+                parent.getOutlineScroll().replace(old, parent.getOutline().name);
             } else
-                guiNpcTextField.setText(parent.outline.name);
+                guiNpcTextField.setText(parent.getOutline().name);
         } else if (guiNpcTextField.id == 2) {
             String menuName = guiNpcTextField.getText();
             if (!menuName.isEmpty()) {
-                parent.outline.menuName = menuName.replaceAll("&", "§");
+                parent.getOutline().menuName = menuName.replaceAll("&", "§");
             }
         } else if (guiNpcTextField.id == 4) {
             outline.innerColor.alpha = guiNpcTextField.getInteger();
@@ -476,7 +475,7 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
     }
 
     public void close() {
-        NoppesUtil.openGUI(player, parent);
+        parent.closeOutlineSubGui(this);
         save();
     }
 

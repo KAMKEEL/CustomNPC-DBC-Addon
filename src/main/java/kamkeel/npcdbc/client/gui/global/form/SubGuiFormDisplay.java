@@ -47,7 +47,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     private final String[] arcoForms = new String[]{"display.arcofirst", "display.arcosecond", "display.arcothird", "display.arcofinal", "display.arcoultimatecooler", "display.arcogoldenform"};
     private final String[] hairTypes = new String[]{"display.base", "display.ssj", "display.ssj2", "display.ssj3", "display.ssj4", "display.oozaru", "display.raditz"};
     private final GuiNpcFormMenu menu;
-    public final GuiNPCManageForms parent;
+    public final IFormManagerGui parent;
     public Form form;
     public FormDisplay display;
     public OverlayChain overlays;
@@ -68,15 +68,15 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
     private GuiScrollWindow window;
 
-    public SubGuiFormDisplay(GuiNPCManageForms parent, Form form) {
+    public SubGuiFormDisplay(IFormManagerGui parent, Form form) {
         menu = new GuiNpcFormMenu(parent, this, -2, form);
 
         this.parent = parent;
-        this.npc = (EntityCustomNpc) parent.npc;
-        this.form = parent.form;
-        this.display = parent.display;
+        this.npc = (EntityCustomNpc) parent.getFormNPC();
+        this.form = parent.getForm();
+        this.display = parent.getFormDisplay();
         this.overlays = display.overlays;
-        this.visualDisplay = parent.visualDisplay;
+        this.visualDisplay = parent.getFormVisualDisplay();
 
         setBackground("menubg.png");
         xSize = 360;

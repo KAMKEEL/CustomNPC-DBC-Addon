@@ -12,6 +12,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.CustomNpcs;
 import noppes.npcs.LogWriter;
+import noppes.npcs.controllers.CategoryManager;
+import noppes.npcs.controllers.data.Category;
 import noppes.npcs.util.NBTJsonUtil;
 
 import java.io.BufferedInputStream;
@@ -22,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
@@ -32,6 +35,8 @@ public class FormController implements IFormHandler {
     private HashMap<Integer, String> bootOrder;
     private int lastUsedID = 0;
 
+    public CategoryManager categoryManager = new CategoryManager();
+
     public FormController() {
         Instance = this;
         customForms = new HashMap<>();
@@ -39,7 +44,6 @@ public class FormController implements IFormHandler {
     }
 
     public void load() {
-        // Instance = new FormController();
         customForms = new HashMap<>();
         bootOrder = new HashMap<>();
         lastUsedID = 0;
@@ -79,43 +83,61 @@ public class FormController implements IFormHandler {
         File dir = getDir();
         if (!dir.exists()) {
             dir.mkdir();
-        } else {
-            for (File file : dir.listFiles()) {
-                if (!file.isFile() || !file.getName().endsWith(".json"))
-                    continue;
-                try {
-                    Form form = new Form();
-                    form.readFromNBT(NBTJsonUtil.LoadFile(file));
-                    form.name = file.getName().substring(0, file.getName().length() - 5);
-
-                    if (form.id == -1) {
-                        form.id = getUnusedId();
-                    }
-
-                    int originalID = form.id;
-                    int setID = form.id;
-                    while (bootOrder.containsKey(setID) || customForms.containsKey(setID)) {
-                        if (bootOrder.containsKey(setID))
-                            if (bootOrder.get(setID).equals(form.name))
-                                break;
-
-                        setID++;
-                    }
-
-                    form.id = setID;
-                    if (originalID != setID) {
-                        LogWriter.info("Found Custom Form ID Mismatch: " + form.name + ", New ID: " + setID);
-                        form.save();
-                    }
-
-                    customForms.put(form.id, form);
-                } catch (Exception e) {
-                    LogWriter.error("Error loading: " + file.getAbsolutePath(), e);
-                }
-            }
+            return;
         }
+
+        categoryManager.loadCategories(dir);
+
+        // Load uncategorized forms (root level .json files)
+        loadFormsFromDir(dir, CategoryManager.UNCATEGORIZED_ID);
+
+        // Load categorized forms (subdirectories)
+        for (Map.Entry<Integer, Category> entry : categoryManager.getCategories().entrySet()) {
+            File catDir = categoryManager.getCategoryDir(entry.getKey());
+            loadFormsFromDir(catDir, entry.getKey());
+        }
+
         verifyLinkedForms();
         saveFormLoadMap();
+    }
+
+    private void loadFormsFromDir(File dir, int catId) {
+        File[] files = dir.listFiles();
+        if (files == null) return;
+        for (File file : files) {
+            if (!file.isFile() || !file.getName().endsWith(".json"))
+                continue;
+            try {
+                Form form = new Form();
+                form.readFromNBT(NBTJsonUtil.LoadFile(file));
+                form.name = file.getName().substring(0, file.getName().length() - 5);
+
+                if (form.id == -1) {
+                    form.id = getUnusedId();
+                }
+
+                int originalID = form.id;
+                int setID = form.id;
+                while (bootOrder.containsKey(setID) || customForms.containsKey(setID)) {
+                    if (bootOrder.containsKey(setID))
+                        if (bootOrder.get(setID).equals(form.name))
+                            break;
+
+                    setID++;
+                }
+
+                form.id = setID;
+                if (originalID != setID) {
+                    LogWriter.info("Found Custom Form ID Mismatch: " + form.name + ", New ID: " + setID);
+                    form.save();
+                }
+
+                customForms.put(form.id, form);
+                categoryManager.registerItem(form.id, catId);
+            } catch (Exception e) {
+                LogWriter.error("Error loading: " + file.getAbsolutePath(), e);
+            }
+        }
     }
 
     private void verifyLinkedForms() {
@@ -157,8 +179,7 @@ public class FormController implements IFormHandler {
 
         saveFormLoadMap();
 
-        // Save CustomForm File
-        File dir = this.getDir();
+        File dir = categoryManager.getItemDir(customForm.getID());
         if (!dir.exists())
             dir.mkdirs();
 
@@ -190,20 +211,7 @@ public class FormController implements IFormHandler {
     public void delete(String name) {
         Form delete = getFormFromName(name);
         if (delete != null) {
-            Form foundForm = this.customForms.remove(delete.getID());
-            if (foundForm != null && foundForm.name != null) {
-                File dir = this.getDir();
-                for (File file : dir.listFiles()) {
-                    if (!file.isFile() || !file.getName().endsWith(".json"))
-                        continue;
-                    if (file.getName().equals(foundForm.name + ".json")) {
-                        file.delete();
-                        DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.FORM, EnumSyncAction.REMOVE, foundForm.getID(), new NBTTagCompound()));
-                        break;
-                    }
-                }
-                saveFormLoadMap();
-            }
+            delete(delete.id);
         }
     }
 
@@ -213,16 +221,13 @@ public class FormController implements IFormHandler {
 
         Form foundForm = this.customForms.remove(id);
         if (foundForm != null && foundForm.name != null) {
-            File dir = this.getDir();
-            for (File file : dir.listFiles()) {
-                if (!file.isFile() || !file.getName().endsWith(".json"))
-                    continue;
-                if (file.getName().equals(foundForm.name + ".json")) {
-                    file.delete();
-                    DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.FORM, EnumSyncAction.REMOVE, foundForm.getID(), new NBTTagCompound()));
-                    break;
-                }
+            File dir = categoryManager.getItemDir(id);
+            File file = new File(dir, foundForm.name + ".json");
+            if (file.exists()) {
+                file.delete();
             }
+            categoryManager.removeItem(id);
+            DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.FORM, EnumSyncAction.REMOVE, foundForm.getID(), new NBTTagCompound()));
             saveFormLoadMap();
         }
     }
@@ -276,10 +281,10 @@ public class FormController implements IFormHandler {
         return dir;
     }
 
-    /// /////////////////////////////////////////////////////
-    /// /////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
     // CUSTOM FORM MAP
-    // Used to keep load order of Forms
+    ////////////////////////////////////////////////////////
+
     public void readCustomFormMap() {
         bootOrder.clear();
 
@@ -369,14 +374,49 @@ public class FormController implements IFormHandler {
     }
 
     public void deleteFormFile(String name) {
-        File dir = this.getDir();
-        if (!dir.exists())
-            dir.mkdirs();
-        File file2 = new File(dir, name + ".json");
-        if (file2.exists())
-            file2.delete();
+        categoryManager.deleteFile(name + ".json");
     }
 
     ////////////////////////////////////////////////////////
+    // CATEGORY HELPERS
     ////////////////////////////////////////////////////////
+
+    public Map<String, Integer> getCategoryScrollData() {
+        return categoryManager.getCategoryScrollData();
+    }
+
+    public Map<String, Integer> getItemsByCategoryScrollData(int catId) {
+        Map<String, Integer> map = new HashMap<>();
+        List<Integer> itemIds = categoryManager.getItemsInCategory(catId, customForms.keySet());
+        for (int itemId : itemIds) {
+            Form form = customForms.get(itemId);
+            if (form != null) {
+                map.put(form.name, form.id);
+            }
+        }
+        return map;
+    }
+
+    public void moveItemToCategory(int itemId, int catId) {
+        Form form = customForms.get(itemId);
+        if (form == null) return;
+        categoryManager.moveItem(itemId, form.name + ".json", catId);
+        saveFormLoadMap();
+    }
+
+    public Category createCategory(String name) {
+        return categoryManager.createCategory(name);
+    }
+
+    public void saveCategory(Category cat) {
+        categoryManager.saveCategory(cat);
+    }
+
+    public boolean removeCategory(int catId) {
+        return categoryManager.removeCategory(catId, customForms.keySet());
+    }
+
+    public Category getCategory(int catId) {
+        return categoryManager.getCategory(catId);
+    }
 }

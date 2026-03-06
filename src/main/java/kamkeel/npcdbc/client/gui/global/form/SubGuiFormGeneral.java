@@ -15,13 +15,13 @@ import noppes.npcs.client.gui.util.ITextfieldListener;
 import noppes.npcs.client.gui.util.SubGuiInterface;
 
 public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener, ITextfieldListener {
-    private final GuiNPCManageForms parent;
+    private final IFormManagerGui parent;
     private GuiNpcFormMenu menu;
     public Form form;
     boolean setAscendSound = true;
 
 
-    public SubGuiFormGeneral(GuiNPCManageForms parent, Form form) {
+    public SubGuiFormGeneral(IFormManagerGui parent, Form form) {
         this.form = form;
         this.parent = parent;
 
@@ -210,14 +210,14 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
                 guiNpcTextField.setText("");
             else {
                 String name = guiNpcTextField.getText();
-                if (name.isEmpty() || this.parent.data.containsKey(name)) {
+                if (name.isEmpty() || this.parent.getFormData().containsKey(name)) {
                     guiNpcTextField.setText(form.name);
                 } else if (form.id >= 0) {
                     String old = form.name;
-                    this.parent.data.remove(old);
+                    this.parent.getFormData().remove(old);
                     form.name = name;
-                    this.parent.data.put(form.name, form.id);
-                    this.parent.scrollForms.replace(old, form.name);
+                    this.parent.getFormData().put(form.name, form.id);
+                    this.parent.getFormScroll().replace(old, form.name);
                 }
             }
         }

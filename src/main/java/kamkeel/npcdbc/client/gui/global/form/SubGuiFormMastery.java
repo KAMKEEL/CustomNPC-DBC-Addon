@@ -37,7 +37,7 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
     public boolean showAbsorption = false;
     public boolean showDestroyer = false;
 
-    public SubGuiFormMastery(GuiNPCManageForms parent, Form form) {
+    public SubGuiFormMastery(IFormManagerGui parent, Form form) {
         this.form = form;
         this.mastery = form.mastery;
 

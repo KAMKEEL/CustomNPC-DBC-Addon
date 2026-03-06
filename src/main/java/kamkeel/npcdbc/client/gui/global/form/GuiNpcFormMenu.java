@@ -13,14 +13,14 @@ import org.lwjgl.input.Keyboard;
 
 public class GuiNpcFormMenu {
 
-    public final GuiNPCManageForms formsParent;
+    public final IFormManagerGui formsParent;
     public final SubGuiInterface parent;
     private GuiMenuTopButton[] topButtons;
     private int activeMenu;
     private final String originalName;
     private Form form;
 
-    public GuiNpcFormMenu(GuiNPCManageForms formsParent, SubGuiInterface parent, int activeMenu, Form form) {
+    public GuiNpcFormMenu(IFormManagerGui formsParent, SubGuiInterface parent, int activeMenu, Form form) {
         this.formsParent = formsParent;
         this.parent = parent;
         this.activeMenu = activeMenu;

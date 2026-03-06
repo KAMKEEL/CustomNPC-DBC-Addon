@@ -33,7 +33,7 @@ public class SubGuiFormAttributes extends SubGuiInterface implements ICustomScro
     private GuiNpcButton btnApplyAttr, btnRemoveAttr, btnEditAttr;
     private GuiNpcButton btnApplyMagic, btnRemoveMagic, btnEditMagic;
 
-    public SubGuiFormAttributes(GuiNPCManageForms parent, Form form) {
+    public SubGuiFormAttributes(IFormManagerGui parent, Form form) {
         this.form = form;
         this.attributes = form.customAttributes;
         this.menu = new GuiNpcFormMenu(parent, this, -7, form);
