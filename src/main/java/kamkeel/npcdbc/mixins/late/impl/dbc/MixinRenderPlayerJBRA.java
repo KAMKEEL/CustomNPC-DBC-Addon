@@ -691,8 +691,11 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         Form form = DBCData.getForm(par1EntityPlayer);
         ClientEventHandler.renderingPlayer = par1EntityPlayer;
         if (form != null) {
+            DBCData dbcData = DBCData.get(par1EntityPlayer);
+            if (dbcData == null || dbcData.currentCustomizedColors == null)
+                return;
 
-            FormDisplay.BodyColor playerColors = DBCData.get(par1EntityPlayer).currentCustomizedColors;
+            FormDisplay.BodyColor playerColors = dbcData.currentCustomizedColors;
             FormDisplay display = form.display;
             if (playerColors.hasAnyColor(display, "bodycm"))
                 bodyCM.set(playerColors.getProperColor(display, "bodycm"));
