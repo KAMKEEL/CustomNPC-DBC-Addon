@@ -392,6 +392,9 @@ public class DBCMoveHelper {
                     // ENHANCED: No keys — friction decelerates naturally
                     DBCKiTech.floatMultAdded = false;
                 }
+            } else if (p.motionY > 0.0 && !p.onGround) {
+                // ENHANCED: Decay upward momentum when flight key released
+                DBCClient.mc.thePlayer.motionY *= ClientCache.flightVerticalDamping;
             }
         } else {
             // New fly mode
@@ -426,6 +429,9 @@ public class DBCMoveHelper {
                     if (DBCClient.mc.thePlayer.motionY > (double) (-(0.25F * add))) {
                         DBCClient.mc.thePlayer.motionY = (double) (-(0.25F * add) * (float) JRMCoreConfig.Flngspd);
                     }
+                } else if (p.motionY > 0.0) {
+                    // ENHANCED: Decay upward momentum when not pressing jump
+                    DBCClient.mc.thePlayer.motionY *= ClientCache.flightVerticalDamping;
                 } else if (p.motionY < 0.0) {
                     // ADDON: Flight gravity inline
                     boolean gravityOn = DBCData.getClient().flightGravity && JRMCoreConfig.PlayerFlyingDragDownOn;

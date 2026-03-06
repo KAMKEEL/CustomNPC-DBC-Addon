@@ -27,6 +27,7 @@ public class ClientCache {
     public static boolean enhancedMovement = true;
     public static boolean allowSpeedModifierTurboFlight = true;
     public static float speedModifierTurboFlight = 0.3f;
+    public static float flightVerticalDamping = 0.5f;
 
     public static String discordURL = null;
 

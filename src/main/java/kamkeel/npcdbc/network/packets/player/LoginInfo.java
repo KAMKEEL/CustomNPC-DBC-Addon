@@ -37,6 +37,7 @@ public final class LoginInfo extends AbstractPacket {
     private final boolean enhancedMovement;
     private final boolean allowSpeedModifierTurboFlight;
     private final float speedModifierTurboFlight;
+    private final float flightVerticalDamping;
     private final String discordURL;
 
     public LoginInfo() {
@@ -53,6 +54,7 @@ public final class LoginInfo extends AbstractPacket {
         this.enhancedMovement = ConfigDBCGameplay.EnhancedMovement;
         this.allowSpeedModifierTurboFlight = ConfigDBCGameplay.AllowSpeedModifierTurboFlight;
         this.speedModifierTurboFlight = ConfigDBCGameplay.SpeedModifierTurboFlight;
+        this.flightVerticalDamping = ConfigDBCGameplay.FlightVerticalDamping;
         this.discordURL = ConfigDBCGeneral.getDiscordURL();
     }
 
@@ -85,6 +87,7 @@ public final class LoginInfo extends AbstractPacket {
         out.writeBoolean(this.enhancedMovement);
         out.writeBoolean(this.allowSpeedModifierTurboFlight);
         out.writeFloat(this.speedModifierTurboFlight);
+        out.writeFloat(this.flightVerticalDamping);
         ByteBufUtils.writeUTF8String(out, discordURL);
 
         HashMap<Integer, HashMap<String, Boolean>> divineRaces = ConfigDBCEffects.getDivineApplicableForms();
@@ -132,6 +135,7 @@ public final class LoginInfo extends AbstractPacket {
             ClientCache.enhancedMovement = in.readBoolean();
             ClientCache.allowSpeedModifierTurboFlight = in.readBoolean();
             ClientCache.speedModifierTurboFlight = in.readFloat();
+            ClientCache.flightVerticalDamping = in.readFloat();
             ClientCache.discordURL = ByteBufUtils.readUTF8String(in);
 
             ClientCache.divineApplicableForms.clear();

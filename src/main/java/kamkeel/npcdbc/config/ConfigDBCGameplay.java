@@ -62,6 +62,7 @@ public class ConfigDBCGameplay {
     public static boolean EnhancedMovement = true;
     public static boolean AllowSpeedModifierTurboFlight = true;
     public static float SpeedModifierTurboFlight = 0.3f;
+    public static float FlightVerticalDamping = 0.5f;
 
 
     public static void init(File configFile) {
@@ -135,7 +136,7 @@ public class ConfigDBCGameplay {
             DodgeCameraLock = config.get(Combat, "camera Turn on UI dodge", true, "True or false whether UI Dodge Turns camera").getBoolean(true);
 
             config.setCategoryPropertyOrder(FixesMovement, new ArrayList<>(Arrays.asList(
-                "Enhanced Movement", "Allow Speed Modifier Turbo-Flight", "Speed Modifier Turbo-Flight")));
+                "Enhanced Movement", "Allow Speed Modifier Turbo-Flight", "Speed Modifier Turbo-Flight", "Flight Vertical Damping")));
             EnhancedMovement = config.get(FixesMovement, "Enhanced Movement", true,
                 "Enables the enhanced movement system for turbo sprint and flight.\n" +
                     "Fixes knockback being destroyed during DBC movement by using additive acceleration\n" +
@@ -150,6 +151,12 @@ public class ConfigDBCGameplay {
                     "Requires Allow Speed Modifier Turbo-Flight to be enabled.").getDouble(0.3);
             SpeedModifierTurboFlight = Math.max(0.0f, SpeedModifierTurboFlight);
 
+            FlightVerticalDamping = (float) config.get(FixesMovement, "Flight Vertical Damping", 0.5,
+                "Controls how quickly upward momentum decays after releasing the jump key during flight.\n" +
+                    "Each tick, upward motionY is multiplied by this value.\n" +
+                    "0.5 = halves each tick (responsive), 0.9 = slow decay (floaty), 1.0 = no damping (vanilla behavior).\n" +
+                    "Requires Enhanced Movement to be enabled.").getDouble(0.5);
+            FlightVerticalDamping = ValueUtil.clamp(FlightVerticalDamping, 0.0f, 1.0f);
 
         } catch (Exception e) {
             FMLLog.log(Level.ERROR, e, "DBC Addon has had a problem loading its gameplay configuration");
