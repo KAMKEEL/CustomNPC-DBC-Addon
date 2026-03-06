@@ -6,6 +6,7 @@ import kamkeel.npcs.controllers.data.telegraph.TelegraphType;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.controllers.data.PlayerData;
 
 /**
  * Concrete toggle ability parameterized by {@link DBCToggle} enum.
@@ -55,14 +56,39 @@ public class DBCToggleAbility extends Ability {
         return true;
     }
 
+    // Mutually exclusive toggles: only one can be active at a time
+    private static final String[] EXCLUSIVE_GROUP = {
+        "npcdbc:kaioken", "npcdbc:potential_unleashed", "npcdbc:ultra_instinct", "npcdbc:god_of_destruction"
+    };
+
+    private boolean isExclusive() {
+        return toggle == DBCToggle.KAIOKEN || toggle == DBCToggle.POTENTIAL_UNLEASHED
+            || toggle == DBCToggle.ULTRA_INSTINCT || toggle == DBCToggle.GOD_OF_DESTRUCTION;
+    }
+
     // ═══════════════════════════════════════════════════════════════════
     // TOGGLE — all state changes routed through onToggle
     // ═══════════════════════════════════════════════════════════════════
 
     @Override
     public void onToggle(EntityLivingBase caster, int oldState, int newState) {
-        if (caster instanceof EntityPlayer)
-            toggle.applyState((EntityPlayer) caster, newState);
+        if (!(caster instanceof EntityPlayer)) return;
+        EntityPlayer player = (EntityPlayer) caster;
+
+        toggle.applyState(player, newState);
+
+        // Deactivate conflicting toggles in the ability data when activating an exclusive toggle
+        if (newState > 0 && isExclusive()) {
+            PlayerData playerData = PlayerData.get(player);
+            if (playerData != null && playerData.abilityData != null) {
+                String myKey = "npcdbc:" + toggle.key;
+                for (String key : EXCLUSIVE_GROUP) {
+                    if (!key.equals(myKey) && playerData.abilityData.isAbilityToggled(key)) {
+                        playerData.abilityData.setToggleState(key, 0);
+                    }
+                }
+            }
+        }
     }
 
     // ═══════════════════════════════════════════════════════════════════

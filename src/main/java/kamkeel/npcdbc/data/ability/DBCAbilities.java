@@ -612,7 +612,15 @@ public class DBCAbilities {
         icon.setLayerIconY(0, 0);
     });
 
+    // Canonical keys (must match ability.getId() set via configureAsBuiltIn)
     private static final String[] TOGGLE_KEYS = {
+        "npcdbc:friendly_fist", "npcdbc:swoop", "npcdbc:kaioken", "npcdbc:fusion", "npcdbc:ki_fist",
+        "npcdbc:ki_protection", "npcdbc:ki_weapon", "npcdbc:potential_unleashed",
+        "npcdbc:ultra_instinct", "npcdbc:god_of_destruction"
+    };
+
+    // Old short keys used before the canonical key fix — removed on login to prevent duplicates
+    private static final String[] LEGACY_SHORT_KEYS = {
         "friendly_fist", "swoop", "kaioken", "fusion", "ki_fist",
         "ki_protection", "ki_weapon", "potential_unleashed",
         "ultra_instinct", "god_of_destruction"
@@ -629,6 +637,15 @@ public class DBCAbilities {
         PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
         boolean changed = false;
 
+        // Remove legacy short keys that cause duplicates
+        for (String oldKey : LEGACY_SHORT_KEYS) {
+            if (playerData.abilityData.hasUnlockedAbility(oldKey)) {
+                playerData.abilityData.lockAbility(oldKey);
+                changed = true;
+            }
+        }
+
+        // Grant with canonical keys
         for (String key : TOGGLE_KEYS) {
             if (!playerData.abilityData.hasUnlockedAbility(key)) {
                 playerData.abilityData.unlockAbility(key);

@@ -63,6 +63,9 @@ public final class DBCToggleAbilityAction extends AbstractPacket {
 
         int newState = playerData.abilityData.toggleAbility(key);
 
+        // Sync toggle states to client (mutual exclusivity may have deactivated other toggles)
+        playerData.abilityData.syncToClient();
+
         String displayName = ability.getDisplayName();
         if (newState > 0) {
             String stateLabel = ability.getToggleStateLabel(newState);
