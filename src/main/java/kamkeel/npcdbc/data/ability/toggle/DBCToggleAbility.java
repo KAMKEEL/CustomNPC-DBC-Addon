@@ -57,13 +57,17 @@ public class DBCToggleAbility extends Ability {
     }
 
     // Mutually exclusive toggles: only one can be active at a time
-    private static final String[] EXCLUSIVE_GROUP = {
+    public static final String[] EXCLUSIVE_GROUP = {
         "npcdbc:kaioken", "npcdbc:potential_unleashed", "npcdbc:ultra_instinct", "npcdbc:god_of_destruction"
     };
 
-    private boolean isExclusive() {
+    public static boolean isExclusiveToggle(DBCToggle toggle) {
         return toggle == DBCToggle.KAIOKEN || toggle == DBCToggle.POTENTIAL_UNLEASHED
             || toggle == DBCToggle.ULTRA_INSTINCT || toggle == DBCToggle.GOD_OF_DESTRUCTION;
+    }
+
+    private boolean isExclusive() {
+        return isExclusiveToggle(toggle);
     }
 
     // ═══════════════════════════════════════════════════════════════════

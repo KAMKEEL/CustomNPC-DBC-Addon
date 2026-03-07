@@ -30,9 +30,11 @@ public enum DBCToggle {
         .setIconTexture("npcdbc:textures/gui/ability/kaioken.png")
         .onStateChanged((p, i) ->  {
             DBCSettingsUtil.setKaioken(p, i > 0);
-            DBCSettingsUtil.setUI(p, false);
-            DBCSettingsUtil.setGOD(p, false);
-            DBCSettingsUtil.setPotentialUnleashed(p, false);
+            if (i > 0) {
+                DBCSettingsUtil.setUI(p, false);
+                DBCSettingsUtil.setGOD(p, false);
+                DBCSettingsUtil.setPotentialUnleashed(p, false);
+            }
         })
     ),
     FUSION(new DBCToggleBuilder("fusion", DBCSettings.FUSION_ENABLED)
@@ -72,9 +74,11 @@ public enum DBCToggle {
         .setIconTexture("npcdbc:textures/gui/ability/potential_unleashed.png")
         .onStateChanged((p, i) ->  {
             DBCSettingsUtil.setPotentialUnleashed(p, i > 0);
-            DBCSettingsUtil.setKaioken(p, false);
-            DBCSettingsUtil.setUI(p, false);
-            DBCSettingsUtil.setGOD(p, false);
+            if (i > 0) {
+                DBCSettingsUtil.setKaioken(p, false);
+                DBCSettingsUtil.setUI(p, false);
+                DBCSettingsUtil.setGOD(p, false);
+            }
         })
     ),
     ULTRA_INSTINCT(new DBCToggleBuilder("ultra_instinct", DBCSettings.ULTRA_INSTINCT)
@@ -82,9 +86,11 @@ public enum DBCToggle {
         .setIconTexture("npcdbc:textures/gui/ability/ultra_instinct.png")
         .onStateChanged((p, i) ->  {
             DBCSettingsUtil.setUI(p, i > 0);
-            DBCSettingsUtil.setPotentialUnleashed(p, false);
-            DBCSettingsUtil.setKaioken(p, false);
-            DBCSettingsUtil.setGOD(p, false);
+            if (i > 0) {
+                DBCSettingsUtil.setPotentialUnleashed(p, false);
+                DBCSettingsUtil.setKaioken(p, false);
+                DBCSettingsUtil.setGOD(p, false);
+            }
         })
     ),
     GOD_OF_DESTRUCTION(new DBCToggleBuilder("god_of_destruction", DBCSettings.GOD_OF_DESTRUCTION)
@@ -92,9 +98,11 @@ public enum DBCToggle {
         .setIconTexture("npcdbc:textures/gui/ability/god_of_destruction.png")
         .onStateChanged((p, i) ->  {
             DBCSettingsUtil.setGOD(p, i > 0);
-            DBCSettingsUtil.setUI(p, false);
-            DBCSettingsUtil.setPotentialUnleashed(p, false);
-            DBCSettingsUtil.setKaioken(p, false);
+            if (i > 0) {
+                DBCSettingsUtil.setUI(p, false);
+                DBCSettingsUtil.setPotentialUnleashed(p, false);
+                DBCSettingsUtil.setKaioken(p, false);
+            }
         })
     );
 
@@ -134,6 +142,23 @@ public enum DBCToggle {
      */
     public int getToggleStates() {
         return modes != null ? modes.length : 1;
+    }
+
+    /**
+     * Find the toggle that maps to the given DBC setting ID, or null if none.
+     */
+    public static DBCToggle fromSettingId(int settingId) {
+        for (DBCToggle t : values()) {
+            if (t.setting == settingId) return t;
+        }
+        return null;
+    }
+
+    /**
+     * Get the canonical ability key for this toggle (e.g. "npcdbc:kaioken").
+     */
+    public String getAbilityKey() {
+        return "npcdbc:" + key;
     }
 
     /**
