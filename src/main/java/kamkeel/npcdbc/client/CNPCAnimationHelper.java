@@ -11,6 +11,11 @@ import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import JinRyuu.JRMCore.entity.ModelBipedBody;
 import JinRyuu.JRMCore.i.ExtendedPlayer;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
+import kamkeel.npcdbc.client.model.ModelDBC;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormDisplay;
+import kamkeel.npcdbc.data.overlay.OverlayContext;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -587,6 +592,22 @@ public class CNPCAnimationHelper {
             int bodyColor2 = skinType == 0 ? 0 : (isArcosianUltimate ? JRMCoreH.dnsauC2(dns) : JRMCoreH.dnsBodyC2(dns));
             int bodyColor3 = skinType == 0 ? 0 : (isArcosianUltimate ? JRMCoreH.dnsauC3(dns) : JRMCoreH.dnsBodyC3(dns));
 
+            // Apply form color overrides
+            Form form = DBCData.getForm(player);
+            DBCData dbcData = DBCData.get(player);
+            if (form != null && dbcData != null && dbcData.currentCustomizedColors != null) {
+                FormDisplay.BodyColor playerColors = dbcData.currentCustomizedColors;
+                FormDisplay display = form.display;
+                if (playerColors.hasAnyColor(display, "bodycm"))
+                    bodyColorMain = playerColors.getProperColor(display, "bodycm");
+                if (playerColors.hasAnyColor(display, "bodyC1"))
+                    bodyColor1 = playerColors.getProperColor(display, "bodyC1");
+                if (playerColors.hasAnyColor(display, "bodyC2"))
+                    bodyColor2 = playerColors.getProperColor(display, "bodyC2");
+                if (playerColors.hasAnyColor(display, "bodyC3"))
+                    bodyColor3 = playerColors.getProperColor(display, "bodyC3");
+            }
+
             int[] raceCustomSkin = JRMCoreH.RaceCustomSkin;
             int[] specials = JRMCoreH.Specials;
             int playerSpecial = skinType == 0 || raceCustomSkin[race] == 0 ? 0 : (bodyType >= specials[race] ? specials[race] - 1 : bodyType);
@@ -652,6 +673,13 @@ public class CNPCAnimationHelper {
 
             // Render bruises if damage indicators are enabled
             renderBruises(mc, modelMain, player, isDBC, race);
+
+            // Render form overlays
+            if (dbcData != null && modelMain instanceof ModelBipedBody) {
+                OverlayContext ctx = OverlayContext.from(dbcData);
+                ctx.model = (ModelBipedBody) modelMain;
+                ModelDBC.renderOverlays(ctx);
+            }
 
             // Render armor
             renderArmor(mc, renderPlayer, modelMain, player, animationId);
