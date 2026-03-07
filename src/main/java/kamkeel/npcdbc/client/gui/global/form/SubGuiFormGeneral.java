@@ -5,6 +5,7 @@ import kamkeel.npcdbc.client.gui.component.SubGuiSetParents;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
 import net.minecraft.client.gui.GuiButton;
+import noppes.npcs.client.gui.SubGuiTagSelect;
 import noppes.npcs.client.gui.select.GuiSoundSelection;
 import noppes.npcs.client.gui.util.GuiNpcButton;
 import noppes.npcs.client.gui.util.GuiNpcLabel;
@@ -104,6 +105,8 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
         getButton(14).enabled = form.childID != -1;
         addLabel(new GuiNpcLabel(14, "general.childForm", guiLeft + 8, y + 5));
 
+        addButton(new GuiNpcButton(40, guiLeft + 240, y, 100, 20, "gui.tags"));
+
         y += 38;
 
         addLabel(new GuiNpcLabel(30, "general.ascendSound", guiLeft + 7, y + 5));
@@ -147,6 +150,9 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
         if (button.id == 31) {
             setAscendSound = false;
             setSubGui(new GuiSoundSelection((getTextField(31).getText())));
+        }
+        if (button.id == 40) {
+            setSubGui(new SubGuiTagSelect(form.tagUUIDs));
         }
         if (button.id == 50) {
             setSubGui(new SubGuiSetParents(form));

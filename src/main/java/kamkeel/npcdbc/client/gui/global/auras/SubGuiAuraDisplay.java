@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
 import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.SubGuiColorSelector;
+import noppes.npcs.client.gui.SubGuiTagSelect;
 import noppes.npcs.client.gui.select.GuiSoundSelection;
 import noppes.npcs.client.gui.util.GuiButtonBiDirectional;
 import noppes.npcs.client.gui.util.GuiNPCInterface;
@@ -117,6 +118,10 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         scrollWindow.getLabel(102).color = 0xffffff;
         scrollWindow.addTextField(new GuiNpcTextField(102, this, this.fontRendererObj, guiX + 100 + rightOffset, y, 120, 20, aura.menuName.replaceAll("§", "&")));
         scrollWindow.getTextField(102).setMaxStringLength(40);
+
+        y += 26;
+        maxScroll += 26;
+        scrollWindow.addButton(new GuiNpcButton(40, guiX + 100 + rightOffset, y, 120, 20, "gui.tags"));
 
         y += 26;
         scrollWindow.addLabel(new GuiNpcLabel(3004, "display.overrideDBC", 3, y + 5));
@@ -428,6 +433,10 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
 
     public void buttonEvent(GuiButton guibutton) {
         GuiNpcButton button = (GuiNpcButton) guibutton;
+        if (button.id == 40) {
+            setSubGui(new SubGuiTagSelect(aura.tagUUIDs));
+            return;
+        }
         if (button.id == 10000) {
             parent.closeSubGui(null); // Close the GUI
         } else if (button.id == 2000) {
@@ -616,7 +625,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
     @Override
     public void keyTyped(char c, int i) {
         super.keyTyped(c, i);
-        if (i == 1) {
+        if (i == 1 && !hasSubGui()) {
             close();
         }
     }
@@ -910,7 +919,6 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         parent.closeSubGui(this);
         if (visualDisplay.auraEntity != null)
             visualDisplay.auraEntity.despawn();
-
 
         parent.getAuraVisualDisplay().auraID = aura.id;
 

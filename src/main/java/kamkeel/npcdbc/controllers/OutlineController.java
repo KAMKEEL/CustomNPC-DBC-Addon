@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.CustomNpcs;
 import noppes.npcs.LogWriter;
 import noppes.npcs.controllers.CategoryManager;
+import noppes.npcs.controllers.TagController;
 import noppes.npcs.controllers.data.Category;
 import noppes.npcs.util.NBTJsonUtil;
 
@@ -24,8 +25,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 
 public class OutlineController implements IOutlineHandler {
@@ -90,6 +93,7 @@ public class OutlineController implements IOutlineHandler {
                     customOutline.setName(customOutline.getName() + "_");
         }
 
+        TagController.validateTagUUIDs(((Outline) customOutline).tagUUIDs);
         customOutlines.remove(customOutline.getID());
         customOutlines.put(customOutline.getID(), (Outline) customOutline);
 
@@ -395,6 +399,18 @@ public class OutlineController implements IOutlineHandler {
             }
         }
         return map;
+    }
+
+    public HashMap<String, HashSet<UUID>> getItemTagMapForCategory(int catId) {
+        HashMap<String, HashSet<UUID>> tagMap = new HashMap<>();
+        List<Integer> itemIds = categoryManager.getItemsInCategory(catId, customOutlines.keySet());
+        for (int itemId : itemIds) {
+            Outline outline = customOutlines.get(itemId);
+            if (outline != null && !outline.tagUUIDs.isEmpty()) {
+                tagMap.put(outline.name, outline.tagUUIDs);
+            }
+        }
+        return tagMap;
     }
 
     public void moveItemToCategory(int itemId, int catId) {

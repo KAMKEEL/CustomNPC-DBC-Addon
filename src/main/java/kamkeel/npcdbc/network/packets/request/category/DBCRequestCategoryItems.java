@@ -13,9 +13,13 @@ import kamkeel.npcs.network.packets.data.large.ScrollDataPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import noppes.npcs.constants.EnumScrollData;
+import noppes.npcs.controllers.TagController;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.UUID;
 
 public class DBCRequestCategoryItems extends AbstractPacket {
     public static final String packetName = "NPC|CatItems";
@@ -53,20 +57,27 @@ public class DBCRequestCategoryItems extends AbstractPacket {
         int catId = in.readInt();
 
         Map<String, Integer> items;
+        HashMap<String, HashSet<UUID>> tagMap = null;
         switch (type) {
             case DBCSyncType.FORM:
                 items = FormController.getInstance().getItemsByCategoryScrollData(catId);
+                tagMap = FormController.getInstance().getItemTagMapForCategory(catId);
                 break;
             case DBCSyncType.AURA:
                 items = AuraController.getInstance().getItemsByCategoryScrollData(catId);
+                tagMap = AuraController.getInstance().getItemTagMapForCategory(catId);
                 break;
             case DBCSyncType.OUTLINE:
                 items = OutlineController.getInstance().getItemsByCategoryScrollData(catId);
+                tagMap = OutlineController.getInstance().getItemTagMapForCategory(catId);
                 break;
             default:
                 return;
         }
 
         ScrollDataPacket.sendScrollData((EntityPlayerMP) player, items, EnumScrollData.CATEGORY_GROUP);
+        if (tagMap != null && !tagMap.isEmpty()) {
+            TagController.sendCategoryTagMap((EntityPlayerMP) player, tagMap);
+        }
     }
 }

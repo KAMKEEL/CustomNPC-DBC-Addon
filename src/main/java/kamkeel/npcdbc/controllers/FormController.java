@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.CustomNpcs;
 import noppes.npcs.LogWriter;
 import noppes.npcs.controllers.CategoryManager;
+import noppes.npcs.controllers.TagController;
 import noppes.npcs.controllers.data.Category;
 import noppes.npcs.util.NBTJsonUtil;
 
@@ -24,8 +25,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 
 public class FormController implements IFormHandler {
@@ -174,6 +177,7 @@ public class FormController implements IFormHandler {
                     customForm.setName(customForm.getName() + "_");
         }
 
+        TagController.validateTagUUIDs(((Form) customForm).tagUUIDs);
         customForms.remove(customForm.getID());
         customForms.put(customForm.getID(), (Form) customForm);
 
@@ -395,6 +399,18 @@ public class FormController implements IFormHandler {
             }
         }
         return map;
+    }
+
+    public HashMap<String, HashSet<UUID>> getItemTagMapForCategory(int catId) {
+        HashMap<String, HashSet<UUID>> tagMap = new HashMap<>();
+        List<Integer> itemIds = categoryManager.getItemsInCategory(catId, customForms.keySet());
+        for (int itemId : itemIds) {
+            Form form = customForms.get(itemId);
+            if (form != null && !form.tagUUIDs.isEmpty()) {
+                tagMap.put(form.name, form.tagUUIDs);
+            }
+        }
+        return tagMap;
     }
 
     public void moveItemToCategory(int itemId, int catId) {

@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.CustomNpcs;
 import noppes.npcs.LogWriter;
 import noppes.npcs.controllers.CategoryManager;
+import noppes.npcs.controllers.TagController;
 import noppes.npcs.controllers.data.Category;
 import noppes.npcs.util.NBTJsonUtil;
 
@@ -24,8 +25,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 
 public class AuraController implements IAuraHandler {
@@ -88,6 +91,7 @@ public class AuraController implements IAuraHandler {
                     customAura.setName(customAura.getName() + "_");
         }
 
+        TagController.validateTagUUIDs(((Aura) customAura).tagUUIDs);
         customAuras.remove(customAura.getID());
         customAuras.put(customAura.getID(), (Aura) customAura);
 
@@ -382,6 +386,18 @@ public class AuraController implements IAuraHandler {
             }
         }
         return map;
+    }
+
+    public HashMap<String, HashSet<UUID>> getItemTagMapForCategory(int catId) {
+        HashMap<String, HashSet<UUID>> tagMap = new HashMap<>();
+        List<Integer> itemIds = categoryManager.getItemsInCategory(catId, customAuras.keySet());
+        for (int itemId : itemIds) {
+            Aura aura = customAuras.get(itemId);
+            if (aura != null && !aura.tagUUIDs.isEmpty()) {
+                tagMap.put(aura.name, aura.tagUUIDs);
+            }
+        }
+        return tagMap;
     }
 
     public void moveItemToCategory(int itemId, int catId) {

@@ -17,9 +17,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.controllers.AnimationController;
+import noppes.npcs.controllers.TagController;
 import noppes.npcs.scripted.NpcAPI;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.UUID;
 
 public class Form implements IForm {
 
@@ -57,6 +60,8 @@ public class Form implements IForm {
 
     public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
 
+    public HashSet<UUID> tagUUIDs = new HashSet<>();
+
     public Form() {
     }
 
@@ -90,6 +95,8 @@ public class Form implements IForm {
         ascendSound = sounds.getString("ascendSound");
         descendSound = sounds.getString("descendSound");
 
+        tagUUIDs = TagController.readTagUUIDs(compound, "TagUUIDs");
+
         mastery.readFromNBT(compound);
         display.readFromNBT(compound);
         stackable.readFromNBT(compound);
@@ -122,6 +129,8 @@ public class Form implements IForm {
         sounds.setString("ascendSound", ascendSound);
         sounds.setString("descendSound", descendSound);
         compound.setTag("sounds", sounds);
+
+        TagController.writeTagUUIDs(compound, "TagUUIDs", tagUUIDs);
 
         mastery.writeToNBT(compound);
         display.writeToNBT(compound);

@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
 import noppes.npcs.client.gui.SubGuiColorSelector;
+import noppes.npcs.client.gui.SubGuiTagSelect;
 import noppes.npcs.client.gui.util.GuiNPCInterface;
 import noppes.npcs.client.gui.util.GuiNpcButton;
 import noppes.npcs.client.gui.util.GuiNpcLabel;
@@ -85,6 +86,11 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
         scrollWindow.getLabel(1).color = 0xffffff;
         scrollWindow.addTextField(new GuiNpcTextField(1, this, this.fontRendererObj, guiX + 110, y, 110, 20, outline.name));
         scrollWindow.getTextField(1).setMaxStringLength(40);
+
+        y += 26;
+        maxScroll += 26;
+        scrollWindow.addButton(new GuiNpcButton(40, guiX + 3, y, 80, 20, "gui.tags"));
+
 
 //        y += 26;
 //        scrollWindow.addLabel(new GuiNpcLabel(2, "general.menuName", 3, y + 5));
@@ -260,6 +266,10 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
 
     public void buttonEvent(GuiButton guibutton) {
         GuiNpcButton button = (GuiNpcButton) guibutton;
+        if (button.id == 40) {
+            setSubGui(new SubGuiTagSelect(outline.tagUUIDs));
+            return;
+        }
         if (button.id == 3) {
             lastColorClicked = 0;
             setSubGui(new SubGuiColorSelector(outline.innerColor.color));
@@ -303,7 +313,7 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
     @Override
     public void keyTyped(char c, int i) {
         super.keyTyped(c, i);
-        if (i == 1) {
+        if (i == 1 && !hasSubGui()) {
             close();
         }
 
