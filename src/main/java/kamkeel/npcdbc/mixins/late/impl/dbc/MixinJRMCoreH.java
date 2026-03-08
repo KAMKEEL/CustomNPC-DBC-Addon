@@ -167,8 +167,14 @@ public abstract class MixinJRMCoreH {
         }
     }
 
-    @Inject(method = "techDBCkic([Ljava/lang/String;I[B)I", at = @At("HEAD"))
-    private static void fix10xKiCost(String[] listOfAttacks, int playerStat, byte[] kiAttackStats, CallbackInfoReturnable<Integer> cir, @Local(ordinal = 0) LocalIntRef stat) {
+    @ModifyVariable(
+        method = "techDBCkic([Ljava/lang/String;I[B)I",
+        at = @At("HEAD"),
+        argsOnly = true,
+        ordinal = 0,
+        remap = false
+    )
+    private static int fix10xKiCost(int playerStat) {
         DBCUtils.calculatingCost = true;
         DBCUtils.calculatingKiDrain = true;
         EntityPlayer player = Utility.isServer() ? CommonProxy.getCurrentJRMCTickPlayer() : CustomNpcPlusDBC.proxy.getClientPlayer();
@@ -181,9 +187,9 @@ public abstract class MixinJRMCoreH {
         int wil = JRMCoreH.getPlayerAttribute(data.player, data.stats.getAllAttributes(), 3, 0, 0, data.Race, data.RacialSkills, data.Release, data.ArcReserve, legendary, majin, false, false, false, false, data.Powertype, data.Skills.split(","), fusion, data.MajinAbsorptionData);
         int stat2 = JRMCoreH.stat(player, 3, data.Powertype, 4, wil, data.Race, data.Class, 0.0F);
 
-        stat.set(stat2);
         DBCUtils.calculatingCost = false;
         DBCUtils.calculatingKiDrain = false;
+        return stat2;
     }
 
     @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At(value = "FIELD", opcode = Opcodes.GETSTATIC, target = "LJinRyuu/JRMCore/JRMCoreH;TransKaiDmg:[F", ordinal = 1, shift = At.Shift.BEFORE))
@@ -365,12 +371,6 @@ public abstract class MixinJRMCoreH {
         }
 
         result = ValueUtil.clamp(result, 0, Integer.MAX_VALUE);
-
-        if (!DBCUtils.noBonusEffects && !DBCUtils.calculatingKiDrain && !DBCUtils.calculatingCost) {
-            int baseAttribute = attribute >= 0 && attribute < currAttributes.length ? currAttributes[attribute] : 0;
-            DBCDataBonus.BonusTotals totals = dbcData.bonus.calculateTotals();
-            result = applyAddonBonuses(dbcData, totals, attribute, baseAttribute, result);
-        }
 
         info.setReturnValue(result);
     }
