@@ -234,7 +234,8 @@ public class DBCDataStats {
         if (!data.isForm(DBCForm.UltraInstinct))
             return;
 
-        int maxHeat = JGConfigUltraInstinct.CONFIG_UI_HEAT_DURATION[data.State2];
+        int state2 = JRMCoreH.state2UltraInstinct(data.isForm(DBCForm.Kaioken), (byte) data.State2);
+        int maxHeat = JGConfigUltraInstinct.CONFIG_UI_HEAT_DURATION[state2];
         int toAdd = (int) (maxHeat * (percToRestore / 100));
 
         data.Heat = ValueUtil.clamp(data.Heat - toAdd, 0, maxHeat);
