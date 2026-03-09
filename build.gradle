@@ -4,6 +4,12 @@ plugins {
     id 'dts.typescript-generator'
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
 var BUILD_USING_CNPC_SOURCE = !(project.hasProperty("useCNPCJar") && project.useCNPCJar == 'true')
 
 if (BUILD_USING_CNPC_SOURCE)
@@ -65,6 +71,10 @@ javadoc {
     options.links(
         'https://docs.oracle.com/javase/8/docs/api/'
     )
+
+    javadocTool = javaToolchains.javadocToolFor {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
 }
 
 
