@@ -97,7 +97,7 @@ public interface IDBCEvent extends IPlayerEvent {
          *
          * Doing setDamage will automatically reset the KO calculation, so setKO modifications must be performed after setDamage.
          *
-         * @return If KO will occur
+         * @param ko If KO will occur
          */
         void setKo(boolean ko);
 
@@ -167,7 +167,7 @@ public interface IDBCEvent extends IPlayerEvent {
         int getSkillType();
 
         /**
-         * Only works for normal & custom skills
+         * Only works for normal &amp; custom skills
          *
          * @return numeric ID of a skill.
          */

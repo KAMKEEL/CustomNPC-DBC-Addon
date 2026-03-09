@@ -55,4 +55,16 @@ tasks.named("generateTypeScriptDefinitions").configure {
 processResources.dependsOn generateTypeScriptDefinitions
 sourcesJar.dependsOn generateTypeScriptDefinitions
 
+javadoc {
+    options.encoding = 'UTF-8'
+    options.charSet = 'UTF-8'
+    options.docEncoding = 'UTF-8'
+
+    include 'kamkeel/npcdbc/api/**'
+
+    options.links(
+        'https://docs.oracle.com/javase/8/docs/api/'
+    )
+}
+
 

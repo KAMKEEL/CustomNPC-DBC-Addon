@@ -97,20 +97,31 @@ public final class ProgressFunctions {
      * @return an {@linkplain Easing} instance: either {@linkplain Linear}, {@linkplain ConstantEasing}, or {@linkplain LinearPiecewise}
      * @throws IllegalArgumentException if paired stops are provided with an odd number of values
      *                                  or if x positions are invalid (out of [0,1] or not increasing)
-     * @example Simple linear (default)
+     * Simple linear (default):
+     * <pre>{@code
      * Easing easing = TimeFunctions.linear(); // 0 → 1 over time
-     * @example Constant value
+     * }</pre>
+     *
+     * Constant value:
+     * <pre>{@code
      * Easing constant = TimeFunctions.linear(42.0); // always returns 42.0
-     * @example Custom linear range
+     * }</pre>
+     *
+     * Custom linear range:
+     * <pre>{@code
      * Easing ramp = TimeFunctions.linear(10.0, 100.0); // from 10 → 100
-     * @example CSS-style piecewise linear
+     * }</pre>
+     *
+     * CSS-style piecewise linear:
+     * <pre>{@code
      * Easing custom = TimeFunctions.linear(
-     * 0.0, 0.0,
-     * 0.25, 0.8,
-     * 0.75, 0.2,
-     * 1.0, 1.0
+     *     0.0, 0.0,
+     *     0.25, 0.8,
+     *     0.75, 0.2,
+     *     1.0, 1.0
      * );
      * // Fast acceleration, then deceleration — all with linear segments
+     * }</pre>
      */
     public static Easing linear(double... values) {
         if (values == null || values.length == 0) {

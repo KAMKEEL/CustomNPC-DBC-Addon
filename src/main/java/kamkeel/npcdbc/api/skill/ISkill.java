@@ -14,13 +14,13 @@ public interface ISkill {
     String getStringId();
 
     /**
-     * @param level Level to check for (if <code>level > #getMaxLevel()</code>, level is treated as max level)
+     * @param level Level to check for (if {@code level > #getMaxLevel()}, level is treated as max level)
      * @return Upgrade cost for a given level
      */
     int getTPCost(int level);
 
     /**
-     * @param level Level to check for (if <code>level > #getMaxLevel()</code>, level is treated as max level)
+     * @param level Level to check for (if {@code level > #getMaxLevel()}, level is treated as max level)
      * @return Upgrade cost for a given level
      */
     int getMindCost(int level);
@@ -28,13 +28,13 @@ public interface ISkill {
     int getMaxLevel();
 
     /**
-     * @param level Level to check for (if <code>level > #getMaxLevel()</code>, level is treated as max level)
+     * @param level Level to check for (if {@code level > #getMaxLevel()}, level is treated as max level)
      * @return Total TP cost it takes to get from LVL 0 to given level
      */
     int getTotalTPCost(int level);
 
     /**
-     * @param level Level to check for (if <code>level > #getMaxLevel()</code>, level is treated as max level)
+     * @param level Level to check for (if {@code level > #getMaxLevel()}, level is treated as max level)
      * @return Total Mind cost it takes to get from LVL 0 to given level
      */
     int getTotalMindCost(int level);
@@ -47,7 +47,7 @@ public interface ISkill {
 
     /**
      * @param player Player to check
-     * @param level  Minimum level (if <code>level > #getMaxLevel()</code>, level is treated as max level)
+     * @param level  Minimum level (if {@code level > #getMaxLevel()}, level is treated as max level)
      * @return If the player has a given skill at a certain level or higher.
      */
     boolean doesPlayerHaveSkill(IPlayer player, int level);
@@ -82,7 +82,7 @@ public interface ISkill {
      * The event is posted only if {@code postEvent == true} **and** the skill is newly learned.
      *
      * @param player    player to teach
-     * @param level     level to set (if <code>level > #getMaxLevel()</code>, level is treated as max level)
+     * @param level     level to set (if {@code level > #getMaxLevel()}, level is treated as max level)
      * @param postEvent whether the event should be posted to scripts (only posted if the skill is newly learned)
      */
     void teachPlayerSkill(IPlayer player, int level, boolean postEvent);
@@ -95,7 +95,7 @@ public interface ISkill {
      * Equivalent of calling {@linkplain ICustomSkill#teachPlayerSkill(IPlayer, int, boolean) teachPlayerSkill(player, level, false)}
      *
      * @param player player to teach
-     * @param level  level to set (if <code>level > #getMaxLevel()</code>, level is treated as max level)
+     * @param level  level to set (if {@code level > #getMaxLevel()}, level is treated as max level)
      */
     default void teachPlayerSkill(IPlayer player, int level) { teachPlayerSkill(player, level, false); }
 

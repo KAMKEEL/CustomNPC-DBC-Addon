@@ -29,7 +29,7 @@ public interface ICustomSkill extends ISkill {
     /**
      * Set a new max level
      *
-     * @param level Level in range <code>1 <= level <= 10</code>
+     * @param level Level in range {@code 1 <= level <= 10}
      */
     void setMaxLevel(int level);
 
