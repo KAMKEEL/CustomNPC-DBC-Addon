@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="refresh" content="3;url=/CustomNPC-DBC-Addon/">
+    <title>Redirecting...</title>
+    <script>
+        var path = window.location.pathname;
+        var base = '/CustomNPC-DBC-Addon/';
+        var relative = path.replace(base, '');
+
+        if (!relative.startsWith('releases/') && !relative.startsWith('experimental/')) {
+          window.location.replace(base + 'releases/latest/' + relative);
+        } else {
+          window.location.replace(base);
+        }
+    </script>
+    <style>
+        body { background: #0c0c0e; color: #e8e8ee; font-family: monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; flex-direction: column; gap: 16px; }
+        a { color: #c8f060; }
+        p { color: #9090a0; font-size: 13px; }
+    </style>
+</head>
+<body>
+<h1>404</h1>
+<p>This page doesn't exist or has been moved.</p>
+<p>Redirecting you shortly — if nothing happens, <a href="/CustomNPC-DBC-Addon/">click here</a>.</p>
+</body>
+</html>
