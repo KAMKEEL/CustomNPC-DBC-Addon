@@ -66,6 +66,13 @@ jobs:
 #          java-version: '25'
 #          distribution: 'temurin'
 
+      - name: Extract convention plugin version
+        id: convention
+        run: |
+          VERSION=$(grep "id 'com.gtnewhorizons.gtnhsettingsconvention'" settings.gradle settings.gradle.kts 2>/dev/null | grep -o "version '[0-9]\+\.[0-9]\+\.[0-9]\+'" | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Detected convention version: $VERSION"
+
       - name: Cache Gradle wrapper
         uses: actions/cache@v4
         with:
@@ -83,12 +90,34 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: Cache RFG
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/rfg
+            build/tmp/.cache/expanded
+            build/tmp/deobfuscateMergedJarToSrg
+          key: ${{ runner.os }}-rfg-convention${{ steps.convention.outputs.version }}
+          restore-keys: |
+            ${{ runner.os }}-rfg-
+
       - name: Generate Javadoc
         run: ./gradlew javadoc -PuseCNPCJar=true
 
       - name: Get deploy path
         id: deploy_path
         run: bash .github/scripts/resolve-doc-path.sh
+
+      - name: Debug deploy path
+        run: |
+          echo "path='${{ steps.deploy_path.outputs.path }}'"
+          echo "extra_path='${{ steps.deploy_path.outputs.extra_path }}'"
+
+      - name: Debug env
+        run: |
+          echo "GITHUB_REF=$GITHUB_REF"
+          echo "event_name=${{ github.event_name }}"
+          echo "head_commit=${{ github.event.head_commit.message }}"
 
       # Comment from Hussar: this releases to either:
       # - experimental/<branch_name>
