@@ -45,4 +45,4 @@ if [ "$BRANCH" = "$MAIN_BRANCH_NAME" ]; then
   # Storing the output for use in the action GH Workflow script.
   echo "path=releases/latest" >> $GITHUB_OUTPUT
   echo "extra_path=releases/$VERSION" >> $GITHUB_OUTPUT
-
+fi
