@@ -15,8 +15,6 @@ EXPERIMENTAL_WHITELIST=(
   "dev"
   # "new-branch"
 )
-
-
 BRANCH="${GITHUB_REF#refs/heads/}"
 SAFE_BRANCH="${BRANCH//\//-}"
 
@@ -45,4 +43,23 @@ if [ "$BRANCH" = "$MAIN_BRANCH_NAME" ]; then
   # Storing the output for use in the action GH Workflow script.
   echo "path=releases/latest" >> $GITHUB_OUTPUT
   echo "extra_path=releases/$VERSION" >> $GITHUB_OUTPUT
+
+else
+  MATCHED=false
+  for ALLOWED in "${EXPERIMENTAL_WHITELIST[@]}"; do
+    if [ "$BRANCH" = "$ALLOWED" ]; then
+      MATCHED=true
+      break
+    fi
+  done
+
+  if [ "$MATCHED" = true ]; then
+    echo "path=experimental/$SAFE_BRANCH" >> $GITHUB_OUTPUT
+    echo "extra_path=" >> $GITHUB_OUTPUT
+    echo "Branch '$BRANCH' is whitelisted, deploying to experimental/$SAFE_BRANCH"
+  else
+    echo "path=" >> $GITHUB_OUTPUT
+    echo "extra_path=" >> $GITHUB_OUTPUT
+    echo "Branch '$BRANCH' is not whitelisted. Skipping deploy."
+  fi
 fi
