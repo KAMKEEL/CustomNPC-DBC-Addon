@@ -152,6 +152,8 @@ tasks.named("runClient").configure {
 // Create a separate task that generates to CNPC+'s own resources directory
 
 tasks.register("generateTypeScriptDefinitionsCNPC", tasks.named("generateTypeScriptDefinitions").get().class) {
+    file("CustomNPC-Plus/dts-patches").mkdirs()
+
     sourceDirectories = ['CustomNPC-Plus/src/api/java', 'CustomNPC-Plus/src/main/java']
     outputDirectory = "CustomNPC-Plus/src/main/resources/assets/customnpcs/api"
     apiPackages = ['noppes.npcs.api','net.minecraft'] as Set
@@ -164,15 +166,6 @@ tasks.register("generateTypeScriptDefinitionsCNPC", tasks.named("generateTypeScr
         'noppes.npcs.quests',
         'kamkeel.npcs.controllers.data'
     ] as Set
-
-
-    doFirst {
-        def patchesDir = file("CustomNPC-Plus/dts-patches")
-        if (!patchesDir.exists()) {
-            patchesDir.mkdirs()
-            logger.lifecycle("Created missing dts-patches directory")
-        }
-    }
 }
 
 // Make the main TypeScript task depend on CNPC+ generation
