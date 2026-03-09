@@ -639,12 +639,12 @@ public class DBCUtils {
     }
 
     // ═══════════════════════════════════════════════════════════════════
-    // SHARED DAMAGE APPLICATION (used by DBCAbilityExtender + DBCEnergyHandler)
+    // SHARED DAMAGE APPLICATION (used by DBCAbilityExtender + DBCEnergyExtender)
     // ═══════════════════════════════════════════════════════════════════
 
     /**
      * Apply DBC damage to a player target using the ability's configured ignore flags.
-     * Shared by both {@code DBCAbilityExtender} and {@code DBCEnergyHandler}.
+     * Shared by both {@code DBCAbilityExtender} and {@code DBCEnergyExtender}.
      */
     public static void applyDBCDamageToPlayer(EntityPlayer player, float damage, DBCAbilityStats stats,
                                                DamageSource source, EntityLivingBase attacker) {
@@ -671,7 +671,7 @@ public class DBCUtils {
 
     /**
      * Apply DBC damage using default defender reduction (player's own DBC settings).
-     * Shared by both {@code DBCAbilityExtender} and {@code DBCEnergyHandler}.
+     * Shared by both {@code DBCAbilityExtender} and {@code DBCEnergyExtender}.
      */
     public static void applyDBCDamageToPlayerDefault(EntityPlayer player, float damage, DBCAbilityStats stats,
                                                       DamageSource source, EntityLivingBase attacker) {

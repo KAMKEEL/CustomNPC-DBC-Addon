@@ -6,7 +6,7 @@ import JinRyuu.JRMCore.JRMCoreHDBC;
 import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.data.ability.DBCAbilityStats;
 import kamkeel.npcdbc.util.DBCUtils;
-import kamkeel.npcs.controllers.data.energy.IEnergyHandler;
+import kamkeel.npcs.controllers.data.energy.IEnergyExtender;
 import kamkeel.npcs.entity.EntityEnergyAbility;
 import kamkeel.npcs.util.AttributeAttackUtil;
 import net.minecraft.entity.Entity;
@@ -27,7 +27,7 @@ import noppes.npcs.entity.EntityNPCInterface;
  * The damageData NBT is expected to contain a "DBCAbilityStats" sub-tag
  * using the same format as ability DBC stats.
  */
-public class DBCEnergyHandler implements IEnergyHandler {
+public class DBCEnergyExtender implements IEnergyExtender {
 
     @Override
     public boolean onEnergyDamage(Entity energyEntity, EntityLivingBase owner,
