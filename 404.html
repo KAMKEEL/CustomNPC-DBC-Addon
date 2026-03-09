@@ -10,7 +10,7 @@
         var relative = path.replace(base, '');
 
         if (!relative.startsWith('releases/') && !relative.startsWith('experimental/')) {
-          window.location.replace(base + 'releases/latest/' + relative);
+          window.location.replace(base + 'experimental/dev/' + relative);
         } else {
           window.location.replace(base);
         }
