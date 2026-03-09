@@ -1,0 +1,127 @@
+name: Generate and Deploy Javadoc
+
+on:
+  push:
+    branches:
+      - main
+      - '**'
+  pull_request:
+    types: [closed]
+  delete:
+  workflow_dispatch:
+    inputs:
+      force_deploy:
+        description: 'Force redeploy Javadocs without a new commit'
+        required: false
+        default: 'true'
+
+jobs:
+  sanity-check:
+    runs-on: ubuntu-latest
+    outputs:
+      should_deploy: ${{ steps.deploy_check.outputs.should_deploy }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for deploy tag
+        id: deploy_check
+        run: |
+          BRANCH="${GITHUB_REF#refs/heads/}"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+          elif [ "$BRANCH" != "main" ]; then
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+          elif echo "${{ github.event.head_commit.message }}" | grep -q "\[deploy-docs\]"; then
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_deploy=false" >> $GITHUB_OUTPUT
+          fi
+
+  build-and-deploy-javadoc:
+    needs: sanity-check
+    if: needs.sanity-check.outputs.should_deploy == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source branch
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+
+      - name: Generate Javadoc
+        run: ./gradlew javadoc
+
+      - name: Get deploy path
+        id: deploy_path
+        run: bash .github/scripts/resolve-doc-path.sh
+
+      # Comment from Hussar: this releases to either:
+      # - experimental/<branch_name>
+      # - releases/latest (for the main branch)
+      - name: Deploy to gh-pages
+        if: steps.deploy_path.outputs.path != ''
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/docs/javadoc
+          destination_dir: ${{ steps.deploy_path.outputs.path }}
+          keep_files: true
+
+      # This however, generates /releases/<version>
+      - name: Deploy versioned snapshot to gh-pages
+        if: steps.deploy_path.outputs.extra_path != ''
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/docs/javadoc
+          destination_dir: ${{ steps.deploy_path.outputs.extra_path }}
+          keep_files: true
+
+
+#      - name: Checkout gh-pages to regenerate index
+#        uses: actions/checkout@v4
+#        with:
+#          ref: gh-pages
+#          path: gh-pages-index
+#
+#      - name: Generate and push index
+#        run: |
+#          cd gh-pages-index
+#          bash ../.github/scripts/generate-index.sh
+#          git config user.name "github-actions"
+#          git config user.email "github-actions@github.com"
+#          git add index.html
+#          git commit -m "Regenerate index [skip ci]" || echo "Index unchanged"
+#          git push
+
+
+  cleanup-on-delete:
+    if: github.event_name == 'delete' && github.event.ref_type == 'branch'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: 'gh-pages'
+
+      - name: Remove deleted branch docs
+        run: |
+          BRANCH="${{ github.event.ref }}"
+          SAFE="experimental/${BRANCH//\//-}"
+          if [ -d "./$SAFE" ]; then
+          rm -rf "./$SAFE"
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add -A
+          git commit -m "Remove docs for deleted branch: $BRANCH"
+          git push
+          else
+          echo "No docs found for $SAFE, skipping."
+          fi
