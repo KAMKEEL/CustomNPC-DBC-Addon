@@ -36,22 +36,44 @@ function useGitHubProfile(username) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    const cacheKey = 'gh-profile-' + username
+
+    // Check sessionStorage first — avoids hammering the API on every render
+    try {
+      const cached = sessionStorage.getItem(cacheKey)
+      if (cached) {
+        setProfile(JSON.parse(cached))
+        setLoading(false)
+        return
+      }
+    } catch (e) {}
+
     fetch('https://api.github.com/users/' + username)
-      .then(r => r.json())
-      .then(d => { setProfile(d); setLoading(false) })
+      .then(r => {
+        if (!r.ok) throw new Error('HTTP ' + r.status)
+        return r.json()
+      })
+      .then(d => {
+        // Don't cache error responses like rate limit messages
+        if (!d.message) {
+          try { sessionStorage.setItem(cacheKey, JSON.stringify(d)) } catch (e) {}
+        }
+        setProfile(d)
+        setLoading(false)
+      })
       .catch(() => setLoading(false))
   }, [username])
 
   return { profile, loading }
 }
 
-function AuthorTile({ username, active, onClick }) {
+function AuthorTile({ username, active }) {
   const { profile, loading } = useGitHubProfile(username)
   const tileClass = styles.authorTile + (active ? ' ' + styles.authorTileActive : '')
 
   if (loading) {
     return (
-      <div className={tileClass} onClick={onClick}>
+      <div className={tileClass}>
         <div className={styles.authorAvatarSkeleton} />
         <div className={styles.authorInfo}>
           <div className={styles.authorSkeleton} style={{ width: '60px' }} />
@@ -64,14 +86,19 @@ function AuthorTile({ username, active, onClick }) {
 
   if (!profile || profile.message) {
     return (
-      <div className={tileClass} onClick={onClick}>
+      <a
+        href={'https://github.com/' + username}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={tileClass}
+      >
         <div className={styles.authorAvatarSkeleton} />
         <div className={styles.authorInfo}>
           <span className={styles.authorName}>{username}</span>
           <span className={styles.authorLogin}>@{username}</span>
           <div className={styles.authorBioPlaceholder} />
         </div>
-      </div>
+      </a>
     )
   }
 
@@ -81,7 +108,6 @@ function AuthorTile({ username, active, onClick }) {
       target="_blank"
       rel="noopener noreferrer"
       className={tileClass}
-      onClick={onClick}
     >
       <img
         src={profile.avatar_url}
@@ -122,7 +148,6 @@ function AuthorsTiles() {
             key={username}
             username={username}
             active={i === active}
-            onClick={() => setActive(i)}
           />
         ))}
       </div>
