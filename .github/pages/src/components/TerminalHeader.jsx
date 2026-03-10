@@ -28,16 +28,15 @@ const LINKS = [
   },
 ]
 
-
 // Add more GitHub usernames here as the project grows
-const AUTHORS = ['somehussar', 'kamkeel', 'bigguy345']
+const AUTHORS = ['bigguy345', 'somehussar', 'kamkeel', 'Vidal1sHere']
 
 function useGitHubProfile(username) {
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch(`https://api.github.com/users/${username}`)
+    fetch('https://api.github.com/users/' + username)
       .then(r => r.json())
       .then(d => { setProfile(d); setLoading(false) })
       .catch(() => setLoading(false))
@@ -46,16 +45,18 @@ function useGitHubProfile(username) {
   return { profile, loading }
 }
 
-function AuthorCard({ username }) {
+function AuthorTile({ username, active, onClick }) {
   const { profile, loading } = useGitHubProfile(username)
+  const tileClass = styles.authorTile + (active ? ' ' + styles.authorTileActive : '')
 
   if (loading) {
     return (
-      <div className={styles.authorCard}>
+      <div className={tileClass} onClick={onClick}>
         <div className={styles.authorAvatarSkeleton} />
         <div className={styles.authorInfo}>
-          <div className={styles.authorSkeleton} style={{ width: '80px' }} />
-          <div className={styles.authorSkeleton} style={{ width: '120px', marginTop: '4px' }} />
+          <div className={styles.authorSkeleton} style={{ width: '60px' }} />
+          <div className={styles.authorSkeleton} style={{ width: '80px', marginTop: '4px' }} />
+          <div className={styles.authorBioPlaceholder} />
         </div>
       </div>
     )
@@ -63,10 +64,12 @@ function AuthorCard({ username }) {
 
   if (!profile || profile.message) {
     return (
-      <div className={styles.authorCard}>
+      <div className={tileClass} onClick={onClick}>
         <div className={styles.authorAvatarSkeleton} />
         <div className={styles.authorInfo}>
           <span className={styles.authorName}>{username}</span>
+          <span className={styles.authorLogin}>@{username}</span>
+          <div className={styles.authorBioPlaceholder} />
         </div>
       </div>
     )
@@ -77,7 +80,8 @@ function AuthorCard({ username }) {
       href={profile.html_url}
       target="_blank"
       rel="noopener noreferrer"
-      className={`${styles.authorCard} ${styles.authorCardLink}`}
+      className={tileClass}
+      onClick={onClick}
     >
       <img
         src={profile.avatar_url}
@@ -87,22 +91,22 @@ function AuthorCard({ username }) {
       <div className={styles.authorInfo}>
         <span className={styles.authorName}>{profile.name || profile.login}</span>
         <span className={styles.authorLogin}>@{profile.login}</span>
-        {profile.bio && (
-          <span className={styles.authorBio}>{profile.bio}</span>
-        )}
+        {profile.bio
+          ? <span className={styles.authorBio}>{profile.bio}</span>
+          : <div className={styles.authorBioPlaceholder} />
+        }
       </div>
-      <span className={styles.authorArrow}>↗</span>
     </a>
   )
 }
 
-function AuthorsCarousel() {
-  const [current, setCurrent] = useState(0)
+function AuthorsTiles() {
+  const [active, setActive] = useState(0)
 
   useEffect(() => {
     if (AUTHORS.length <= 1) return
     const t = setInterval(() => {
-      setCurrent(i => (i + 1) % AUTHORS.length)
+      setActive(i => (i + 1) % AUTHORS.length)
     }, 4000)
     return () => clearInterval(t)
   }, [])
@@ -112,25 +116,14 @@ function AuthorsCarousel() {
       <div className={styles.outputLine}>
         <span className={styles.chevron}>›</span> Authors:
       </div>
-      {AUTHORS.length > 1 && (
-              <div className={styles.carouselDots}>
-                {AUTHORS.map((_, i) => (
-                  <button
-                    key={i}
-                    className={`${styles.dot2} ${i === current ? styles.dot2Active : ''}`}
-                    onClick={() => setCurrent(i)}
-                  />
-                ))}
-              </div>
-            )}
-      <div className={styles.carouselWrap}>
+      <div className={styles.authorRow}>
         {AUTHORS.map((username, i) => (
-          <div
+          <AuthorTile
             key={username}
-            className={`${styles.carouselSlide} ${i === current ? styles.carouselActive : ''}`}
-          >
-            <AuthorCard username={username} />
-          </div>
+            username={username}
+            active={i === active}
+            onClick={() => setActive(i)}
+          />
         ))}
       </div>
     </div>
@@ -141,16 +134,16 @@ export default function TerminalHeader() {
   return (
     <div className={styles.wrap}>
       <div className={styles.bar}>
-        <div className={`${styles.dot} ${styles.red}`}   />
-        <div className={`${styles.dot} ${styles.amber}`} />
-        <div className={`${styles.dot} ${styles.green}`} />
+        <div className={styles.dot + ' ' + styles.red}   />
+        <div className={styles.dot + ' ' + styles.amber} />
+        <div className={styles.dot + ' ' + styles.green} />
         <span className={styles.title}>javadoc-index — bash</span>
       </div>
       <div className={styles.body}>
         <h1 className={styles.heading}>
-        Custom<strong>NPC+</strong>&nbsp;DBC&nbsp;Addon
-{/*         <span className={styles.cursor} /> */}
+          Custom<strong>NPC+</strong>&nbsp;DBC&nbsp;Addon
         </h1>
+
         <div className={styles.promptLine}>
           <span className={styles.prompt}>$</span>
           <span className={styles.cmd}>browse-docs</span>
@@ -166,24 +159,26 @@ export default function TerminalHeader() {
         </div>
 
         <div className={styles.links}>
-          {LINKS.map(({ tag, label, href, color }) => (
-            <a
-              key={tag}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.link}
-            >
-              <span className={styles.linkTag} style={{ color, borderColor: color }}>
-                {tag}
-              </span>
-              <span className={styles.linkLabel}>{label}</span>
-              <span className={styles.linkArrow} style={{ color }}>↗</span>
-            </a>
-          ))}
+          {LINKS.map(function(l) {
+            return (
+              <a
+                key={l.tag}
+                href={l.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.link}
+              >
+                <span className={styles.linkTag} style={{ color: l.color, borderColor: l.color }}>
+                  {l.tag}
+                </span>
+                <span className={styles.linkLabel}>{l.label}</span>
+                <span className={styles.linkArrow} style={{ color: l.color }}>↗</span>
+              </a>
+            )
+          })}
         </div>
 
-        <AuthorsCarousel />
+        <AuthorsTiles />
 
         <div className={styles.promptLine} style={{ marginTop: '16px' }}>
           <span className={styles.prompt}>$</span>
