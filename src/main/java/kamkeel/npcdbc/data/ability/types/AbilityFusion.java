@@ -9,10 +9,7 @@ import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.util.DBCSettingsUtil;
 import kamkeel.npcdbc.util.Utility;
 import kamkeel.npcs.controllers.data.ability.Ability;
-import kamkeel.npcs.controllers.data.ability.enums.AbilityPhase;
-import kamkeel.npcs.controllers.data.ability.enums.LockMode;
-import kamkeel.npcs.controllers.data.ability.enums.TargetingMode;
-import kamkeel.npcs.controllers.data.ability.enums.UserType;
+import kamkeel.npcs.controllers.data.ability.enums.*;
 import kamkeel.npcs.controllers.data.telegraph.TelegraphType;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -57,6 +54,8 @@ public class AbilityFusion extends Ability {
         this.telegraphType = TelegraphType.NONE;
         this.showTelegraph = false;
         this.allowedBy = UserType.PLAYER_ONLY;
+        this.rotationMode = RotationMode.LOCKED;
+        this.rotationPhase = LockMode.ACTIVE;
     }
 
     @Override
@@ -81,21 +80,7 @@ public class AbilityFusion extends Ability {
 
     @Override
     public void onExecute(EntityLivingBase caster, EntityLivingBase target) {
-        if (!(caster instanceof EntityPlayer)) {
-            cleanup();
-            signalCompletion();
-            return;
-        }
 
-        EntityPlayer player = (EntityPlayer) caster;
-
-        if (!checkAllConditions(player, null, false)) {
-            cleanup();
-            signalCompletion();
-            return;
-        }
-
-        playerUUID = Utility.getUUID(player);
     }
 
     @Override
@@ -107,6 +92,17 @@ public class AbilityFusion extends Ability {
         }
 
         EntityPlayer player = (EntityPlayer) caster;
+
+        if (tick == 1) {
+            if (!checkAllConditions(player, null, false)) {
+                cleanup();
+                signalCompletion();
+                return;
+            }
+
+            playerUUID = Utility.getUUID(player);
+        }
+
 
         if (fuseeUUID != null) return;
 
@@ -255,20 +251,26 @@ public class AbilityFusion extends Ability {
     }
 
     private void prepareForFusion(EntityPlayer player, EntityPlayer fusee) {
-        double angle = Math.toRadians(player.rotationYaw + 90);
-        double offsetX = Math.cos(angle);
-        double offsetZ = Math.sin(angle);
+        double yaw = Math.toRadians(player.rotationYaw);
 
-        double targetX = player.posX + offsetX;
-        double targetZ = player.posZ + offsetZ;
+        double leftX = Math.cos(yaw);
+        double leftZ = -Math.sin(yaw);
 
-        if (!player.worldObj.isAirBlock((int) targetX, (int) player.posY, (int) targetZ)) {
-            targetX = player.posX;
-            targetZ = player.posZ;
+        double targetX = player.posX;
+        double targetZ = player.posZ;
+
+        for (int dist = 1; dist <= 2; dist++) {
+            double tx = player.posX + leftX * dist;
+            double tz = player.posZ + leftZ * dist;
+
+            if (player.worldObj.isAirBlock((int) tx, (int) player.posY, (int) tz)) {
+                targetX = tx;
+                targetZ = tz;
+                break;
+            }
         }
 
         fusee.setPositionAndUpdate(targetX, player.posY, targetZ);
-
         player.setRotationYawHead(player.rotationYaw);
         fusee.setRotationYawHead(player.rotationYaw);
 
@@ -314,6 +316,18 @@ public class AbilityFusion extends Ability {
                 FieldDef.intField("ability.requestTicks", this::getFusionRequestTicks, this::setFusionRequestTicks)
             ),
             FieldDef.stringField("ability.fusionMessage", this::getFusionMessage, this::setFusionMessage)
+        ));
+
+        FieldDef.modifyVisibility(defs, "ability.activeAnimation", () -> false);
+
+        FieldDef.insertAfter(defs, "ability.windUpAnimation", FieldDef.animSubGui("ability.leftFusionAnimation",
+            this::getLeftFuseeAnimationId, this::setLeftFuseeAnimationId,
+            this::getLeftFuseeAnimationName, this::setLeftFuseeAnimationName
+        ));
+
+        FieldDef.insertAfter(defs, "ability.leftFusionAnimation", FieldDef.animSubGui("ability.rightFusionAnimation",
+            this::getRightFuseeAnimationId, this::setRightFuseeAnimationId,
+            this::getRightFuseeAnimationName, this::setRightFuseeAnimationName
         ));
     }
 
