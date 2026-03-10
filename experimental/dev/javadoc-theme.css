@@ -27,6 +27,10 @@
 
 * { box-sizing: border-box !important; }
 
+html, body {
+  height: 100%;
+}
+
 body {
   background: var(--bg) !important;
   color: var(--text) !important;
@@ -35,6 +39,10 @@ body {
   line-height: 1.6 !important;
   margin: 0 !important;
   padding: 0 !important;
+
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
 .skipNav { display: none !important; }
@@ -268,15 +276,16 @@ body {
 main {
   background: var(--bg) !important;
   padding: 24px !important;
+  flex: 1 0 auto !important;
 }
 
 .contentContainer, div.contentContainer {
   background: var(--bg) !important;
-  padding: 0 24px 24px !important;
+  padding: 0 24px 0px !important;
 }
 
 .header {
-  padding: 24px 24px 0 !important;
+  padding: 0 24px 0 !important;
   margin-bottom: 16px !important;
 }
 
@@ -478,6 +487,9 @@ main > div p, .contentContainer p {
 }
 
 /* Bottom footer subNav — sits below .bottomNav */
+footer {
+    /*margin-top: auto;*/
+}
 footer .subNav {
   background: var(--bg3) !important;
   border-top: 1px solid var(--border) !important;
