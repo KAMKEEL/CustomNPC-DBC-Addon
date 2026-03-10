@@ -76,7 +76,7 @@ for i in "${!RELEASES[@]}"; do
   else
     IS_LATEST="false"
   fi
-  RELEASES_JSON+="{\"id\":\"${version}\",\"version\":\"${version}\",\"path\":\"releases/${version}\",\"hash\":\"${HASH}\",\"date\":\"${DATE}\",\"isLatest\":${IS_LATEST}},"
+  RELEASES_JSON+="{\"id\":\"${version}\",\"version\":\"${version}\",\"path\":\"releases/${version}\",\"date\":\"${DATE}\",\"isLatest\":${IS_LATEST}},"
 done
 
 RELEASES_JSON="${RELEASES_JSON%,}]"

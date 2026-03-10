@@ -36,24 +36,17 @@ export function ReleaseCard({ release, index }) {
       <div className={styles.version}>
         v{release.version}
       </div>
-
-      <div className={styles.meta}>
-        {date && (
-          <div className={styles.metaRow}>
-            <span className={styles.metaKey}>date</span>
-            <span className={styles.metaVal}>{date}</span>
-          </div>
-        )}
-        {release.hash && (
-          <div className={styles.metaRow}>
-            <span className={styles.metaKey}>sha</span>
-            <span className={styles.metaVal + ' ' + styles.hash}>{release.hash}</span>
-          </div>
-        )}
-        <div className={styles.metaRow}>
-          <span className={styles.metaKey}>path</span>
-          <span className={styles.metaVal}>{release.path}/</span>
-        </div>
+        <div className={styles.meta}>
+            {date && (
+              <div className={styles.metaRow}>
+                <span className={styles.metaKey}>date</span>
+                <span className={styles.metaVal}>{date}</span>
+              </div>
+            )}
+            <div className={styles.metaRow}>
+              <span className={styles.metaKey}>path</span>
+              <span className={styles.metaVal}>{release.path}/</span>
+            </div>
       </div>
     </a>
   )
