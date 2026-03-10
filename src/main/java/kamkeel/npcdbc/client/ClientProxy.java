@@ -13,8 +13,10 @@ import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.data.ability.DBCAbilityFieldProvider;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.items.ModItems;
+import kamkeel.npcs.controllers.AbilityController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -22,11 +24,13 @@ import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
 import noppes.npcs.CustomNpcs;
 import noppes.npcs.entity.EntityCustomNpc;
 
+import java.lang.reflect.Field;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
@@ -48,9 +52,9 @@ public class ClientProxy extends CommonProxy {
     public void preInit(FMLPreInitializationEvent ev) {
         super.preInit(ev);
         forceStencilEnable();
-//        CustomNpcs.addClassesToClientClassFilter(filter -> {
-//            filter.addRegexes("kamkeel\\.npcdbc\\.api\\..*");
-//        });
+        CustomNpcs.addClassesToClientClassFilter(filter -> {
+            filter.addRegexes("kamkeel\\.npcdbc\\.api\\..*");
+        });
     }
 
     public void init(FMLInitializationEvent ev) {
@@ -59,7 +63,7 @@ public class ClientProxy extends CommonProxy {
         KeyHandler.registerKeys();
 
         // Register DBC ability field providers for GUI tab injection
-//        AbilityController.Instance.registerFieldProvider(new DBCAbilityFieldProvider());
+        AbilityController.Instance.registerFieldProvider(new DBCAbilityFieldProvider());
         RenderingRegistry.registerEntityRenderingHandler(EntityAura.class, new AuraRenderer());
         MinecraftForgeClient.registerItemRenderer(ModItems.Potaras, new PotaraItemRenderer());
         ShaderHelper.loadShaders(false);
@@ -69,9 +73,9 @@ public class ClientProxy extends CommonProxy {
     }
 
     public void postInit(FMLPostInitializationEvent ev) {
-//        PostProcessing.IrisHelper.init();
-//        PostProcessing.init(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
-//        //  ModernModels.loadModels();
+        PostProcessing.IrisHelper.init();
+        PostProcessing.init(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
+        //  ModernModels.loadModels();
 
         Collection renderManager = RenderManager.instance.entityRenderMap.values();
         for (Object o : renderManager) {
@@ -119,17 +123,13 @@ public class ClientProxy extends CommonProxy {
     }
 
     private void forceStencilEnable() {
-        ConfigDBCClient.EnableShaders = false;
-        ConfigDBCClient.EnableOutlines = false;
-        ConfigDBCClient.EnableBloom = false;
-
-//        try {
-//            System.setProperty("forge.forceDisplayStencil", "true");
-//            Field field = ForgeHooksClient.class.getDeclaredField("stencilBits");
-//            field.setAccessible(true);
-//            field.setInt(ForgeHooksClient.class, 8);
-//        } catch (Exception e) {
-//            LOGGER.error("Failed setting stencil bits to 8: " + e.getMessage());
-//        }
+        try {
+            System.setProperty("forge.forceDisplayStencil", "true");
+            Field field = ForgeHooksClient.class.getDeclaredField("stencilBits");
+            field.setAccessible(true);
+            field.setInt(ForgeHooksClient.class, 8);
+        } catch (Exception e) {
+            LOGGER.error("Failed setting stencil bits to 8: " + e.getMessage());
+        }
     }
 }

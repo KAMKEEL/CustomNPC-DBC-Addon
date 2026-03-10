@@ -30,6 +30,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.client.gui.util.GuiCustomScroll;
+import noppes.npcs.client.ClientEventHandler;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 
@@ -233,16 +234,19 @@ public class GuiAuraDirectory extends GuiDirectoryCategorized implements IAuraMa
         GL11.glTranslatef(0.0F, 0.1f + entity.yOffset, 1F);
         RenderManager.instance.playerViewY = 180F;
 
+        ClientEventHandler.renderingEntityInGUI = true;
         try {
             RenderManager.instance.renderEntityWithPosYaw(entity, 0.0, 0.0, 0.0, 0.0F, partialTicks);
         } catch (Exception ignored) {
         }
+        ClientEventHandler.renderingEntityInGUI = false;
 
         SubGuiAuraDisplay.useGUIAura = false;
         entity.prevRenderYawOffset = entity.renderYawOffset = f2;
         entity.prevRotationYaw = entity.rotationYaw = f3;
         entity.rotationPitch = entity.prevRotationPitch = f4;
         entity.prevRotationYawHead = entity.rotationYawHead = f7;
+        GL11.glPopMatrix();
 
         RenderHelper.disableStandardItemLighting();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
@@ -250,7 +254,6 @@ public class GuiAuraDirectory extends GuiDirectoryCategorized implements IAuraMa
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-        GL11.glPopMatrix();
     }
 
     @Override

@@ -755,7 +755,7 @@ public class DBCUtils {
             if (isMelee) {
                 // Base melee damage
                 int meleeStat = stat(attacker, 0, ctx.powerType, 0, modifiedSTR, ctx.race, ctx.classID, 0.0F);
-                double baseMeleeDmg = meleeStat * ctx.release * 0.01 * weightPerc(0, attacker);
+                double baseMeleeDmg = (double) meleeStat * ctx.release * 0.01 * weightPerc(0, attacker);
 
                 // Ki bonuses
                 int kiFistBonus = computeKiFistBonus(ctx, false);
@@ -852,7 +852,7 @@ public class DBCUtils {
 
         int baseStat = stat(ctx.player, scalingAttribute, ctx.powerType, DBCStatistics.Melee,
             modifiedAttr, ctx.race, ctx.classID, 0.0F);
-        double baseDmg = baseStat * ctx.release * 0.01 * weightPerc(0, ctx.player);
+        double baseDmg = (double) baseStat * ctx.release * 0.01 * weightPerc(0, ctx.player);
 
         int kiFistBonus = computeKiFistBonus(ctx, false);
         int kiWeaponDamage = computeKiWeaponBonus(ctx, false);
@@ -870,7 +870,7 @@ public class DBCUtils {
 
         int baseStat = (int) (stat(ctx.player, scalingAttribute, ctx.powerType, DBCStatistics.EnergyPower,
             modifiedAttr, ctx.race, ctx.classID, 0.0F) * 0.01F);
-        float baseDmg = (float) (baseStat * ctx.release * 0.01 * weightPerc(1, ctx.player));
+        float baseDmg = (float) ((double) baseStat * ctx.release * 0.01 * weightPerc(1, ctx.player));
 
         float[] infuseResult = computeKiInfuseBonus(ctx, false);
         float kiInfuseBonus = infuseResult[0];
@@ -991,9 +991,9 @@ public class DBCUtils {
         int kiWeaponDamage = (int) (kiFistSkillLvl * scaledDmg);
 
         // Second component (weight-scaled)
-        float weightedDmg = (float) (energyPowerStat * ctx.release * 0.01 * weightPerc(1, ctx.player)
+        float weightedDmg = (float) ((double) energyPowerStat * ctx.release * 0.01 * weightPerc(1, ctx.player)
             * (isSword ? DBCConfig.cnfKCsd : DBCConfig.cnfKBld) * JRMCoreConfig.dat5700);
-        float weightedCost = (float) (energyPowerStat * ctx.release * 0.01 * weightPerc(1, ctx.player)
+        float weightedCost = (float) ((double) energyPowerStat * ctx.release * 0.01 * weightPerc(1, ctx.player)
             * (isSword ? DBCConfig.cnfKCsc : DBCConfig.cnfKBlc));
         kiWeaponCost += (int) (weightedCost / ((kiWeaponSkillLvl > 1) ? (kiWeaponSkillLvl * 0.3f + 1.0f) : 1.0f));
         kiWeaponDamage += (int) (kiWeaponSkillLvl * weightedDmg);
@@ -1016,7 +1016,7 @@ public class DBCUtils {
         int WIL = ctx.getModifiedAttribute(DBCAttribute.Willpower);
         int energyPowerStat = (int) (stat(ctx.player, DBCAttribute.Willpower, ctx.powerType, DBCStatistics.EnergyPower,
             WIL, ctx.race, ctx.classID, 0.0F) * 0.01F);
-        float kiInfuseBonus = (float) (energyPowerStat * ctx.release * 0.005 * kiWeaponSkillLvl * weightPerc(1, ctx.player));
+        float kiInfuseBonus = (float) ((double) energyPowerStat * ctx.release * 0.005 * kiWeaponSkillLvl * weightPerc(1, ctx.player));
 
         if (kiInfuseBonus <= 0) return new float[]{0, 1.0f};
 
