@@ -1,5 +1,7 @@
 import styles from './Card.module.css'
-import { BASE_PATH } from '../useDocs'
+import { REPO_NAME } from '../config'
+
+const BASE_PATH = `/${REPO_NAME}`
 
 function formatDate(iso) {
   if (!iso) return null

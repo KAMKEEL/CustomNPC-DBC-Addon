@@ -2,7 +2,6 @@
 .settings
 /.idea/
 /.vscode/
-/.github/
 /run/
 /build/
 /eclipse/

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
+import { REPO_OWNER, REPO_NAME } from './config'
 
-const REPO_OWNER = 'kamkeel'
-const REPO_NAME  = 'CustomNPC-DBC-Addon'
 const BASE_PATH  = `/${REPO_NAME}`
 const API_BASE   = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`
 

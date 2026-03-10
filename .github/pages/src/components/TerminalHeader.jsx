@@ -1,35 +1,6 @@
 import { useState, useEffect } from 'react'
 import styles from './TerminalHeader.module.css'
-
-const LINKS = [
-  {
-    tag: 'GH',
-    label: 'github.com/kamkeel/CustomNPC-DBC-Addon',
-    href: 'https://github.com/kamkeel/CustomNPC-DBC-Addon',
-    color: '#e6edf3',
-  },
-  {
-    tag: 'DC',
-    label: 'discord.gg/pQqRTvFeJ',
-    href: 'https://discord.com/invite/pQqRTvFeJ',
-    color: '#5865f2',
-  },
-  {
-    tag: 'CF',
-    label: 'curseforge.com/minecraft/mc-mods/cnpc-dbc-addon',
-    href: 'https://www.curseforge.com/minecraft/mc-mods/cnpc-dbc-addon',
-    color: '#f16436',
-  },
-  {
-    tag: 'MR',
-    label: 'modrinth.com/mod/customnpc-plus-dbc-addon',
-    href: 'https://modrinth.com/mod/customnpc-plus-dbc-addon/',
-    color: '#1bd96a',
-  },
-]
-
-// Add more GitHub usernames here as the project grows
-const AUTHORS = ['bigguy345', 'somehussar', 'kamkeel', 'Vidal1sHere']
+import { PROJECT_NAME, REPO_NAME, LINKS, AUTHORS } from '../config'
 
 function useGitHubProfile(username) {
   const [profile, setProfile] = useState(null)
@@ -166,13 +137,13 @@ export default function TerminalHeader() {
       </div>
       <div className={styles.body}>
         <h1 className={styles.heading}>
-          Custom<strong>NPC+</strong>&nbsp;DBC&nbsp;Addon
+          {PROJECT_NAME}
         </h1>
 
         <div className={styles.promptLine}>
           <span className={styles.prompt}>$</span>
           <span className={styles.cmd}>browse-docs</span>
-          <span className={styles.arg}>CustomNPC-DBC-Addon</span>
+          <span className={styles.arg}>{REPO_NAME}</span>
           <span className={styles.flag}>--all-versions</span>
         </div>
 
