@@ -14,14 +14,16 @@ export default function Footer({ source }) {
         Auto-generated · {source === 'manifest' ? 'manifest.json' : 'GitHub API'}
       </span>
       <span>{now}</span>
+      <span>Template by:&nbsp;
       <a
-        href={`https://github.com/${REPO_OWNER}/${REPO_NAME}`}
+        href={`https://github.com/somehussar/`}
         target="_blank"
         rel="noopener noreferrer"
         className={styles.link}
       >
-        github.com/{REPO_OWNER}/{REPO_NAME}
+        github.com/somehussar
       </a>
+      </span>
     </footer>
   )
 }
