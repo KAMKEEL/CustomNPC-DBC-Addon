@@ -101,6 +101,8 @@ public interface ISkill {
 
     /**
      * Equivalent to {@linkplain #unlearnSkill(IPlayer, boolean) unlearnSkill(player, false)}.
+     *
+     * @param player Player to unlearn the skill from
      */
     default void unlearnSkill(IPlayer player) {
         unlearnSkill(player, false);

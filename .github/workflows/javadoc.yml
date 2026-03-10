@@ -136,8 +136,53 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
+      - name: Resolve CNPC+ Javadoc URL
+        id: cnpc_docs
+        run: |
+          BRANCH="${GITHUB_REF#refs/heads/}"
+          CNPC_BASE="https://kamkeel.github.io/CustomNPC-Plus"
+
+          if [ "$BRANCH" = "main" ]; then
+            # Main branch links to CNPC+ master (releases/<version>)
+            # Resolve the CNPC+ version from the submodule
+            cd CustomNPC-Plus
+            if [ -f "gradle.properties" ] && grep -q "^modVersion=" gradle.properties; then
+              CNPC_VER=$(grep "^modVersion=" gradle.properties | cut -d'=' -f2 | tr -d '[:space:]')
+            elif [ -f "gradle.properties" ] && grep -q "^version=" gradle.properties; then
+              CNPC_VER=$(grep "^version=" gradle.properties | cut -d'=' -f2 | tr -d '[:space:]')
+            elif [ -f "build.gradle" ]; then
+              CNPC_VER=$(grep "^version" build.gradle | head -1 | sed "s/version\s*=\s*['\"]//;s/['\"].*//;s/\s//g")
+            else
+              CNPC_VER="unknown"
+            fi
+            cd ..
+            CNPC_DOC_URL="${CNPC_BASE}/releases/${CNPC_VER}"
+            echo "Linking DBC main -> CNPC+ releases/${CNPC_VER}"
+          else
+            # Dev / experimental branches link to CNPC+ experimental/<branch>
+            # Default to 'dev' for the dev branch
+            SAFE_BRANCH="${BRANCH//\//-}"
+            CNPC_DOC_URL="${CNPC_BASE}/experimental/${SAFE_BRANCH}"
+            echo "Linking DBC ${BRANCH} -> CNPC+ experimental/${SAFE_BRANCH}"
+          fi
+
+          # Download the element-list so javadoc can resolve cross-references
+          mkdir -p build/cnpc-element-list
+          if curl -fsSL "${CNPC_DOC_URL}/element-list" -o build/cnpc-element-list/element-list; then
+            echo "Downloaded element-list from ${CNPC_DOC_URL}"
+          elif curl -fsSL "${CNPC_DOC_URL}/package-list" -o build/cnpc-element-list/element-list; then
+            echo "Downloaded package-list (JDK 8 format) from ${CNPC_DOC_URL}"
+          else
+            echo "::warning::Could not download element-list from ${CNPC_DOC_URL}. Cross-links to CNPC+ will not work."
+          fi
+
+          echo "url=${CNPC_DOC_URL}" >> $GITHUB_OUTPUT
+
       - name: Generate Javadoc
-        run: ./gradlew javadoc -PuseCNPCJar=true
+        run: |
+          ./gradlew javadoc -PuseCNPCJar=true \
+            -PcnpcDocUrl=${{ steps.cnpc_docs.outputs.url }} \
+            -PcnpcDocElementList=build/cnpc-element-list
 
       - name: Get deploy path
         id: deploy_path

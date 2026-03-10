@@ -90,6 +90,8 @@ public interface IDBCEvent extends IPlayerEvent {
         /**
          * Returns the unmodified KO result based on the current damage and
          * attacker before any overrides are applied.
+         *
+         * @return true if a knockout would occur before any overrides
          */
         boolean getKO();
 

@@ -11,12 +11,19 @@ public interface ISkillHandler {
     void delete(ICustomSkill skill);
 
     /**
-     * Calls {@linkplain ISkillHandler#createSkill(String, int) createSkill(stringLiteralId, 1)}
+     * Calls {@linkplain ISkillHandler#createSkill(String, int, int[], int[]) createSkill(stringLiteralId, 1, null, null)}
+     *
+     * @param stringLiteralId String ID which can be used to look up the skill with.
+     * @return newly created or existing skill.
      */
     ICustomSkill createSkill(String stringLiteralId);
 
     /**
-     * Calls {@linkplain ISkillHandler#createSkill(String, int) createSkill(stringLiteralId, maxLevel, null, null)}
+     * Calls {@linkplain ISkillHandler#createSkill(String, int, int[], int[]) createSkill(stringLiteralId, maxLevel, null, null)}
+     *
+     * @param stringLiteralId String ID which can be used to look up the skill with.
+     * @param maxLevel        Max level of a skill. Minimum 1, Max 10.
+     * @return newly created or existing skill.
      */
     ICustomSkill createSkill(String stringLiteralId, int maxLevel);
 

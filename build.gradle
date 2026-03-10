@@ -76,13 +76,20 @@ javadoc {
 
     include 'kamkeel/npcdbc/api/**'
 
-    options.links(
-        'https://docs.oracle.com/en/java/javase/11/docs/api/',
-        // Messy and will have to figure out how to update this shit to work
-        // with an updated CNPC javadoc?
-        // TODO: Figure out better way to handle multi-project setups.
-        'https://kamkeel.github.io/CustomNPC-Plus/'
-    )
+    options.links('https://docs.oracle.com/en/java/javase/11/docs/api/')
+
+    // Link to CNPC+ javadoc. The URL and local element-list location are
+    // supplied by the CI workflow via Gradle properties:
+    //   -PcnpcDocUrl=https://kamkeel.github.io/CustomNPC-Plus/experimental/dev
+    //   -PcnpcDocElementList=build/cnpc-element-list
+    // Falls back to the submodule's docs/ folder for local builds.
+    def cnpcUrl = project.hasProperty('cnpcDocUrl')
+        ? project.cnpcDocUrl
+        : 'https://kamkeel.github.io/CustomNPC-Plus/'
+    def cnpcElementList = project.hasProperty('cnpcDocElementList')
+        ? project.cnpcDocElementList
+        : "${project.rootDir}/CustomNPC-Plus/docs"
+    options.linksOffline(cnpcUrl, cnpcElementList)
 
     javadocTool = javaToolchains.javadocToolFor {
         languageVersion = JavaLanguageVersion.of(11)
