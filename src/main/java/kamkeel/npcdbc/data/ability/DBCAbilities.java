@@ -5,6 +5,7 @@ import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCSkills;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.constants.enums.EnumDBCRaces;
+import kamkeel.npcdbc.data.ability.types.AbilityFusion;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.ability.conditions.ConditionRace;
 import kamkeel.npcs.controllers.data.ability.conditions.ConditionHPThreshold;
@@ -64,6 +65,9 @@ public class DBCAbilities {
         ability.setPlayerRequirement(player -> DBCData.get(player).hasSkill(skill.getId()));
         return ability;
     }
+
+    // Unique Abilities
+    public static final Ability FUSION_DANCE = ABILITIES.registerType("fusion_dance", AbilityFusion::new);
 
     // Ability Variants
 

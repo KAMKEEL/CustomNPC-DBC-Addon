@@ -21,6 +21,7 @@ import java.util.UUID;
 public class FusionHandler {
 
     public static HashMap<UUID, FuseRequest> fuseRequest = new HashMap<>();
+    public static HashMap<UUID, UUID> fusionDance = new HashMap<>();
 
     public static boolean requestFusion(EntityPlayer sender, EntityPlayer target, boolean rightSide, String hash, int tier) {
         boolean senderFusion = JRMCoreH.PlyrSettingsB(sender, DBCSettings.FUSION_ENABLED);
