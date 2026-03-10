@@ -149,7 +149,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <td class="colFirst"><code><a href="ICustomSkill.html" title="interface in kamkeel.npcdbc.api.skill">ICustomSkill</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createSkill(java.lang.String)">createSkill</a></span>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;stringLiteralId)</code></th>
 <td class="colLast">
-<div class="block">Calls <a href="#createSkill(java.lang.String,int)">createSkill(stringLiteralId, 1)</a></div>
+<div class="block">Calls <a href="#createSkill(java.lang.String,int,int%5B%5D,int%5B%5D)">createSkill(stringLiteralId, 1, null, null)</a></div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
@@ -157,7 +157,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createSkill(java.lang.String,int)">createSkill</a></span>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;stringLiteralId,
            int&nbsp;maxLevel)</code></th>
 <td class="colLast">
-<div class="block">Calls <a href="#createSkill(java.lang.String,int)">createSkill(stringLiteralId, maxLevel, null, null)</a></div>
+<div class="block">Calls <a href="#createSkill(java.lang.String,int,int%5B%5D,int%5B%5D)">createSkill(stringLiteralId, maxLevel, null, null)</a></div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -255,7 +255,13 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li class="blockList">
 <h4>createSkill</h4>
 <pre class="methodSignature"><a href="ICustomSkill.html" title="interface in kamkeel.npcdbc.api.skill">ICustomSkill</a>&nbsp;createSkill&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;stringLiteralId)</pre>
-<div class="block">Calls <a href="#createSkill(java.lang.String,int)">createSkill(stringLiteralId, 1)</a></div>
+<div class="block">Calls <a href="#createSkill(java.lang.String,int,int%5B%5D,int%5B%5D)">createSkill(stringLiteralId, 1, null, null)</a></div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>stringLiteralId</code> - String ID which can be used to look up the skill with.</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>newly created or existing skill.</dd>
+</dl>
 </li>
 </ul>
 <a id="createSkill(java.lang.String,int)">
@@ -266,7 +272,14 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <h4>createSkill</h4>
 <pre class="methodSignature"><a href="ICustomSkill.html" title="interface in kamkeel.npcdbc.api.skill">ICustomSkill</a>&nbsp;createSkill&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;stringLiteralId,
                          int&nbsp;maxLevel)</pre>
-<div class="block">Calls <a href="#createSkill(java.lang.String,int)">createSkill(stringLiteralId, maxLevel, null, null)</a></div>
+<div class="block">Calls <a href="#createSkill(java.lang.String,int,int%5B%5D,int%5B%5D)">createSkill(stringLiteralId, maxLevel, null, null)</a></div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>stringLiteralId</code> - String ID which can be used to look up the skill with.</dd>
+<dd><code>maxLevel</code> - Max level of a skill. Minimum 1, Max 10.</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>newly created or existing skill.</dd>
+</dl>
 </li>
 </ul>
 <a id="createSkill(java.lang.String,int,int[],int[])">
