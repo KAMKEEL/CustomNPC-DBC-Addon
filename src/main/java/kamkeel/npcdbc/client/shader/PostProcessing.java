@@ -392,8 +392,6 @@ public class PostProcessing {
             return;
         }
 
-        IrisHelper.init();
-
         int previousBuffer = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
         MAIN = getMainBuffer();
 
