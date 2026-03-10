@@ -11,6 +11,7 @@ MAIN_BRANCH_NAME="main"
 # -----------------------------------------------
 EXPERIMENTAL_WHITELIST=(
   "dev"
+  "supporter-prerelease"
   # "new-branch"
 )
 BRANCH="${GITHUB_REF#refs/heads/}"
