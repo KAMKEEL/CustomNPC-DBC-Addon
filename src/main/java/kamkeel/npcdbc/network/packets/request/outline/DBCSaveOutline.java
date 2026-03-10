@@ -8,6 +8,7 @@ import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.network.PacketChannel;
 import kamkeel.npcdbc.network.packets.EnumPacketRequest;
+import kamkeel.npcs.network.packets.data.large.GuiDataPacket;
 import kamkeel.npcs.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -66,5 +67,6 @@ public class DBCSaveOutline extends AbstractPacket {
         }
 
         NetworkUtility.sendCustomOutlineDataAll((EntityPlayerMP) player);
+        GuiDataPacket.sendGuiData((EntityPlayerMP) player, outline.writeToNBT());
     }
 }
