@@ -348,13 +348,12 @@ public class PostProcessing {
     }
 
     public static void setupDepthAndStencil() {
-        int BUFFER_ATTACHMENT_TYPE = IrisHelper.getDepthBufferType(MAIN);
-
-        if (BUFFER_ATTACHMENT_TYPE == GL_TEXTURE_2D) {
-            setupIrisStencil(IrisHelper.getDepthBufferPointer(MAIN));
-            return;
-        }
-
+//        int BUFFER_ATTACHMENT_TYPE = IrisHelper.getDepthBufferType(MAIN);
+//
+//        if (BUFFER_ATTACHMENT_TYPE == GL_TEXTURE_2D) {
+//            setupIrisStencil(IrisHelper.getDepthBufferPointer(MAIN));
+//            return;
+//        }
 
         OpenGlHelper.func_153176_h(OpenGlHelper.field_153199_f, MAIN.depthBuffer);
         if (net.minecraftforge.client.MinecraftForgeClient.getStencilBits() == 0) {
