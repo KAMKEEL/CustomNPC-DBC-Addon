@@ -4,14 +4,12 @@ set -e
 RELEASES=()
 EXPERIMENTAL=()
 
-# Collect releases (excluding 'latest')
+# Collect releases
 if [ -d "./releases" ]; then
   for dir in ./releases/*/; do
     [ -d "$dir" ] || continue
     name=$(basename "$dir")
-    if [ "$name" != "latest" ]; then
-      RELEASES+=("$name")
-    fi
+    RELEASES+=("$name")
   done
 fi
 
@@ -29,9 +27,38 @@ if [ ${#RELEASES[@]} -gt 0 ]; then
   IFS=$'\n' RELEASES=($(sort -rV <<< "${RELEASES[*]}")); unset IFS
 fi
 
-# ── Helper: get commit hash + date for a path ─────────────────
+# ── Store source commit metadata for this deploy ───────────────
+# DEPLOY_PATH, SOURCE_HASH, SOURCE_DATE are passed in as env vars from the workflow
+if [ -n "$DEPLOY_PATH" ] && [ -n "$SOURCE_HASH" ]; then
+  mkdir -p ".doc-meta"
+  META_KEY="${DEPLOY_PATH//\//_}"
+  cat > ".doc-meta/${META_KEY}.json" << JSON
+{"hash":"${SOURCE_HASH}","date":"${SOURCE_DATE}"}
+JSON
+  echo "Stored source metadata for $DEPLOY_PATH → $SOURCE_HASH @ $SOURCE_DATE"
+fi
+
+# ── Helper: get source commit hash + date for a path ──────────
 get_commit_info() {
   local path="$1"
+
+  # If this is the path we just deployed, use the injected source commit
+  if [ "$path" = "$DEPLOY_PATH" ] && [ -n "$SOURCE_HASH" ]; then
+    echo "${SOURCE_HASH} ${SOURCE_DATE}"
+    return
+  fi
+
+  # Try reading from stored metadata file (set by previous deploys)
+  local meta=".doc-meta/${path//\//_}.json"
+  if [ -f "$meta" ]; then
+    local hash date
+    hash=$(python3 -c "import json,sys; d=json.load(open('$meta')); print(d.get('hash',''))" 2>/dev/null || grep -o '"hash":"[^"]*"' "$meta" | cut -d'"' -f4)
+    date=$(python3 -c "import json,sys; d=json.load(open('$meta')); print(d.get('date',''))" 2>/dev/null || grep -o '"date":"[^"]*"' "$meta" | cut -d'"' -f4)
+    echo "${hash:-} ${date:-}"
+    return
+  fi
+
+  # Last resort: gh-pages git log (hash will be wrong but better than empty)
   local hash date
   hash=$(git log --oneline -1 -- "$path" 2>/dev/null | awk '{print $1}')
   date=$(git log --format="%cI" -1 -- "$path" 2>/dev/null)
@@ -41,14 +68,15 @@ get_commit_info() {
 # ── Build releases JSON ────────────────────────────────────────
 RELEASES_JSON="["
 
-if [ -d "./releases/latest" ]; then
-  read -r HASH DATE <<< "$(get_commit_info releases/latest)"
-  RELEASES_JSON+="{\"id\":\"latest\",\"version\":\"latest\",\"path\":\"releases/latest\",\"hash\":\"${HASH}\",\"date\":\"${DATE}\"},"
-fi
-
-for version in "${RELEASES[@]}"; do
+for i in "${!RELEASES[@]}"; do
+  version="${RELEASES[$i]}"
   read -r HASH DATE <<< "$(get_commit_info "releases/$version")"
-  RELEASES_JSON+="{\"id\":\"${version}\",\"version\":\"${version}\",\"path\":\"releases/${version}\",\"hash\":\"${HASH}\",\"date\":\"${DATE}\"},"
+  if [ "$i" -eq 0 ]; then
+    IS_LATEST="true"
+  else
+    IS_LATEST="false"
+  fi
+  RELEASES_JSON+="{\"id\":\"${version}\",\"version\":\"${version}\",\"path\":\"releases/${version}\",\"date\":\"${DATE}\",\"isLatest\":${IS_LATEST}},"
 done
 
 RELEASES_JSON="${RELEASES_JSON%,}]"

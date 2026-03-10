@@ -25,6 +25,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.util.GuiCustomScroll;
+import noppes.npcs.client.ClientEventHandler;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 
@@ -226,15 +227,18 @@ public class GuiOutlineDirectory extends GuiDirectoryCategorized implements IOut
         GL11.glTranslatef(0.0F, entity.yOffset, 1F);
         RenderManager.instance.playerViewY = 180F;
 
+        ClientEventHandler.renderingEntityInGUI = true;
         try {
             RenderManager.instance.renderEntityWithPosYaw(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F);
         } catch (Exception ignored) {
         }
+        ClientEventHandler.renderingEntityInGUI = false;
 
         entity.prevRenderYawOffset = entity.renderYawOffset = f2;
         entity.prevRotationYaw = entity.rotationYaw = f3;
         entity.rotationPitch = f4;
         entity.prevRotationYawHead = entity.rotationYawHead = f7;
+        GL11.glPopMatrix();
 
         RenderHelper.disableStandardItemLighting();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
@@ -242,7 +246,6 @@ public class GuiOutlineDirectory extends GuiDirectoryCategorized implements IOut
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-        GL11.glPopMatrix();
 
         npc.display.showName = hideName;
         npc.display.modelSize = size;

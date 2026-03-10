@@ -144,7 +144,8 @@ public class DBCDataBonus {
         }
 
         public float getMultiplicative(int attributeID) {
-            return getValue(attributeID, multiplicative);
+            int index = toBonusIndex(attributeID);
+            return index >= 0 ? multiplicative[index] : 1.0f;
         }
 
         /**

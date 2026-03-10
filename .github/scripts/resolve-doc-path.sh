@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
-
 MAIN_BRANCH_NAME="main"
-
 # -----------------------------------------------
 # WHITELIST: Add branch names here to give them
 # a page under experimental/<branch>
@@ -13,15 +11,13 @@ MAIN_BRANCH_NAME="main"
 # -----------------------------------------------
 EXPERIMENTAL_WHITELIST=(
   "dev"
+  "supporter-prerelease"
   # "new-branch"
 )
 BRANCH="${GITHUB_REF#refs/heads/}"
 SAFE_BRANCH="${BRANCH//\//-}"
 
-# This branch is the logic for getting the proper `/releases/<version>/` path
-# It also provides `/releases/latest` by default for MAIN.
 if [ "$BRANCH" = "$MAIN_BRANCH_NAME" ]; then
-
   # For anyone having to deal with this bash script later on. This is the current version checking order
   # -> check if gradle.properties has a `modVersion` tag. If it does, just grab it.
   # -> check if it has the `version` tag. Grab it if it does
@@ -38,13 +34,15 @@ if [ "$BRANCH" = "$MAIN_BRANCH_NAME" ]; then
     echo "Could not find version. Defaulting to 'unknown'."
     VERSION="unknown"
   fi
+
   echo "Resolved version: $VERSION"
 
-  # Storing the output for use in the action GH Workflow script.
-  echo "path=releases/latest" >> $GITHUB_OUTPUT
-  echo "extra_path=releases/$VERSION" >> $GITHUB_OUTPUT
+  # Only deploy to releases/<version> — isLatest is handled by generate-index.sh
+  echo "path=releases/$VERSION" >> $GITHUB_OUTPUT
+  echo "extra_path=" >> $GITHUB_OUTPUT
 
 else
+  # Check if branch is in the experimental whitelist
   MATCHED=false
   for ALLOWED in "${EXPERIMENTAL_WHITELIST[@]}"; do
     if [ "$BRANCH" = "$ALLOWED" ]; then

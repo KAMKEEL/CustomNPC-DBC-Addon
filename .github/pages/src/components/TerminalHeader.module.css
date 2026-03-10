@@ -36,6 +36,22 @@
   padding: 16px 36px 36px;
 }
 
+/* ── Heading ── */
+.heading {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: clamp(28px, 5vw, 52px);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1.05;
+  margin-bottom: 20px;
+}
+
+.heading strong {
+  font-weight: 600;
+  color: var(--green);
+}
+
 /* ── Prompt ── */
 .promptLine {
   display: flex;
@@ -126,72 +142,72 @@
   margin-bottom: 8px;
 }
 
-.carouselWrap {
-  position: relative;
+.authorRow {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
   padding-left: 36px;
   margin-top: 6px;
-  min-height: 86px;
+  flex-wrap: wrap;
 }
 
-.carouselSlide {
-  position: absolute;
-  top: 0;
-  left: 36px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
-.carouselActive {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.authorCard {
-  display: inline-flex;
+/* ── Author tile ── */
+.authorTile {
+  display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   background: var(--bg3);
   border: 1px solid var(--border);
   border-radius: 6px;
-  padding: 10px 14px;
-  min-width: 220px;
-  max-width: 340px;
-  position: relative;
-  transition: border-color 0.15s, background 0.15s;
-}
-
-.authorCardLink {
+  padding: 8px 12px;
   text-decoration: none;
   cursor: pointer;
+  /* width is dynamic — grows with content */
+  width: max-content;
+  min-width: 140px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s;
 }
 
-.authorCardLink:hover {
+.authorTile::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--green);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.authorTileActive::before,
+.authorTile:hover::before {
+  opacity: 1;
+}
+
+.authorTileActive {
+  border-color: var(--green-dim);
+  background: rgba(57, 211, 83, 0.04);
+}
+
+.authorTile:hover {
   border-color: var(--border2);
   background: #161b22;
+  transform: translateY(-1px);
 }
 
-.authorCardLink:hover .authorArrow {
-  opacity: 1;
-  transform: translate(2px, -2px);
-}
-
+/* ── Author content ── */
 .authorAvatar {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   border: 1px solid var(--border2);
   flex-shrink: 0;
 }
 
 .authorAvatarSkeleton {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: var(--border2);
   flex-shrink: 0;
@@ -206,22 +222,23 @@
 }
 
 .authorName {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--text);
   font-family: 'IBM Plex Sans', sans-serif;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .authorLogin {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--blue);
   font-family: 'IBM Plex Mono', monospace;
+  white-space: nowrap;
 }
 
+/* Bio — always reserves vertical height, width animates open */
 .authorBio {
+  display: block;
   font-size: 10px;
   color: var(--text-dim);
   font-family: 'IBM Plex Sans', sans-serif;
@@ -229,75 +246,46 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 200px;
+  /* always reserve vertical space */
+  height: 14px;
+  /* collapsed horizontally */
+  width: 0;
+  opacity: 0;
+  transition: opacity 0.25s ease, width 0.3s ease;
+}
+
+.authorTileActive .authorBio,
+.authorTile:hover .authorBio {
+  width: 200px;
+  opacity: 1;
+}
+
+/* Placeholder for loading/no-profile/no-bio states */
+.authorBioPlaceholder {
+  height: 14px;
+  margin-top: 2px;
+  width: 0;  /* never takes horizontal space, never expands */
 }
 
 .authorSkeleton {
-  height: 10px;
+  height: 9px;
   border-radius: 4px;
   background: var(--border2);
   animation: shimmer 1.5s ease infinite;
 }
 
-.authorArrow {
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  font-size: 11px;
-  color: var(--text-dim);
-  opacity: 0.4;
-  transition: opacity 0.15s, transform 0.15s;
-}
-
-/* ── Carousel dots ── */
-.carouselDots {
-  display: flex;
-  gap: 6px;
-  margin-top: 10px;
-  padding-left: 36px;
-}
-
-.dot2 {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  border: none;
-  background: var(--border2);
-  cursor: pointer;
-  padding: 0;
-  transition: background 0.2s;
-}
-
-.dot2Active {
-  background: var(--green);
-}
-
-/* ── Heading ── */
-.heading {
-  font-family: 'IBM Plex Sans', sans-serif;
-  font-size: clamp(28px, 5vw, 52px);
-  font-weight: 300;
-  letter-spacing: -0.02em;
-  color: var(--text);
-  line-height: 1.05;
-  margin-bottom: 8px;
-}
-
-.heading strong {
-  font-weight: 600;
-  color: var(--green);
-}
-
+/* ── Cursor ── */
 .cursor {
   display: inline-block;
-  width: 3px;
-  height: 0.85em;
+  width: 8px;
+  height: 13px;
   background: var(--green);
-  margin-left: 4px;
+  margin-left: 2px;
   vertical-align: text-bottom;
   animation: blink 1s step-end infinite;
 }
 
+/* ── Animations ── */
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0; }
@@ -311,5 +299,5 @@
 @media (max-width: 600px) {
   .body { padding: 20px; }
   .links { padding-left: 20px; }
-  .carouselWrap { padding-left: 20px; }
+  .authorRow { padding-left: 20px; }
 }

@@ -5,8 +5,13 @@ const REPO_NAME  = 'CustomNPC-DBC-Addon'
 const BASE_PATH  = `/${REPO_NAME}`
 const API_BASE   = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`
 
+// Cache bust on every page load — appends current timestamp to manifest URL
+// so the browser never serves a stale manifest.json
 async function fetchFromManifest() {
-  const res = await fetch(`${BASE_PATH}/manifest.json`)
+  const bust = `?t=${Date.now()}`
+  const res = await fetch(`${BASE_PATH}/manifest.json${bust}`, {
+    cache: 'no-store',  // tells browser not to cache this request at all
+  })
   if (!res.ok) throw new Error('No manifest')
   return res.json()
 }
@@ -29,14 +34,13 @@ async function fetchFromGitHubAPI() {
     const date = c.commit?.committer?.date || c.commit?.author?.date || ''
     const hash = c.sha?.slice(0, 7) || ''
     const msg  = c.commit?.message || ''
-    if (msg.includes('releases/latest')) commitMap['releases/latest'] = { date, hash }
     const vMatch = msg.match(/releases\/([\d.]+)/)
     if (vMatch) commitMap[`releases/${vMatch[1]}`] = { date, hash }
     const eMatch = msg.match(/experimental\/([\w-]+)/)
     if (eMatch) commitMap[`experimental/${eMatch[1]}`] = { date, hash }
   })
 
-  const releaseDirs     = new Set()
+  const releaseDirs      = new Set()
   const experimentalDirs = new Set()
 
   treeData.tree.forEach(item => {
@@ -46,18 +50,21 @@ async function fetchFromGitHubAPI() {
     if (parts[0] === 'experimental' && parts.length === 2) experimentalDirs.add(parts[1])
   })
 
-  const releases = []
-  if (releaseDirs.has('latest')) {
-    const c = commitMap['releases/latest'] || {}
-    releases.push({ id: 'latest', version: 'latest', path: 'releases/latest', date: c.date, hash: c.hash })
-  }
-  ;[...releaseDirs]
-    .filter(v => v !== 'latest')
+  // Sort releases newest first, mark first as latest
+  const sortedReleases = [...releaseDirs]
     .sort((a, b) => b.localeCompare(a, undefined, { numeric: true }))
-    .forEach(v => {
-      const c = commitMap[`releases/${v}`] || {}
-      releases.push({ id: v, version: v, path: `releases/${v}`, date: c.date, hash: c.hash })
-    })
+
+  const releases = sortedReleases.map((v, i) => {
+    const c = commitMap[`releases/${v}`] || {}
+    return {
+      id: v,
+      version: v,
+      path: `releases/${v}`,
+      date: c.date,
+      hash: c.hash,
+      isLatest: i === 0,  // newest version is always latest
+    }
+  })
 
   const experimental = [...experimentalDirs].sort().map(b => {
     const c = commitMap[`experimental/${b}`] || {}
@@ -74,7 +81,7 @@ export function useDocs() {
 
   useEffect(() => {
     fetchFromManifest()
-      .then(d => { setData({ ...d, source: 'manifest' }); setLoading(false) })
+      .then(d => { setData(d); setLoading(false) })
       .catch(() =>
         fetchFromGitHubAPI()
           .then(d => { setData(d); setLoading(false) })

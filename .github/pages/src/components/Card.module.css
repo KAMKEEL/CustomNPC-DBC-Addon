@@ -20,8 +20,8 @@
   transition: opacity 0.15s;
 }
 
-.release::before  { background: var(--green); }
-.latest::before   { background: linear-gradient(90deg, var(--green), var(--blue)); }
+.release::before      { background: var(--green); }
+.latest::before       { background: linear-gradient(90deg, var(--green), var(--blue)); }
 .experimental::before { background: var(--amber); }
 
 .card:hover {
@@ -38,6 +38,12 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 14px;
+}
+
+.badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .badge {
@@ -74,6 +80,7 @@
   color: var(--border2);
   transition: color 0.15s, transform 0.15s;
 }
+
 .card:hover .arrow {
   color: var(--text-mid);
   transform: translateX(3px);
