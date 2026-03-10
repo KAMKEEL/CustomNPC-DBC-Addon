@@ -546,6 +546,14 @@ ability.npcdbc.potential_unleashed=Potential Unleashed
 ability.npcdbc.ultra_instinct=Ultra Instinct
 ability.npcdbc.god_of_destruction=God of Destruction
 
+ability.npcdbc.fusion_dance=Fusion Dance
+
+# Ability Fusion Dance
+ability.timeLimit=Time Limit
+ability.danceTicks=Dance Ticks
+ability.requestTicks=Request Ticks
+ability.fusionMessage=Fusion Message
+
 # Condition Ki Threshold
 condition.npcdbc.ki_threshold=Ki Threshold
 

@@ -1,5 +1,7 @@
 package kamkeel.npcdbc.data.ability.types;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.constants.DBCSkills;
 import kamkeel.npcdbc.controllers.FusionHandler;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -15,11 +17,13 @@ import kamkeel.npcs.controllers.data.telegraph.TelegraphType;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.client.gui.builder.FieldDef;
 import noppes.npcs.controllers.AnimationController;
 import noppes.npcs.controllers.data.Animation;
 import noppes.npcs.controllers.data.PlayerAbilityData;
 import noppes.npcs.controllers.data.PlayerData;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,7 +39,7 @@ public class AbilityFusion extends Ability {
 
     private String fusionMessage = "§6FUUUU-SION! §bHA!";
 
-    private double range = 8;
+    private float range = 8;
     private int timeLimit = 20;
 
     private UUID fuseeUUID = null;
@@ -297,11 +301,27 @@ public class AbilityFusion extends Ability {
         playerData.animationData.updateClient();
     }
 
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void getAbilityDefinitions(List<FieldDef> defs) {
+        defs.addAll(Arrays.asList(
+            FieldDef.row(
+                FieldDef.intField("ability.timeLimit", this::getTimeLimit, this::setTimeLimit),
+                FieldDef.floatField("gui.range", this::getRange, this::setRange)
+            ),
+            FieldDef.row(
+                FieldDef.intField("ability.danceTicks", this::getFusionDanceTicks, this::setFusionDanceTicks),
+                FieldDef.intField("ability.requestTicks", this::getFusionRequestTicks, this::setFusionRequestTicks)
+            ),
+            FieldDef.stringField("ability.fusionMessage", this::getFusionMessage, this::setFusionMessage)
+        ));
+    }
+
     @Override
     public void writeTypeNBT(NBTTagCompound nbt) {
         nbt.setInteger("fusionDanceTicks", fusionDanceTicks);
         nbt.setInteger("fusionRequestTicks", fusionRequestTicks);
-        nbt.setDouble("range", range);
+        nbt.setFloat("range", range);
         nbt.setInteger("timeLimit", timeLimit);
         nbt.setString("fusionMessage", fusionMessage);
         nbt.setInteger("leftFuseeAnimationId", leftFuseeAnimationId);
@@ -314,7 +334,7 @@ public class AbilityFusion extends Ability {
     public void readTypeNBT(NBTTagCompound nbt) {
         fusionDanceTicks = nbt.getInteger("fusionDanceTicks");
         fusionRequestTicks = nbt.getInteger("fusionRequestTicks");
-        range = nbt.getDouble("range");
+        range = nbt.getFloat("range");
         timeLimit = nbt.getInteger("timeLimit");
         fusionMessage = nbt.getString("fusionMessage");
         leftFuseeAnimationId = nbt.getInteger("leftFuseeAnimationId");
@@ -347,11 +367,11 @@ public class AbilityFusion extends Ability {
         this.fusionMessage = fusionMessage;
     }
 
-    public double getRange() {
+    public float getRange() {
         return range;
     }
 
-    public void setRange(double range) {
+    public void setRange(float range) {
         this.range = range;
     }
 
@@ -360,7 +380,7 @@ public class AbilityFusion extends Ability {
     }
 
     public void setTimeLimit(int timeLimit) {
-        this.timeLimit = timeLimit;
+        this.timeLimit = Math.max(1, timeLimit);
     }
 
     public int getLeftFuseeAnimationId() {
