@@ -40,6 +40,12 @@
   margin-bottom: 14px;
 }
 
+.badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .badge {
   font-size: 9px;
   font-weight: 600;

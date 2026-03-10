@@ -11,25 +11,27 @@ function formatDate(iso) {
 }
 
 export function ReleaseCard({ release, index }) {
-  const isLatest = release.isLatest  // comes from manifest, not inferred
+  const isLatest = release.isLatest
   const date     = formatDate(release.date)
 
   return (
-    <a
+
       href={`${BASE_PATH}/${release.path}/`}
       className={`${styles.card} ${isLatest ? styles.latest : styles.release}`}
       style={{ animationDelay: `${index * 50}ms` }}
     >
       <div className={styles.header}>
-        <span className={`${styles.badge} ${isLatest ? styles.badgeLatest : styles.badgeRelease}`}>
-          {isLatest ? '● latest' : 'release'}
-        </span>
+        <div className={styles.badges}>
+          {isLatest && (
+            <span className={`${styles.badge} ${styles.badgeLatest}`}>● latest</span>
+          )}
+          <span className={`${styles.badge} ${styles.badgeRelease}`}>release</span>
+        </div>
         <span className={styles.arrow}>→</span>
       </div>
 
       <div className={styles.version}>
         v{release.version}
-        {isLatest && <span className={styles.latestPill}>latest</span>}
       </div>
 
       <div className={styles.meta}>
