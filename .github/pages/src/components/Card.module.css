@@ -20,8 +20,8 @@
   transition: opacity 0.15s;
 }
 
-.release::before  { background: var(--green); }
-.latest::before   { background: linear-gradient(90deg, var(--green), var(--blue)); }
+.release::before      { background: var(--green); }
+.latest::before       { background: linear-gradient(90deg, var(--green), var(--blue)); }
 .experimental::before { background: var(--amber); }
 
 .card:hover {
@@ -81,6 +81,9 @@
 
 /* ── Version ── */
 .version {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 20px;
   font-weight: 500;
   color: var(--text);
@@ -90,6 +93,19 @@
 
 .latest .version { color: var(--green); }
 .versionBranch   { font-size: 16px; color: var(--amber); }
+
+.latestPill {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--green);
+  border: 1px solid var(--green-dim);
+  background: rgba(57, 211, 83, 0.08);
+  border-radius: 2px;
+  padding: 1px 6px;
+  animation: pulseBorder 2s ease infinite;
+}
 
 /* ── Meta ── */
 .meta {

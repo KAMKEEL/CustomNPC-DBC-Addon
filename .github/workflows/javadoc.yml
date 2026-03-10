@@ -70,6 +70,12 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Detected convention version: $VERSION"
 
+      - name: Get source commit info
+        id: source_commit
+        run: |
+          echo "hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "date=$(git log -1 --format='%cI')" >> $GITHUB_OUTPUT
+
       - name: Cache Gradle wrapper
         uses: actions/cache@v4
         with:
@@ -115,7 +121,7 @@ jobs:
 
       # Comment from Hussar: this releases to either:
       # - experimental/<branch_name>
-      # - releases/latest (for the main branch)
+      # - releases/<version> (for the main branch)
       - name: Deploy to gh-pages
         if: steps.deploy_path.outputs.path != ''
         uses: peaceiris/actions-gh-pages@v4
@@ -125,15 +131,9 @@ jobs:
           destination_dir: ${{ steps.deploy_path.outputs.path }}
           keep_files: true
 
-      # This however, generates /releases/<version>
-      - name: Deploy versioned snapshot to gh-pages
-        if: steps.deploy_path.outputs.extra_path != ''
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build/docs/javadoc
-          destination_dir: ${{ steps.deploy_path.outputs.extra_path }}
-          keep_files: true
+      # Give GitHub a moment to settle after the peaceiris push
+      - name: Wait for gh-pages to settle
+        run: sleep 10
 
       - name: Checkout gh-pages
         uses: actions/checkout@v4
@@ -144,6 +144,9 @@ jobs:
       - name: Generate manifest
         run: |
           cd gh-pages-index
+          SOURCE_HASH="${{ steps.source_commit.outputs.hash }}" \
+          SOURCE_DATE="${{ steps.source_commit.outputs.date }}" \
+          DEPLOY_PATH="${{ steps.deploy_path.outputs.path }}" \
           bash ../.github/scripts/generate-index.sh
 
       - name: Install page dependencies
@@ -180,6 +183,9 @@ jobs:
           SAFE="experimental/${BRANCH//\//-}"
           if [ -d "./$SAFE" ]; then
             rm -rf "./$SAFE"
+            # Also remove metadata file if it exists
+            META_KEY="${SAFE//\//_}"
+            rm -f ".doc-meta/${META_KEY}.json"
             git config user.name "github-actions"
             git config user.email "github-actions@github.com"
             git add -A

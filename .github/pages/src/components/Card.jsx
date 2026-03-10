@@ -11,7 +11,7 @@ function formatDate(iso) {
 }
 
 export function ReleaseCard({ release, index }) {
-  const isLatest = release.id === 'latest'
+  const isLatest = release.isLatest  // comes from manifest, not inferred
   const date     = formatDate(release.date)
 
   return (
@@ -28,7 +28,8 @@ export function ReleaseCard({ release, index }) {
       </div>
 
       <div className={styles.version}>
-        {isLatest ? 'Latest' : `v${release.version}`}
+        v{release.version}
+        {isLatest && <span className={styles.latestPill}>latest</span>}
       </div>
 
       <div className={styles.meta}>
