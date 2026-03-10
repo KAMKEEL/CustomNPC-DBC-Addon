@@ -5,8 +5,6 @@ on:
     branches:
       - main
       - '**'
-  pull_request:
-    types: [closed]
   delete:
   workflow_dispatch:
     inputs:
@@ -60,11 +58,10 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
-#      - name: Setup JDK 25
-#        uses: actions/setup-java@v4
-#        with:
-#          java-version: '25'
-#          distribution: 'temurin'
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
       - name: Extract convention plugin version
         id: convention
@@ -101,23 +98,20 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-rfg-
 
+      - name: Cache Node modules
+        uses: actions/cache@v4
+        with:
+          path: .github/pages/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('.github/pages/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Generate Javadoc
         run: ./gradlew javadoc -PuseCNPCJar=true
 
       - name: Get deploy path
         id: deploy_path
         run: bash .github/scripts/resolve-doc-path.sh
-
-      - name: Debug deploy path
-        run: |
-          echo "path='${{ steps.deploy_path.outputs.path }}'"
-          echo "extra_path='${{ steps.deploy_path.outputs.extra_path }}'"
-
-      - name: Debug env
-        run: |
-          echo "GITHUB_REF=$GITHUB_REF"
-          echo "event_name=${{ github.event_name }}"
-          echo "head_commit=${{ github.event.head_commit.message }}"
 
       # Comment from Hussar: this releases to either:
       # - experimental/<branch_name>
@@ -141,21 +135,34 @@ jobs:
           destination_dir: ${{ steps.deploy_path.outputs.extra_path }}
           keep_files: true
 
-  #      - name: Checkout gh-pages to regenerate index
-  #        uses: actions/checkout@v4
-  #        with:
-  #          ref: gh-pages
-  #          path: gh-pages-index
-  #
-  #      - name: Generate and push index
-  #        run: |
-  #          cd gh-pages-index
-  #          bash ../.github/scripts/generate-index.sh
-  #          git config user.name "github-actions"
-  #          git config user.email "github-actions@github.com"
-  #          git add index.html
-  #          git commit -m "Regenerate index [skip ci]" || echo "Index unchanged"
-  #          git push
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages-index
+
+      - name: Generate manifest
+        run: |
+          cd gh-pages-index
+          bash ../.github/scripts/generate-index.sh
+
+      - name: Install page dependencies
+        run: npm ci --prefix .github/pages
+
+      - name: Build index page
+        run: |
+          cp gh-pages-index/manifest.json .github/pages/public/manifest.json
+          npm run build --prefix .github/pages
+
+      - name: Deploy index to gh-pages
+        run: |
+          cp -r .github/pages-dist/* gh-pages-index/
+          cd gh-pages-index
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add -A
+          git commit -m "Regenerate index and manifest [skip ci]" || echo "Unchanged"
+          git push
 
   cleanup-on-delete:
     if: github.event_name == 'delete' && github.event.ref_type == 'branch'
