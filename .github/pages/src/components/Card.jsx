@@ -7,25 +7,28 @@ function formatDate(iso) {
     return new Intl.DateTimeFormat('en-GB', {
       day: '2-digit', month: 'short', year: 'numeric'
     }).format(new Date(iso))
-  } catch { return null }
+  } catch (e) { return null }
 }
 
 export function ReleaseCard({ release, index }) {
   const isLatest = release.isLatest
-  const date     = formatDate(release.date)
+  const date = formatDate(release.date)
+  const cardClass = isLatest
+    ? styles.card + ' ' + styles.latest
+    : styles.card + ' ' + styles.release
 
   return (
-
-      href={`${BASE_PATH}/${release.path}/`}
-      className={`${styles.card} ${isLatest ? styles.latest : styles.release}`}
-      style={{ animationDelay: `${index * 50}ms` }}
+    <a
+      href={BASE_PATH + '/' + release.path + '/'}
+      className={cardClass}
+      style={{ animationDelay: (index * 50) + 'ms' }}
     >
       <div className={styles.header}>
         <div className={styles.badges}>
           {isLatest && (
-            <span className={`${styles.badge} ${styles.badgeLatest}`}>● latest</span>
+            <span className={styles.badge + ' ' + styles.badgeLatest}>● latest</span>
           )}
-          <span className={`${styles.badge} ${styles.badgeRelease}`}>release</span>
+          <span className={styles.badge + ' ' + styles.badgeRelease}>release</span>
         </div>
         <span className={styles.arrow}>→</span>
       </div>
@@ -44,7 +47,7 @@ export function ReleaseCard({ release, index }) {
         {release.hash && (
           <div className={styles.metaRow}>
             <span className={styles.metaKey}>sha</span>
-            <span className={`${styles.metaVal} ${styles.hash}`}>{release.hash}</span>
+            <span className={styles.metaVal + ' ' + styles.hash}>{release.hash}</span>
           </div>
         )}
         <div className={styles.metaRow}>
@@ -61,18 +64,18 @@ export function ExperimentalCard({ branch, index }) {
 
   return (
     <a
-      href={`${BASE_PATH}/${branch.path}/`}
-      className={`${styles.card} ${styles.experimental}`}
-      style={{ animationDelay: `${index * 50}ms` }}
+      href={BASE_PATH + '/' + branch.path + '/'}
+      className={styles.card + ' ' + styles.experimental}
+      style={{ animationDelay: (index * 50) + 'ms' }}
     >
       <div className={styles.header}>
-        <span className={`${styles.badge} ${styles.badgeExperimental}`}>
+        <span className={styles.badge + ' ' + styles.badgeExperimental}>
           experimental
         </span>
         <span className={styles.arrow}>→</span>
       </div>
 
-      <div className={`${styles.version} ${styles.versionBranch}`}>
+      <div className={styles.version + ' ' + styles.versionBranch}>
         {branch.branch}
       </div>
 
@@ -86,7 +89,7 @@ export function ExperimentalCard({ branch, index }) {
         {branch.hash && (
           <div className={styles.metaRow}>
             <span className={styles.metaKey}>sha</span>
-            <span className={`${styles.metaVal} ${styles.hash}`}>{branch.hash}</span>
+            <span className={styles.metaVal + ' ' + styles.hash}>{branch.hash}</span>
           </div>
         )}
         <div className={styles.metaRow}>
