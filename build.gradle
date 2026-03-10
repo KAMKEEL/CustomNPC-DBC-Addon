@@ -62,19 +62,29 @@ processResources.dependsOn generateTypeScriptDefinitions
 sourcesJar.dependsOn generateTypeScriptDefinitions
 
 javadoc {
-    options.encoding = 'UTF-8'
-    options.charSet = 'UTF-8'
-    options.docEncoding = 'UTF-8'
+    options.encoding     = 'UTF-8'
+    options.charSet      = 'UTF-8'
+    options.docEncoding  = 'UTF-8'
+//    options.addStringOption('Xdoclint:none', '-quiet')
+
+    options.stylesheetFile = file('.github/javadoc/javadoc-theme.css')
+    options.header = file('.github/javadoc/javadoc-header.html').text.replaceAll('\\s+', ' ').trim()
+
+    options.addBooleanOption('-allow-script-in-comments', true)
+    options.footer = file('.github/javadoc/javadoc-footer.html').text.replaceAll('\\s+', ' ').trim()
+
 
     include 'kamkeel/npcdbc/api/**'
 
     options.links(
-        'https://docs.oracle.com/javase/8/docs/api/'
+        'https://docs.oracle.com/javase/8/docs/api/',
+        // Messy and will have to figure out how to update this shit to work
+        // with an updated CNPC javadoc?
+        // TODO: Figure out better way to handle multi-project setups.
+        'https://kamkeel.github.io/CustomNPC-Plus/'
     )
 
     javadocTool = javaToolchains.javadocToolFor {
         languageVersion = JavaLanguageVersion.of(11)
     }
 }
-
-
