@@ -1,24 +1,14 @@
 #!/bin/bash
 set -e
-MAIN_BRANCH_NAME="main"
-# -----------------------------------------------
-# WHITELIST: Add branch names here to give them
-# a page under experimental/<branch>
-# `main` is handled AUTOMATICALLY
-#
-# Notice how they do NOT have commas.
-# Gotta love bash. -Hussar
-# -----------------------------------------------
-EXPERIMENTAL_WHITELIST=(
-  "dev"
-  "supporter-prerelease"
-  # "new-branch"
-)
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/doc-config.sh"
+
 BRANCH="${GITHUB_REF#refs/heads/}"
 SAFE_BRANCH="${BRANCH//\//-}"
 
 if [ "$BRANCH" = "$MAIN_BRANCH_NAME" ]; then
-  # For anyone having to deal with this bash script later on. This is the current version checking order
+  # Version resolution order:
   # -> check if gradle.properties has a `modVersion` tag. If it does, just grab it.
   # -> check if it has the `version` tag. Grab it if it does
   # -> check build.gradle for the version tag.
@@ -42,7 +32,6 @@ if [ "$BRANCH" = "$MAIN_BRANCH_NAME" ]; then
   echo "extra_path=" >> $GITHUB_OUTPUT
 
 else
-  # Check if branch is in the experimental whitelist
   MATCHED=false
   for ALLOWED in "${EXPERIMENTAL_WHITELIST[@]}"; do
     if [ "$BRANCH" = "$ALLOWED" ]; then

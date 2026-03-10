@@ -23,16 +23,40 @@ jobs:
       - name: Check for deploy tag
         id: deploy_check
         run: |
+          source .github/scripts/doc-config.sh
+
           BRANCH="${GITHUB_REF#refs/heads/}"
+
+          # Always deploy on manual trigger
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "should_deploy=true" >> $GITHUB_OUTPUT
-          elif [ "$BRANCH" != "main" ]; then
-            echo "should_deploy=true" >> $GITHUB_OUTPUT
-          elif echo "${{ github.event.head_commit.message }}" | grep -q "\[deploy-docs\]"; then
-            echo "should_deploy=true" >> $GITHUB_OUTPUT
-          else
-            echo "should_deploy=false" >> $GITHUB_OUTPUT
+            echo "Reason: workflow_dispatch"
+            exit 0
           fi
+
+          # Main branch: only deploy if commit message contains [deploy-docs]
+          if [ "$BRANCH" = "$MAIN_BRANCH_NAME" ]; then
+            if echo "${{ github.event.head_commit.message }}" | grep -q "\[deploy-docs\]"; then
+              echo "should_deploy=true" >> $GITHUB_OUTPUT
+              echo "Reason: main branch with [deploy-docs] tag"
+            else
+              echo "should_deploy=false" >> $GITHUB_OUTPUT
+              echo "Reason: main branch without [deploy-docs] tag, skipping"
+            fi
+            exit 0
+          fi
+
+          # Experimental branches: only deploy if whitelisted
+          for ALLOWED in "${EXPERIMENTAL_WHITELIST[@]}"; do
+            if [ "$BRANCH" = "$ALLOWED" ]; then
+              echo "should_deploy=true" >> $GITHUB_OUTPUT
+              echo "Reason: branch '$BRANCH' is whitelisted"
+              exit 0
+            fi
+          done
+
+          echo "should_deploy=false" >> $GITHUB_OUTPUT
+          echo "Reason: branch '$BRANCH' is not whitelisted, skipping"
 
   build-and-deploy-javadoc:
     needs: sanity-check
@@ -183,7 +207,6 @@ jobs:
           SAFE="experimental/${BRANCH//\//-}"
           if [ -d "./$SAFE" ]; then
             rm -rf "./$SAFE"
-            # Also remove metadata file if it exists
             META_KEY="${SAFE//\//_}"
             rm -f ".doc-meta/${META_KEY}.json"
             git config user.name "github-actions"
