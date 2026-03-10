@@ -7,7 +7,7 @@ import kamkeel.npcdbc.api.npc.IDBCStats;
  * Extends {@link IDBCStats} for universal damage configuration
  * and adds player resource cost/drain and damage scaling fields.
  */
-public interface IDBCAbility extends IDBCStats {
+public interface IDBCAbilityStats extends IDBCStats {
 
     // ==================== PLAYER RESOURCE COSTS ====================
 
