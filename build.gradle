@@ -77,7 +77,7 @@ javadoc {
     include 'kamkeel/npcdbc/api/**'
 
     options.links(
-        'https://docs.oracle.com/javase/8/docs/api/',
+        'https://docs.oracle.com/en/java/javase/11/docs/api/',
         // Messy and will have to figure out how to update this shit to work
         // with an updated CNPC javadoc?
         // TODO: Figure out better way to handle multi-project setups.
