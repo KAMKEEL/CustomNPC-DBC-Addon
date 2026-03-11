@@ -117,6 +117,28 @@ public class AuraController implements IAuraHandler {
         return customAuras.get(customAura.getID());
     }
 
+    public Aura cloneAura(int originalId) {
+        Aura original = customAuras.get(originalId);
+        if (original == null) return null;
+
+        int originalCatId = categoryManager.getItemCategory(originalId);
+
+        Aura clone = new Aura();
+        clone.readFromNBT(original.writeToNBT());
+        clone.id = getUnusedId();
+
+        String name = clone.name;
+        while (hasName(name)) name += "_";
+        clone.name = name;
+
+        if (originalCatId > CategoryManager.UNCATEGORIZED_ID) {
+            categoryManager.registerItem(clone.id, originalCatId);
+        }
+
+        saveAura(clone);
+        return clone;
+    }
+
     public void deleteAuraFile(String name) {
         categoryManager.deleteFile(name + ".json");
     }

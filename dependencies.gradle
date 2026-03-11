@@ -46,11 +46,10 @@ dependencies {
     devOnlyNonPublishable(rfg.deobf(project.files("lib/JFamilyC-v1.2.18.jar")))
 
 //    implementation(files("janino/build/libs/standalone-JaninoLoader-1.0.1-ALPHA.jar"))
-    implementation(files("lib/standalone-JaninoLoader-1.0.2-ALPHA.jar"))
+    implementation(files("lib/standalone-JaninoLoader-1.0.2.jar"))
 
     testImplementation("junit:junit:4.13.2")
 
-    compileOnly(files("lib/angelica-2.0.0-alpha23-MINIFIED-FOR-SPECIFIC-INTERFACE.jar"))
 //    implementation(files(customNpcJar))
 
     // Make sure to comment this out if you're using an actual copy of EDE.

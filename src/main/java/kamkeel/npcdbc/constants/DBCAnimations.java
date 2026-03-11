@@ -8,7 +8,7 @@ import noppes.npcs.controllers.data.BuiltInAnimation;
 
 public class DBCAnimations {
     private static final String NAMESPACE = CustomNpcPlusDBC.ID;
-    public static Register.Animations ANIMATIONS = Register.Animations.create(CustomNpcPlusDBC.class, "animations", NAMESPACE);
+    public static Register.Animations ANIMATIONS = Register.Animations.create(CustomNpcPlusDBC.class, "cnpc_animations", NAMESPACE);
 
     public static final Animation NAMEK_REGEN = ANIMATIONS.register("NamekRegen", BuiltInAnimation::new);
 

@@ -203,6 +203,30 @@ public class FormController implements IFormHandler {
         return customForms.get(customForm.getID());
     }
 
+    public Form cloneForm(int originalId) {
+        Form original = customForms.get(originalId);
+        if (original == null) return null;
+
+        int originalCatId = categoryManager.getItemCategory(originalId);
+
+        Form clone = new Form();
+        clone.readFromNBT(original.writeToNBT());
+        clone.id = getUnusedId();
+        clone.parentID = -1;
+        clone.childID = -1;
+
+        String name = clone.name;
+        while (hasName(name)) name += "_";
+        clone.name = name;
+
+        if (originalCatId > CategoryManager.UNCATEGORIZED_ID) {
+            categoryManager.registerItem(clone.id, originalCatId);
+        }
+
+        saveForm(clone);
+        return clone;
+    }
+
     public boolean hasName(String newName) {
         if (newName.trim().isEmpty())
             return true;

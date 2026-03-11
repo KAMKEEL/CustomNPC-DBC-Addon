@@ -73,7 +73,6 @@ public class ClientProxy extends CommonProxy {
     }
 
     public void postInit(FMLPostInitializationEvent ev) {
-        PostProcessing.IrisHelper.init();
         PostProcessing.init(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
         //  ModernModels.loadModels();
 
