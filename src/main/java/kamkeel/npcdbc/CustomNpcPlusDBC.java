@@ -10,6 +10,7 @@ import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.event.IDBCEvent;
+import noppes.npcs.controllers.APIRegistry;
 import kamkeel.npcdbc.config.LoadConfiguration;
 import kamkeel.npcdbc.data.ability.DBCAbilities;
 import kamkeel.npcdbc.constants.DBCAnimations;
@@ -108,6 +109,8 @@ public class CustomNpcPlusDBC {
         DBCConditions.register();
         DBCAnimations.register();
         DBCAbilities.register();
+
+        APIRegistry.Instance.register("DBC Addon API", "https://kamkeel.github.io/CustomNPC-DBC-Addon/");
     }
 
     @Mod.EventHandler
