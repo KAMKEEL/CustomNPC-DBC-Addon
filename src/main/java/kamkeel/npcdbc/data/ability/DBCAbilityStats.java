@@ -1,16 +1,16 @@
 package kamkeel.npcdbc.data.ability;
 
-import kamkeel.npcdbc.api.ability.IDBCAbility;
+import kamkeel.npcdbc.api.ability.IDBCAbilityStats;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.util.ValueUtil;
 
 /**
- * DBC combat stats for abilities, implementing {@link IDBCAbility}.
+ * DBC combat stats for abilities, implementing {@link IDBCAbilityStats}.
  * Stored in the ability's customData NBT under the "DBCAbilityStats" tag.
  */
-public class DBCAbilityStats implements IDBCAbility {
+public class DBCAbilityStats implements IDBCAbilityStats {
     private static final String NBT_KEY = "DBCAbilityStats";
 
     private final NBTTagCompound customData;

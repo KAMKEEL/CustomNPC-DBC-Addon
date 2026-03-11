@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DBCDataBonus {
+    private static final int ATTRIBUTE_COUNT = 5;
     private final DBCData data;
 
     public DBCDataBonus(DBCData dbcData) {
@@ -29,38 +30,46 @@ public class DBCDataBonus {
     }
 
     public BonusTotals calculateTotals() {
-        float[] multi = new float[5];
-        float[] flat = new float[5];
+        float[] percentage = new float[ATTRIBUTE_COUNT];
+        float[] flat = new float[ATTRIBUTE_COUNT];
+        float[] multiplicative = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
 
         for (PlayerBonus playerBonus : getCurrentBonuses().values()) {
-            if (playerBonus.type == 0) {
-                multi[0] += playerBonus.strength;
-                multi[1] += playerBonus.dexterity;
-                multi[2] += playerBonus.willpower;
-                multi[3] += playerBonus.constituion;
-                multi[4] += playerBonus.spirit;
-            } else if (playerBonus.type == 1) {
-                flat[0] += playerBonus.strength;
-                flat[1] += playerBonus.dexterity;
-                flat[2] += playerBonus.willpower;
-                flat[3] += playerBonus.constituion;
-                flat[4] += playerBonus.spirit;
+            float[] values = playerBonus.getValues();
+            switch (playerBonus.type) {
+                case 0: // Percentage (additive stacking)
+                    for (int i = 0; i < ATTRIBUTE_COUNT; i++)
+                        percentage[i] += values[i];
+                    break;
+                case 1: // Flat
+                    for (int i = 0; i < ATTRIBUTE_COUNT; i++)
+                        flat[i] += values[i];
+                    break;
+                case 2: // Multiplicative (true percentage multiplication)
+                    for (int i = 0; i < ATTRIBUTE_COUNT; i++)
+                        multiplicative[i] *= Math.max(0.0f, 1.0f + values[i] / 100.0f);
+                    break;
             }
         }
 
-        return new BonusTotals(multi, flat);
+        // Clamp percentage totals to -1.0 (can't reduce more than 100%)
+        for (int i = 0; i < ATTRIBUTE_COUNT; i++) {
+            if (percentage[i] < -1.0f) percentage[i] = -1.0f;
+        }
+
+        return new BonusTotals(percentage, flat, multiplicative);
     }
 
     public float[] getMultiBonus() {
-        return calculateTotals().copyMultipliers();
+        return calculateTotals().copyPercentage();
     }
 
     public float[] getFlatBonus() {
-        return calculateTotals().copyFlatAdditions();
+        return calculateTotals().copyFlat();
     }
 
     public float getMultiBonusForAttribute(int attributeID) {
-        return calculateTotals().getMultiplier(attributeID);
+        return calculateTotals().getPercentage(attributeID);
     }
 
     public float getFlatBonusForAttribute(int attributeID) {
@@ -80,28 +89,97 @@ public class DBCDataBonus {
     }
 
     public static final class BonusTotals {
-        private final float[] multipliers;
+        private final float[] percentage;
         private final float[] flatAdditions;
+        private final float[] multiplicative;
 
-        private BonusTotals(float[] multipliers, float[] flatAdditions) {
-            this.multipliers = multipliers;
+        private BonusTotals(float[] percentage, float[] flatAdditions, float[] multiplicative) {
+            this.percentage = percentage;
             this.flatAdditions = flatAdditions;
+            this.multiplicative = multiplicative;
         }
 
+        public float[] copyPercentage() {
+            return percentage.clone();
+        }
+
+        /**
+         * @deprecated Use {@link #copyPercentage()} instead
+         */
+        @Deprecated
         public float[] copyMultipliers() {
-            return multipliers.clone();
+            return copyPercentage();
         }
 
-        public float[] copyFlatAdditions() {
+        public float[] copyFlat() {
             return flatAdditions.clone();
         }
 
+        /**
+         * @deprecated Use {@link #copyFlat()} instead
+         */
+        @Deprecated
+        public float[] copyFlatAdditions() {
+            return copyFlat();
+        }
+
+        public float[] copyMultiplicative() {
+            return multiplicative.clone();
+        }
+
+        public float getPercentage(int attributeID) {
+            return getValue(attributeID, percentage);
+        }
+
+        /**
+         * @deprecated Use {@link #getPercentage(int)} instead
+         */
+        @Deprecated
         public float getMultiplier(int attributeID) {
-            return getValue(attributeID, multipliers);
+            return getPercentage(attributeID);
         }
 
         public float getFlat(int attributeID) {
             return getValue(attributeID, flatAdditions);
+        }
+
+        public float getMultiplicative(int attributeID) {
+            int index = toBonusIndex(attributeID);
+            return index >= 0 ? multiplicative[index] : 1.0f;
+        }
+
+        /**
+         * Applies all bonus types to an attribute value in the correct order:
+         * <ol>
+         *   <li>Multiplicative (Type 2) - true percentage multiplication</li>
+         *   <li>Percentage (Type 0) - additive percentage of base attribute</li>
+         *   <li>Flat (Type 1) - direct addition</li>
+         * </ol>
+         * Result is floored to 1 to prevent division-by-zero in downstream calculations.
+         *
+         * @param attributeID  The DBC attribute ID
+         * @param baseAttribute The original base attribute value (used for percentage calc)
+         * @param currentValue  The current computed attribute value
+         * @return The modified attribute value, minimum 1
+         */
+        public int applyAll(int attributeID, int baseAttribute, int currentValue) {
+            int index = toBonusIndex(attributeID);
+            if (index < 0)
+                return currentValue;
+
+            // Type 2: Multiplicative (applied first)
+            if (multiplicative[index] != 1.0f)
+                currentValue = Math.round(currentValue * multiplicative[index]);
+
+            // Type 0: Percentage (additive stacking)
+            if (percentage[index] != 0.0f)
+                currentValue += Math.round(baseAttribute * percentage[index]);
+
+            // Type 1: Flat
+            if (flatAdditions[index] != 0.0f)
+                currentValue += Math.round(flatAdditions[index]);
+
+            return Math.max(currentValue, 1);
         }
 
         private float getValue(int attributeID, float[] values) {

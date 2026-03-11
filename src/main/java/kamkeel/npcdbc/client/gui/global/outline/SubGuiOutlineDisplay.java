@@ -312,11 +312,15 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
 
     @Override
     public void keyTyped(char c, int i) {
-        super.keyTyped(c, i);
-        if (i == 1 && !hasSubGui()) {
-            close();
+        if (i == 1) {
+            if (hasSubGui()) {
+                getSubGui().close();
+            } else {
+                close();
+            }
+            return;
         }
-
+        super.keyTyped(c, i);
     }
 
 

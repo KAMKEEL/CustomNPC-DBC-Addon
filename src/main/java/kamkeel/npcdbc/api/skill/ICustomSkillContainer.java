@@ -42,11 +42,11 @@ public interface ICustomSkillContainer {
     boolean tryToProgressLevel();
 
     /**
-     * Attempts to progress a level if TP & Mind are sufficient. <br>
-     * It <bold>does</bold> take the TP.
+     * Attempts to progress a level if TP &amp; Mind are sufficient. <br>
+     * It <b>does</b> take the TP.
      *
      * @param postEvent Post the event to scripts to catch.
-     * @return
+     * @return If upgrade attempt finished successfully.
      */
     boolean tryToProgressLevel(boolean postEvent);
 

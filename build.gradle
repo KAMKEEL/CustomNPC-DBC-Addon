@@ -4,13 +4,19 @@ plugins {
     id 'dts.typescript-generator'
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
 var BUILD_USING_CNPC_SOURCE = !(project.hasProperty("useCNPCJar") && project.useCNPCJar == 'true')
 
 if (BUILD_USING_CNPC_SOURCE)
     apply from: 'gradle.handleCNPCSubmoduleInjection.groovy'
 
 group= "kamkeel.npcdbc"
-version = "1.2-prerelease1"
+version = "1.2"
 group= "kamkeel.npcdbc"
 archivesBaseName = "npcdbc"
 
@@ -55,4 +61,37 @@ tasks.named("generateTypeScriptDefinitions").configure {
 processResources.dependsOn generateTypeScriptDefinitions
 sourcesJar.dependsOn generateTypeScriptDefinitions
 
+javadoc {
+    options.encoding     = 'UTF-8'
+    options.charSet      = 'UTF-8'
+    options.docEncoding  = 'UTF-8'
+//    options.addStringOption('Xdoclint:none', '-quiet')
 
+    options.stylesheetFile = file('.github/javadoc/javadoc-theme.css')
+    options.header = file('.github/javadoc/javadoc-header.html').text.replaceAll('\\s+', ' ').trim()
+
+    options.addBooleanOption('-allow-script-in-comments', true)
+    options.footer = file('.github/javadoc/javadoc-footer.html').text.replaceAll('\\s+', ' ').trim()
+
+
+    include 'kamkeel/npcdbc/api/**'
+
+    options.links('https://docs.oracle.com/en/java/javase/11/docs/api/')
+
+    // Link to CNPC+ javadoc. The URL and local element-list location are
+    // supplied by the CI workflow via Gradle properties:
+    //   -PcnpcDocUrl=https://kamkeel.github.io/CustomNPC-Plus/experimental/dev
+    //   -PcnpcDocElementList=build/cnpc-element-list
+    // Falls back to the submodule's docs/ folder for local builds.
+    def cnpcUrl = project.hasProperty('cnpcDocUrl')
+        ? project.cnpcDocUrl
+        : 'https://kamkeel.github.io/CustomNPC-Plus/'
+    def cnpcElementList = project.hasProperty('cnpcDocElementList')
+        ? project.cnpcDocElementList
+        : "${project.rootDir}/CustomNPC-Plus/docs"
+    options.linksOffline(cnpcUrl, cnpcElementList)
+
+    javadocTool = javaToolchains.javadocToolFor {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}

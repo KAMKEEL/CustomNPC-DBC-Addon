@@ -386,6 +386,11 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
 
             boolean isModified = false;
             if (!isSTRDEXWIL) {
+                float multiplicativeBonus = getAddonBonusMultiplicative(i);
+                if (multiplicativeBonus != 1.0f) {
+                    modifiedStatVal = Math.round(modifiedStatVal * multiplicativeBonus);
+                    isModified = true;
+                }
                 float multiBonus = getAddonBonusMulti(i);
                 if (multiBonus != 0) {
                     modifiedStatVal += Math.round(originalStatVal * multiBonus);
@@ -420,10 +425,15 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                         float stackMulti = dbcMulti * (JGConfigDBCFormMastery.FM_Enabled ? (float) getFormMasteryAttributeMulti(JRMCoreClient.mc.thePlayer, State, State2, Race, StusEfctsMe(5), StusEfctsMe(13), StusEfctsMe(19), StusEfctsMe(20)) : 1);
                         multiString += "\n* §4x" + round(stackMulti, 2) + "§8 (" + trl("jrmc", getTransformationName(Race, isPowerTypeChakra() ? 0 : State, isRose, isMystic, isUI, isGoD)) + ")";
                     }
+                    float addonMultiplicative = getAddonBonusMultiplicative(i);
+                    if (addonMultiplicative != 1.0f) {
+                        String color = addonMultiplicative > 1.0f ? "§2" : "§4";
+                        multiString += "\n> " + color + "x" + String.format(Locale.US, "%.2f", addonMultiplicative) + "§8 (" + StatCollector.translateToLocal("statsheet.bonus.label.addonMultiplicative") + ")";
+                    }
                     float addonMulti = getAddonBonusMulti(i);
                     if (addonMulti != 0) {
                         String color = addonMulti > 0 ? "§2" : "§4";
-                        multiString += "\n> " + color + String.format(Locale.US, "%+.2f", addonMulti) + "§8 (Addon Bonus)";
+                        multiString += "\n> " + color + String.format(Locale.US, "%+.2f", addonMulti) + "§8 (" + StatCollector.translateToLocal("statsheet.bonus.label.addonPercentage") + ")";
                     }
                     attributeDesc += multiString;
                 }
@@ -1089,10 +1099,18 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                 if (value == 0)
                     continue;
 
-                boolean isFlat = playerBonus.type == 1;
-                String formatted = isFlat
-                    ? String.format(Locale.US, "%+.0f Flat", value)
-                    : String.format(Locale.US, "%+.2f Multi", value);
+                String formatted;
+                switch (playerBonus.type) {
+                    case 1:
+                        formatted = String.format(Locale.US, "%+.0f %s", value, StatCollector.translateToLocal("statsheet.bonus.type.flat"));
+                        break;
+                    case 2:
+                        formatted = String.format(Locale.US, "%+.1f%% %s", value, StatCollector.translateToLocal("statsheet.bonus.type.multiplicative"));
+                        break;
+                    default:
+                        formatted = String.format(Locale.US, "%+.2f %s", value, StatCollector.translateToLocal("statsheet.bonus.type.percentage"));
+                        break;
+                }
 
                 description += "\n>> " + playerBonus.name + ": " + formatted;
             }
@@ -1125,6 +1143,11 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
     public float getAddonBonusMulti(int attributeID) {
         DBCData dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
         return dbcData.bonus.getMultiBonusForAttribute(attributeID);
+    }
+
+    public float getAddonBonusMultiplicative(int attributeID) {
+        DBCData dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
+        return dbcData.bonus.calculateTotals().getMultiplicative(attributeID);
     }
 
     public double DBCFormMulti(int atr) {

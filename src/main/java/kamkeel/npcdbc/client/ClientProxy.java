@@ -12,6 +12,7 @@ import kamkeel.npcdbc.client.render.PotaraItemRenderer;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.ability.DBCAbilityFieldProvider;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.items.ModItems;

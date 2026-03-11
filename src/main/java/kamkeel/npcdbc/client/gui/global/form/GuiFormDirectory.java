@@ -28,7 +28,6 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.client.ClientEventHandler;
-import noppes.npcs.client.CustomNpcResourceListener;
 import noppes.npcs.client.gui.util.GuiCustomScroll;
 import noppes.npcs.client.gui.util.SubGuiInterface;
 import noppes.npcs.entity.EntityCustomNpc;
@@ -217,13 +216,14 @@ public class GuiFormDirectory extends GuiDirectoryCategorized implements IFormMa
         entity.rotationPitch = f4;
         entity.prevRotationYawHead = entity.rotationYawHead = f7;
 
+        GL11.glPopMatrix();
+
         RenderHelper.disableStandardItemLighting();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-        GL11.glPopMatrix();
     }
 
     @Override
@@ -231,30 +231,30 @@ public class GuiFormDirectory extends GuiDirectoryCategorized implements IFormMa
         if (form == null || form.id == -1) return;
 
         String drawString = form.getMenuName();
-        fontRendererObj.drawString(drawString, x, y, CustomNpcResourceListener.DefaultTextColor, true);
+        fontRendererObj.drawString(drawString, x, y, 0xFFFFFF, true);
 
         String race = "\u00A7fRace: \u00A7e" + (form.getRace() == -1 ? "All" :
             form.getRace() == DBCRace.ALL_SAIYANS ? "All Saiyans" :
             form.getRace() == 1 ? "Pure Saiyan" : JRMCoreH.Races[form.race()]);
-        fontRendererObj.drawString(race, x, y + 12, CustomNpcResourceListener.DefaultTextColor, true);
+        fontRendererObj.drawString(race, x, y + 12, 0xFFFFFF, true);
 
         int ty = y + 28;
-        fontRendererObj.drawString("\u00A7fSTR: \u00A74x\u00A7c" + form.strengthMulti, x, ty, CustomNpcResourceListener.DefaultTextColor, true);
+        fontRendererObj.drawString("\u00A7fSTR: \u00A74x\u00A7c" + form.strengthMulti, x, ty, 0xFFFFFF, true);
         ty += 12;
-        fontRendererObj.drawString("\u00A7fDEX: \u00A73x\u00A7b" + form.dexMulti, x, ty, CustomNpcResourceListener.DefaultTextColor, true);
+        fontRendererObj.drawString("\u00A7fDEX: \u00A73x\u00A7b" + form.dexMulti, x, ty, 0xFFFFFF, true);
         ty += 12;
-        fontRendererObj.drawString("\u00A7fWIL: \u00A76x\u00A7e" + form.willMulti, x, ty, CustomNpcResourceListener.DefaultTextColor, true);
+        fontRendererObj.drawString("\u00A7fWIL: \u00A76x\u00A7e" + form.willMulti, x, ty, 0xFFFFFF, true);
 
         ty += 16;
         if (form.hasChild() && form.getChild() != null) {
-            fontRendererObj.drawString("\u00A7fChild: \u00A77" + form.getChild().getName(), x, ty, CustomNpcResourceListener.DefaultTextColor, true);
+            fontRendererObj.drawString("\u00A7fChild: \u00A77" + form.getChild().getName(), x, ty, 0xFFFFFF, true);
             ty += 12;
         }
         if (form.race() != -1 && form.requiredForm.containsKey(form.race())) {
             String parentName = Utility.removeBoldColorCode(DBCUtils.getFormattedStateName(form.race(), form.requiredForm.get(form.race())));
-            fontRendererObj.drawString("\u00A7fParent: " + parentName, x, ty, CustomNpcResourceListener.DefaultTextColor, true);
+            fontRendererObj.drawString("\u00A7fParent: " + parentName, x, ty, 0xFFFFFF, true);
         } else if (form.hasParent() && form.getParent() != null) {
-            fontRendererObj.drawString("\u00A7fParent: \u00A77" + form.getParent().getName(), x, ty, CustomNpcResourceListener.DefaultTextColor, true);
+            fontRendererObj.drawString("\u00A7fParent: \u00A77" + form.getParent().getName(), x, ty, 0xFFFFFF, true);
         }
     }
 
