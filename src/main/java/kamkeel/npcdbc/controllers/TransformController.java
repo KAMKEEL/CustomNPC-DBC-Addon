@@ -157,6 +157,8 @@ public class TransformController {
         if (selected == null || current == null)
             return null;
         FormCustomStackable stackable = current.customStackable;
+        if (!stackable.customStackable)
+            return null;
         int selectedId = selected.id;
 
         for (FormStack stack : stackable.formStacks.values()) {
@@ -299,7 +301,7 @@ public class TransformController {
             if (!form.stackable.kaiokenStackable && dbcData.isForm(DBCForm.Kaioken))
                 dbcData.setForm(DBCForm.Kaioken, false);
 
-            formData.lastFormBeforeStack = originalForm;
+            formData.lastFormBeforeStack = stackedForm != null ? originalForm : -1;
 
             formData.currentForm = form.id;
 
@@ -354,19 +356,20 @@ public class TransformController {
             }
             if (formID == FULL_DESCEND) {
                 formData.currentForm = -1;
+                formData.lastFormBeforeStack = -1;
             } else if (form.requiredForm.containsKey((int) dbcData.Race)) {
                 formData.currentForm = -1;
+                formData.lastFormBeforeStack = -1;
                 NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descend", "§r ", form.getMenuName());
                 dbcData.State = form.requiredForm.get((int) dbcData.Race);
             } else {
                 int realStackedFrom = formData.lastFormBeforeStack;
+                formData.lastFormBeforeStack = -1;
 
-                if (realStackedFrom != -1) {
+                if (realStackedFrom != -1 && FormController.Instance.has(realStackedFrom)) {
                     Form previousForm = (Form) FormController.Instance.get(realStackedFrom);
                     NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descend", "§r ", previousForm.getMenuName());
                     formData.currentForm = realStackedFrom;
-
-                    formData.lastFormBeforeStack = -1;
                 } else if (intoParent) {
                     NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descend", "§r ", form.getParent().getMenuName());
                     formData.currentForm = form.getParentID();
