@@ -4,6 +4,7 @@ import kamkeel.npcdbc.controllers.FormController;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class FormCustomStackable {
     private final Form parent;
@@ -21,11 +22,9 @@ public class FormCustomStackable {
 
         compound.setBoolean("customStackable", customStackable);
 
-        int i = 0;
-        for (FormStack stack : formStacks.values()) {
-            NBTTagCompound stackCompound = stack.writeToNBT();
-            compound.setTag("stack" + i, stackCompound);
-            i++;
+        for (Map.Entry<Integer, FormStack> entry : formStacks.entrySet()) {
+            NBTTagCompound stackCompound = entry.getValue().writeToNBT();
+            compound.setTag("stack" + entry.getKey(), stackCompound);
         }
 
         root.setTag("stackableCustomForms", compound);
@@ -36,12 +35,13 @@ public class FormCustomStackable {
         NBTTagCompound stackCompound = compound.getCompoundTag("stackableCustomForms");
         this.customStackable = stackCompound.getBoolean("customStackable");
 
-        int i = 0;
-        while (stackCompound.hasKey("stack" + i)) {
-            FormStack stack = new FormStack(parent);
-            stack.readFromNBT(stackCompound.getCompoundTag("stack" + i));
-            this.formStacks.put(i, stack);
-            i++;
+        this.formStacks.clear();
+        for (int i = 0; i < 4; i++) {
+            if (stackCompound.hasKey("stack" + i)) {
+                FormStack stack = new FormStack(parent);
+                stack.readFromNBT(stackCompound.getCompoundTag("stack" + i));
+                this.formStacks.put(i, stack);
+            }
         }
     }
 
@@ -49,8 +49,19 @@ public class FormCustomStackable {
         if (id > 3 || id < 0)
             return;
 
-        if (!compareStacks(stack))
+        if (stack.isEmpty()) {
+            this.formStacks.remove(id);
             return;
+        }
+
+        // Remove entry at this slot before comparing so we don't
+        // reject a stack that is replacing itself at the same slot
+        FormStack old = this.formStacks.remove(id);
+        if (!compareStacks(stack)) {
+            if (old != null)
+                this.formStacks.put(id, old);
+            return;
+        }
 
         this.formStacks.put(id, stack);
     }
@@ -61,6 +72,9 @@ public class FormCustomStackable {
 
     public boolean compareStacks(FormStack newStack) {
         int newFrom = newStack.getFromID();
+
+        if (newFrom == -1)
+            return true;
 
         for (FormStack existing : formStacks.values()) {
             if (existing.getFromID() == newFrom) {
