@@ -23,6 +23,7 @@ import kamkeel.npcdbc.network.packets.player.form.DBCSaveFormWheel;
 import kamkeel.npcdbc.network.packets.player.form.DBCSelectForm;
 import kamkeel.npcdbc.network.packets.player.outline.DBCRequestOutline;
 import kamkeel.npcdbc.network.packets.player.skill.CustomSkillPacket;
+import kamkeel.npcdbc.network.packets.request.aura.DBCCloneAura;
 import kamkeel.npcdbc.network.packets.request.aura.DBCRemoveAura;
 import kamkeel.npcdbc.network.packets.request.aura.DBCSaveAura;
 import kamkeel.npcdbc.network.packets.request.category.DBCCategoryMoveItem;
@@ -30,8 +31,10 @@ import kamkeel.npcdbc.network.packets.request.category.DBCCategoryRemove;
 import kamkeel.npcdbc.network.packets.request.category.DBCCategorySave;
 import kamkeel.npcdbc.network.packets.request.category.DBCRequestCategories;
 import kamkeel.npcdbc.network.packets.request.category.DBCRequestCategoryItems;
+import kamkeel.npcdbc.network.packets.request.form.DBCCloneForm;
 import kamkeel.npcdbc.network.packets.request.form.DBCRemoveForm;
 import kamkeel.npcdbc.network.packets.request.form.DBCSaveForm;
+import kamkeel.npcdbc.network.packets.request.outline.DBCCloneOutline;
 import kamkeel.npcdbc.network.packets.request.outline.DBCRemoveOutline;
 import kamkeel.npcdbc.network.packets.request.outline.DBCSaveOutline;
 import net.minecraft.entity.Entity;
@@ -121,6 +124,9 @@ public class DBCPacketHandler {
         REQUEST_PACKETS.registerPacket(new DBCSaveForm());
         REQUEST_PACKETS.registerPacket(new DBCRemoveOutline());
         REQUEST_PACKETS.registerPacket(new DBCSaveOutline());
+        REQUEST_PACKETS.registerPacket(new DBCCloneAura());
+        REQUEST_PACKETS.registerPacket(new DBCCloneForm());
+        REQUEST_PACKETS.registerPacket(new DBCCloneOutline());
 
     }
 

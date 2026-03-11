@@ -16,6 +16,7 @@ import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.aura.DBCGetAura;
 import kamkeel.npcdbc.network.packets.request.aura.DBCRemoveAura;
+import kamkeel.npcdbc.network.packets.request.aura.DBCCloneAura;
 import kamkeel.npcdbc.network.packets.request.aura.DBCSaveAura;
 import kamkeel.npcdbc.network.packets.request.category.DBCCategoryMoveItem;
 import kamkeel.npcdbc.network.packets.request.category.DBCCategoryRemove;
@@ -125,9 +126,7 @@ public class GuiAuraDirectory extends GuiDirectoryCategorized implements IAuraMa
     @Override
     protected void onCloneItem() {
         if (aura != null && aura.id >= 0) {
-            Aura clone = (Aura) aura.clone();
-            while (itemData.containsKey(clone.name)) clone.name += "_";
-            DBCPacketHandler.Instance.sendToServer(new DBCSaveAura(clone.writeToNBT(), clone.name));
+            DBCPacketHandler.Instance.sendToServer(new DBCCloneAura(aura.id));
         }
     }
 

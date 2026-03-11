@@ -119,6 +119,28 @@ public class OutlineController implements IOutlineHandler {
         return customOutlines.get(customOutline.getID());
     }
 
+    public Outline cloneOutline(int originalId) {
+        Outline original = customOutlines.get(originalId);
+        if (original == null) return null;
+
+        int originalCatId = categoryManager.getItemCategory(originalId);
+
+        Outline clone = new Outline();
+        clone.readFromNBT(original.writeToNBT());
+        clone.id = getUnusedId();
+
+        String name = clone.name;
+        while (hasName(name)) name += "_";
+        clone.name = name;
+
+        if (originalCatId > CategoryManager.UNCATEGORIZED_ID) {
+            categoryManager.registerItem(clone.id, originalCatId);
+        }
+
+        saveOutline(clone);
+        return clone;
+    }
+
     @Override
     public void deleteOutlineFile(String name) {
         categoryManager.deleteFile(name + ".json");

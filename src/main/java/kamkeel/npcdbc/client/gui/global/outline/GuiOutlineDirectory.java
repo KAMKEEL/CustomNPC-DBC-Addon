@@ -17,6 +17,7 @@ import kamkeel.npcdbc.network.packets.request.category.DBCCategorySave;
 import kamkeel.npcdbc.network.packets.request.category.DBCRequestCategories;
 import kamkeel.npcdbc.network.packets.request.category.DBCRequestCategoryItems;
 import kamkeel.npcdbc.network.packets.request.outline.DBCRemoveOutline;
+import kamkeel.npcdbc.network.packets.request.outline.DBCCloneOutline;
 import kamkeel.npcdbc.network.packets.request.outline.DBCSaveOutline;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
@@ -109,9 +110,7 @@ public class GuiOutlineDirectory extends GuiDirectoryCategorized implements IOut
     @Override
     protected void onCloneItem() {
         if (outline != null && outline.id >= 0) {
-            Outline clone = (Outline) outline.clone();
-            while (itemData.containsKey(clone.name)) clone.name += "_";
-            DBCPacketHandler.Instance.sendToServer(new DBCSaveOutline(clone.writeToNBT(), clone.name));
+            DBCPacketHandler.Instance.sendToServer(new DBCCloneOutline(outline.id));
         }
     }
 

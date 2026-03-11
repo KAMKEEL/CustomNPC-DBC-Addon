@@ -19,6 +19,7 @@ import kamkeel.npcdbc.network.packets.request.category.DBCCategorySave;
 import kamkeel.npcdbc.network.packets.request.category.DBCRequestCategories;
 import kamkeel.npcdbc.network.packets.request.category.DBCRequestCategoryItems;
 import kamkeel.npcdbc.network.packets.request.form.DBCRemoveForm;
+import kamkeel.npcdbc.network.packets.request.form.DBCCloneForm;
 import kamkeel.npcdbc.network.packets.request.form.DBCSaveForm;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
@@ -119,9 +120,7 @@ public class GuiFormDirectory extends GuiDirectoryCategorized implements IFormMa
     @Override
     protected void onCloneItem() {
         if (form != null && form.id >= 0) {
-            Form clone = (Form) form.clone();
-            while (itemData.containsKey(clone.name)) clone.name += "_";
-            DBCPacketHandler.Instance.sendToServer(new DBCSaveForm(clone.writeToNBT(), clone.name));
+            DBCPacketHandler.Instance.sendToServer(new DBCCloneForm(form.id));
         }
     }
 
