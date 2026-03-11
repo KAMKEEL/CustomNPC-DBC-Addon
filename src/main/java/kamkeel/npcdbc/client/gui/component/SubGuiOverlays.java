@@ -6,8 +6,6 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.overlay.Overlay;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiYesNo;
-import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.SubGuiColorSelector;
 import noppes.npcs.client.gui.script.GuiScriptInterface;
@@ -32,7 +30,7 @@ import java.util.stream.Collectors;
 import static kamkeel.npcdbc.api.client.overlay.IOverlay.Type.ALL;
 
 
-public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, ITextfieldListener, GuiYesNoCallback {
+public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, ITextfieldListener {
     public SubGuiFormDisplay parent;
     public Form form;
     public static OverlayChain overlays;
@@ -226,15 +224,8 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         }
 
         if (buttonType == 10) {
-            Overlay foundOverlay = get(overlayID);
-            if (foundOverlay.texture.isEmpty() || !foundOverlay.scriptHandler.hasScript()) {
-                deleteOverlay();
-                initGui();
-            } else {
-                GuiYesNo guiyesno = new GuiYesNo(this, StatCollector.translateToLocal("gui.paste"),
-                    StatCollector.translateToLocal("gui.sure"), 1);
-                this.displayGuiScreen(guiyesno);
-            }
+            deleteOverlay();
+            initGui();
         }
 
         if (buttonType == 1) {//buttons 1,2,3 are identical to clicked indices
@@ -287,14 +278,6 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         //Script
         if (buttonType == 11)
             GuiScriptInterface.open((net.minecraft.client.gui.GuiScreen) this.parent.parent, get(overlayID).scriptHandler);
-    }
-
-    public void confirmClicked(boolean flag, int i) {
-        if (flag) {
-            if (i == 1)
-                deleteOverlay();
-        }
-        this.displayGuiScreen(this);
     }
 
     public void deleteOverlay() {
