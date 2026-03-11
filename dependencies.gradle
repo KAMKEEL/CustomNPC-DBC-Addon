@@ -50,7 +50,6 @@ dependencies {
 
     testImplementation("junit:junit:4.13.2")
 
-    compileOnly(files("lib/angelica-2.0.0-alpha23-MINIFIED-FOR-SPECIFIC-INTERFACE.jar"))
 //    implementation(files(customNpcJar))
 
     // Make sure to comment this out if you're using an actual copy of EDE.
