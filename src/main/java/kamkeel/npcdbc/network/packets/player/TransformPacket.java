@@ -6,12 +6,9 @@ import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.PacketChannel;
 import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
-import kamkeel.npcs.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.io.IOException;
-
-import static noppes.npcs.NoppesUtilServer.getPlayerByName;
 
 public final class TransformPacket extends AbstractPacket {
     public static final String packetName = "NPC|Transform";

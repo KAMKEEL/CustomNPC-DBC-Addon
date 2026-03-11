@@ -90,6 +90,8 @@ public interface IDBCEvent extends IPlayerEvent {
         /**
          * Returns the unmodified KO result based on the current damage and
          * attacker before any overrides are applied.
+         *
+         * @return true if a knockout would occur before any overrides
          */
         boolean getKO();
 
@@ -97,7 +99,7 @@ public interface IDBCEvent extends IPlayerEvent {
          *
          * Doing setDamage will automatically reset the KO calculation, so setKO modifications must be performed after setDamage.
          *
-         * @return If KO will occur
+         * @param ko If KO will occur
          */
         void setKo(boolean ko);
 
@@ -142,5 +144,52 @@ public interface IDBCEvent extends IPlayerEvent {
     interface DBCKnockout extends IDBCEvent {
         IDamageSource getDamageSource();
 
+    }
+
+    @Cancelable
+    interface SkillEvent extends IDBCEvent {
+
+        /**
+         * Event types:
+         * 0 - Learn
+         * 1 - Unlearn
+         * 2 - Upgrade
+         * <br>
+         * if it returns -1, something has gone horribly wrong.
+         *
+         * @return event type;
+         */
+        int getEventType();
+
+        /**
+         * Check the skill type
+         *
+         * @return 0 for racial, 1 for normal skills, 2 for custom skills
+         */
+        int getSkillType();
+
+        /**
+         * Only works for normal &amp; custom skills
+         *
+         * @return numeric ID of a skill.
+         */
+        int getSkillID();
+
+        interface Learn extends SkillEvent {
+            void setCost(int cost);
+
+            int getCost();
+        }
+
+        interface Unlearn extends SkillEvent {
+        }
+
+        interface Upgrade extends SkillEvent {
+            void setCost(int cost);
+
+            int getCost();
+
+            int getNewLevel();
+        }
     }
 }

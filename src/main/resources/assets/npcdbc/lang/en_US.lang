@@ -12,35 +12,79 @@ dbc.clientsettings.aura.firstPersonOpacity=First person 3D Aura Opacity: %s%%
 global.customforms=Forms
 global.customauras=Auras
 global.customoutlines=Outlines
-global.customeffects=Effects
 
 stats.dbcsettings=DBC Settings
 inventory.extras=Extras
 
 gui.clone=Clone
+gui.addCategory=Add Category
+gui.fullscreen=FULL
 
-stats.dbc=DBC Settings
 stats.lockOnState=Can NPC be locked onto?
+stats.dbcEnabled=DBC Damage Enabled
 stats.friendlyFist=Friendly Fist
+stats.friendlyFistTime=Friendly Fist Duration (s)
+stats.section.damageModifiers=Damage Modifiers
 stats.ignoreDex=Ignore Dex
 stats.ignoreBlock=Ignore Block
 stats.ignoreEndurance=Ignore Endurance
 stats.ignoreKiDamage=Ignore Ki Protection
 stats.ignoreFormDefense=Ignore Form Defense
+stats.section.defensePenetration=Defense Penetration
 stats.hasDefensePenetration=Has Defense Penetration
 stats.defensePenetration=Defense Penetration
 
-effect.runsEveryX=Runs every X tick
-effect.defaultLength=Default length
+stats.section.playerSettings=Player Settings
+stats.kiCost=Ki Cost
+stats.kiCostPercent=Percent
+stats.kiDrain=Ki Drain
+stats.kiDrainPercent=Percent
+stats.hover.kiDrain=Ki drained per tick (1 = 20/sec). In percent mode, percentage of max Ki pool per tick.
+stats.staminaCost=Stamina Cost
+stats.staminaCostPercent=Percent
+stats.staminaDrain=Stamina Drain
+stats.staminaDrainPercent=Percent
+stats.hover.staminaDrain=Stamina drained per tick (1 = 20/sec). In percent mode, percentage of max Stamina pool per tick.
+stats.section.playerDamage=Player Damage
+stats.playerDamageType=Damage Type
+stats.damageTypeInfo=Info
+stats.damageType.desc.default=Uses the ability's base damage value
+stats.damageType.desc.flat=Fixed DBC body damage value
+stats.damageType.desc.melee=DBC Melee formula + Ki Fist + Ki Weapon
+stats.damageType.desc.ki=DBC Ki formula + Ki Infuse bonus
+stats.damageType.desc.cnpc=Custom: Stat x Release x Weight x Multiplier
+stats.flatDamage=Flat Damage
+stats.scalingAttribute=Scaling Attribute
+stats.playerDBCStats=Player DBC Stats
+stats.cnpc.setCount=Number of Sets
+stats.section.cnpcSet1=Set 1
+stats.section.cnpcSet2=Set 2
+stats.section.cnpcSet3=Set 3
+stats.cnpc.attribute=Attribute
+stats.cnpc.useStat=Use Stat
+stats.cnpc.statType=Stat Type
+stats.cnpc.multiplier=Multiplier
+stats.cnpc.kiFist=Ki Fist
+stats.cnpc.kiWeapon=Ki Weapon
+stats.cnpc.kiInfuse=Ki Infuse
+stats.hover.cnpc.kiFist=Adds Ki Fist bonus (SPI/Ki Pool) to this set. Requires Ki Fist skill.
+stats.hover.cnpc.kiWeapon=Adds Ki Weapon bonus (WIL/Ki Power) to this set. Requires Ki Weapon skill.
+stats.hover.cnpc.kiInfuse=Multiplies this set's damage by Ki Infuse multiplier. Requires Ki Weapon skill.
+stats.cnpc.previewLine=Set
+stats.cnpc.previewTotal=Total
+stats.hover.playerDBCStats=When enabled, the player's own DBC settings (Friendly Fist, etc.) are used instead of the ability's. When disabled, the ability's configured DBC combat settings (Ignore Dex, Friendly Fist, Defense Penetration, etc.) override the player's own settings. Greyed out when DBC Stats is disabled.
+stats.damagePreview=Preview
+stats.section.universalSettings=Universal Settings
 
-# These are supposed to be shorter
-effect.editor.runsEveryX=Every X tick
-effect.editor.defaultLength=Length
-effect.editor.height=Height
-effect.editor.width=Width
-effect.editor.xPos=X Pos
-effect.editor.yPos=Y Pos
-effect.editor.lossOnDeath=Loss on Death
+stats.section.barrierScaling=Barrier Health Scaling
+stats.barrierScalingEnabled=Use DBC Health Scaling
+stats.hover.barrierScaling=When enabled, barrier health is calculated from the CNPC scaling sets below instead of the flat value. Only applies to player-cast barriers.
+
+stats.section.healing=DBC Healing
+stats.healingMode=Healing Mode
+stats.hover.healingMode=How healing is applied to DBC players. Flat: heal amount is added directly as Body HP. Percent: heal amount is used as a percentage of max Body HP. Non-DBC entities always receive vanilla healing.
+stats.healScalingEnabled=Use DBC Heal Scaling
+stats.hover.healScaling=When enabled, healing amount is calculated from CNPC scaling sets instead of the ability's base heal value. Only applies to player casters.
 
 mastery.maxLevel=Max Level
 mastery.multiFlat=Multi Flat
@@ -63,7 +107,7 @@ mastery.fireKiGainSettings=Fire Ki Gain Settings
 mastery.updateGain=Update Gain
 mastery.attackGain=Attack Gain
 mastery.damagedGain=Damaged Gain
-mastery.fireKiGain=Update Gain
+mastery.fireKiGain=Fire Ki Gain
 mastery.flatMind=Flat Mind
 mastery.perMind=Per Mind
 mastery.maxMind=Max Mind
@@ -91,6 +135,8 @@ mastery.destroyerSettings=Destroyer Settings
 mastery.destroyerKiDamage=Ki Damage Multi
 mastery.linkedMastery=Linked Mastery
 
+display.femaleModel=Female
+display.breastSize=Breast Size
 display.attri=Attri
 display.adv=Adv
 display.human=Human
@@ -98,8 +144,6 @@ display.saiyan=Saiyan
 display.halfsaiyan=Half-Saiyan
 display.namekian=Namekian
 display.arcosian=Arcosian
-display.majin=Majin
-display.raditz=Raditz
 display.arcofirst=First
 display.arcosecond=Second
 display.arcothird=Third
@@ -107,7 +151,6 @@ display.arcofinal=Final
 display.arcoultimatecooler=Ultimate
 display.arcogoldenform=Golden
 display.majin=Majin
-display.raditz=Raditz
 display.part.antenna=Antenna
 display.part.firstformspikes=First
 display.part.secondformspikes=Second
@@ -139,6 +182,7 @@ display.furOff=Fur Off
 display.tail=Tail
 display.normalTail=Normal
 display.wrappedTail=Wrapped
+display.arcoTail=Arcosian
 display.noTail=No Tail
 display.base=Base
 display.ssj=SSJ
@@ -152,10 +196,10 @@ display.eye=Eye
 display.isBerserk=Berserk
 display.normalEye=Normal
 display.hasEyebrows=Eyebrows
+display.hasPupils=Pupils
 display.mouth=Mouth
 display.nose=Nose
 display.formCanFormbeCustomized=Player customization
-display.color=Color
 display.modify=Modify
 display.formWidth=Form Width
 display.formSize=Form Size
@@ -171,10 +215,15 @@ display.form=Form
 display.mastery=Mastery
 display.stackable=Stackable
 display.general=General
+display.custom=Custom
+display.overlays=Overlays
+display.body=Body
 display.bodyc1=Body C1
 display.bodyc2=Body C2
 display.bodyc3=Body C3
 display.vanillaStackable=Vanilla Stackable
+display.customStackable=Custom Stackable
+display.formStacks=Form Stacks
 display.kkStackable=Kaioken Stackable
 display.kaiokenMulti=KK Multiplier
 display.kaiokenDrain=KK Drain Config
@@ -197,13 +246,11 @@ display.secondaryAura=Secondary Aura
 display.outline=Outline
 display.selectOutline=No Outline
 display.extra=Extra
-display.size=Size
 display.speed=Speed
 display.overrideDBC=Overrides DBC forms
 display.color1=Color 1
 display.color2=Color 2
 display.color3=Color 3
-display.alpha=Alpha
 display.3DType=3D Type
 display.2DType=2D Type
 display.aura.alwaysShowOutline=Outline always on
@@ -255,7 +302,6 @@ outline.colorSmoothness=Color Smoothness
 outline.colorInterpolation=Color Interpolation
 outline.pulsingSpeed=Pulsing Speed
 
-general.menuName=Menu Name
 general.strength=Strength
 general.dexterity=Dexterity
 general.willpower=Willpower
@@ -271,7 +317,7 @@ general.noForm=No Form
 general.ascendSound=Ascend Sound
 general.descendSound=Descend Sound
 general.allRaces=All Races
-general.allSaiyans= All Saiyans
+general.allSaiyans=All Saiyans
 
 general.auraSound=Sound
 general.kaiokenSound=Kaioken Sound
@@ -296,9 +342,6 @@ statsheet.attribute.SPI=SPI
 
 part.horns=Horns
 part.ears=Ears
-
-form.clear=Clear
-form.select=Select
 
 aura.shown=Shown
 aura.hidden=Hidden
@@ -381,6 +424,7 @@ npcdbc.notEnoughMastery=You do not have enough mastery to instant transform
 npcdbc.cannotTransformDirect=You cannot transform to this form directly
 npcdbc.clearedSelection=Cleared selection
 npcdbc.formSelect=Form Selected:
+npcdbc.abilitySelect=Ability Selected:
 npcdbc.auraSelect=Aura Selected:
 npcdbc.transform=Transformed to
 npcdbc.descend=Descended to
@@ -453,6 +497,108 @@ item.npcdbc:one_potara.name=Potara Earring
 item.npcdbc:two_potara.name=Grand Potara Earring
 item.npcdbc:three_potara.name=Supreme Potara Earring
 
+wheel.configure=Configure
+wheel.switchWheel=Switch Wheel
+hotbar.vertical=Vertical Hotbar
+hotbar.horizontal=Horizontal Hotbar
+hotbar.switchHotbar=Switch Hotbar
+
+ability.npcdbc.ki_blast=Energy Blast
+ability.npcdbc.ki_blast_volley=Energy Blast Volley
+ability.npcdbc.finish_breaker=Finish Breaker
+ability.npcdbc.bigbang_attack=Big Bang Attack
+ability.npcdbc.burning_attack=Burning Attack
+ability.npcdbc.death_ball=Death Ball
+ability.npcdbc.spirit_bomb=Spirit Bomb
+ability.npcdbc.large_spirit_bomb=Large Spirit Bomb
+ability.npcdbc.super_spirit_bomb=Super Spirit Bomb
+ability.npcdbc.supernova=Supernova
+ability.npcdbc.ki_wave=Energy Wave
+ability.npcdbc.kamehameha=Kamehameha
+ability.npcdbc.double_sunday=Double Sunday
+ability.npcdbc.galick_gun=Galick Gun
+ability.npcdbc.final_flash=Final Flash
+ability.npcdbc.masenko=Masenko
+ability.npcdbc.ki_disc=Energy Disc
+ability.npcdbc.destructo_disc=Destructo Disc
+ability.npcdbc.death_saucer=Death Saucer
+ability.npcdbc.ki_laser=Energy Laser
+ability.npcdbc.special_beam_cannon=Special Beam Cannon
+ability.npcdbc.tribeam=Tri-Beam
+ability.npcdbc.android_barrier=Android Barrier
+ability.npcdbc.hakai=Destruction
+ability.npcdbc.namek_regen=Namekian Regeneration
+
+ability.npcdbc.dbc_toggle=DBC Toggle
+ability.npcdbc.ki_fist=Ki Fist
+ability.npcdbc.swoop=Swoop
+ability.npcdbc.ki_protection=Ki Protection
+ability.npcdbc.friendly_fist=Friendly Fist
+ability.npcdbc.ki_weapon=Ki Weapon
+ability.npcdbc.ki_blade=Ki Blade
+ability.npcdbc.ki_scythe=Ki Scythe
+ability.npcdbc.kaioken=Kaioken
+ability.npcdbc.fusion=Fusion
+ability.npcdbc.potential_unleashed=Potential Unleashed
+ability.npcdbc.ultra_instinct=Ultra Instinct
+ability.npcdbc.god_of_destruction=God of Destruction
+
+# Condition Ki Threshold
+condition.npcdbc.ki_threshold=Ki Threshold
+
+# Condition Stamina Threshold
+condition.npcdbc.stamina_threshold=Stamina Threshold
+
+# Condition Form
+condition.npcdbc.form=Transformation
+condition.form_id=Form
+condition.transformed=Transformed
+condition.form_unlocked=Needs Unlocked
+condition.is_dbc=Is DBC
+
+# Condition Race
+condition.npcdbc.race=Is Race
+condition.race_id=Race
+
+# Condition DBC Stat
+condition.npcdbc.stat=DBC Stat
+condition.stat_type=Stat
+condition.stat.str=Strength
+condition.stat.dex=Dexterity
+condition.stat.con=Constitution
+condition.stat.wil=Willpower
+condition.stat.mnd=Mind
+condition.stat.spi=Spirit
+
+# Condition DBC Level
+condition.npcdbc.level=DBC Level
+condition.level=Level
+condition.compare_type=Compare Type
+
+# Condition DBC Class
+condition.npcdbc.class=DBC Class
+condition.class_type=Class
+condition.class.martial_artist=Martial Artist
+condition.class.spiritualist=Spiritualist
+condition.class.warrior=Warrior
+
+# Condition DBC Effect
+condition.npcdbc.dbc_effect=DBC Effect
+condition.dbceffect_id=DBC Effect
+condition.dbceffect_type=Effect Type
+
+# Condition Skill
+condition.npcdbc.skill=Skill Unlocked
+condition.skill_id=Skill
+condition.skill_level=Skill Level
+condition.is_custom=Is Custom
+
+# Condition Locked On
+condition.npcdbc.locked_on=Is Locked On
+
+# Condition Fused
+condition.npcdbc.fused=Is Fused
+
 effect.healthregeneration=Health Regeneration
 effect.exhausted=Exhausted
 effect.darkness=Darkness
@@ -467,5 +613,61 @@ effect.potara=Potara
 effect.kiregeneration=Ki Regeneration
 effect.staminaregeneration=Stamina Regeneration
 effect.zenkai=Zenkai
+effect.dbc.permanent=Permanent
+effect.dbc.temporary=Temporary
 
 stats.ki=Ki
+
+############################
+## GUI LABELS
+############################
+
+# Overlay GUI
+overlay.title=Overlay %s:
+overlay.glow=Glow:
+overlay.alpha=Alpha:
+overlay.warning=WARNING: Too many overlays may cause lag or file deletion!
+overlay.disableOther=Disable Other Overlays
+overlay.selectTypes=Select Types
+overlay.allTypes=All Types
+overlay.selectedTypes=Selected Types
+
+# Kaioken Settings
+kaioken.drainMultiScaling=Drain multi scaling:
+kaioken.multiplyCurrentDrain=Multiply current form drain:
+kaioken.strainedMultis=Strained Kaioken Multis:
+kaioken.drainMulti=%s Drain Multi:
+kaioken.multiScaling=Multi scaling:
+kaioken.useGlobalMulti=Use Global Multi:
+kaioken.multi=%s Multi:
+
+# Custom Stackable
+stackable.stack=Stack %s:
+stackable.configMulti=Config Multi
+
+# Form Parents
+formparents.races=Races
+formparents.forms=Forms
+formparents.removeAll=Remove All
+
+# Face Parts
+facepart.eyebrows=Eyebrows
+facepart.eyeWhite=Eye White
+facepart.eyeLeft=Eye Left
+facepart.eyeRight=Eye Right
+facepart.nose=Nose
+facepart.mouth=Mouth
+facepart.faceType=Face Type
+facepart.all=All
+
+# StatSheet
+statsheet.updateVanity=Update vanity
+statsheet.hideVanity=Hide own vanity
+statsheet.showVanity=Show own vanity
+statsheet.bonusAttributes=Bonus Attributes:
+statsheet.bonusStats=Bonus Stats:
+statsheet.bonus.type.percentage=Percentage
+statsheet.bonus.type.flat=Flat
+statsheet.bonus.type.multiplicative=Multiplicative
+statsheet.bonus.label.addonMultiplicative=Bonus Multi
+statsheet.bonus.label.addonPercentage=Bonus Percent

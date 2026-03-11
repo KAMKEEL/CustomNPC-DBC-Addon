@@ -5,17 +5,24 @@ import kamkeel.npcdbc.client.gui.component.SubGuiSetParents;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
 import net.minecraft.client.gui.GuiButton;
+import noppes.npcs.client.gui.SubGuiTagSelect;
 import noppes.npcs.client.gui.select.GuiSoundSelection;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.GuiNpcTextField;
+import noppes.npcs.client.gui.util.GuiSelectionListener;
+import noppes.npcs.client.gui.util.ISubGuiListener;
+import noppes.npcs.client.gui.util.ITextfieldListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 
 public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener, ITextfieldListener {
-    private final GuiNPCManageForms parent;
+    private final IFormManagerGui parent;
     private GuiNpcFormMenu menu;
     public Form form;
     boolean setAscendSound = true;
 
 
-    public SubGuiFormGeneral(GuiNPCManageForms parent, Form form) {
+    public SubGuiFormGeneral(IFormManagerGui parent, Form form) {
         this.form = form;
         this.parent = parent;
 
@@ -98,6 +105,8 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
         getButton(14).enabled = form.childID != -1;
         addLabel(new GuiNpcLabel(14, "general.childForm", guiLeft + 8, y + 5));
 
+        addButton(new GuiNpcButton(40, guiLeft + 240, y, 100, 20, "gui.tags"));
+
         y += 38;
 
         addLabel(new GuiNpcLabel(30, "general.ascendSound", guiLeft + 7, y + 5));
@@ -142,20 +151,15 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
             setAscendSound = false;
             setSubGui(new GuiSoundSelection((getTextField(31).getText())));
         }
+        if (button.id == 40) {
+            setSubGui(new SubGuiTagSelect(form.tagUUIDs));
+        }
         if (button.id == 50) {
             setSubGui(new SubGuiSetParents(form));
         }
         if (button.id == 1010101) {
             initGui();
         }
-    }
-
-    @Override
-    public void keyTyped(char c, int i) {
-        super.keyTyped(c, i);
-        if (i == 1)
-            menu.close();
-
     }
 
     private int getRaceButton(int button) {
@@ -212,14 +216,14 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
                 guiNpcTextField.setText("");
             else {
                 String name = guiNpcTextField.getText();
-                if (name.isEmpty() || this.parent.data.containsKey(name)) {
+                if (name.isEmpty() || this.parent.getFormData().containsKey(name)) {
                     guiNpcTextField.setText(form.name);
                 } else if (form.id >= 0) {
                     String old = form.name;
-                    this.parent.data.remove(old);
+                    this.parent.getFormData().remove(old);
                     form.name = name;
-                    this.parent.data.put(form.name, form.id);
-                    this.parent.scrollForms.replace(old, form.name);
+                    this.parent.getFormData().put(form.name, form.id);
+                    this.parent.getFormScroll().replace(old, form.name);
                 }
             }
         }
@@ -299,5 +303,6 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
     }
 
     public void save() {
+        menu.save();
     }
 }

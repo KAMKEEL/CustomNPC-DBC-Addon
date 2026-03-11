@@ -98,6 +98,18 @@ public interface IFormMastery {
      */
     boolean hasHeat();
 
+    /**
+     * @return Minimum heat percentage (0-100) required before pain is applied on manual descend.
+     */
+    int getPainThreshold();
+
+    /**
+     * @param threshold Minimum heat percentage (0-100) before pain applies on descend.
+     *                  Default 25. Setting to 0 means any heat triggers pain.
+     *                  Setting to 100 means pain only triggers on forced max-heat descend.
+     */
+    void setPainThreshold(int threshold);
+
     float getDamageNegation();
 
     /**

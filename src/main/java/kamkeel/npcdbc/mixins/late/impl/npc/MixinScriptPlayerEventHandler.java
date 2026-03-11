@@ -3,6 +3,9 @@ package kamkeel.npcdbc.mixins.late.impl.npc;
 import kamkeel.npcdbc.data.DBCDamageCalc;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.util.DBCUtils;
+import kamkeel.npcs.controllers.AttributeController;
+import kamkeel.npcs.controllers.data.attribute.tracker.PlayerAttributeTracker;
+import kamkeel.npcs.util.AttributeAttackUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
@@ -14,7 +17,9 @@ import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = ScriptPlayerEventHandler.class, remap = false)
 public abstract class MixinScriptPlayerEventHandler {
@@ -28,42 +33,66 @@ public abstract class MixinScriptPlayerEventHandler {
     @Unique
     private DBCDamageCalc attackEventDamage;
 
-    @Redirect(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "FIELD", target = "Lnet/minecraftforge/event/entity/living/LivingAttackEvent;ammount:F", opcode = Opcodes.GETFIELD, remap = true, ordinal = 0))
+    @Redirect(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "FIELD", target = "Lnet/minecraftforge/event/entity/living/LivingAttackEvent;ammount:F", opcode = Opcodes.GETFIELD, ordinal = 0))
     public float attackedEvent(LivingAttackEvent instance) {
+        DBCUtils.preCalculatedAttackerDamage = null;
+
+        if (DBCUtils.abilityDamageHandled) {
+            // Use the actual ability damage instead of the 1.0f dummy value
+            return DBCUtils.abilityDamageAmount != null ? DBCUtils.abilityDamageAmount : instance.ammount;
+        }
+
         EntityPlayer player = npcdbc$getAttackingPlayer(instance.source);
         if (player != null) {
             DBCData data = DBCData.get(player);
             if (dbcAltered = data.Powertype == 1) {
                 float attackStat = DBCUtils.calculateAttackStat(player, instance.ammount, instance.source);
-                if (instance.entityLiving instanceof EntityPlayer){
-                    this.attackedEventDamage =  DBCUtils.calculateDBCDamageFromSource(instance.entityLiving, attackStat, instance.source);
+                // Pre-calculate attacker's DBC damage so Counter/Dodge on player targets can use it
+                DBCUtils.preCalculatedAttackerDamage = attackStat;
+                if (instance.entityLiving instanceof EntityPlayer) {
+                    this.attackedEventDamage = DBCUtils.calculateDBCDamageFromSource(instance.entityLiving, attackStat, instance.source);
                     return attackedEventDamage.getDamage();
-                }
-                else
-                    return attackStat;
+                } else
+                    return AttributeAttackUtil.calculateOutgoing(player, attackStat);
             }
         }
         return instance.ammount;
     }
 
-    @Redirect(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "FIELD", target = "Lnet/minecraftforge/event/entity/living/LivingAttackEvent;ammount:F", opcode = Opcodes.GETFIELD, remap = true, ordinal = 1))
+    @Redirect(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "FIELD", target = "Lnet/minecraftforge/event/entity/living/LivingAttackEvent;ammount:F", opcode = Opcodes.GETFIELD, ordinal = 1))
     public float attackEvent(LivingAttackEvent instance) {
+        if (DBCUtils.abilityDamageHandled) {
+            // Use the actual ability damage instead of the 1.0f dummy value
+            return DBCUtils.abilityDamageAmount != null ? DBCUtils.abilityDamageAmount : instance.ammount;
+        }
+
         EntityPlayer player = npcdbc$getAttackingPlayer(instance.source);
         if (player != null) {
             DBCData data = DBCData.get(player);
             boolean isNPC = instance.entityLiving instanceof EntityNPCInterface;
             dbcAltered = data.Powertype == 1;
+            DBCUtils.entityLastSetDamage = null;
             if (dbcAltered && !isNPC) {
                 float attackStat = DBCUtils.calculateAttackStat(player, instance.ammount, instance.source);
-                if (instance.entityLiving instanceof EntityPlayer){
+                if (instance.entityLiving instanceof EntityPlayer) {
                     attackEventDamage = DBCUtils.calculateDBCDamageFromSource(instance.entityLiving, attackStat, instance.source);
                     return attackEventDamage.getDamage();
+                } else {
+                    float outgoing = AttributeAttackUtil.calculateOutgoing(player, attackStat);
+                    PlayerAttributeTracker tracker = AttributeController.getTracker(player);
+                    if (tracker != null)
+                        outgoing = AttributeAttackUtil.applyCrit(outgoing, tracker);
+                    DBCUtils.entityLastSetDamage = outgoing;
+                    return outgoing;
                 }
-                else
-                    return attackStat;
             }
         }
         return instance.ammount;
+    }
+
+    @Inject(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At("RETURN"))
+    private void clearPreCalculatedDamage(LivingAttackEvent event, CallbackInfo ci) {
+        DBCUtils.preCalculatedAttackerDamage = null;
     }
 
     @Unique

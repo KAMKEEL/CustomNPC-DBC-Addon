@@ -1,10 +1,6 @@
 package kamkeel.npcdbc.scripted;
 
 import kamkeel.npcdbc.constants.DBCScriptType;
-import kamkeel.npcs.controllers.AttributeController;
-import kamkeel.npcs.controllers.data.attribute.tracker.PlayerAttributeTracker;
-import net.minecraft.entity.player.EntityPlayer;
-import noppes.npcs.config.ConfigMain;
 import noppes.npcs.controllers.ScriptController;
 import noppes.npcs.controllers.data.PlayerDataScript;
 import noppes.npcs.scripted.NpcAPI;
@@ -45,5 +41,11 @@ public class DBCEventHooks {
         PlayerDataScript handler = ScriptController.Instance.getPlayerScripts(koEvent.getPlayer());
         handler.callScript(DBCScriptType.KNOCKOUT.function, koEvent);
         return NpcAPI.EVENT_BUS.post(koEvent);
+    }
+
+    public static boolean onSkillEvent(DBCPlayerEvent.SkillEvent event) {
+        PlayerDataScript handler = ScriptController.Instance.getPlayerScripts(event.getPlayer());
+        handler.callScript(DBCScriptType.SKILL_EVENT.function, event);
+        return NpcAPI.EVENT_BUS.post(event);
     }
 }

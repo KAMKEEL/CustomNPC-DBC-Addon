@@ -39,6 +39,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 
+
 import static noppes.npcs.NoppesStringUtils.translate;
 
 public class ClientEventHandler {
@@ -241,6 +242,8 @@ public class ClientEventHandler {
             ticks++;
         }
     }
+
+    // DBC Ability Hotbar HUD removed - now handled by CustomNPC+ AbilityHotbarComponent
 
     @SubscribeEvent
     public void entityAura(LivingEvent.LivingUpdateEvent event) {

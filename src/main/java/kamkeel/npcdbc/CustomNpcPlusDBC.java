@@ -3,15 +3,37 @@ package kamkeel.npcdbc;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.relauncher.Side;
+import kamkeel.npcdbc.api.event.IDBCEvent;
 import kamkeel.npcdbc.config.LoadConfiguration;
-import kamkeel.npcdbc.controllers.*;
+import kamkeel.npcdbc.data.ability.DBCAbilities;
+import kamkeel.npcdbc.constants.DBCAnimations;
+import kamkeel.npcdbc.constants.DBCScriptType;
+import kamkeel.npcdbc.controllers.AuraController;
+import kamkeel.npcdbc.controllers.BonusController;
+import kamkeel.npcdbc.controllers.CapsuleController;
+import kamkeel.npcdbc.controllers.DBCEffectController;
+import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.controllers.OutlineController;
+import kamkeel.npcdbc.controllers.SkillController;
 import kamkeel.npcdbc.data.DBCProfileData;
+import kamkeel.npcdbc.data.ability.DBCAbilityExtender;
+import kamkeel.npcdbc.data.energy.DBCEnergyExtender;
+import kamkeel.npcdbc.data.ability.DBCConditions;
 import kamkeel.npcdbc.data.attribute.DBCItemAttributes;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.items.ModItems;
 import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcs.controllers.AbilityController;
+import kamkeel.npcs.controllers.EnergyController;
 import kamkeel.npcs.controllers.ProfileController;
+import noppes.npcs.constants.ScriptContext;
+import noppes.npcs.controllers.ScriptHookController;
 
 import java.io.File;
 
@@ -25,11 +47,15 @@ public class CustomNpcPlusDBC {
 
     public static final String name = "CustomNPC+ DBC Addon";
     public static final String ID = "npcdbc";
-    public static final String version = "1.1.5";
+    public static final String version = "1.2";
 
     @SidedProxy(clientSide = "kamkeel.npcdbc.client.ClientProxy", serverSide = "kamkeel.npcdbc.CommonProxy")
     public static CommonProxy proxy;
-    @Mod.Instance
+
+    public CustomNpcPlusDBC() {
+        instance = this;
+    }
+
     public static CustomNpcPlusDBC instance;
     public static String addonConfig;
 
@@ -50,6 +76,38 @@ public class CustomNpcPlusDBC {
         DBCEffectController.getInstance().load();
 
         new DBCItemAttributes();
+
+        // Register ability extender for DBC damage routing and lifecycle hooks
+        AbilityController.Instance.registerExtender(new DBCAbilityExtender());
+
+        // Register energy handler for DBC damage routing on script-created energy entities
+        EnergyController.Instance.registerExtender(new DBCEnergyExtender());
+
+        // Register DBC flight checker so abilities don't pull flying players down
+        AbilityController.Instance.registerFlightChecker(player -> {
+            DBCData data = DBCData.get(player);
+            return data != null && data.isFlying;
+        });
+
+        // Prevent fusion spectators from activating any ability
+        AbilityController.Instance.registerActivationChecker(player -> !DBCData.get(player).isFusionSpectator());
+
+        // Register DBC player hooks so handler-based GUIs include them
+        if (ScriptHookController.Instance != null) {
+            ScriptContext.PLAYER.addNamespace("IDBCEvent");
+
+            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.FORMCHANGE.function, IDBCEvent.FormChangeEvent.class);
+            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.DAMAGED.function, IDBCEvent.DamagedEvent.class);
+            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.CAPSULEUSED.function, IDBCEvent.CapsuleUsedEvent.class);
+            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.SENZUUSED.function, IDBCEvent.SenzuUsedEvent.class);
+            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.REVIVED.function, IDBCEvent.DBCReviveEvent.class);
+            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.KNOCKOUT.function, IDBCEvent.DBCKnockout.class);
+            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.SKILL_EVENT.function, IDBCEvent.SkillEvent.class);
+        }
+
+        DBCConditions.register();
+        DBCAnimations.register();
+        DBCAbilities.register();
     }
 
     @Mod.EventHandler
@@ -59,6 +117,7 @@ public class CustomNpcPlusDBC {
         CapsuleController.getInstance().load();
         BonusController.getInstance().load();
         OutlineController.getInstance().load();
+        SkillController.Instance.load();
     }
 
     @Mod.EventHandler

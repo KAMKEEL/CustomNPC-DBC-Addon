@@ -58,6 +58,12 @@ public class ConfigDBCGameplay {
     public static boolean DodgeTeleport = true;
     public static boolean DodgeCameraLock = true;
 
+    public final static String FixesMovement = "Fixes.Movement";
+    public static boolean EnhancedMovement = true;
+    public static boolean AllowSpeedModifierTurboFlight = true;
+    public static float SpeedModifierTurboFlight = 0.3f;
+    public static float FlightVerticalDamping = 0.5f;
+
 
     public static void init(File configFile) {
         config = new Configuration(configFile);
@@ -126,9 +132,31 @@ public class ConfigDBCGameplay {
             PercentDamageRequired = config.get(HumanSpirit, "Percent Damage Required", 400).getInt(400);
             DamageRequiredSeconds = config.get(HumanSpirit, "Time Allotted", 20, "Amount of time to consider the Percent of Damage Required").getInt(50);
 
-            DodgeTeleport = config.get(Combat,"Teleport on UI Dodge",true,"True or false whether UI Dodge teleports to the target").getBoolean(true);
-            DodgeCameraLock = config.get(Combat,"camera Turn on UI dodge",true,"True or false whether UI Dodge Turns camera").getBoolean(true);
+            DodgeTeleport = config.get(Combat, "Teleport on UI Dodge", true, "True or false whether UI Dodge teleports to the target").getBoolean(true);
+            DodgeCameraLock = config.get(Combat, "camera Turn on UI dodge", true, "True or false whether UI Dodge Turns camera").getBoolean(true);
 
+            config.setCategoryPropertyOrder(FixesMovement, new ArrayList<>(Arrays.asList(
+                "Enhanced Movement", "Allow Speed Modifier Turbo-Flight", "Speed Modifier Turbo-Flight", "Flight Vertical Damping")));
+            EnhancedMovement = config.get(FixesMovement, "Enhanced Movement", true,
+                "Enables the enhanced movement system for turbo sprint and flight.\n" +
+                    "Fixes knockback being destroyed during DBC movement by using additive acceleration\n" +
+                    "instead of velocity assignment. Preserves knockback, explosions, and other forces.").getBoolean(true);
+            AllowSpeedModifierTurboFlight = config.get(FixesMovement, "Allow Speed Modifier Turbo-Flight", true,
+                "Enables movement speed modifiers to affect turbo sprint and flight.\n" +
+                    "When enabled, external speed changes (e.g. from effects or attributes) are\n" +
+                    "scaled by the Speed Modifier Turbo-Flight value below.").getBoolean(true);
+            SpeedModifierTurboFlight = (float) config.get(FixesMovement, "Speed Modifier Turbo-Flight", 0.3,
+                "Scales how much movement speed changes affect turbo and flight.\n" +
+                    "0.3 = 30% effect (default), 1.0 = full effect, 0.0 = no effect.\n" +
+                    "Requires Allow Speed Modifier Turbo-Flight to be enabled.").getDouble(0.3);
+            SpeedModifierTurboFlight = Math.max(0.0f, SpeedModifierTurboFlight);
+
+            FlightVerticalDamping = (float) config.get(FixesMovement, "Flight Vertical Damping", 0.5,
+                "Controls how quickly upward momentum decays after releasing the jump key during flight.\n" +
+                    "Each tick, upward motionY is multiplied by this value.\n" +
+                    "0.5 = halves each tick (responsive), 0.9 = slow decay (floaty), 1.0 = no damping (vanilla behavior).\n" +
+                    "Requires Enhanced Movement to be enabled.").getDouble(0.5);
+            FlightVerticalDamping = ValueUtil.clamp(FlightVerticalDamping, 0.0f, 1.0f);
 
         } catch (Exception e) {
             FMLLog.log(Level.ERROR, e, "DBC Addon has had a problem loading its gameplay configuration");

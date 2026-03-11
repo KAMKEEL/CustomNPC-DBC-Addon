@@ -18,21 +18,41 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
 import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.SubGuiColorSelector;
+import noppes.npcs.client.gui.SubGuiTagSelect;
 import noppes.npcs.client.gui.select.GuiSoundSelection;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiButtonBiDirectional;
+import noppes.npcs.client.gui.util.GuiNPCInterface;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcButtonYesNo;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.GuiNpcTextField;
+import noppes.npcs.client.gui.util.GuiScrollWindow;
+import noppes.npcs.client.gui.util.GuiSelectionListener;
+import noppes.npcs.client.gui.util.ISubGuiListener;
+import noppes.npcs.client.gui.util.ITextfieldListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import static kamkeel.npcdbc.client.ClientEventHandler.spawnAura;
 import static kamkeel.npcdbc.client.ClientEventHandler.spawnKaiokenAura;
-import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.*;
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.Base;
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.GoD;
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.None;
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.SaiyanBlue;
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.SaiyanBlueEvo;
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.SaiyanGod;
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.SaiyanRose;
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.SaiyanRoseEvo;
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.UI;
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.UltimateArco;
 
 public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListener, GuiSelectionListener, ITextfieldListener {
     public static boolean useGUIAura;
     public static Aura aura;
     public static int auraTicks = 1;
-    private final GuiNPCManageAuras parent;
+    private final IAuraManagerGui parent;
     private DBCDisplay visualDisplay;
     public AuraDisplay display;
     public int lastColorClicked = 0;
@@ -48,12 +68,12 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
     private int revampedAura;
     boolean setNormalSound = true;
 
-    public SubGuiAuraDisplay(GuiNPCManageAuras parent) {
-        super(parent.npc);
-        SubGuiAuraDisplay.aura = parent.aura;
-        this.display = parent.display;
+    public SubGuiAuraDisplay(IAuraManagerGui parent) {
+        super(parent.getAuraNPC());
+        SubGuiAuraDisplay.aura = parent.getAura();
+        this.display = parent.getAuraDisplay();
         this.parent = parent;
-        this.visualDisplay = parent.visualDisplay;
+        this.visualDisplay = parent.getAuraVisualDisplay();
 
         xSize = 360;
         ySize = 216;
@@ -98,6 +118,10 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         scrollWindow.getLabel(102).color = 0xffffff;
         scrollWindow.addTextField(new GuiNpcTextField(102, this, this.fontRendererObj, guiX + 100 + rightOffset, y, 120, 20, aura.menuName.replaceAll("§", "&")));
         scrollWindow.getTextField(102).setMaxStringLength(40);
+
+        y += 26;
+        maxScroll += 26;
+        scrollWindow.addButton(new GuiNpcButton(40, guiX + 100 + rightOffset, y, 120, 20, "gui.tags"));
 
         y += 26;
         scrollWindow.addLabel(new GuiNpcLabel(3004, "display.overrideDBC", 3, y + 5));
@@ -409,6 +433,10 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
 
     public void buttonEvent(GuiButton guibutton) {
         GuiNpcButton button = (GuiNpcButton) guibutton;
+        if (button.id == 40) {
+            setSubGui(new SubGuiTagSelect(aura.tagUUIDs));
+            return;
+        }
         if (button.id == 10000) {
             parent.closeSubGui(null); // Close the GUI
         } else if (button.id == 2000) {
@@ -453,7 +481,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             // Change 3D Type
             display.type = EnumAuraTypes3D.values()[button.getValue()];
             if (display.auraSound.equalsIgnoreCase("default")) {
-                parent.stopSound(parent.auraSound, false);
+                parent.stopSound(parent.getAuraSound(), false);
                 parent.playSound(true);
             }
             initGui();
@@ -480,7 +508,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             display.hasKaiokenAura = !display.hasKaiokenAura;
             if (!on) {
                 visualDisplay.isKaioken = false;
-                parent.stopSound(parent.kaiokenSound, false);
+                parent.stopSound(parent.getKaiokenSound(), false);
             }
 
             initGui();
@@ -491,8 +519,8 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
 
             if (is)
                 parent.playSound(false);
-            else if (parent.kaiokenSound != null) {
-                parent.stopSound(parent.kaiokenSound, false);
+            else if (parent.getKaiokenSound() != null) {
+                parent.stopSound(parent.getKaiokenSound(), false);
             }
 
             initGui();
@@ -521,8 +549,8 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             display.kettleModeEnabled = !display.kettleModeEnabled;
             if (display.kettleModeEnabled)
                 parent.playSound(false);
-            else if (parent.kettleSound != null) {
-                parent.stopSound(parent.kettleSound, false);
+            else if (parent.getKettleSound() != null) {
+                parent.stopSound(parent.getKettleSound(), false);
             }
             initGui();
         } else if (button.id == 670) {
@@ -563,8 +591,8 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             this.setSubGui(new SubGuiSelectAura());
         } else if (button.id == 1406) {
             aura.secondaryAuraID = -1;
-            parent.stopSound(parent.secondarySound, false);
-            parent.stopSound(parent.secondaryKettleSound, false);
+            parent.stopSound(parent.getSecondarySound(), false);
+            parent.stopSound(parent.getSecondaryKettleSound(), false);
             initGui();
         } else if (button.id == 2306) {
             this.setSubGui(new SubGuiSelectOutline());
@@ -580,7 +608,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             setSubGui(new GuiSoundSelection((getTextField(1).getText())));
         } else if (button.id == 11) {
             display.auraSound = "jinryuudragonbc:DBC.aura";
-            parent.stopSound(parent.auraSound, false);
+            parent.stopSound(parent.getAuraSound(), false);
             parent.playSound(false);
             initGui();
         } else if (button.id == 2) {
@@ -588,7 +616,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             setSubGui(new GuiSoundSelection((getTextField(2).getText())));
         } else if (button.id == 21) {
             display.kaiokenSound = "";
-            parent.stopSound(parent.kaiokenSound, false);
+            parent.stopSound(parent.getKaiokenSound(), false);
             parent.playSound(false);
             initGui();
         }
@@ -596,29 +624,34 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
 
     @Override
     public void keyTyped(char c, int i) {
-        super.keyTyped(c, i);
         if (i == 1) {
-            close();
+            if (hasSubGui()) {
+                getSubGui().close();
+            } else {
+                close();
+            }
+            return;
         }
+        super.keyTyped(c, i);
     }
 
     @Override
     public void unFocused(GuiNpcTextField guiNpcTextField) {
         if (guiNpcTextField.id == 101) {
             String name = guiNpcTextField.getText();
-            if (!name.isEmpty() && !parent.data.containsKey(name)) {
-                String old = parent.aura.name;
-                parent.data.remove(parent.aura.name);
-                parent.aura.name = name;
-                parent.data.put(parent.aura.name, parent.aura.id);
-                parent.selected = name;
-                parent.scrollAuras.replace(old, parent.aura.name);
+            if (!name.isEmpty() && !parent.getAuraData().containsKey(name)) {
+                String old = parent.getAura().name;
+                parent.getAuraData().remove(parent.getAura().name);
+                parent.getAura().name = name;
+                parent.getAuraData().put(parent.getAura().name, parent.getAura().id);
+                parent.setAuraSelected(name);
+                parent.getAuraScroll().replace(old, parent.getAura().name);
             } else
                 guiNpcTextField.setText(aura.name);
         } else if (guiNpcTextField.id == 102) {
             String menuName = guiNpcTextField.getText();
             if (!menuName.isEmpty()) {
-                parent.aura.menuName = menuName.replaceAll("&", "§");
+                parent.getAura().menuName = menuName.replaceAll("&", "§");
             }
         }
         if (guiNpcTextField.id == 202) {
@@ -655,12 +688,12 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         } else if (guiNpcTextField.id == 1) {
             display.auraSound = guiNpcTextField.getText();
             getButton(11).enabled = !display.auraSound.equals("jinryuudragonbc:DBC.aura");
-            parent.stopSound(parent.auraSound, false);
+            parent.stopSound(parent.getAuraSound(), false);
             parent.playSound(false);
         } else if (guiNpcTextField.id == 2) {
             display.kaiokenSound = guiNpcTextField.getText();
             getButton(21).enabled = !display.kaiokenSound.isEmpty();
-            parent.stopSound(parent.kaiokenSound, false);
+            parent.stopSound(parent.getKaiokenSound(), false);
             parent.playSound(false);
         }
     }
@@ -888,15 +921,14 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
     }
 
     public void close() {
-        NoppesUtil.openGUI(player, parent);
+        parent.closeSubGui(this);
         if (visualDisplay.auraEntity != null)
             visualDisplay.auraEntity.despawn();
 
+        parent.getAuraVisualDisplay().auraID = aura.id;
 
-        parent.visualDisplay.auraID = aura.id;
-
-        parent.visualDisplay.isKaioken = false;
-        parent.stopSound(parent.kaiokenSound, false);
+        parent.getAuraVisualDisplay().isKaioken = false;
+        parent.stopSound(parent.getKaiokenSound(), false);
         aura = null;
         save();
     }

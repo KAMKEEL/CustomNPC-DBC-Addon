@@ -3,18 +3,22 @@ package kamkeel.npcdbc.client.gui.global.form.attributes;
 import kamkeel.npcdbc.client.gui.global.form.SubGuiFormAttributes;
 import kamkeel.npcdbc.data.form.FormAttributes;
 import net.minecraft.client.gui.GuiButton;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.GuiNpcTextField;
+import noppes.npcs.client.gui.util.ITextfieldListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 
 public class SubGuiEditFormAttribute extends SubGuiInterface implements ITextfieldListener {
     private final SubGuiFormAttributes parent;
-    private final String               key;
-    private final FormAttributes       attrs;
-    private GuiNpcTextField            tfValue;
+    private final String key;
+    private final FormAttributes attrs;
+    private GuiNpcTextField tfValue;
 
     public SubGuiEditFormAttribute(SubGuiFormAttributes parent, String key) {
         this.parent = parent;
-        this.key    = key;
-        this.attrs  = parent.form.customAttributes;
+        this.key = key;
+        this.attrs = parent.form.customAttributes;
         // window size & styling
         setBackground("menubg.png");
         this.xSize = 200;
@@ -25,10 +29,10 @@ public class SubGuiEditFormAttribute extends SubGuiInterface implements ITextfie
     @Override
     public void initGui() {
         super.initGui();
-        int midX = guiLeft + xSize/2;
+        int midX = guiLeft + xSize / 2;
 
         // title label
-        this.addLabel(new GuiNpcLabel(0, "Edit “"+ key +"”", guiLeft + 10, guiTop + 8, 0xFFFFFF));
+        this.addLabel(new GuiNpcLabel(0, "Edit “" + key + "”", guiLeft + 10, guiTop + 8, 0xFFFFFF));
 
         // current value
         float cur = attrs.getAllAttributes().getOrDefault(key, 0f);
@@ -39,7 +43,7 @@ public class SubGuiEditFormAttribute extends SubGuiInterface implements ITextfie
 
         // Done button
         int bw = 50, bh = 20;
-        this.addButton(new GuiNpcButton(0, midX - bw/2, guiTop + ySize - bh - 6, bw, bh, "Done"));
+        this.addButton(new GuiNpcButton(0, midX - bw / 2, guiTop + ySize - bh - 6, bw, bh, "Done"));
     }
 
     @Override

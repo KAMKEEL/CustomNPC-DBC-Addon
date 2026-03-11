@@ -1,7 +1,11 @@
 package kamkeel.npcdbc.data.form;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.api.form.*;
+import kamkeel.npcdbc.api.form.IForm;
+import kamkeel.npcdbc.api.form.IFormAdvanced;
+import kamkeel.npcdbc.api.form.IFormDisplay;
+import kamkeel.npcdbc.api.form.IFormMastery;
+import kamkeel.npcdbc.api.form.IFormStackable;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.FormController;
@@ -13,9 +17,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.controllers.AnimationController;
+import noppes.npcs.controllers.TagController;
 import noppes.npcs.scripted.NpcAPI;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.UUID;
 
 public class Form implements IForm {
 
@@ -29,6 +36,7 @@ public class Form implements IForm {
     public FormMastery mastery = new FormMastery(this);
     public FormDisplay display = new FormDisplay(this);
     public FormStackable stackable = new FormStackable(this);
+    public FormCustomStackable customStackable = new FormCustomStackable(this);
     public FormAdvanced advanced = new FormAdvanced(this);
     public FormAttributes customAttributes = new FormAttributes(this);
     public FormMagicData magicData = new FormMagicData(this);
@@ -51,6 +59,8 @@ public class Form implements IForm {
     public int mindRequirement = 0;
 
     public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
+
+    public HashSet<UUID> tagUUIDs = new HashSet<>();
 
     public Form() {
     }
@@ -85,9 +95,12 @@ public class Form implements IForm {
         ascendSound = sounds.getString("ascendSound");
         descendSound = sounds.getString("descendSound");
 
+        tagUUIDs = TagController.readTagUUIDs(compound, "TagUUIDs");
+
         mastery.readFromNBT(compound);
         display.readFromNBT(compound);
         stackable.readFromNBT(compound);
+        customStackable.readFromNBT(compound);
         advanced.readFromNBT(compound);
         customAttributes.readFromNBT(compound);
         magicData.readFromNBT(compound);
@@ -117,9 +130,12 @@ public class Form implements IForm {
         sounds.setString("descendSound", descendSound);
         compound.setTag("sounds", sounds);
 
+        TagController.writeTagUUIDs(compound, "TagUUIDs", tagUUIDs);
+
         mastery.writeToNBT(compound);
         display.writeToNBT(compound);
         stackable.writeToNBT(compound);
+        customStackable.writeToNBT(compound);
         advanced.writeToNBT(compound);
         customAttributes.writeToNBT(compound);
         magicData.writeToNBT(compound);
@@ -444,6 +460,8 @@ public class Form implements IForm {
     public IFormDisplay getDisplay() {
         return display;
     }
+
+    // TODO api class for FormOverlay
 
     @Override
     public IFormStackable getStackable() {

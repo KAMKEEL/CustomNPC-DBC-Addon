@@ -9,6 +9,11 @@
 .project
 /bin/
 /config/
+/groovy/
+/.$state/
+/copilot/
+/api_old/
+src/main/resources/assets/npcdbc/api
 /crash-reports/
 /logs/
 options.txt
@@ -37,3 +42,8 @@ addon.late.local.gradle
 addon.late.local.gradle.kts
 layout.json
 debug.log
+AGENTS.md
+/.sisyphus/
+nul
+ability-branch
+jdk/

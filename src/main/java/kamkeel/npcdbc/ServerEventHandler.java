@@ -28,6 +28,7 @@ import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.CapsuleInfo;
 import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
 import kamkeel.npcdbc.network.packets.player.LoginInfo;
+import kamkeel.npcdbc.data.ability.DBCAbilities;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
@@ -46,6 +47,7 @@ import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
+import noppes.npcs.scripted.event.player.PlayerEvent;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.Iterator;
@@ -63,6 +65,17 @@ public class ServerEventHandler {
         DBCPacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.STRENGTH), (EntityPlayerMP) event.player);
         DBCPacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.EFFECT_TIME), (EntityPlayerMP) event.player);
         DBCPacketHandler.Instance.sendToPlayer(new LoginInfo(), (EntityPlayerMP) event.player);
+        DBCAbilities.grantToggleAbilities(event.player);
+    }
+
+    @SubscribeEvent
+    public void onProfileChange(PlayerEvent.ProfileEvent.Changed event) {
+        if (!event.post)
+            return;
+        EntityPlayer player = (EntityPlayer) event.player.getMCEntity();
+        if (player == null || player.worldObj == null || player.worldObj.isRemote)
+            return;
+        DBCAbilities.grantToggleAbilities(player);
     }
 
     @SubscribeEvent
@@ -169,6 +182,10 @@ public class ServerEventHandler {
         Form form = dbcData.getForm();
 
         if (form == null) {
+            // Passive heat decay when not in any form (-5 per second)
+            if (dbcData.addonCurrentHeat > 0 && player.ticksExisted % 20 == 0) {
+                dbcData.setAddonHeat(Math.max(dbcData.addonCurrentHeat - 5, 0));
+            }
             return;
         }
 
@@ -211,7 +228,7 @@ public class ServerEventHandler {
         }
 
         if (form.mastery.hasKiDrain() && isInSurvival) {
-            if (player.ticksExisted % 10 == 0) {
+            if (player.ticksExisted % form.mastery.kiDrainTimer == 0) { // i changed the timer
                 double might = DBCUtils.calculateKiDrainMight(dbcData, player);
 
                 double cost = might * form.mastery.getKiDrain();
@@ -220,7 +237,7 @@ public class ServerEventHandler {
                     cost *= form.mastery.calculateMulti("kiDrain", formData.getCurrentLevel());
                 }
 
-                int actualCost = (int) Math.floor((-cost / form.mastery.kiDrainTimer) * 10);
+                int actualCost = (int) Math.floor(-cost);
 
                 dbcData.stats.restoreKiFlat(actualCost);
             }
@@ -230,18 +247,24 @@ public class ServerEventHandler {
             float heatToAdd = form.mastery.calculateMulti("heat", formData.getCurrentLevel());
             float newHeat = ValueUtil.clamp(dbcData.addonCurrentHeat + heatToAdd, 0, form.mastery.maxHeat);
 
-            if (newHeat == form.mastery.maxHeat) {
+            // Max heat reached: apply full pain and force descend
+            if (newHeat >= form.mastery.maxHeat) {
                 int painTime = (int) (form.mastery.painTime * 60f / 5f * form.mastery.calculateMulti("pain", formData.getCurrentLevel()));
-                dbcData.getRawCompound().setInteger("jrmcGyJ7dp", painTime);
-                newHeat = 0;
-                TransformController.handleFormDescend(player, -10);
+                dbcData.setAddonPain(painTime);
+                // Reset heat before descend so descend handler doesn't re-process it
+                dbcData.setAddonHeat(0);
+                TransformController.handleFormDescend(player, TransformController.FULL_DESCEND);
+                return;
             }
 
-            dbcData.getRawCompound().setFloat("addonCurrentHeat", newHeat);
+            dbcData.setAddonHeat(newHeat);
+        } else if (!form.mastery.hasHeat() && dbcData.addonCurrentHeat > 0 && player.ticksExisted % 20 == 0) {
+            // Passive heat decay while in a non-heated form (prevents exploit: swap to non-heated form to dodge heat)
+            dbcData.setAddonHeat(Math.max(dbcData.addonCurrentHeat - 5, 0));
         }
 
         if ((form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")) && DBCRace.isSaiyan(dbcData.Race) && !dbcData.hasTail()) {
-            TransformController.handleFormDescend(player, -10);
+            TransformController.handleFormDescend(player, TransformController.FULL_DESCEND);
         }
     }
 
@@ -286,4 +309,5 @@ public class ServerEventHandler {
             }
         }
     }
+
 }

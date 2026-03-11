@@ -1,23 +1,35 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
+import kamkeel.npcdbc.client.gui.component.SubGuiFormCustomStackable;
 import kamkeel.npcdbc.client.gui.component.SubGuiKaiokenDrain;
 import kamkeel.npcdbc.client.gui.component.SubGuiKaiokenMulti;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormCustomStackable;
 import kamkeel.npcdbc.data.form.FormStackable;
 import net.minecraft.client.gui.GuiButton;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcButtonYesNo;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.GuiNpcTextField;
+import noppes.npcs.client.gui.util.GuiScrollWindow;
+import noppes.npcs.client.gui.util.GuiSelectionListener;
+import noppes.npcs.client.gui.util.ISubGuiListener;
+import noppes.npcs.client.gui.util.ITextfieldListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 
 public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener, ITextfieldListener {
     private GuiNpcFormMenu menu;
     public Form form;
     public FormStackable stackable;
+    public FormCustomStackable customStackable;
     public GuiScrollWindow scrollWindow;
 
-    public SubGuiFormStackable(GuiNPCManageForms parent, Form form) {
+    public SubGuiFormStackable(IFormManagerGui parent, Form form) {
         this.form = form;
         this.stackable = form.stackable;
+        this.customStackable = form.customStackable;
 
         setBackground("menubg.png");
         xSize = 360;
@@ -44,7 +56,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
         addScrollableGui(0, scrollWindow);
 
-        int maxScroll = -20;
+        int maxScroll = 0;
         int guiLeft = 0;
         y = 2;
         scrollWindow.addLabel(new GuiNpcLabel(1, "display.vanillaStackable", 4, y + 5));
@@ -136,12 +148,25 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
             scrollWindow.getLabel(52).color = 0xffffff;
         }
 
+        y += 23;
+        scrollWindow.addLabel(new GuiNpcLabel(12, "display.customStackable", guiLeft + 4, y + 5));
+        scrollWindow.addButton(new GuiNpcButtonYesNo(12, guiLeft + 115, y, 50, 20, customStackable.customStackable));
+        scrollWindow.getLabel(12).color = 0xffffff;
+
+        if (customStackable.customStackable) {
+            maxScroll += 23;
+            y += 23;
+
+            scrollWindow.addLabel(new GuiNpcLabel(122, "display.formStacks", guiLeft + 4, y + 5, 0xffffff));
+            scrollWindow.addButton(new GuiNpcButton(122, guiLeft + 115, y, 50, 20, "gui.edit"));
+        }
+
         y += 46;
         maxScroll += 46;
 
         scrollWindow.addButton(new GuiNpcButton(9, guiLeft + 75, y, 90, 20, "general.noForm"));
         scrollWindow.addButton(new GuiNpcButton(91, guiLeft + 167, y, 20, 20, "X"));
-        scrollWindow.addLabel(new GuiNpcLabel(92, "Fusion", guiLeft + 4, y + 5));
+        scrollWindow.addLabel(new GuiNpcLabel(92, "dbc.se.fusion", guiLeft + 4, y + 5));
         scrollWindow.getButton(91).enabled = stackable.fusionID != -1;
         scrollWindow.getLabel(92).color = 0xffffff;
 
@@ -154,14 +179,14 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
         scrollWindow.addButton(new GuiNpcButton(6, guiLeft + 75, y, 90, 20, "general.noForm"));
         scrollWindow.addButton(new GuiNpcButton(61, guiLeft + 167, y, 20, 20, "X"));
-        scrollWindow.addLabel(new GuiNpcLabel(62, "Legendary", guiLeft + 4, y + 5));
+        scrollWindow.addLabel(new GuiNpcLabel(62, "dbc.se.legendary", guiLeft + 4, y + 5));
         scrollWindow.getButton(61).enabled = stackable.legendaryID != -1;
         scrollWindow.getLabel(62).color = 0xffffff;
         if (stackable.legendaryID != -1) {
             if (FormController.getInstance().has(stackable.legendaryID))
                 scrollWindow.getButton(6).setDisplayText(FormController.getInstance().get(stackable.legendaryID).getName());
         }
-        scrollWindow.addLabel(new GuiNpcLabel(63, "Config Multi", guiLeft + 197, y + 5));
+        scrollWindow.addLabel(new GuiNpcLabel(63, "stackable.configMulti", guiLeft + 197, y + 5));
         scrollWindow.addButton(new GuiNpcButtonYesNo(65, guiLeft + 260, y, 30, 20, stackable.useLegendaryConfig));
         if (!stackable.useLegendaryConfig) {
             scrollWindow.addTextField(new GuiNpcTextField(64, this, guiLeft + 293, y, 44, 20, String.valueOf(stackable.legendaryStrength)));
@@ -176,7 +201,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
         scrollWindow.addButton(new GuiNpcButton(7, guiLeft + 75, y, 90, 20, "general.noForm"));
         scrollWindow.addButton(new GuiNpcButton(71, guiLeft + 167, y, 20, 20, "X"));
-        scrollWindow.addLabel(new GuiNpcLabel(72, "Divine", guiLeft + 4, y + 5));
+        scrollWindow.addLabel(new GuiNpcLabel(72, "dbc.se.divine", guiLeft + 4, y + 5));
         scrollWindow.getButton(71).enabled = stackable.divineID != -1;
         scrollWindow.getLabel(72).color = 0xffffff;
 
@@ -184,7 +209,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
             if (FormController.getInstance().has(stackable.divineID))
                 scrollWindow.getButton(7).setDisplayText(FormController.getInstance().get(stackable.divineID).getName());
         }
-        scrollWindow.addLabel(new GuiNpcLabel(73, "Config Multi", guiLeft + 197, y + 5));
+        scrollWindow.addLabel(new GuiNpcLabel(73, "stackable.configMulti", guiLeft + 197, y + 5));
         scrollWindow.addButton(new GuiNpcButtonYesNo(75, guiLeft + 260, y, 30, 20, stackable.useDivineConfig));
         if (!stackable.useDivineConfig) {
             scrollWindow.addTextField(new GuiNpcTextField(74, this, guiLeft + 293, y, 44, 20, String.valueOf(stackable.divineStrength)));
@@ -199,7 +224,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
         scrollWindow.addButton(new GuiNpcButton(8, guiLeft + 75, y, 90, 20, "general.noForm"));
         scrollWindow.addButton(new GuiNpcButton(81, guiLeft + 167, y, 20, 20, "X"));
-        scrollWindow.addLabel(new GuiNpcLabel(82, "Majin", guiLeft + 4, y + 5));
+        scrollWindow.addLabel(new GuiNpcLabel(82, "display.majin", guiLeft + 4, y + 5));
         scrollWindow.getButton(81).enabled = stackable.majinID != -1;
         scrollWindow.getLabel(82).color = 0xffffff;
 
@@ -207,7 +232,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
             if (FormController.getInstance().has(stackable.majinID))
                 scrollWindow.getButton(8).setDisplayText(FormController.getInstance().get(stackable.majinID).getName());
         }
-        scrollWindow.addLabel(new GuiNpcLabel(83, "Config Multi", guiLeft + 197, y + 5));
+        scrollWindow.addLabel(new GuiNpcLabel(83, "stackable.configMulti", guiLeft + 197, y + 5));
         scrollWindow.addButton(new GuiNpcButtonYesNo(85, guiLeft + 260, y, 30, 20, stackable.useMajinConfig));
         if (!stackable.useMajinConfig) {
             scrollWindow.addTextField(new GuiNpcTextField(84, this, guiLeft + 293, y, 44, 20, String.valueOf(stackable.majinStrength)));
@@ -237,6 +262,9 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         }
         if (button.id == 5) {
             stackable.mysticStackable = button.getValue() == 1;
+        }
+        if (button.id == 12) {
+            customStackable.customStackable = button.getValue() == 1;
         }
 
 
@@ -285,6 +313,9 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         if (button.id == 101) {
             this.setSubGui(new SubGuiKaiokenMulti(form));
         }
+        if (button.id == 122) {
+            this.setSubGui(new SubGuiFormCustomStackable(form));
+        }
         initGui();
     }
 
@@ -324,14 +355,6 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
     }
 
     @Override
-    public void keyTyped(char c, int i) {
-        super.keyTyped(c, i);
-        if (i == 1)
-            menu.close();
-
-    }
-
-    @Override
     public void subGuiClosed(SubGuiInterface subgui) {
         if (subgui instanceof SubGuiSelectForm) {
             if (form != null) {
@@ -368,5 +391,6 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
     }
 
     public void save() {
+        menu.save();
     }
 }

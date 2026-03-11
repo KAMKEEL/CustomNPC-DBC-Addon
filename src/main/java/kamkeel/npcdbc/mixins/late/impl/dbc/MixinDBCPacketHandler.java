@@ -10,6 +10,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalByteRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CommonProxy;
+import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -34,7 +35,38 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static kamkeel.npcdbc.constants.DBCForm.*;
+import static kamkeel.npcdbc.constants.DBCForm.ArcoGod;
+import static kamkeel.npcdbc.constants.DBCForm.BlueEvo;
+import static kamkeel.npcdbc.constants.DBCForm.FinalForm;
+import static kamkeel.npcdbc.constants.DBCForm.FirstForm;
+import static kamkeel.npcdbc.constants.DBCForm.GodOfDestruction;
+import static kamkeel.npcdbc.constants.DBCForm.HumanBuffed;
+import static kamkeel.npcdbc.constants.DBCForm.HumanFullRelease;
+import static kamkeel.npcdbc.constants.DBCForm.HumanGod;
+import static kamkeel.npcdbc.constants.DBCForm.Kaioken;
+import static kamkeel.npcdbc.constants.DBCForm.Kaioken6;
+import static kamkeel.npcdbc.constants.DBCForm.MajinEvil;
+import static kamkeel.npcdbc.constants.DBCForm.MajinFullPower;
+import static kamkeel.npcdbc.constants.DBCForm.MajinGod;
+import static kamkeel.npcdbc.constants.DBCForm.MajinPure;
+import static kamkeel.npcdbc.constants.DBCForm.MasteredSuperSaiyan;
+import static kamkeel.npcdbc.constants.DBCForm.Mystic;
+import static kamkeel.npcdbc.constants.DBCForm.NamekFullRelease;
+import static kamkeel.npcdbc.constants.DBCForm.NamekGiant;
+import static kamkeel.npcdbc.constants.DBCForm.NamekGod;
+import static kamkeel.npcdbc.constants.DBCForm.SecondForm;
+import static kamkeel.npcdbc.constants.DBCForm.SuperForm;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyan;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyan2;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyan3;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyan4;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyanBlue;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyanG2;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyanG3;
+import static kamkeel.npcdbc.constants.DBCForm.SuperSaiyanGod;
+import static kamkeel.npcdbc.constants.DBCForm.ThirdForm;
+import static kamkeel.npcdbc.constants.DBCForm.UltimateForm;
+import static kamkeel.npcdbc.constants.DBCForm.UltraInstinct;
 
 @Mixin(value = DBCPacketHandlerServer.class, remap = false)
 public class MixinDBCPacketHandler {
@@ -81,14 +113,16 @@ public class MixinDBCPacketHandler {
                 st2.set((byte) 0);
                 statusKaiokenOn.set(true);
                 isMysticAvailable.set(true);
-                stus = data.setForm(GodOfDestruction, false);
+                data.setForm(GodOfDestruction, false);
                 if (!DBCConfig.MysticKaiokenOn) {
                     data.setForm(Kaioken, false);
                 }
+
                 if (statusUltraInstinctOn.get())
                     stus = data.setForm(UltraInstinct, false);
                 else
                     stus = JRMCoreH.StusEfcts(19, stus, nbt, false);
+
                 statusUltraInstinctOn.set(false);
             } else if (selected >= Kaioken && selected <= Kaioken6) {
                 int chosen = (selected - Kaioken + 1);
@@ -121,15 +155,16 @@ public class MixinDBCPacketHandler {
             } else {
                 if (statusMysticOn.get()) {
                     statusMysticOn.set(false);
-                    data.setForm(Mystic, false);
-
+                    stus = data.setForm(Mystic, false);
                 }
                 if (statusUltraInstinctOn.get()) {
                     statusUltraInstinctOn.set(false);
-                    data.setForm(UltraInstinct, false);
-
+                    stus = data.setForm(UltraInstinct, false);
                 }
-
+                if (statusGodOfDestructionOn.get()) {
+                    statusGodOfDestructionOn.set(false);
+                    stus = data.setForm(GodOfDestruction, false);
+                }
                 if (race == DBCRace.HUMAN || race == DBCRace.NAMEKIAN) {
                     playerAscendGod.set(false);
 
@@ -138,7 +173,6 @@ public class MixinDBCPacketHandler {
                         data.setSetting(1, 0);
                         st.set((byte) 0);
                         playerAscendNormal.set(true);
-
                     }
 
                     if (selected == (human ? HumanBuffed : NamekGiant)) {
@@ -146,7 +180,6 @@ public class MixinDBCPacketHandler {
                         st.set((byte) 0);
                         playerAscendNormal.set(false);
                     }
-
 
                     if (selected == (human ? HumanGod : NamekGod)) {
                         data.setSetting(1, 1);
@@ -365,7 +398,7 @@ public class MixinDBCPacketHandler {
 
         instance.setByte(key, value);
 
-        if(ConfigMain.AttributesEnabled){
+        if (ConfigMain.AttributesEnabled) {
             PlayerAttributeTracker tracker = AttributeController.getTracker(player);
             tracker.recalcAttributes(player);
         }

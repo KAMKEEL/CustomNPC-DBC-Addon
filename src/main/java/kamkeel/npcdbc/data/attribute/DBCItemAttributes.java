@@ -108,7 +108,7 @@ public class DBCItemAttributes {
             FormAttributes fa = form.customAttributes;
 
             // — flat attributes —
-            for (Map.Entry<String,Float> e : fa.getAllAttributes().entrySet()) {
+            for (Map.Entry<String, Float> e : fa.getAllAttributes().entrySet()) {
                 AttributeDefinition def = AttributeController.getAttribute(e.getKey());
                 if (def == null) continue;
                 PlayerAttribute inst = tracker.playerAttributes.getAttributeInstance(def);
@@ -117,7 +117,7 @@ public class DBCItemAttributes {
             }
 
             // — magic attributes —
-            for (Map.Entry<String,Map<Integer,Float>> tagEntry : fa.getAllMagic().entrySet()) {
+            for (Map.Entry<String, Map<Integer, Float>> tagEntry : fa.getAllMagic().entrySet()) {
                 String tag = tagEntry.getKey();
                 tagEntry.getValue().forEach((magicId, v) -> {
                     switch (tag) {

@@ -13,14 +13,14 @@ import org.lwjgl.input.Keyboard;
 
 public class GuiNpcFormMenu {
 
-    public final GuiNPCManageForms formsParent;
+    public final IFormManagerGui formsParent;
     public final SubGuiInterface parent;
     private GuiMenuTopButton[] topButtons;
     private int activeMenu;
     private final String originalName;
     private Form form;
 
-    public GuiNpcFormMenu(GuiNPCManageForms formsParent, SubGuiInterface parent, int activeMenu, Form form) {
+    public GuiNpcFormMenu(IFormManagerGui formsParent, SubGuiInterface parent, int activeMenu, Form form) {
         this.formsParent = formsParent;
         this.parent = parent;
         this.activeMenu = activeMenu;
@@ -37,10 +37,10 @@ public class GuiNpcFormMenu {
         GuiMenuTopButton display = new GuiMenuTopButton(-2, general.xPosition + general.getWidth(), guiTop - 17, "menu.display");
         GuiMenuTopButton mastery = new GuiMenuTopButton(-3, display.xPosition + display.getWidth(), guiTop - 17, "display.mastery");
         GuiMenuTopButton stackable = new GuiMenuTopButton(-4, mastery.xPosition + mastery.getWidth(), guiTop - 17, "display.stackable");
-        GuiMenuTopButton advanced   = new GuiMenuTopButton(-6, stackable.xPosition + stackable.getWidth(), guiTop - 17, "display.adv");
+        GuiMenuTopButton advanced = new GuiMenuTopButton(-6, stackable.xPosition + stackable.getWidth(), guiTop - 17, "display.adv");
         GuiMenuTopButton attributes = new GuiMenuTopButton(-7, advanced.xPosition + advanced.getWidth(), guiTop - 17, "display.attri");
 
-        this.topButtons = new GuiMenuTopButton[]{ general, display, mastery, stackable, advanced, attributes, close };
+        this.topButtons = new GuiMenuTopButton[]{general, display, mastery, stackable, advanced, attributes, close};
         GuiMenuTopButton[] var12 = this.topButtons;
         int var13 = var12.length;
 
@@ -81,8 +81,12 @@ public class GuiNpcFormMenu {
         if (this.parent != null) {
             GuiNpcTextField.unfocus();
             ((SubGuiInterface) this.parent).close();
-            DBCPacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT(), this.originalName));
+            save();
         }
+    }
+
+    public void save() {
+        DBCPacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT(), this.originalName));
     }
 
     public void mouseClicked(int i, int j, int k) {

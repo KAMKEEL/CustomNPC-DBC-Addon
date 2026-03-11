@@ -23,7 +23,7 @@ public abstract class MixinCommandKamkeel {
         registerCommand(new FormMasteryCommand());
     }
 
-    @Shadow
+    @Shadow(remap = false)
     public void registerCommand(CommandKamkeelBase command) {
     }
 }

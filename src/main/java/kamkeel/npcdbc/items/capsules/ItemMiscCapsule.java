@@ -34,9 +34,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static JinRyuu.JRMCore.JRMCoreH.getInt;
-import static JinRyuu.JRMCore.JRMCoreH.getString;
 import static JinRyuu.JRMCore.JRMCoreH.setInt;
-import static JinRyuu.JRMCore.JRMCoreH.setString;
 
 public class ItemMiscCapsule extends Item {
 
@@ -153,29 +151,29 @@ public class ItemMiscCapsule extends Item {
                 dbcData.stats.restoreAbsorption(100);
                 player.addChatComponentMessage(new ChatComponentText("§5Absorption Restored"));
             }
-        } else if (meta == EnumMiscCapsules.Strain.getMeta()){
-            if(getInt(player,"jrmcStrain") <= 0){
+        } else if (meta == EnumMiscCapsules.Strain.getMeta()) {
+            if (getInt(player, "jrmcStrain") <= 0) {
                 player.addChatComponentMessage(new ChatComponentText("§cYou are not strained"));
                 return itemStack;
             } else {
-                setInt(0,player,"jrmcStrain");
+                setInt(0, player, "jrmcStrain");
                 player.addChatComponentMessage(new ChatComponentText("§aYou are no longer strained!"));
             }
 
-        } else if(meta == EnumMiscCapsules.NoFuse.getMeta()){
-            if(Integer.parseInt(player.getEntityData().getCompoundTag("PlayerPersisted").getString("jrmcFuzion")) <= 0){
+        } else if (meta == EnumMiscCapsules.NoFuse.getMeta()) {
+            if (player.getEntityData().getCompoundTag("PlayerPersisted").getString("jrmcFuzion") == null || player.getEntityData().getCompoundTag("PlayerPersisted").getString("jrmcFuzion").matches(" ")) {
                 player.addChatComponentMessage(new ChatComponentText("§cYou do not have no fuse"));
                 return itemStack;
             } else {
-                setInt(0,player,"jrmcFuzion");
+                setInt(0, player, "jrmcFuzion");
                 player.addChatComponentMessage(new ChatComponentText("§aYou no longer have no fuse!"));
             }
 
-        } else if(meta == EnumMiscCapsules.Exhausted.getMeta()){
-            if(!DBCEffectController.getInstance().hasEffect(player, Effects.EXHAUSTED)){
+        } else if (meta == EnumMiscCapsules.Exhausted.getMeta()) {
+            if (!DBCEffectController.getInstance().hasEffect(player, Effects.EXHAUSTED)) {
                 player.addChatComponentMessage(new ChatComponentText("§cYou are not exhausted"));
             } else {
-                DBCEffectController.getInstance().removeEffect(player,Effects.EXHAUSTED);
+                DBCEffectController.getInstance().removeEffect(player, Effects.EXHAUSTED);
                 player.addChatComponentMessage(new ChatComponentText("§aYou are no longer exhausted!"));
             }
         }

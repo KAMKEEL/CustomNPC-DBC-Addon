@@ -7,7 +7,10 @@ import net.minecraft.nbt.NBTTagCompound;
 public class PlayerBonus implements IPlayerBonus {
 
     public String name;
-    public byte type; // Type 0 is Multi, Type 1 is Addition
+    // Type 0 = Percentage (additive stacking, applied as % of base)
+    // Type 1 = Flat (direct addition)
+    // Type 2 = Multiplicative (true percentage multiplication, each bonus compounds)
+    public byte type;
 
     public float strength = 0;
     public float dexterity = 0;
@@ -102,6 +105,10 @@ public class PlayerBonus implements IPlayerBonus {
     @Override
     public void setSpirit(float spirit) {
         this.spirit = spirit;
+    }
+
+    public float[] getValues() {
+        return new float[]{strength, dexterity, willpower, constituion, spirit};
     }
 
     public static PlayerBonus readBonusData(NBTTagCompound nbt) {

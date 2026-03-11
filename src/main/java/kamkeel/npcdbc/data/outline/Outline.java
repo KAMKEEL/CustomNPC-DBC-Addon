@@ -1,10 +1,14 @@
 package kamkeel.npcdbc.data.outline;
 
+import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.api.outline.IOutline;
-import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.controllers.OutlineController;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.controllers.TagController;
 import noppes.npcs.util.ValueUtil;
+
+import java.util.HashSet;
+import java.util.UUID;
 
 public class Outline implements IOutline {
     public int id = -1;
@@ -12,6 +16,8 @@ public class Outline implements IOutline {
 
     public Color innerColor = new Color(0x00ffff, 1), outerColor = new Color(0xffffff, 1);
     public float size = 1f, speed = 1f, noiseSize = 1f, colorSmoothness = 0.2f, colorInterpolation = 0.55f, pulsingSpeed = 0;
+
+    public HashSet<UUID> tagUUIDs = new HashSet<>();
 
     public Outline() {
     }
@@ -35,6 +41,8 @@ public class Outline implements IOutline {
 
         innerColor.writeToNBT(compound, "inner");
         outerColor.writeToNBT(compound, "outer");
+
+        TagController.writeTagUUIDs(compound, "TagUUIDs", tagUUIDs);
         return compound;
     }
 
@@ -54,6 +62,8 @@ public class Outline implements IOutline {
 
         innerColor.readFromNBT(compound, "inner");
         outerColor.readFromNBT(compound, "outer");
+
+        tagUUIDs = TagController.readTagUUIDs(compound, "TagUUIDs");
     }
 
     @Override

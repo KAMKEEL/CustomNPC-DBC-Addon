@@ -1,12 +1,17 @@
 package kamkeel.npcdbc.client.gui.component;
 
+import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.client.gui.GuiDBCDisplayColor;
 import kamkeel.npcdbc.client.gui.GuiModelDBC;
-import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.npc.KiWeaponData;
 import net.minecraft.client.gui.GuiButton;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiButtonBiDirectional;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.GuiNpcTextField;
+import noppes.npcs.client.gui.util.ITextfieldListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 import noppes.npcs.entity.EntityCustomNpc;
 import org.lwjgl.opengl.GL11;
 
@@ -34,7 +39,7 @@ public class SubGuiKiWeapon extends SubGuiInterface implements ITextfieldListene
         y += 3;
         addLabel(new GuiNpcLabel(1, "display.leftArm", guiLeft + 5, y + 5));
         getLabel(1).color = 0xffffff;
-        addButton(new GuiButtonBiDirectional(1, guiLeft + 80, y, 110, 20, new String[]{"gui.no", "Ki Blade", "Ki Scythe"}, left.weaponType));
+        addButton(new GuiButtonBiDirectional(1, guiLeft + 80, y, 110, 20, new String[]{"gui.no", "display.kiBlade", "display.kiScythe"}, left.weaponType));
         if (left.isEnabled()) {
             y += 22;
             addLabel(new GuiNpcLabel(2, "display.color", guiLeft + 5, y + 5));
@@ -94,7 +99,7 @@ public class SubGuiKiWeapon extends SubGuiInterface implements ITextfieldListene
         y += 50;
         addLabel(new GuiNpcLabel(11, "display.rightArm", guiLeft + 5, y + 5));
         getLabel(11).color = 0xffffff;
-        addButton(new GuiButtonBiDirectional(11, guiLeft + 80, y, 110, 20, new String[]{"gui.no", "Ki Blade", "Ki Scythe"}, right.weaponType));
+        addButton(new GuiButtonBiDirectional(11, guiLeft + 80, y, 110, 20, new String[]{"gui.no", "display.kiBlade", "display.kiScythe"}, right.weaponType));
         if (right.isEnabled()) {
             y += 22;
             addLabel(new GuiNpcLabel(12, "display.color", guiLeft + 5, y + 5));
@@ -152,7 +157,7 @@ public class SubGuiKiWeapon extends SubGuiInterface implements ITextfieldListene
         }
 
 
-        //    addButton(new GuiNpcButton(66, guiLeft + xSize - 24, guiTop + 3, 20, 20, "X"));
+        addButton(new GuiNpcButton(66, guiLeft + xSize - 24, guiTop + 3, 20, 20, "X"));
     }
 
 
@@ -251,6 +256,18 @@ public class SubGuiKiWeapon extends SubGuiInterface implements ITextfieldListene
             right.offsetZ = textfield.getFloat();
             getButton(15).enabled = right.offsetX != 0 || right.offsetY != 0 || right.offsetZ != 0;
         }
+    }
+
+    @Override
+    public void keyTyped(char c, int i) {
+        if (i == 1) {
+            if (hasSubGui())
+                getSubGui().close();
+            else
+                close();
+            return;
+        }
+        super.keyTyped(c, i);
     }
 
     public void drawScreen(int i, int j, float f) {

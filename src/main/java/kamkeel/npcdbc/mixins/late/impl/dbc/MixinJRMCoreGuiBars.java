@@ -17,6 +17,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import noppes.npcs.client.ClientCacheHandler;
+import noppes.npcs.client.renderer.AnimationHelper;
 import noppes.npcs.client.renderer.ImageData;
 import noppes.npcs.controllers.CustomEffectController;
 import noppes.npcs.controllers.data.CustomEffect;
@@ -123,8 +124,13 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
             int iconWidth = effect.getWidth();
             int iconHeight = effect.getHeight();
             int width = data.getTotalWidth();
-            int height = data.getTotalWidth();
+            int height = data.getTotalHeight();
 
+            if (data.isAnimated()) {
+                iconY += (int) (data.getCurrentFrameVOffset() * height);
+            } else if (effect.animated && effect.frameCount > 1) {
+                iconY += (int) (AnimationHelper.getFrameVOffset(height, effect.frameCount, effect.frametime) * height);
+            }
 
             func_152125_a(x + 2 + (JGConfigClientSettings.CLIENT_hud0 > 1 ? 50 : 0), y + w2 + 2, iconX, iconY, iconWidth, iconHeight, 16, 16, width, height);
         } else {

@@ -18,9 +18,13 @@ import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCAttribute;
+import kamkeel.npcdbc.constants.DBCDamageSource;
 import kamkeel.npcdbc.constants.DBCSettings;
+import kamkeel.npcdbc.constants.DBCStatistics;
 import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.data.DBCDamageCalc;
+import kamkeel.npcdbc.data.ability.CNPCScalingSet;
+import kamkeel.npcdbc.data.ability.DBCAbilityStats;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCStats;
@@ -28,6 +32,8 @@ import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.mixins.late.INPCStats;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
+import kamkeel.npcs.controllers.data.ability.type.AbilityDefend;
+import kamkeel.npcs.controllers.data.ability.type.AbilityGuard;
 import kamkeel.npcs.util.AttributeAttackUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -38,13 +44,40 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import noppes.npcs.config.ConfigMain;
+import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.scripted.CustomNPCsException;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static JinRyuu.JRMCore.JRMCoreH.*;
+import static JinRyuu.JRMCore.JRMCoreH.DBCRacialSkillMindCost;
+import static JinRyuu.JRMCore.JRMCoreH.DBCRacialSkillTPCost;
+import static JinRyuu.JRMCore.JRMCoreH.DBCSkillMindCost;
+import static JinRyuu.JRMCore.JRMCoreH.DBCSkillNames;
+import static JinRyuu.JRMCore.JRMCoreH.DBCSkillTPCost;
+import static JinRyuu.JRMCore.JRMCoreH.PlyrAttrbts;
+import static JinRyuu.JRMCore.JRMCoreH.PlyrSettingsB;
+import static JinRyuu.JRMCore.JRMCoreH.PlyrSettingsI;
+import static JinRyuu.JRMCore.JRMCoreH.PlyrSkills;
+import static JinRyuu.JRMCore.JRMCoreH.SklLvl;
+import static JinRyuu.JRMCore.JRMCoreH.SklLvlY;
+import static JinRyuu.JRMCore.JRMCoreH.SklLvl_KiBs;
+import static JinRyuu.JRMCore.JRMCoreH.StusEfcts;
+import static JinRyuu.JRMCore.JRMCoreH.difp;
+import static JinRyuu.JRMCore.JRMCoreH.getByte;
+import static JinRyuu.JRMCore.JRMCoreH.getInt;
+import static JinRyuu.JRMCore.JRMCoreH.getPlayerAttribute;
+import static JinRyuu.JRMCore.JRMCoreH.getString;
+import static JinRyuu.JRMCore.JRMCoreH.isInCreativeMode;
+import static JinRyuu.JRMCore.JRMCoreH.nbt;
+import static JinRyuu.JRMCore.JRMCoreH.pwr_cha;
+import static JinRyuu.JRMCore.JRMCoreH.pwr_ki;
+import static JinRyuu.JRMCore.JRMCoreH.pwr_sa;
+import static JinRyuu.JRMCore.JRMCoreH.setByte;
+import static JinRyuu.JRMCore.JRMCoreH.setInt;
+import static JinRyuu.JRMCore.JRMCoreH.stat;
+import static JinRyuu.JRMCore.JRMCoreH.weightPerc;
 
 // Created by Goatee
 public class DBCUtils {
@@ -59,8 +92,16 @@ public class DBCUtils {
     // lastSetDamage works with player's DBCDamagedEvent
     public static Float npcLastSetDamage = null;
     public static DBCDamageCalc lastSetDamage = null;
+    /** Pre-calculated attribute damage (with crit) for vanilla/modded mob targets. Set in LivingAttackEvent, consumed in damageEntity. */
+    public static Float entityLastSetDamage = null;
 
     public static boolean damageEntityCalled = false;
+    public static boolean abilityDamageHandled = false;
+    public static Float abilityDamageAmount = null; // Actual ability damage for player script events
+    /** True while inside EntityNPCInterface.attackEntityFrom(), where Guard is already applied. */
+    public static boolean insideAttackEntityFrom = false;
+    /** Pre-calculated DBC attack damage from the current attacker (set at HEAD of attackEntityFrom). */
+    public static Float preCalculatedAttackerDamage = null;
 
     public static String[] CONFIG_UI_NAME;
     public static String[] cCONFIG_UI_NAME;
@@ -294,13 +335,22 @@ public class DBCUtils {
                 }
 
                 float defense = lf ? 0 : def;
-                float defensePen2 = ((defense * defensePenetration) * 0.01F);
+                float rawDamage = dbcA;
                 double e = (double) (1.0F - 0.03F * (float) t);
-                String ss = "A=" + defense + (defensePen2 > 0 ? "-" + defensePenetration + "%" : "") + ", SEM=" + (1.0F - 0.03F * (float) t);
-                dbcA = (float) ((double) (dbcA - (defense - defensePen2)) * e);
+                String ss = "A=" + defense + (defensePenetration > 0 ? "-" + defensePenetration + "%" : "") + ", SEM=" + (1.0F - 0.03F * (float) t);
+
+                // Damage after full defense reduction
+                dbcA = (float) ((double) (dbcA - defense) * e);
                 dbcA = dbcA < 1 ? 1 : dbcA;
-                if ((double) ((float) (dbcA * defensePenetration) * 0.01F) * e > (double) dbcA) {
-                    dbcA = (float) ((double) ((float) (dbcA * defensePenetration) * 0.01F) * e);
+
+                // Defense Penetration: conditional minimum damage guarantee
+                // Only activates when defense > damage (normal formula gives minimum 1)
+                // Guarantees at least defPen% of raw damage gets through
+                if (defensePenetration > 0) {
+                    float guaranteedDamage = (float) ((float) (rawDamage * defensePenetration) * 0.01F * e);
+                    if (guaranteedDamage > dbcA) {
+                        dbcA = guaranteedDamage;
+                    }
                 }
 
                 dbcA = (float) ((double) dbcA / per);
@@ -323,14 +373,14 @@ public class DBCUtils {
 
                 dbcA = calculateDamageNegation(player, dbcA);
 
-                if(ConfigMain.AttributesEnabled){
-                    if(dse){
+                if (ConfigMain.AttributesEnabled) {
+                    if (dse) {
                         EntityPlayer attackingPlayer = (EntityPlayer) s.getEntity();
                         EntityPlayer defendingPlayer = (EntityPlayer) Player;
                         dbcA = AttributeAttackUtil.calculateDamagePlayerToPlayer(attackingPlayer, defendingPlayer, dbcA);
                     }
                 }
-                
+
                 float hpRemaining = currentHP - dbcA;
                 float newHP;
                 if (dse) {
@@ -504,29 +554,20 @@ public class DBCUtils {
                     enduranceReduction = (double) (1.0F - 0.03F * (float) enduranceLevel);
                 }
 
-                float defensePenetrated = 0;
-                // Default Penetration of the NPC
-                // By default all entities are 10. Players have their own
-                // default penetration skill. Based on if they are in Legendary
-                int npcDefensePenetration = dbcStats.getDefensePenetration();
-                if (dbcStats.hasDefensePenetration()) {
-                    // Defense Penetrated = RawDefense * (defensePen * 0.01%)
-                    // Defense Pen of 10 --> RawDefense * 0.1 -- 10% Penetrated
-                    // Defense Pen of 50 --> RawDefense * 0.5 -- 50% Penetrated
-                    // Defense Pen of 100 --> RawDefense * 1 -- 100% Penetrated
-                    defensePenetrated = ((float) (rawDefense * npcDefensePenetration) * 0.01F);
-                }
-
-                // Damage after Reduction
-                damageAmount = (float) ((damageAmount - rawDefense - defensePenetrated) * enduranceReduction);
+                // Damage after Defense Reduction (full defense applied)
+                damageAmount = (float) ((damageAmount - rawDefense) * enduranceReduction);
 
                 // Prevents Negative Damages
                 damageAmount = Math.max(damageAmount, 1);
 
+                // Defense Penetration: conditional minimum damage guarantee
+                // Only activates when defense > damage (normal formula gives minimum 1)
+                // Guarantees at least defPen% of raw damage gets through
                 if (dbcStats.hasDefensePenetration()) {
-                    // Guarantee Damage is dealt with Defense Penetration
-                    if ((double) ((float) (rawDamage * npcDefensePenetration) * 0.01F) * enduranceReduction > (double) damageAmount) {
-                        damageAmount = (float) ((double) ((float) (rawDamage * npcDefensePenetration) * 0.01F) * enduranceReduction);
+                    int npcDefensePenetration = dbcStats.getDefensePenetration();
+                    float guaranteedDamage = (float) ((float) (rawDamage * npcDefensePenetration) * 0.01F * enduranceReduction);
+                    if (guaranteedDamage > damageAmount) {
+                        damageAmount = guaranteedDamage;
                     }
                 }
 
@@ -547,8 +588,11 @@ public class DBCUtils {
 
         int playerHP = getInt(player, "jrmcBdy");
 
+        // Read KO flag from damage calc before clearing (set by player's Friendly Fist in calculateDBCDamageFromSource)
+        boolean koFromCalc = false;
         if (lastSetDamage != null) {
             damage = Math.max(lastSetDamage.damage, 0);
+            koFromCalc = lastSetDamage.ko;
             lastSetDamage = null;
         }
 
@@ -558,15 +602,30 @@ public class DBCUtils {
         float reducedHP = playerHP - effectiveDamage;
         float newHP = reducedHP;
 
-        boolean friendlyFist = dbcStats.isFriendlyFist();
+        boolean friendlyFist = dbcStats != null && dbcStats.isFriendlyFist();
 
         if (!isInCreativeMode(player)) {
             if (friendlyFist) {
                 int ko = getInt(player, "jrmcHar4va");
                 newHP = Math.max(reducedHP, 20);
                 if (ko <= 0 && newHP == 20) {
-                    if(!DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer(player), source))){
+                    if (!DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer(player), source))) {
                         setInt((int) dbcStats.getFriendlyFistAmount(), player, "jrmcHar4va");
+                        setByte(race == 4 ? (state < 4 ? state : 4) : 0, player, "jrmcState");
+                        setByte((int) 0, player, "jrmcState2");
+                        setByte((int) 0, player, "jrmcRelease");
+                        setInt((int) 0, player, "jrmcStamina");
+                        StusEfcts(19, statusEffects, (EntityPlayer) player, false);
+                    }
+                }
+            } else if (koFromCalc) {
+                // Player's own Friendly Fist setting triggered KO in calculateDBCDamageFromSource
+                // Apply the same KO logic with DBC's default KO duration (6 seconds)
+                int ko = getInt(player, "jrmcHar4va");
+                newHP = Math.max(reducedHP, 20);
+                if (ko <= 0 && newHP == 20) {
+                    if (!DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer(player), source))) {
+                        setInt(6, player, "jrmcHar4va");
                         setByte(race == 4 ? (state < 4 ? state : 4) : 0, player, "jrmcState");
                         setByte((int) 0, player, "jrmcState2");
                         setByte((int) 0, player, "jrmcRelease");
@@ -577,6 +636,86 @@ public class DBCUtils {
             }
             setInt(newHP, player, "jrmcBdy");
         }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // SHARED DAMAGE APPLICATION (used by DBCAbilityExtender + DBCEnergyExtender)
+    // ═══════════════════════════════════════════════════════════════════
+
+    /**
+     * Apply DBC damage to a player target using the ability's configured ignore flags.
+     * Shared by both {@code DBCAbilityExtender} and {@code DBCEnergyExtender}.
+     */
+    public static void applyDBCDamageToPlayer(EntityPlayer player, float damage, DBCAbilityStats stats,
+                                               DamageSource source, EntityLivingBase attacker) {
+        DBCDamageCalc damageCalc = calculateDBCStatDamage(player, (int) damage, stats, source);
+        damageCalc.damage = applyGuardReduction(player, attacker, source, damageCalc.damage);
+
+        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(
+            player, damageCalc, source, DBCDamageSource.NPC
+        );
+        if (DBCEventHooks.onDBCDamageEvent(damagedEvent)) {
+            return;
+        }
+
+        damageCalc.damage = damagedEvent.damage;
+        damageCalc.stamina = damagedEvent.getStaminaReduced();
+        damageCalc.ki = damagedEvent.getKiReduced();
+        damageCalc.ko = damagedEvent.getFinalKO();
+
+        lastSetDamage = damageCalc;
+        damageCalc.processExtras();
+
+        doDBCDamage(player, damageCalc.damage, stats, source);
+    }
+
+    /**
+     * Apply DBC damage using default defender reduction (player's own DBC settings).
+     * Shared by both {@code DBCAbilityExtender} and {@code DBCEnergyExtender}.
+     */
+    public static void applyDBCDamageToPlayerDefault(EntityPlayer player, float damage, DBCAbilityStats stats,
+                                                      DamageSource source, EntityLivingBase attacker) {
+        DBCDamageCalc damageCalc = calculateDBCDamageFromSource(player, damage, source);
+        damageCalc.damage = applyGuardReduction(player, attacker, source, damageCalc.damage);
+
+        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(
+            player, damageCalc, source, DBCDamageSource.PLAYER
+        );
+        if (DBCEventHooks.onDBCDamageEvent(damagedEvent)) {
+            return;
+        }
+
+        damageCalc.damage = damagedEvent.damage;
+        damageCalc.stamina = damagedEvent.getStaminaReduced();
+        damageCalc.ki = damagedEvent.getKiReduced();
+        damageCalc.ko = damagedEvent.getFinalKO();
+
+        lastSetDamage = damageCalc;
+        damageCalc.processExtras();
+
+        // null stats = use player's own DBC settings
+        doDBCDamage(player, damageCalc.damage, null, source);
+    }
+
+    /**
+     * Apply Guard ability reduction if the defender has an active Guard.
+     */
+    public static float applyGuardReduction(EntityPlayer player, EntityLivingBase attacker,
+                                             DamageSource source, float damage) {
+        if (attacker == null) {
+            return damage;
+        }
+
+        PlayerData pData = PlayerData.get(player);
+        if (pData == null || pData.abilityData == null) {
+            return damage;
+        }
+
+        AbilityDefend defend = pData.abilityData.getActiveDefend();
+        if (defend instanceof AbilityGuard) {
+            return defend.onDefend(attacker, source, damage);
+        }
+        return damage;
     }
 
     public static float calculateDamageNegation(EntityPlayer player, float originalDamage) {
@@ -595,135 +734,398 @@ public class DBCUtils {
 
     public static float calculateAttackStat(EntityPlayer attacker, float eventDamage, DamageSource source) {
         float dam = eventDamage;
-        DBCData data = DBCData.get(attacker);
-        if (data.isFusionSpectator())
+        DBCPlayerContext ctx = DBCPlayerContext.create(attacker);
+        if (ctx.isFusionSpectator())
             return 0;
         if (source.getEntity() != null) {
-            int powerType = data.Powertype;
-            if (!JRMCoreH.isPowerTypeKi(powerType))
+            if (!ctx.isPowerTypeKi())
                 return eventDamage;
 
             boolean ultraInstinctCounter = source.getDamageType().equals("UICounter");
-            boolean Melee = ultraInstinctCounter || (source.getSourceOfDamage() == attacker && source.getDamageType().equals("player"));
+            boolean isMelee = ultraInstinctCounter || (source.getSourceOfDamage() == attacker && source.getDamageType().equals("player"));
             boolean energyAtt = source.getDamageType().equals("EnergyAttack") && source.getSourceOfDamage() instanceof EntityEnergyAtt;
-            boolean Projectile = source.getSourceOfDamage() instanceof IProjectile && !energyAtt;
+            boolean isProjectile = source.getSourceOfDamage() instanceof IProjectile && !energyAtt;
 
-            int race = data.Race;
-            int state = data.State;
-            int state2 = data.State2;
-            int classID = data.Class;
-            double release = data.Release;
-            int currentEnergy = data.Ki;
-            int currentStamina = data.Stamina;
-            String sklx = data.RacialSkills;
-            int resrv = data.ArcReserve;
-            String absorption = data.MajinAbsorptionData;
-            int[] PlyrAttrbts = data.stats.getAllAttributes();
-            String[] PlyrSkills = data.Skills.split(",");
-            String statusEffects = data.StatusEffects;
-            boolean mj = JRMCoreH.StusEfcts(12, statusEffects);
-            boolean lg = JRMCoreH.StusEfcts(14, statusEffects);
-            boolean kk = JRMCoreH.StusEfcts(5, statusEffects);
-            boolean mc = JRMCoreH.StusEfcts(13, statusEffects);
-            boolean mn = JRMCoreH.StusEfcts(19, statusEffects);
-            boolean gd = JRMCoreH.StusEfcts(20, statusEffects);
-            boolean c = JRMCoreH.StusEfcts(10, statusEffects) || JRMCoreH.StusEfcts(11, statusEffects);
+            // Stamina cost uses base (unmodified) STR
+            int baseSTR = ctx.attributes[DBCAttribute.Strength];
+            int baseMeleeStat = JRMCoreH.stat(0, attacker, 0, baseSTR, 0.0f);
+            int staminaCost = (int) (baseMeleeStat * 0.1f);
 
-            int STR = PlyrAttrbts[DBCAttribute.Strength];
-            int ml = JRMCoreH.stat(0, attacker, 0, STR, 0.0f);
-            int staminaCost = (int)(ml * 0.1f);
+            int modifiedSTR = ctx.getModifiedAttribute(DBCAttribute.Strength);
+            if (isMelee) {
+                // Base melee damage
+                int meleeStat = stat(attacker, 0, ctx.powerType, 0, modifiedSTR, ctx.race, ctx.classID, 0.0F);
+                double baseMeleeDmg = (double) meleeStat * ctx.release * 0.01 * weightPerc(0, attacker);
 
-            STR = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, DBCAttribute.Strength, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
-            if (Melee) {
-                // Calculate base Melee damage (curAtr)
-                int dmg = JRMCoreH.stat(attacker, 0, powerType, 0, STR, race, classID, 0.0F);
-                double curAtr = (double) dmg * release * 0.01 * (double) JRMCoreH.weightPerc(0, attacker);
+                // Ki bonuses
+                int kiFistBonus = computeKiFistBonus(ctx, false);
+                int kiWeaponDamage = computeKiWeaponBonus(ctx, false);
 
-                int sklkf = JRMCoreH.SklLvl(12, PlyrSkills);
-                boolean sklkfe = !JRMCoreH.PlyrSettingsB(attacker, DBCSettings.KI_FIST);
-                int sklks = 0;
-                if (sklkf > 0 && sklkfe) {
-                    int SPI = PlyrAttrbts[5];
-                    int statSPI = JRMCoreH.stat(attacker, 5, powerType, 5, SPI, race, classID, JRMCoreH.SklLvl_KiBs(PlyrSkills, powerType));
-                    sklks = (int) ((double) sklkf * 0.0025 * (double) statSPI * release * 0.01);
-                    if (sklks > 0) {
-                        int cstF = (int) ((double) sklks * DBCConfig.cnfKFc);
-                        if (currentEnergy > cstF) {
-                            sklks = (int) ((double) sklks * DBCConfig.cnfKFd);
-                        } else {
-                            sklks = 0;
-                        }
-                    }
-                }
-
-                // Calculate Ki Weapon damage
-                boolean sklkfe2 = JRMCoreH.PlyrSettingsB(attacker, DBCSettings.KI_WEAPON_TOGGLE);
-                boolean sklkfe3 = JRMCoreH.PlyrSettingsI(attacker, DBCSettings.KI_WEAPON_TOGGLE, 1);
-                int skf = JRMCoreH.SklLvl(15, PlyrSkills);
-                boolean hasKiWeaponEnabled = sklkf > 0 && skf > 0 && sklkfe2;
-                int kiWeaponDamage = 0;
-                if (hasKiWeaponEnabled) {
-                    int kiWeaponCost = 0;
-                    int WIL = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 3, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
-                    int dmg1 = (int) ((float) JRMCoreH.stat(attacker, 3, powerType, 4, WIL, race, classID, 0.0F) * 0.01F);
-                    float data1 = (float) ((int) (0.005 * (double) dmg1 * release * 0.01 * (sklkfe3 ? DBCConfig.cnfKCsd : DBCConfig.cnfKBld) * JRMCoreConfig.dat5699));
-                    float data2 = (float) ((int) (0.005 * (double) dmg1 * release * 0.01 * (sklkfe3 ? DBCConfig.cnfKCsc : DBCConfig.cnfKBlc)));
-                    kiWeaponCost += (int)(data2 / ((sklkf > 1) ? (sklkf * 0.3f + 1.0f) : 1.0f));
-                    kiWeaponDamage += (int)(sklkf * data1);
-
-                    dmg1 = (int)(JRMCoreH.stat((Entity)attacker, 3, powerType, 4, WIL, race, classID, 0.0f) * 0.01f);
-                    data1 = (float) (dmg1 * release * 0.01F * JRMCoreH.weightPerc(1, attacker) * (sklkfe3 ? DBCConfig.cnfKCsd : DBCConfig.cnfKBld) * JRMCoreConfig.dat5700);
-                    data2 = (float) (dmg1 * release * 0.01F * JRMCoreH.weightPerc(1, attacker) * (sklkfe3 ? DBCConfig.cnfKCsc : DBCConfig.cnfKBlc));
-                    kiWeaponCost += (int)(data2 / ((skf > 1) ? (skf * 0.3f + 1.0f) : 1.0f));
-                    kiWeaponDamage += (int)(skf * data1);
-
-                    if (kiWeaponCost > 0 && currentEnergy >= kiWeaponCost) {
-                        dam += kiWeaponDamage;
-                    }
-                }
-
-                dam += (float)(curAtr + sklks);
-            } else if (Projectile) {
+                dam += (float) baseMeleeDmg + kiFistBonus + kiWeaponDamage;
+            } else if (isProjectile) {
                 staminaCost = 1;
-                int WIL = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 3, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
-                int dmg3 = (int) ((float) JRMCoreH.stat(attacker, 3, powerType, 4, WIL, race, classID, 0.0F) * 0.01F);
-                int skf = JRMCoreH.SklLvl(15, PlyrSkills);
 
-                // Calculate base projectile damage with Ki Infuse bonus
-                float kiInfuseBonus = (float) (dmg3 * release * 0.005F * skf * JRMCoreH.weightPerc(1, attacker));
-                dam += kiInfuseBonus;
-                if (skf > 0) {
-                    int kiCost = (int) (dam * 0.005 * skf * DBCConfig.cnfKIc);
-                    if (currentEnergy >= kiCost) {
-                        dam = (float) (dam * DBCConfig.cnfKId);
-                    } else {
-                        // Not enough Ki - remove the Ki Infuse bonus
-                        dam -= kiInfuseBonus;
-                    }
-                }
+                // Ki Infuse bonus
+                float[] infuseResult = computeKiInfuseBonus(ctx, false);
+                float kiInfuseBonus = infuseResult[0];
+                float kiInfuseMultiplier = infuseResult[1];
+
+                dam = (dam + kiInfuseBonus) * kiInfuseMultiplier;
             }
 
             if (ultraInstinctCounter) {
-                dam *= (float) JGConfigUltraInstinct.CONFIG_UI_ATTACK_DAMAGE_PERCENTAGE[JRMCoreH.state2UltraInstinct(!mn, (byte) state2)] * 0.01F;
+                int uiLevel = JRMCoreH.state2UltraInstinct(!ctx.isUltraInstinct, (byte) ctx.state2);
+                dam *= (float) JGConfigUltraInstinct.CONFIG_UI_ATTACK_DAMAGE_PERCENTAGE[uiLevel] * 0.01F;
             }
 
             dam = ((dam <= 0.0f) ? 1.0f : dam);
-            int UI_cost = 0;
-            if (Melee && ultraInstinctCounter) {
-                UI_cost = (int)getUltraInstinctCounterStaminaCost(attacker, (byte)JRMCoreH.state2UltraInstinct(!mn, (byte)state2));
+            int uiCost = 0;
+            if (isMelee && ultraInstinctCounter) {
+                uiCost = (int) getUltraInstinctCounterStaminaCost(attacker, (byte) JRMCoreH.state2UltraInstinct(!ctx.isUltraInstinct, (byte) ctx.state2));
             }
 
-            staminaCost = (int)(staminaCost * JRMCoreConfig.cnfPnchc + UI_cost);
-            if(currentStamina <= staminaCost || dam == 1.0f) {
+            staminaCost = (int) (staminaCost * JRMCoreConfig.cnfPnchc + uiCost);
+            if (ctx.currentStamina <= staminaCost || dam == 1.0f) {
                 dam = eventDamage;
             }
         }
         return dam;
     }
 
-    private static float getUltraInstinctCounterStaminaCost(final EntityPlayer targetPlayer, final byte targetState2) {
-        return getUltraInstinctStaminaCost(targetPlayer, targetState2, (float)JGConfigUltraInstinct.CONFIG_UI_DODGE_STAMINA_COST[targetState2]);
+    /**
+     * Calculates the outgoing ability damage for a player caster based on their DBC stats.
+     * Supports five damage algorithms:
+     * <ul>
+     *   <li><b>DEFAULT (0)</b> — returns 0; caller uses the ability's base damage parameter</li>
+     *   <li><b>FLAT (1)</b> — returns the configured flat damage value directly</li>
+     *   <li><b>MELEE (2)</b> — DBC melee formula: chosen attribute through Melee stat type,
+     *       plus Ki Fist bonus (from SPI) and Ki Weapon bonus (from WIL)</li>
+     *   <li><b>KI (3)</b> — DBC ki formula: chosen attribute through EnergyPower stat type,
+     *       plus Ki Infuse bonus (from WIL)</li>
+     *   <li><b>CNPC (4)</b> — Custom formula: attribute's natural stat type * release * weight * multiplier,
+     *       no DBC skill bonuses</li>
+     * </ul>
+     * <p>
+     * {@code usePlayerSettings} controls whether DBC skill toggles (Ki Fist, Ki Weapon, Ki Infuse)
+     * are checked. When false, all bonuses are forced on (if skill level > 0). When true,
+     * player toggle settings and ki resource checks are respected (but ki is never deducted —
+     * abilities use their own cost system via {@code onAbilityStart}).
+     *
+     * @param caster The player casting the ability
+     * @param stats  The ability's DBC stats
+     * @return Computed outgoing damage, or 0 for DEFAULT (caller should use ability base damage)
+     */
+    public static float calculateAbilityAttackDamage(EntityPlayer caster, IDBCStats stats) {
+        if (!(stats instanceof DBCAbilityStats))
+            return 0;
+
+        DBCAbilityStats abilityStats = (DBCAbilityStats) stats;
+        int damageType = abilityStats.playerDamageType;
+
+        if (damageType == 0) return 0;                       // DEFAULT — caller uses ability's base damage
+        if (damageType == 1) return abilityStats.flatDamage;  // FLAT
+
+        DBCPlayerContext ctx = DBCPlayerContext.create(caster);
+        if (ctx.isFusionSpectator() || !ctx.isPowerTypeKi())
+            return 0;
+
+        float damage = 0;
+
+        if (damageType == 2) {
+            damage = calculateMeleeAbilityDamage(ctx, abilityStats);
+        } else if (damageType == 3) {
+            damage = calculateKiAbilityDamage(ctx, abilityStats);
+        } else if (damageType == 4) {
+            damage = calculateCNPCAbilityDamage(ctx, abilityStats);
+        }
+
+        return Math.max(damage, 1.0f);
     }
+
+    /**
+     * MELEE FORMULA: Chosen attribute through Melee stat type
+     * + Ki Fist bonus (from SPI) + Ki Weapon bonus (from WIL).
+     */
+    private static float calculateMeleeAbilityDamage(DBCPlayerContext ctx, DBCAbilityStats stats) {
+        int scalingAttribute = stats.scalingAttribute;
+        int modifiedAttr = ctx.getModifiedAttribute(scalingAttribute);
+
+        int baseStat = stat(ctx.player, scalingAttribute, ctx.powerType, DBCStatistics.Melee,
+            modifiedAttr, ctx.race, ctx.classID, 0.0F);
+        double baseDmg = (double) baseStat * ctx.release * 0.01 * weightPerc(0, ctx.player);
+
+        int kiFistBonus = computeKiFistBonus(ctx, false);
+        int kiWeaponDamage = computeKiWeaponBonus(ctx, false);
+
+        return (float) (baseDmg + kiFistBonus + kiWeaponDamage);
+    }
+
+    /**
+     * KI FORMULA: Chosen attribute through EnergyPower stat type
+     * + Ki Infuse bonus (from WIL, using Ki Weapon skill level).
+     */
+    private static float calculateKiAbilityDamage(DBCPlayerContext ctx, DBCAbilityStats stats) {
+        int scalingAttribute = stats.scalingAttribute;
+        int modifiedAttr = ctx.getModifiedAttribute(scalingAttribute);
+
+        int baseStat = (int) (stat(ctx.player, scalingAttribute, ctx.powerType, DBCStatistics.EnergyPower,
+            modifiedAttr, ctx.race, ctx.classID, 0.0F) * 0.01F);
+        float baseDmg = (float) ((double) baseStat * ctx.release * 0.01 * weightPerc(1, ctx.player));
+
+        float[] infuseResult = computeKiInfuseBonus(ctx, false);
+        float kiInfuseBonus = infuseResult[0];
+        float kiInfuseMultiplier = infuseResult[1];
+
+        return (baseDmg + kiInfuseBonus) * kiInfuseMultiplier;
+    }
+
+    /**
+     * CNPC FORMULA: Multi-set (1-3 sets summed). Per set: stat(attr, statType)
+     * * multiplier * weight, plus optional Ki bonuses, then sum * release.
+     */
+    private static float calculateCNPCAbilityDamage(DBCPlayerContext ctx, DBCAbilityStats stats) {
+        float totalDamage = 0;
+        int setCount = stats.getScalingSetCount();
+
+        for (int s = 0; s < setCount; s++) {
+            CNPCScalingSet set = stats.getSet(s);
+            totalDamage += calculateScalingSetValue(ctx, set);
+        }
+
+        return totalDamage * (float) (ctx.release * 0.01);
+    }
+
+    /**
+     * Calculate a single CNPC scaling set's value.
+     * Shared by ability damage (type 4), barrier health scaling, and preview.
+     */
+    static float calculateScalingSetValue(DBCPlayerContext ctx, CNPCScalingSet set) {
+        int modAttr = ctx.getModifiedAttribute(set.attribute);
+
+        float value;
+        if (set.statEnabled) {
+            value = stat(ctx.player, set.attribute, ctx.powerType, set.statType, modAttr, ctx.race, ctx.classID, 0.0F);
+        } else {
+            value = modAttr;
+        }
+
+        int weightType = isPhysicalStat(set.statType) ? 0 : 1;
+        float setDmg = value * set.multiplier * (float) weightPerc(weightType, ctx.player);
+
+        if (set.kiFist) {
+            setDmg += computeKiFistBonus(ctx, false);
+        }
+        if (set.kiWeapon) {
+            setDmg += computeKiWeaponBonus(ctx, false);
+        }
+        if (set.kiInfuse) {
+            float[] infuseResult = computeKiInfuseBonus(ctx, false);
+            setDmg *= infuseResult[1];
+        }
+
+        return setDmg;
+    }
+
+    /**
+     * Whether a stat type uses physical weight (type 0) vs energy weight (type 1).
+     */
+    private static boolean isPhysicalStat(int statType) {
+        return statType == DBCStatistics.Melee || statType == DBCStatistics.Body || statType == DBCStatistics.Stamina;
+    }
+
+    /**
+     * Compute Ki Fist bonus damage (SPI through EnergyPool).
+     * When forced=true, skips player toggle/cost checks (just requires skill level > 0).
+     */
+    static int computeKiFistBonus(DBCPlayerContext ctx, boolean forced) {
+        int kiFistSkillLvl = SklLvl(12, ctx.skills);
+        boolean kiFistActive;
+        if (forced) {
+            kiFistActive = kiFistSkillLvl > 0;
+        } else {
+            kiFistActive = kiFistSkillLvl > 0 && !PlyrSettingsB(ctx.player, DBCSettings.KI_FIST);
+        }
+        if (!kiFistActive) return 0;
+
+        int SPI = ctx.attributes[DBCAttribute.Spirit];
+        int statSPI = stat(ctx.player, DBCAttribute.Spirit, ctx.powerType, DBCStatistics.EnergyPool,
+            SPI, ctx.race, ctx.classID, SklLvl_KiBs(ctx.skills, ctx.powerType));
+        int kiFistBonus = (int) (kiFistSkillLvl * 0.0025 * statSPI * ctx.release * 0.01);
+        if (kiFistBonus <= 0) return 0;
+
+        if (!forced) {
+            int cost = (int) (kiFistBonus * DBCConfig.cnfKFc);
+            if (ctx.currentEnergy <= cost) return 0;
+        }
+        return (int) (kiFistBonus * DBCConfig.cnfKFd);
+    }
+
+    /**
+     * Compute Ki Weapon bonus damage (WIL through EnergyPower).
+     * When forced=true, skips player toggle/cost checks and uses blade mode.
+     */
+    static int computeKiWeaponBonus(DBCPlayerContext ctx, boolean forced) {
+        int kiFistSkillLvl = SklLvl(12, ctx.skills);
+        int kiWeaponSkillLvl = SklLvl(15, ctx.skills);
+        boolean kiWeaponActive;
+        if (forced) {
+            kiWeaponActive = kiFistSkillLvl > 0 && kiWeaponSkillLvl > 0;
+        } else {
+            kiWeaponActive = kiFistSkillLvl > 0 && kiWeaponSkillLvl > 0
+                && PlyrSettingsB(ctx.player, DBCSettings.KI_WEAPON_TOGGLE);
+        }
+        if (!kiWeaponActive) return 0;
+
+        boolean isSword = !forced && PlyrSettingsI(ctx.player, DBCSettings.KI_WEAPON_TOGGLE, 1);
+
+        int WIL = ctx.getModifiedAttribute(DBCAttribute.Willpower);
+
+        // First component (skill-level scaled)
+        int energyPowerStat = (int) (stat(ctx.player, DBCAttribute.Willpower, ctx.powerType, DBCStatistics.EnergyPower,
+            WIL, ctx.race, ctx.classID, 0.0F) * 0.01F);
+        float scaledDmg = (float) ((int) (0.005 * energyPowerStat * ctx.release * 0.01
+            * (isSword ? DBCConfig.cnfKCsd : DBCConfig.cnfKBld) * JRMCoreConfig.dat5699));
+        float scaledCost = (float) ((int) (0.005 * energyPowerStat * ctx.release * 0.01
+            * (isSword ? DBCConfig.cnfKCsc : DBCConfig.cnfKBlc)));
+        int kiWeaponCost = (int) (scaledCost / ((kiFistSkillLvl > 1) ? (kiFistSkillLvl * 0.3f + 1.0f) : 1.0f));
+        int kiWeaponDamage = (int) (kiFistSkillLvl * scaledDmg);
+
+        // Second component (weight-scaled)
+        float weightedDmg = (float) ((double) energyPowerStat * ctx.release * 0.01 * weightPerc(1, ctx.player)
+            * (isSword ? DBCConfig.cnfKCsd : DBCConfig.cnfKBld) * JRMCoreConfig.dat5700);
+        float weightedCost = (float) ((double) energyPowerStat * ctx.release * 0.01 * weightPerc(1, ctx.player)
+            * (isSword ? DBCConfig.cnfKCsc : DBCConfig.cnfKBlc));
+        kiWeaponCost += (int) (weightedCost / ((kiWeaponSkillLvl > 1) ? (kiWeaponSkillLvl * 0.3f + 1.0f) : 1.0f));
+        kiWeaponDamage += (int) (kiWeaponSkillLvl * weightedDmg);
+
+        if (!forced && kiWeaponCost > 0 && ctx.currentEnergy < kiWeaponCost) {
+            return 0;
+        }
+        return kiWeaponDamage;
+    }
+
+    /**
+     * Compute Ki Infuse bonus and multiplier (WIL through EnergyPower, Ki Weapon skill).
+     * Returns float[2]: [0] = additive bonus, [1] = damage multiplier (1.0 if not applicable).
+     * When forced=true, skips cost checks.
+     */
+    static float[] computeKiInfuseBonus(DBCPlayerContext ctx, boolean forced) {
+        int kiWeaponSkillLvl = SklLvl(15, ctx.skills);
+        if (kiWeaponSkillLvl <= 0) return new float[]{0, 1.0f};
+
+        int WIL = ctx.getModifiedAttribute(DBCAttribute.Willpower);
+        int energyPowerStat = (int) (stat(ctx.player, DBCAttribute.Willpower, ctx.powerType, DBCStatistics.EnergyPower,
+            WIL, ctx.race, ctx.classID, 0.0F) * 0.01F);
+        float kiInfuseBonus = (float) ((double) energyPowerStat * ctx.release * 0.005 * kiWeaponSkillLvl * weightPerc(1, ctx.player));
+
+        if (kiInfuseBonus <= 0) return new float[]{0, 1.0f};
+
+        if (forced) {
+            return new float[]{kiInfuseBonus, (float) DBCConfig.cnfKId};
+        } else {
+            int kiCost = (int) (kiInfuseBonus * 0.005 * kiWeaponSkillLvl * DBCConfig.cnfKIc);
+            if (ctx.currentEnergy >= kiCost) {
+                return new float[]{kiInfuseBonus, (float) DBCConfig.cnfKId};
+            } else {
+                return new float[]{0, 1.0f};
+            }
+        }
+    }
+
+    /**
+     * Returns a single CNPC set's preview line, e.g. "STR[150] * Melee[x2.5] * 1.0"
+     * or "STR[150] * 1.0" when stat is disabled.
+     * Ki bonus indicators reflect the player's current DBC toggle state.
+     */
+    public static String getCNPCSetPreviewLine(EntityPlayer caster, IDBCStats stats,
+                                               int setIndex, String[] attrNames, String[] statNames) {
+        if (!(stats instanceof DBCAbilityStats))
+            return "N/A";
+
+        DBCAbilityStats abilityStats = (DBCAbilityStats) stats;
+        DBCPlayerContext ctx = DBCPlayerContext.create(caster);
+        if (ctx.isFusionSpectator() || !ctx.isPowerTypeKi())
+            return "N/A";
+
+        CNPCScalingSet set = abilityStats.getSet(setIndex);
+        int modAttr = ctx.getModifiedAttribute(set.attribute);
+
+        String line;
+        if (set.statEnabled) {
+            float[] statMultipliers = JRMCoreH.getStatIncreases(ctx.powerType, ctx.race, ctx.classID);
+            float statMulti = (set.statType < statMultipliers.length) ? statMultipliers[set.statType] : 1.0f;
+            line = String.format("%s[%,d] * %s[x%.1f] * %.1f",
+                attrNames[set.attribute], modAttr, statNames[set.statType], statMulti, set.multiplier);
+        } else {
+            line = String.format("%s[%,d] * %.1f",
+                attrNames[set.attribute], modAttr, set.multiplier);
+        }
+
+        // Ki bonus indicators — computed with forced=false to reflect player's actual DBC settings
+        if (set.kiFist) {
+            int kfBonus = computeKiFistBonus(ctx, false);
+            line += kfBonus > 0 ? String.format(" +KF[%,d]", kfBonus) : " +KF[off]";
+        }
+        if (set.kiWeapon) {
+            int kwBonus = computeKiWeaponBonus(ctx, false);
+            line += kwBonus > 0 ? String.format(" +KW[%,d]", kwBonus) : " +KW[off]";
+        }
+        if (set.kiInfuse) {
+            float[] infuseResult = computeKiInfuseBonus(ctx, false);
+            float kiMult = infuseResult[1];
+            line += kiMult > 1.0f ? String.format(" *KI[x%.1f]", kiMult) : " *KI[off]";
+        }
+
+        return line;
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // CNPC SCALING SET CALCULATION (shared by barrier health, heal scaling)
+    // ═══════════════════════════════════════════════════════════════════
+
+    /**
+     * Core CNPC multi-set formula: for each set, compute attribute * stat * multiplier * weight,
+     * plus optional ki bonuses, then sum all sets and apply release.
+     *
+     * @param caster The player
+     * @param stats  The ability's DBC stats containing the scaling sets
+     * @return Computed value from scaling sets, or 0 if player data is invalid
+     */
+    public static float calculateScalingSets(EntityPlayer caster, DBCAbilityStats stats) {
+        DBCPlayerContext ctx = DBCPlayerContext.create(caster);
+        if (ctx.isFusionSpectator() || !ctx.isPowerTypeKi()) return 0;
+
+        float total = 0;
+        int setCount = stats.getScalingSetCount();
+
+        for (int s = 0; s < setCount; s++) {
+            CNPCScalingSet set = stats.getSet(s);
+            total += calculateScalingSetValue(ctx, set);
+        }
+
+        return total * (float) (ctx.release * 0.01);
+    }
+
+    /**
+     * Calculate barrier health from CNPC scaling sets.
+     */
+    public static float calculateBarrierHealth(EntityPlayer caster, DBCAbilityStats stats) {
+        if (!stats.barrierScalingEnabled) return 0;
+        return calculateScalingSets(caster, stats);
+    }
+
+    /**
+     * Calculate healing amount from CNPC scaling sets.
+     */
+    public static float calculateHealingAmount(EntityPlayer caster, DBCAbilityStats stats) {
+        if (!stats.healScalingEnabled) return 0;
+        return calculateScalingSets(caster, stats);
+    }
+
+    private static float getUltraInstinctCounterStaminaCost(final EntityPlayer targetPlayer, final byte targetState2) {
+        return getUltraInstinctStaminaCost(targetPlayer, targetState2, (float) JGConfigUltraInstinct.CONFIG_UI_DODGE_STAMINA_COST[targetState2]);
+    }
+
     private static float getUltraInstinctStaminaCost(EntityPlayer targetPlayer, byte targetState2, float staminaCost) {
         if (JGConfigUltraInstinct.CONFIG_UI_PERCENTAGE_STAMINA_COST) {
             byte pwr = JRMCoreH.getByte(targetPlayer, "jrmcPwrtyp");
@@ -732,11 +1134,11 @@ public class DBCUtils {
             int[] PlyrAttrbts = JRMCoreH.PlyrAttrbts(targetPlayer);
             int maxStamina = JRMCoreH.stat(targetPlayer, 2, pwr, 3, PlyrAttrbts[2], rce, cls, 0.0F);
             if (staminaCost > 100.0F) {
-                staminaCost = (float)maxStamina;
+                staminaCost = (float) maxStamina;
             } else if (staminaCost == 0.0F) {
                 staminaCost = 0.0F;
             } else {
-                staminaCost *= (float)maxStamina / 100.0F;
+                staminaCost *= (float) maxStamina / 100.0F;
             }
         }
 
@@ -923,9 +1325,9 @@ public class DBCUtils {
     /**
      * Determines if incoming damage will knock the player out using Friendly Fist logic.
      *
-     * @param player  Player receiving damage
-     * @param source  Source of the damage
-     * @param damage  Final damage that will be applied to the player
+     * @param player Player receiving damage
+     * @param source Source of the damage
+     * @param damage Final damage that will be applied to the player
      * @return {@code true} if the damage should result in a knock out
      */
     public static boolean checkKnockout(EntityPlayer player, DamageSource source, float damage) {
@@ -948,5 +1350,4 @@ public class DBCUtils {
         }
         return false;
     }
-
 }

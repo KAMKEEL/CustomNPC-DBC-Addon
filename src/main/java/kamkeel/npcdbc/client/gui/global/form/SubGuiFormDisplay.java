@@ -1,26 +1,44 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
 import kamkeel.npcdbc.api.aura.IAura;
+import kamkeel.npcdbc.client.gui.component.SubGuiFormFaceParts;
+import kamkeel.npcdbc.client.gui.component.SubGuiOverlays;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectAura;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
+import kamkeel.npcdbc.data.overlay.OverlayChain;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
+import noppes.npcs.client.ClientEventHandler;
 import noppes.npcs.client.gui.SubGuiColorSelector;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiButtonBiDirectional;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcButtonYesNo;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.GuiNpcTextField;
+import noppes.npcs.client.gui.util.GuiScrollWindow;
+import noppes.npcs.client.gui.util.GuiSelectionListener;
+import noppes.npcs.client.gui.util.ISubGuiListener;
+import noppes.npcs.client.gui.util.ITextfieldListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 import noppes.npcs.entity.EntityCustomNpc;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import java.awt.*;
-import java.awt.datatransfer.*;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 
 import static JinRyuu.JRMCore.JRMCoreH.dnsHairG1toG2;
 
@@ -29,8 +47,10 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     private final String[] arcoForms = new String[]{"display.arcofirst", "display.arcosecond", "display.arcothird", "display.arcofinal", "display.arcoultimatecooler", "display.arcogoldenform"};
     private final String[] hairTypes = new String[]{"display.base", "display.ssj", "display.ssj2", "display.ssj3", "display.ssj4", "display.oozaru", "display.raditz"};
     private final GuiNpcFormMenu menu;
+    public final IFormManagerGui parent;
     public Form form;
     public FormDisplay display;
+    public OverlayChain overlays;
     private final DBCDisplay visualDisplay;
     public EntityCustomNpc npc;
 
@@ -48,13 +68,15 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
     private GuiScrollWindow window;
 
-    public SubGuiFormDisplay(GuiNPCManageForms parent, Form form) {
+    public SubGuiFormDisplay(IFormManagerGui parent, Form form) {
         menu = new GuiNpcFormMenu(parent, this, -2, form);
 
-        this.npc = (EntityCustomNpc) parent.npc;
-        this.form = parent.form;
-        this.display = parent.display;
-        this.visualDisplay = parent.visualDisplay;
+        this.parent = parent;
+        this.npc = (EntityCustomNpc) parent.getFormNPC();
+        this.form = parent.getForm();
+        this.display = parent.getFormDisplay();
+        this.overlays = display.overlays;
+        this.visualDisplay = parent.getFormVisualDisplay();
 
         setBackground("menubg.png");
         xSize = 360;
@@ -178,7 +200,10 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         button.enabled = display.bodyColors.eyeColor != -1;
         window.addButton(button);
 
-        window.addButton(new GuiNpcButton(1072, x + 50, y - 5, 54, 20, new String[]{"display.normalEye", "display.isBerserk"}, form.display.isBerserk ? 1 : 0));
+        int currentIndex = ConfigDBCClient.EnableHDTextures && form.display.hasPupils ? 2 : form.display.isBerserk ? 1 : 0;
+        String[] eyeSettingString = new String[]{"display.normalEye", "display.isBerserk", "display.hasPupils"};
+
+        window.addButton(new GuiNpcButton(1072, x + 50, y - 5, 54, 20, eyeSettingString, currentIndex));
         if (DBCRace.isSaiyan(visualDisplay.race) || visualDisplay.race == DBCRace.HUMAN) {
             y += 25;
             window.addLabel(new GuiNpcLabel(1082, "display.hasEyebrows", x, y, 0xFFFFFF));
@@ -210,6 +235,12 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             window.addButton(button);
 
             window.addButton(new GuiNpcButtonYesNo(123, x + 50, y - 5, 54, 20, form.display.hasBodyFur));
+
+            if (display.hasBodyFur || display.hairType.equals("ssj4")) {
+                y += 25;
+                window.addLabel(new GuiNpcLabel(1113, "Type", x, y, 0xFFFFFF));
+                window.addButton(new GuiNpcButton(11132, width - x - 75, y - 5, 50, 20, new String[]{"GT", "Daima", "Legend"}, display.furType));
+            }
         }
 
 
@@ -224,7 +255,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         }
 
 
-//
+        //
         if (visualDisplay.race == DBCRace.ARCOSIAN) {
             y += 30;
             window.addLabel(new GuiNpcLabel(113, "display.arcoMask", x, y, 0xFFFFFF));
@@ -235,6 +266,20 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             window.addLabel(new GuiNpcLabel(114, "display.form", x, y, 0xFFFFFF));
             window.addButton(new GuiButtonBiDirectional(114, width - x - 75 - 12, y - 5, 73, 20, arcoForms, index));
         }
+
+        y += 30;
+
+        window.addLabel(new GuiNpcLabel(116, "Face Data", x, y, 0xFFFFFF)); // put translation here
+        window.addButton(new GuiNpcButtonYesNo(1161, x + 64, y - 5, 40, 20, display.faceData.enabled));
+        window.addButton(new GuiNpcButton(116, width - x - 75, y - 5, 50, 20, "Edit"));
+        window.getButton(116).enabled = display.faceData.enabled;
+
+        y += 30;
+
+        window.addLabel(new GuiNpcLabel(117, "display.overlays", x, y, 0xFFFFFF));
+        window.addButton(new GuiNpcButtonYesNo(117, x + 64, y - 5, 40, 20, overlays.enabled));
+        window.addButton(new GuiNpcButton(118, width - x - 75, y - 5, 50, 20, "Edit"));
+        window.getButton(118).enabled = overlays.enabled;
 
         window.maxScrollY = (y - height) + 20 + 5;
     }
@@ -308,7 +353,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         window.addButton(button);
 
 
-//        y += 25;
+        //        y += 25;
 
 
         int index = getHairType();
@@ -329,6 +374,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     @Override
     protected void actionPerformed(GuiButton btn) {
         GuiNpcButton button = (GuiNpcButton) btn;
+
         if (button.id == 1) {
             if (form.getRace() == DBCRace.ALL_SAIYANS) {
                 if (racePage == DBCRace.SAIYAN) {
@@ -399,6 +445,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         //Berserk
         if (button.id == 1072) {
             display.isBerserk = button.getValue() == 1;
+            display.hasPupils = ConfigDBCClient.EnableHDTextures && button.getValue() == 2;
         }
         // Body
         if (button.id == 108) {
@@ -467,6 +514,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Body Fur
         if (button.id == 123) {
             display.hasBodyFur = !display.hasBodyFur;
+            display.furType = 0;
             updateButtons();
         }
 
@@ -475,6 +523,34 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             display.bodyType = getArcoString(button.getValue());
             updateButtons();
         }
+
+        if (button.id == 11132) {
+            display.furType = (display.furType + 1) % 3;
+            updateButtons();
+        }
+
+        // Face Data
+        if (button.id == 1161) {
+            display.faceData.enabled = button.getValue() == 1;
+            updateButtons();
+        }
+
+        if (button.id == 116) {
+            setSubGui(new SubGuiFormFaceParts(this));
+            updateButtons();
+        }
+
+        // Form Overlays
+        if (button.id == 117) {
+            overlays.enabled = button.getValue() == 1;
+            updateButtons();
+        }
+
+        if (button.id == 118) {
+            setSubGui(new SubGuiOverlays(this));
+            updateButtons();
+        }
+
 
         // Hair Clear
         if (button.id == 103) {
@@ -521,8 +597,6 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     @Override
     public void keyTyped(char c, int i) {
         super.keyTyped(c, i);
-        if (i == 1)
-            menu.close();
     }
 
     @Override
@@ -646,6 +720,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         RenderManager.instance.playerViewY = 180F;
 
         auraTicks++;
+        ClientEventHandler.renderingEntityInGUI = true;
 
         // Render Entity
         GL11.glPushMatrix();
@@ -662,6 +737,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         }
         GL11.glPopMatrix();
 
+        ClientEventHandler.renderingEntityInGUI = false;
 
         entity.prevRenderYawOffset = entity.renderYawOffset = f2;
         entity.prevRotationYaw = entity.rotationYaw = f3;
@@ -801,5 +877,9 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
     @Override
     public void lostOwnership(Clipboard clipboard, Transferable contents) {
+    }
+
+    public void save() {
+        menu.save();
     }
 }

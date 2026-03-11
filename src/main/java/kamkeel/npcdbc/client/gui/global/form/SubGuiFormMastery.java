@@ -3,7 +3,15 @@ package kamkeel.npcdbc.client.gui.global.form;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormMastery;
 import net.minecraft.client.gui.GuiButton;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcButtonYesNo;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.GuiNpcTextField;
+import noppes.npcs.client.gui.util.GuiScrollWindow;
+import noppes.npcs.client.gui.util.GuiSelectionListener;
+import noppes.npcs.client.gui.util.ISubGuiListener;
+import noppes.npcs.client.gui.util.ITextfieldListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 import noppes.npcs.util.ValueUtil;
 
 public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener, ITextfieldListener {
@@ -29,7 +37,7 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
     public boolean showAbsorption = false;
     public boolean showDestroyer = false;
 
-    public SubGuiFormMastery(GuiNPCManageForms parent, Form form) {
+    public SubGuiFormMastery(IFormManagerGui parent, Form form) {
         this.form = form;
         this.mastery = form.mastery;
 
@@ -382,6 +390,15 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             scrollWindow.getTextField(404).floatsOnly = true;
             scrollWindow.getTextField(404).setMinMaxDefaultFloat(-10000f, 10000f, 0f);
             scrollWindow.getLabel(404).color = 0xffffff;
+
+            maxScroll += 23;
+            y += 23;
+            scrollWindow.addLabel(new GuiNpcLabel(405, "mastery.painThreshold", 4, y + 5));
+            scrollWindow.addTextField(new GuiNpcTextField(405, this, 135, y, 40, 20, String.valueOf(mastery.painThreshold)));
+            scrollWindow.getTextField(405).setMaxStringLength(3);
+            scrollWindow.getTextField(405).integersOnly = true;
+            scrollWindow.getTextField(405).setMinMaxDefault(0, 100, 25);
+            scrollWindow.getLabel(405).color = 0xffffff;
         }
         maxScroll += 23;
         y += 23;
@@ -896,6 +913,8 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             mastery.painMultiPerLevel = txtField.getFloat();
         } else if (txtField.id == 404) {
             mastery.painMultiMinOrMax = txtField.getFloat();
+        } else if (txtField.id == 405) {
+            mastery.painThreshold = txtField.getInteger();
         } else if (txtField.id == 501) {
             mastery.dodgeChance = txtField.getFloat();
         } else if (txtField.id == 502) {
@@ -956,14 +975,6 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
     }
 
     @Override
-    public void keyTyped(char c, int i) {
-        super.keyTyped(c, i);
-        if (i == 1)
-            menu.close();
-
-    }
-
-    @Override
     public void subGuiClosed(SubGuiInterface subgui) {
     }
 
@@ -978,5 +989,6 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
     }
 
     public void save() {
+        menu.save();
     }
 }

@@ -22,7 +22,17 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
 import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.select.GuiSoundSelection;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiCustomScroll;
+import noppes.npcs.client.gui.util.GuiNPCInterface2;
+import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.GuiNpcTextField;
+import noppes.npcs.client.gui.util.ICustomScrollListener;
+import noppes.npcs.client.gui.util.IGuiData;
+import noppes.npcs.client.gui.util.IScrollData;
+import noppes.npcs.client.gui.util.ISubGuiListener;
+import noppes.npcs.client.gui.util.ITextfieldListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 import noppes.npcs.constants.EnumScrollData;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
@@ -35,7 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
-public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScrollListener, IScrollData, IGuiData, ISubGuiListener, GuiYesNoCallback, ITextfieldListener {
+public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScrollListener, IScrollData, IGuiData, ISubGuiListener, GuiYesNoCallback, ITextfieldListener, IOutlineManagerGui {
     public GuiCustomScroll scrollOutlines;
     public HashMap<String, Integer> data = new HashMap<>();
     public Outline outline = new Outline();
@@ -45,9 +55,11 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
     public DBCDisplay visualDisplay;
     boolean setNormalSound = true;
     private float zoomed = 70.0F, rotation;
+    private EntityNPCInterface originalNpc;
 
     public GuiNPCManageOutlines(EntityNPCInterface npc) {
         super(npc);
+        this.originalNpc = npc;
         this.npc = DBCDisplay.setupGUINPC((EntityCustomNpc) npc);
         this.npc.display.name = "outline man";
 
@@ -61,15 +73,20 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
 
     public void initGui() {
         super.initGui();
-        addButton(new GuiNpcButton(0, guiLeft + 368, guiTop + 8, 45, 20, "gui.add"));
+        GuiNpcButton fullBtn = new GuiNpcButton(10, guiLeft + 368, guiTop + 8, 45, 20, "gui.fullscreen");
+        fullBtn.setTextColor(0x55FF55);
+        fullBtn.setHoverText("gui.fullscreen.tooltip");
+        addButton(fullBtn);
 
-        addButton(new GuiNpcButton(1, guiLeft + 368, guiTop + 32, 45, 20, "gui.remove"));
+        addButton(new GuiNpcButton(0, guiLeft + 368, guiTop + 36, 45, 20, "gui.add"));
+
+        addButton(new GuiNpcButton(1, guiLeft + 368, guiTop + 60, 45, 20, "gui.remove"));
         getButton(1).enabled = outline != null && outline.id != -1;
 
-        addButton(new GuiNpcButton(2, guiLeft + 368, guiTop + 56, 45, 20, "gui.clone"));
+        addButton(new GuiNpcButton(2, guiLeft + 368, guiTop + 84, 45, 20, "gui.clone"));
         getButton(2).enabled = outline != null && outline.id != -1;
 
-        addButton(new GuiNpcButton(3, guiLeft + 368, guiTop + 80, 45, 20, "gui.edit"));
+        addButton(new GuiNpcButton(3, guiLeft + 368, guiTop + 108, 45, 20, "gui.edit"));
         getButton(3).enabled = outline != null && outline.id != -1;
 
         if (scrollOutlines == null) {
@@ -86,30 +103,16 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
             //   addButton(new GuiNpcButton(1500, guiLeft + 8, guiTop + 192, 203, 20, "display.displaySettings"));
             addLabel(new GuiNpcLabel(10, "ID", guiLeft + 368, guiTop + 4 + 3 + 185));
             addLabel(new GuiNpcLabel(11, outline.id + "", guiLeft + 368, guiTop + 4 + 3 + 195));
-//
-//            int y = guiTop + 3;
-//
-//            addTextField(new GuiNpcTextField(13, this, this.fontRendererObj, guiLeft + 36, y, 180, 20, outline.name));
-//            addLabel(new GuiNpcLabel(13, "gui.name", guiLeft + 4, y + 5));
-//
-//            y += 23;
-//
-//            addTextField(new GuiNpcTextField(14, this, guiLeft + 70, y, 146, 20, outline.menuName.replaceAll("§", "&")));
-//            getTextField(14).setMaxStringLength(20);
-//            addLabel(new GuiNpcLabel(14, "general.menuName", guiLeft + 4, y + 5));
-//
-//            y += 60;
-//            addButton(new GuiNpcButton(1500, guiLeft + 7, y, 208, 20, "display.displaySettings"));
-//
-//            y += 40;
-
-
         }
     }
 
     @Override
     protected void actionPerformed(GuiButton guibutton) {
         GuiNpcButton button = (GuiNpcButton) guibutton;
+        if (button.id == 10) {
+            Minecraft.getMinecraft().displayGuiScreen(new GuiOutlineDirectory(originalNpc));
+            return;
+        }
         if (button.id == 0) {
             save();
             String name = "New";
@@ -133,7 +136,7 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
         }
 
         if (button.id == 3) {
-            Minecraft.getMinecraft().displayGuiScreen(new SubGuiOutlineDisplay(this, npc, outline));
+            Minecraft.getMinecraft().displayGuiScreen(new SubGuiOutlineDisplay(this, outline));
 
         }
 
@@ -409,5 +412,33 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
             }
         }
 
+    }
+
+    // ========== IOutlineManagerGui ==========
+
+    @Override
+    public HashMap<String, Integer> getOutlineData() { return data; }
+
+    @Override
+    public GuiCustomScroll getOutlineScroll() { return scrollOutlines; }
+
+    @Override
+    public EntityNPCInterface getOutlineNPC() { return npc; }
+
+    @Override
+    public Outline getOutline() { return outline; }
+
+    @Override
+    public DBCDisplay getOutlineVisualDisplay() { return visualDisplay; }
+
+    @Override
+    public String getOutlineSelected() { return selected; }
+
+    @Override
+    public void setOutlineSelected(String selected) { this.selected = selected; }
+
+    @Override
+    public void closeOutlineSubGui(Object obj) {
+        NoppesUtil.openGUI(player, this);
     }
 }

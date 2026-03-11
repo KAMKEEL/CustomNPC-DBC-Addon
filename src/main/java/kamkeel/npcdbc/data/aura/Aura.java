@@ -10,7 +10,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.controllers.AnimationController;
+import noppes.npcs.controllers.TagController;
 import noppes.npcs.scripted.NpcAPI;
+
+import java.util.HashSet;
+import java.util.UUID;
 
 public class Aura implements IAura {
     public int id = -1;
@@ -18,6 +22,8 @@ public class Aura implements IAura {
 
     public int secondaryAuraID = -1;
     public AuraDisplay display = new AuraDisplay(this);
+
+    public HashSet<UUID> tagUUIDs = new HashSet<>();
 
     public Aura() {
     }
@@ -34,8 +40,9 @@ public class Aura implements IAura {
         compound.setString("menuName", menuName);
         compound.setInteger("secondaryAuraID", secondaryAuraID);
 
-        display.writeToNBT(compound);
+        TagController.writeTagUUIDs(compound, "TagUUIDs", tagUUIDs);
 
+        display.writeToNBT(compound);
 
         return compound;
     }
@@ -52,6 +59,8 @@ public class Aura implements IAura {
         if (!compound.hasKey("secondaryAuraID"))
             compound.setInteger("secondaryAuraID", -1);
         secondaryAuraID = compound.getInteger("secondaryAuraID");
+
+        tagUUIDs = TagController.readTagUUIDs(compound, "TagUUIDs");
 
         display.readFromNBT(compound);
     }

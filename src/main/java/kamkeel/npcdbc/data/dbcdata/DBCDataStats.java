@@ -208,6 +208,18 @@ public class DBCDataStats {
         data.getRawCompound().setInteger("jrmcBdy", data.Body);
     }
 
+    public void restoreHealthFlat(int amountToRestore) {
+        int maxBody = isFused() ? getMaxFusionBody() : getMaxBody();
+        data.Body = ValueUtil.clamp(data.Body + amountToRestore, 0, maxBody);
+        data.getRawCompound().setInteger("jrmcBdy", data.Body);
+    }
+
+    public void restoreStaminaFlat(int amountToRestore) {
+        int maxSta = isFused() ? getMaxFusionStamina() : getMaxStamina();
+        data.Stamina = ValueUtil.clamp(data.Stamina + amountToRestore, 0, maxSta);
+        data.getRawCompound().setInteger("jrmcStamina", data.Stamina);
+    }
+
     public void restoreStaminaPercent(float percToRestore) {
         int maxSta = isFused() ? getMaxFusionStamina() : getMaxStamina();
         int toAdd = (int) (maxSta * (percToRestore / 100));
@@ -222,7 +234,8 @@ public class DBCDataStats {
         if (!data.isForm(DBCForm.UltraInstinct))
             return;
 
-        int maxHeat = JGConfigUltraInstinct.CONFIG_UI_HEAT_DURATION[data.State2];
+        int state2 = JRMCoreH.state2UltraInstinct(data.isForm(DBCForm.Kaioken), (byte) data.State2);
+        int maxHeat = JGConfigUltraInstinct.CONFIG_UI_HEAT_DURATION[state2];
         int toAdd = (int) (maxHeat * (percToRestore / 100));
 
         data.Heat = ValueUtil.clamp(data.Heat - toAdd, 0, maxHeat);
