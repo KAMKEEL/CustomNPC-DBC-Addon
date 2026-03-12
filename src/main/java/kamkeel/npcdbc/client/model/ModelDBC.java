@@ -505,7 +505,7 @@ public class ModelDBC extends ModelBase {
         boolean saiyan = DBCRace.isSaiyan(ctx.race());
 
         /* ───────── Fur / Body Overlays ───────── */
-        if (oozaru)
+        if (saiyan && oozaru)
             chains.add(OOZARU_FUR);
 
         if (DBCRace.isSaiyan(ctx.race()) && (ssj4 || ctx.hasFur())) {
