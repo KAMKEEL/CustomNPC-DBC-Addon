@@ -1,6 +1,6 @@
 {
-  "releases": [{"id":"1.2","version":"1.2","path":"releases/1.2","date":"2026-03-11T16:12:13-04:00","isLatest":true},{"id":"1.1.5","version":"1.1.5","path":"releases/1.1.5","date":"2026-03-12T01:57:56Z","isLatest":false}],
-  "experimental": [{"id":"dev","branch":"dev","path":"experimental/dev","hash":"c4932824","date":"2026-03-11T21:56:06-04:00"}],
-  "generated": "2026-03-12T01:58:07Z",
+  "releases": [{"id":"1.2","version":"1.2","path":"releases/1.2","date":"2026-03-11T16:12:13-04:00","isLatest":true},{"id":"1.1.5","version":"1.1.5","path":"releases/1.1.5","date":"2026-03-12T02:02:56Z","isLatest":false}],
+  "experimental": [{"id":"dev","branch":"dev","path":"experimental/dev","hash":"bcd5cf9f","date":"2026-03-11T22:00:23-04:00"}],
+  "generated": "2026-03-12T02:03:09Z",
   "source": "manifest"
 }
