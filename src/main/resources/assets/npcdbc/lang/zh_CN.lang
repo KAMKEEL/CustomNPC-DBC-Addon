@@ -12,39 +12,83 @@ dbc.clientsettings.aura.firstPersonOpacity=第一人称3D气焰不透明度: %s%
 global.customforms=形态
 global.customauras=气焰
 global.customoutlines=气轮廓
-global.customeffects=状态
 
 stats.dbcsettings=DBC 设置
-inventory.extras=气焰
+inventory.extras=额外
 
 gui.clone=复制
+gui.addCategory=添加分类
+gui.fullscreen=全屏
 
-stats.dbc=DBC 设置
 stats.lockOnState=NPC可以被锁定吗?
+stats.dbcEnabled=DBC伤害开启
 stats.friendlyFist=友好拳
+stats.friendlyFistTime=友好拳攻击持续时间（秒）
+stats.section.damageModifiers=伤害系数
 stats.ignoreDex=忽略灵巧
 stats.ignoreBlock=忽略格挡
 stats.ignoreEndurance=忽略耐力
 stats.ignoreKiDamage=忽略气护体
 stats.ignoreFormDefense=忽略形态减伤
+stats.section.defensePenetration=防御穿透
 stats.hasDefensePenetration=有防御穿透
 stats.defensePenetration=防御穿透
 
-effect.runsEveryX=每X个tick运行一次
-effect.defaultLength=默认长度
+stats.section.playerSettings=玩家设置
+stats.kiCost=气消耗
+stats.kiCostPercent=百分比
+stats.kiDrain=气流失
+stats.kiDrainPercent=百分比
+stats.hover.kiDrain=每刻流失的气（1 = 每秒20点）。在百分比模式下，指每刻流失最大气量的百分比。
+stats.staminaCost=体力消耗
+stats.staminaCostPercent=百分比
+stats.staminaDrain=体力流失
+stats.staminaDrainPercent=百分比
+stats.hover.staminaDrain=每刻流失的体力（1 = 每秒20点）。在百分比模式下，指每刻流失最大体力的百分比。
+stats.section.playerDamage=玩家伤害
+stats.playerDamageType=伤害类型
+stats.damageTypeInfo=信息
+stats.damageType.desc.default=使用技能的基础伤害值
+stats.damageType.desc.flat=固定DBC身体伤害值
+stats.damageType.desc.melee=DBC近战公式 + 气拳 + 气武器
+stats.damageType.desc.ki=DBC气公式 + 气灌注加成
+stats.damageType.desc.cnpc=自定义：属性 x 释放 x 重量 x 乘数
+stats.flatDamage=固定伤害
+stats.scalingAttribute=属性成长
+stats.playerDBCStats=玩家DBC数据
+stats.cnpc.setCount=数量
+stats.section.cnpcSet1=设置 1
+stats.section.cnpcSet2=设置 2
+stats.section.cnpcSet3=设置 3
+stats.cnpc.attribute=属性
+stats.cnpc.useStat=使用属性
+stats.cnpc.statType=属性类型
+stats.cnpc.multiplier=乘数
+stats.cnpc.kiFist=气拳
+stats.cnpc.kiWeapon=气武器
+stats.cnpc.kiInfuse=气灌注
+stats.hover.cnpc.kiFist=为该装备增加气拳加成（精神/气量）。需要气拳技能。
+stats.hover.cnpc.kiWeapon=为该装备增加气武器加成（意志/气威力）。需要气武器技能。
+stats.hover.cnpc.kiInfuse=根据气注入的倍率乘以该装备的伤害。需要气武器技能。
+stats.cnpc.previewLine=设置
+stats.cnpc.previewTotal=总计
+stats.hover.playerDBCStats=启用后，将遵循玩家的DBC技能开关设置（气拳、气武器、气灌注）。禁用时，若玩家拥有该技能，则强制开启所有加成。
+stats.damagePreview=预览
+stats.section.universalSettings=通用设置
 
-# These are supposed to be shorter
-effect.editor.runsEveryX=每个X点
-effect.editor.defaultLength=长度
-effect.editor.height=高度
-effect.editor.width=宽度
-effect.editor.xPos=X Pos
-effect.editor.yPos=Y Pos
-effect.editor.lossOnDeath=死亡损失
+stats.section.barrierScaling=屏障血量动态调整
+stats.barrierScalingEnabled=启用 DBC 血量修正
+stats.hover.barrierScaling=开启后，屏障血量将不再固定，而是随下方 CNPC 设定动态变化。仅对玩家生成的屏障生效。
+
+stats.section.healing=DBC 治疗机制
+stats.healingMode=治疗模式
+stats.hover.healingMode=决定玩家的治疗生效方式
+stats.healScalingEnabled=使用 DBC 血量修正
+stats.hover.healScaling=开启后，治疗量将不再依赖技能基础值，而是随下方 CNPC 设定动态变化。仅对玩家施法者生效。
 
 mastery.maxLevel=最大形态等级
-mastery.multiFlat=固定倍率加成
-mastery.multiMinMax=最小/最大等级范围
+mastery.multiFlat=固定加成
+mastery.multiMinMax=最小/最大增幅范围
 mastery.multiPerLevel=每升一级增加
 mastery.instantTransform=瞬间变身等级需求
 mastery.healthReqSettings=血量要求设置
@@ -62,7 +106,7 @@ mastery.damagedGainSettings=发射气功获得设置
 mastery.fireKiGainSettings=被打获得设置
 mastery.updateGain=挂机获得
 mastery.attackGain=攻击获得
-mastery.damagedGain=受损获得
+mastery.damagedGain=发射气功获得
 mastery.fireKiGain=被打获得
 mastery.flatMind=固定心灵加成
 mastery.perMind=每一点心灵加成
@@ -91,15 +135,15 @@ mastery.destroyerSettings=破坏能量设置
 mastery.destroyerKiDamage=破坏能量气功伤害倍率
 mastery.linkedMastery=关联等级
 
-display.attri=属性设置
-display.adv=龙珠属性加成
+display.femaleModel=女性模型
+display.breastSize=胸部大小
+display.attri=属性
+display.adv=进阶
 display.human=人类
 display.saiyan=赛亚人
 display.halfsaiyan=混血赛亚人
 display.namekian=那美克星人
 display.arcosian=冰冻恶魔
-display.majin=魔人
-display.raditz=拉帝兹
 display.arcofirst=第一阶段
 display.arcosecond=第二阶段
 display.arcothird=第三阶段
@@ -107,7 +151,6 @@ display.arcofinal=最终阶段
 display.arcoultimatecooler=终极形态
 display.arcogoldenform=黄金形态
 display.majin=魔人
-display.raditz=拉帝兹
 display.part.antenna=触角
 display.part.firstformspikes=第一阶段尖刺
 display.part.secondformspikes=第二阶段尖刺
@@ -139,7 +182,7 @@ display.furOff=毛发关闭
 display.tail=尾巴
 display.normalTail=普通尾巴
 display.wrappedTail=缠绕尾巴
-display.arcoTail=冰冻恶魔
+display.arcoTail=冰冻恶魔尾巴
 display.noTail=没有尾巴
 display.base=基础
 display.ssj=超赛
@@ -153,10 +196,10 @@ display.eye=眼睛
 display.isBerserk=狂暴状态
 display.normalEye=正常
 display.hasEyebrows=眉毛
+display.hasPupils=瞳孔
 display.mouth=嘴巴
 display.nose=鼻子
 display.formCanFormbeCustomized=玩家自定义
-display.color=颜色
 display.modify=修改
 display.formWidth=形态宽度
 display.formSize=形态大小
@@ -172,10 +215,15 @@ display.form=形态
 display.mastery=形态等级
 display.stackable=可叠加
 display.general=一般
+display.custom=自定义
+display.overlays=叠加层
+display.body=身体
 display.bodyc1=身体颜色1
 display.bodyc2=身体颜色2
 display.bodyc3=身体颜色3
 display.vanillaStackable=原版可叠加
+display.customStackable=自定义可叠加
+display.formStacks=形态叠加
 display.kkStackable=界王拳可叠加
 display.kaiokenMulti=界王拳倍数
 display.kaiokenDrain=界王拳消耗设置
@@ -198,13 +246,11 @@ display.secondaryAura=次级气焰
 display.outline=气轮廓
 display.selectOutline=无气轮廓
 display.extra=额外
-display.size=大小
-display.speed=流动速度
+display.speed=速度
 display.overrideDBC=覆盖DBC形态
 display.color1=颜色1
 display.color2=颜色2
 display.color3=颜色3
-display.alpha=透明度
 display.3DType=3D类型
 display.2DType=2D类型
 display.aura.alwaysShowOutline=气轮廓始终开启
@@ -246,17 +292,16 @@ display.kettleOnly=仅魔人气焰
 display.kettlePlusAura=魔人气焰 + 气焰
 display.revampAura=重塑气焰
 display.dbcAura=DBC气焰
-display.bloom=泛光
-display.outlines=气轮廓
+display.bloom=泛光效果
+display.outlines=轮廓
 display.shaders=着色器
-display.firstPersonAura=第一人称气轮廓透明度
+display.firstPersonAura=第一人称气焰不透明度
 
-outline.noiseSize=轮廓光效粗糙度
+outline.noiseSize=声音大小
 outline.colorSmoothness=颜色平滑度
 outline.colorInterpolation=颜色过渡
 outline.pulsingSpeed=闪烁速度
 
-general.menuName=形态名称
 general.strength=力量
 general.dexterity=灵巧
 general.willpower=意志
@@ -298,9 +343,6 @@ statsheet.attribute.SPI=精神
 part.horns=角
 part.ears=耳朵
 
-form.clear=清除
-form.select=选择
-
 aura.shown=显示
 aura.hidden=隐藏
 
@@ -317,10 +359,10 @@ npcdbc.inventory.willpower=意志
 npcdbc.inventory.mastery=形态等级
 npcdbc.inventory.selected=已选择
 npcdbc.inventory.noauraselected=未选择气焰
-npcdbc.inventory.tweaks=调整
-npcdbc.inventory.revampAura=修改气焰
+npcdbc.inventory.tweaks=调整项
+npcdbc.inventory.revampAura=重制版气焰
 
-npcdbc.inventory.stackable.dbc=龙块C
+npcdbc.inventory.stackable.dbc=DBC
 npcdbc.inventory.stackable.kk=界王拳
 npcdbc.inventory.stackable.ui=自在
 npcdbc.inventory.stackable.godofdestruction=自我
@@ -336,7 +378,7 @@ dbc.se.flying=飞行
 dbc.se.charging=充能
 dbc.se.kaioken=界王拳
 dbc.se.swooping=俯冲
-dbc.se.strain=紧张
+dbc.se.strain=负荷
 dbc.se.fullmoon=满月
 dbc.se.godpower=神之力
 dbc.se.majin=魔化
@@ -350,7 +392,7 @@ dbc.se.ko=击倒
 dbc.se.fusion=融合
 dbc.se.god=自我
 dbc.se.turbo=爆气
-dbc.se.strainIn=紧张
+dbc.se.strainIn=负荷
 dbc.se.fatigue=疲劳
 
 ############################
@@ -365,7 +407,7 @@ npcdbc.spectator=作为副体无法变身
 npcdbc.raceIneligible=您的种族不符合此形态要求
 npcdbc.healthRequirement=您需要在 %d 百分之以下的生命值才能变身所选形态
 npcdbc.pain=无法在痛苦状态中变身
-npcdbc.wrongDBC=您处于错误的形态
+npcdbc.wrongDBC=您处于错误的 DBC 形态
 npcdbc.transformFromParent=必须从前置形态变身
 npcdbc.fusionSkillFusion=没有启用融合技能
 npcdbc.holdPotara=双方玩家必须各带波塔拉耳环
@@ -382,15 +424,15 @@ npcdbc.notEnoughMastery=您的形态等级不足以进行瞬间变身
 npcdbc.cannotTransformDirect=您无法直接变身为此形态
 npcdbc.clearedSelection=已清除选择
 npcdbc.formSelect=已选择形态：
-npcdbc.abilitySelect=已选择技能：
+npcdbc.abilitySelect=已选定能力：
 npcdbc.auraSelect=已选择气焰：
 npcdbc.transform=变身为
 npcdbc.descend=降级至
 npcdbc.descendFrom=已解除
 npcdbc.timeExpired=计时器已到期！
-npcdbc.full=你感觉有点吃不下了
-npcdbc.bloated=你已经完成吃不下去了。
-npcdbc.humanSpiritMessage=你感觉到人类的精神。
+npcdbc.full=你开始发胀了！
+npcdbc.bloated=你现在肚子胀了。
+npcdbc.humanSpiritMessage=你感觉到你的身体被你的人类精神赋予力量！
 
 ############################
 ## ITEMS
@@ -408,7 +450,7 @@ capsule.stamina=耐力
 # (1) - Status effect name
 # (2) - Status effect level
 # (3) - Effect time
-capsule.effect=使用胶囊会得到 %2s 状态，根据 "%1s" 等级给与 %3s 秒状态
+capsule.effect=在等级 %2s 时，给予 "%1s" 效果，持续 %3s 秒
 
 item.npcdbc:base_healthcapsule.name=基础生命胶囊
 item.npcdbc:super_healthcapsule.name=初级生命胶囊
@@ -446,37 +488,186 @@ item.npcdbc:revive_misccapsule.name=复活胶囊
 item.npcdbc:heat_misccapsule.name=热量胶囊
 item.npcdbc:powerpoint_misccapsule.name=能量点胶囊
 item.npcdbc:absorption_misccapsule.name=吸收胶囊
-item.npcdbc:strain_misccapsule.name=應變膠囊
-item.npcdbc:nofuse_misccapsule.name=諾夫塞膠囊
-item.npcdbc:exhausted_misccapsule.name=耗尽的胶囊
+item.npcdbc:strain_misccapsule.name=负荷胶囊
+item.npcdbc:nofuse_misccapsule.name=融合解除胶囊
+item.npcdbc:exhausted_misccapsule.name=耗尽胶囊
 
 item.npcdbc:fruitofmight.name=精神树果实
 item.npcdbc:one_potara.name=波塔拉耳环
 item.npcdbc:two_potara.name=波塔拉耳环[金]
 item.npcdbc:three_potara.name=波塔拉耳环[豪华]
 
-effect.healthregeneration=生命回复
-effect.exhausted=疲惫
+wheel.configure=配置轮盘
+wheel.switchWheel=切换轮盘
+hotbar.vertical=垂直快捷栏
+hotbar.horizontal=水平快捷栏
+hotbar.switchHotbar=切换快捷栏
+
+ability.npcdbc.ki_blast=气弹
+ability.npcdbc.ki_blast_volley=连发气弹
+ability.npcdbc.finish_breaker=加力克炮
+ability.npcdbc.bigbang_attack=大爆炸攻击
+ability.npcdbc.burning_attack=燃烧攻击
+ability.npcdbc.death_ball=死亡球
+ability.npcdbc.spirit_bomb=魔贯光杀炮
+ability.npcdbc.large_spirit_bomb=大型魔贯光杀炮
+ability.npcdbc.super_spirit_bomb=超级魔贯光杀炮
+ability.npcdbc.supernova=超新星
+ability.npcdbc.ki_wave=冲击波
+ability.npcdbc.kamehameha=龟派气功
+ability.npcdbc.double_sunday=双重星期天
+ability.npcdbc.galick_gun=加力克炮
+ability.npcdbc.final_flash=最终闪光
+ability.npcdbc.masenko=马森科
+ability.npcdbc.ki_disc=气圆斩
+ability.npcdbc.destructo_disc=舞空术切割
+ability.npcdbc.death_saucer=死亡光轮
+ability.npcdbc.ki_laser=激光
+ability.npcdbc.special_beam_cannon=特殊光线炮
+ability.npcdbc.tribeam=三连发气功波
+ability.npcdbc.android_barrier=屏障
+ability.npcdbc.hakai=破坏
+ability.npcdbc.namek_regen=那美克星人再生
+
+ability.npcdbc.dbc_toggle=DBC技能开关
+ability.npcdbc.ki_fist=气拳
+ability.npcdbc.swoop=俯冲
+ability.npcdbc.ki_protection=气护盾
+ability.npcdbc.friendly_fist=友好拳
+ability.npcdbc.ki_weapon=气武器
+ability.npcdbc.ki_blade=气刃
+ability.npcdbc.ki_scythe=气镰刀
+ability.npcdbc.kaioken=界王拳
+ability.npcdbc.fusion=融合
+ability.npcdbc.potential_unleashed=潜力解放
+ability.npcdbc.ultra_instinct=自在极意功
+ability.npcdbc.god_of_destruction=自我极意功
+
+# Condition Ki Threshold
+condition.npcdbc.ki_threshold=气阀值
+
+# Condition Stamina Threshold
+condition.npcdbc.stamina_threshold=耐力阈值
+
+# Condition Form
+condition.npcdbc.form=变身
+condition.form_id=形态
+condition.transformed=已变身
+condition.form_unlocked=需解锁
+condition.is_dbc=是否为DBC角色
+
+# Condition Race
+condition.npcdbc.race=是否为指定种族
+condition.race_id=种族
+
+# Condition DBC Stat
+condition.npcdbc.stat=DBC 属性
+condition.stat_type=属性类型
+condition.stat.str=力量
+condition.stat.dex=敏捷
+condition.stat.con=体质
+condition.stat.wil=意志
+condition.stat.mnd=心智
+condition.stat.spi=精神
+
+# Condition DBC Level
+condition.npcdbc.level=DBC 等级
+condition.level=等级
+condition.compare_type=比较类型
+
+# Condition DBC Class
+condition.npcdbc.class=DBC 职业
+condition.class_type=职业类型
+condition.class.martial_artist=武道家
+condition.class.spiritualist=气功师
+condition.class.warrior=格斗家
+
+# Condition DBC Effect
+condition.npcdbc.dbc_effect=DBC 效果
+condition.dbceffect_id=DBC 效果
+condition.dbceffect_type=效果类型
+
+# Condition Skill
+condition.npcdbc.skill=技能已解锁
+condition.skill_id=技能
+condition.skill_level=技能等级
+condition.is_custom=是否为自定义
+
+# Condition Locked On
+condition.npcdbc.locked_on=是否已锁定目标
+
+# Condition Fused
+condition.npcdbc.fused=是否处于融合状态
+
+effect.healthregeneration=再生
+effect.exhausted=精疲力竭
 effect.darkness=黑暗
-effect.chocolated=有点吃不下
-effect.bloated=吃不下了
-effect.fruitofmight=精神树果实
+effect.chocolated=巧克力化
+effect.bloated=腹胀
+effect.fruitofmight=力量之果
 effect.humanspirit=人类精神
 effect.meditation=冥想
-effect.namekianregeneration=那美克星人再生
-effect.overpower=压倒
-effect.potara=波塔拉
-effect.kiregeneration=气回复
-effect.staminaregeneration=耐力回复
-effect.zenkai=濒死复活强化
+effect.namekianregeneration=那美克星再生
+effect.overpower=压倒力量
+effect.potara=耳环合体
+effect.kiregeneration=气再生
+effect.staminaregeneration=体力再生
+effect.zenkai=复活增强
+effect.dbc.permanent=永久
+effect.dbc.temporary=临时
 
 stats.ki=气
 
-ability.icon.texture=贴图
-ability.icon.section.uv=UV坐标
-ability.icon.x=图标X
-ability.icon.y=图标Y
-ability.icon.section.size=尺寸
-ability.icon.width=宽度
-ability.icon.height=高度
-ability.icon.scale=缩放
+############################
+## GUI LABELS
+############################
+
+# Overlay GUI
+overlay.title=叠加层 %s:
+overlay.glow=发光:
+overlay.alpha=透明度:
+overlay.warning=警告：过多的叠加层可能会导致卡顿或文件删除！
+overlay.disableOther=禁用其他叠加层
+overlay.selectTypes=选择类型
+overlay.allTypes=所有类型
+overlay.selectedTypes=已选类型
+
+# Kaioken Settings
+kaioken.drainMultiScaling=消耗倍率缩放:
+kaioken.multiplyCurrentDrain=乘以当前形态消耗:
+kaioken.strainedMultis=负荷界王拳倍率:
+kaioken.drainMulti=%s 消耗倍率:
+kaioken.multiScaling=倍率缩放:
+kaioken.useGlobalMulti=使用全局倍率:
+kaioken.multi=%s 倍率:
+
+# Custom Stackable
+stackable.stack=叠加 %s:
+stackable.configMulti=配置倍率
+
+# Form Parents
+formparents.races=种族
+formparents.forms=形态
+formparents.removeAll=全部移除
+
+# Face Parts
+facepart.eyebrows=眉毛
+facepart.eyeWhite=眼白
+facepart.eyeLeft=左眼
+facepart.eyeRight=右眼
+facepart.nose=鼻子
+facepart.mouth=嘴巴
+facepart.faceType=脸型
+facepart.all=全部
+
+# StatSheet
+statsheet.updateVanity=更新外观
+statsheet.hideVanity=隐藏自身外观
+statsheet.showVanity=显示自身外观
+statsheet.bonusAttributes=额外属性:
+statsheet.bonusStats=额外状态:
+statsheet.bonus.type.percentage=百分比
+statsheet.bonus.type.flat=固定值
+statsheet.bonus.type.multiplicative=乘算
+statsheet.bonus.label.addonMultiplicative=额外乘算加成
+statsheet.bonus.label.addonPercentage=额外百分比加成
