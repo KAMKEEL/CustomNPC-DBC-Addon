@@ -315,7 +315,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         button = new GuiNpcButton(111, width - x - 75, y - 5, 50, 20, getColor(display.bodyColors.bodyC3));
         button.packedFGColour = display.bodyColors.bodyC3;
         window.addButton(button);
-        button = new GuiNpcButton(111, width - x - 20, y - 5, 20, 20, "X");
+        button = new GuiNpcButton(1111, width - x - 20, y - 5, 20, 20, "X");
         button.enabled = display.bodyColors.bodyC3 != -1;
         window.addButton(button);
 
