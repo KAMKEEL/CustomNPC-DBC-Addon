@@ -127,7 +127,8 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 }
 
                 // Cancel normal face rendering for oozaru forms (oozaru renders its own eyes via renderOozaru)
-                if (form.display.hairType.equals("oozaru") && !ClientConstants.renderingOozaru) {
+                boolean isSaiyanRace = dbcData.Race == 1 || dbcData.Race == 2;
+                if (isSaiyanRace && form.display.hairType.equals("oozaru") && !ClientConstants.renderingOozaru) {
                     if (hair.contains("FACENOSE") || hair.contains("FACEMOUTH") || hair.contains("EYEBROW") ||
                         hair.contains("EYEBASE") || hair.contains("EYELEFT") || hair.contains("EYERIGHT")) {
                         ci.setReturnValue("");
