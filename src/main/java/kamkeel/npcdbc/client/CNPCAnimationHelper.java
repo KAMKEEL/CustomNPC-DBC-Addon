@@ -244,20 +244,72 @@ public class CNPCAnimationHelper {
                 modelBipedBody.B4, modelBipedBody.B5, modelBipedBody.B7, modelBipedBody.B9,
                 modelBipedBody.Bbreast, modelBipedBody.Bbreast2,
                 modelBipedBody.body, modelBipedBody.hip, modelBipedBody.waist,
-                modelBipedBody.bottom, modelBipedBody.hip2, modelBipedBody.bottom2)) {
+                modelBipedBody.bottom, modelBipedBody.hip2, modelBipedBody.bottom2,
+                modelBipedBody.skirt1, modelBipedBody.skirt2)) {
                 return EnumAnimationPart.BODY;
+            }
+            if (isAny(renderer, modelBipedBody.Brightarm)) {
+                return EnumAnimationPart.RIGHT_ARM;
+            }
+            if (isAny(renderer, modelBipedBody.Bleftarm)) {
+                return EnumAnimationPart.LEFT_ARM;
+            }
+            if (isAny(renderer, modelBipedBody.rightleg)) {
+                return EnumAnimationPart.RIGHT_LEG;
+            }
+            if (isAny(renderer, modelBipedBody.leftleg)) {
+                return EnumAnimationPart.LEFT_LEG;
             }
         }
         if (model instanceof ModelBipedDBC) {
             ModelBipedDBC modelBipedDBC = (ModelBipedDBC) model;
             if (isAny(renderer,
+                // Face parts
                 modelBipedDBC.face1, modelBipedDBC.face2, modelBipedDBC.face3, modelBipedDBC.face4,
-                modelBipedDBC.face5, modelBipedDBC.face6, modelBipedDBC.SaiO, modelBipedDBC.Nam,
-                modelBipedDBC.Fro5, modelBipedDBC.Fro, modelBipedDBC.Fro0, modelBipedDBC.Fro1, modelBipedDBC.Fro2)) {
+                modelBipedDBC.face5, modelBipedDBC.face6,
+                // Base preset hair renderers
+                modelBipedDBC.bipedHeadAll, modelBipedDBC.bipedHeadg, modelBipedDBC.bipedHeadt,
+                modelBipedDBC.bipedHeadv, modelBipedDBC.bipedHeadgh, modelBipedDBC.bipedHeadnull,
+                modelBipedDBC.bipedHeadg2, modelBipedDBC.bipedHeadght, modelBipedDBC.bipedHeadgt,
+                modelBipedDBC.bipedHeadgtt, modelBipedDBC.bipedHeadc7, modelBipedDBC.bipedHeadc8,
+                // SS variants
+                modelBipedDBC.bipedHeadsg, modelBipedDBC.bipedHeadst,
+                modelBipedDBC.bipedHeadsv, modelBipedDBC.bipedHeadsgh,
+                // SS2 variants
+                modelBipedDBC.bipedHeadssg, modelBipedDBC.bipedHeadsst,
+                modelBipedDBC.bipedHeadssv, modelBipedDBC.bipedHeadssgh,
+                // SSJ3 hair
+                modelBipedDBC.bipedHeadssj3, modelBipedDBC.bipedHeadssj3l,
+                modelBipedDBC.bipedHeadssj3t, modelBipedDBC.bipedHeadssj3l2,
+                // Raditz-style long hair
+                modelBipedDBC.bipedHeadrad, modelBipedDBC.bipedHeadradl, modelBipedDBC.bipedHeadradl2,
+                // Fro / Oozaru / Namekian / Saiyan extras
+                modelBipedDBC.Fro5, modelBipedDBC.Fro, modelBipedDBC.Fro0, modelBipedDBC.Fro1,
+                modelBipedDBC.Fro2, modelBipedDBC.FroB,
+                modelBipedDBC.SaiO, modelBipedDBC.SaiE, modelBipedDBC.Nam)) {
                 return EnumAnimationPart.HEAD;
             }
-            if (isAny(renderer, modelBipedDBC.Fro5b, modelBipedDBC.WShell)) {
+            // Halo
+            if (isAny(renderer, modelBipedDBC.halo)) {
+                return EnumAnimationPart.HEAD;
+            }
+            // Body parts
+            if (isAny(renderer, modelBipedDBC.Fro5b, modelBipedDBC.WShell,
+                modelBipedDBC.SaiT1, modelBipedDBC.SaiT2)) {
                 return EnumAnimationPart.BODY;
+            }
+            // Weighted clothing
+            if (isAny(renderer, modelBipedDBC.WRightarm)) {
+                return EnumAnimationPart.RIGHT_ARM;
+            }
+            if (isAny(renderer, modelBipedDBC.WLeftarm)) {
+                return EnumAnimationPart.LEFT_ARM;
+            }
+            if (isAny(renderer, modelBipedDBC.WRightleg)) {
+                return EnumAnimationPart.RIGHT_LEG;
+            }
+            if (isAny(renderer, modelBipedDBC.WLeftleg)) {
+                return EnumAnimationPart.LEFT_LEG;
             }
         }
         if (model instanceof GiTurtleMdl) {
@@ -273,8 +325,24 @@ public class CNPCAnimationHelper {
         }
         if (model instanceof DBC_GiTurtleMdl) {
             DBC_GiTurtleMdl dbcGiTurtleMdl = (DBC_GiTurtleMdl) model;
-            if (renderer == dbcGiTurtleMdl.NeckRing) {
+            if (isAny(renderer, dbcGiTurtleMdl.halo)) {
+                return EnumAnimationPart.HEAD;
+            }
+            if (isAny(renderer, dbcGiTurtleMdl.NeckRing, dbcGiTurtleMdl.body,
+                dbcGiTurtleMdl.tail, dbcGiTurtleMdl.BoL_Base)) {
                 return EnumAnimationPart.BODY;
+            }
+            if (isAny(renderer, dbcGiTurtleMdl.Rarm)) {
+                return EnumAnimationPart.RIGHT_ARM;
+            }
+            if (isAny(renderer, dbcGiTurtleMdl.Larm)) {
+                return EnumAnimationPart.LEFT_ARM;
+            }
+            if (isAny(renderer, dbcGiTurtleMdl.Rleg)) {
+                return EnumAnimationPart.RIGHT_LEG;
+            }
+            if (isAny(renderer, dbcGiTurtleMdl.Lleg)) {
+                return EnumAnimationPart.LEFT_LEG;
             }
         }
         return null;
