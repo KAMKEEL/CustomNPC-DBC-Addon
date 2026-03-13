@@ -6,6 +6,7 @@ import kamkeel.npcdbc.constants.DBCSkills;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.constants.enums.EnumDBCRaces;
 import kamkeel.npcdbc.data.ability.types.AbilityFusion;
+import kamkeel.npcdbc.data.ability.types.AbilityOrbSurround;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.ability.conditions.ConditionRace;
 import kamkeel.npcs.controllers.data.ability.conditions.ConditionHPThreshold;
@@ -68,6 +69,7 @@ public class DBCAbilities {
 
     // Unique Abilities
     public static final Ability FUSION_DANCE = ABILITIES.registerType("fusion_dance", AbilityFusion::new);
+    public static final Ability ORB_SURROUND = ABILITIES.registerType("orb_surround", AbilityOrbSurround::new);
 
     // Ability Variants
 
