@@ -14,6 +14,6 @@ public class OverlayScript extends JaninoScript<IOverlayScript.Functions> implem
     };
 
     public OverlayScript() {
-        super(Functions.class, DEFAULT_IMPORTS, true);
+        super(Functions.class, DEFAULT_IMPORTS);
     }
 }

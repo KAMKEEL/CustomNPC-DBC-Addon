@@ -7,6 +7,7 @@ import kamkeel.npcdbc.api.client.overlay.IOverlay.RenderFunction;
 import kamkeel.npcdbc.api.client.overlay.IOverlay.Type;
 import kamkeel.npcdbc.data.overlay.OverlayContext;
 import net.minecraft.util.MathHelper;
+import kamkeel.npcdbc.client.ClientConstants;
 import noppes.npcs.constants.EnumAnimation;
 import org.lwjgl.opengl.GL11;
 
@@ -32,9 +33,6 @@ public final class OverlayModelRenderer {
         GL11.glTranslatef(0, 0.00001f, 0); //Must be this precise
 
         if (ctx.isNPC) {
-            if (ctx.female()) {
-                GL11.glScalef(0.85F, 1, 0.85F);
-            }
             ctx.mpm().renderHead(ctx.npc, SCALE);
         } else {
             float a = ctx.age();
@@ -94,11 +92,13 @@ public final class OverlayModelRenderer {
                 ctx.mpm().bipedLeftArm.render(SCALE);
             GL11.glPopMatrix();
         } else {
-            float scaleXZ = ctx.inverseAge() * (ctx.female() ? 0.7F : 1.0F);
-
             GL11.glPushMatrix();
-            GL11.glScalef(scaleXZ, ctx.inverseAge(), scaleXZ);
-            GL11.glTranslatef(0.0F, (ctx.age() - 1.0F) * 1.5F, 0.0F);
+
+            if (!ClientConstants.renderingArm) {
+                float scaleXZ = ctx.inverseAge() * (ctx.female() ? 0.7F : 1.0F);
+                GL11.glScalef(scaleXZ, ctx.inverseAge(), scaleXZ);
+                GL11.glTranslatef(0.0F, (ctx.age() - 1.0F) * 1.5F, 0.0F);
+            }
 
             if (ctx.female()) {
                 if (right)

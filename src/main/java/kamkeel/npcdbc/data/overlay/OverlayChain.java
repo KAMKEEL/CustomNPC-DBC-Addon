@@ -220,7 +220,7 @@ public class OverlayChain implements IOverlayChain {
 
             if (overlay != null) {
                 overlay.readFromNBT(overlayCompound);
-                overlays.add(i, overlay);
+                overlays.add(overlays.size(), overlay);
             }
             i++;
         }
