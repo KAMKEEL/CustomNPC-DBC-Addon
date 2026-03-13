@@ -86,7 +86,6 @@ public class FormController implements IFormHandler {
         File dir = getDir();
         if (!dir.exists()) {
             dir.mkdir();
-            return;
         }
 
         categoryManager.loadCategories(dir);

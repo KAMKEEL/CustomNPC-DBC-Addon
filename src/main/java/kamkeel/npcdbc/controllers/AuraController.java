@@ -149,7 +149,6 @@ public class AuraController implements IAuraHandler {
         File dir = getDir();
         if (!dir.exists()) {
             dir.mkdir();
-            return;
         }
 
         categoryManager.loadCategories(dir);
