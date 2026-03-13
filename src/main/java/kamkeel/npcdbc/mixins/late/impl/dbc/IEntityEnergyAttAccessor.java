@@ -11,4 +11,13 @@ public interface IEntityEnergyAttAccessor {
 
     @Accessor("color2")
     void npcdbc$setColor2(int color2);
+
+    @Accessor("strtX")
+    float npcdbc$getStrtX();
+
+    @Accessor("strtY")
+    float npcdbc$getStrtY();
+
+    @Accessor("strtZ")
+    float npcdbc$getStrtZ();
 }

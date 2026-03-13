@@ -41,6 +41,9 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
     private final String[] arrRace = new String[]{"gui.no", "display.human", "display.saiyan", "display.halfsaiyan", "display.namekian", "display.arcosian", "display.majin"};
     private final String[] arrHorns = new String[]{"gui.no", "display.part.antenna", "display.part.firstformspikes", "display.part.secondformspikes", "display.part.thirdformbighead", "display.part.ultimatespikes"};
     private final String[] arrHair = new String[]{"display.base", "display.ssj", "display.ssj2", "display.ssj3", "display.ssj4", "display.oozaru", "display.raditz"};
+    private final String[] arrHairNonSaiyan = new String[]{"display.base", "display.ssj", "display.ssj2", "display.raditz"};
+    private static final String[] hairKeys = new String[]{"base", "ssj", "ssj2", "ssj3", "ssj4", "oozaru", "raditz"};
+    private static final String[] hairDisplayKeys = new String[]{"display.base", "display.ssj", "display.ssj2", "display.ssj3", "display.ssj4", "display.oozaru", "display.raditz"};
     private final String[] arrRaceEars = new String[]{"gui.no", "display.part.arcoEars"};
     private final String[] arrBody = new String[]{"gui.no", "display.part.backSpike"};
     private final String[] arrArm = new String[]{"gui.no", "display.part.armSpikes", "display.part.shoulder"};
@@ -140,8 +143,9 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             cosmeticsScrollWindow.addLabel(new GuiNpcLabel(100, "display.hair", guiLeft, y + 5, 0xFFFFFF));
             cosmeticsScrollWindow.addButton(new GuiNpcButton(104, guiLeft + 101, y += 22, 50, 20, getColor(display.hairColor)));
             cosmeticsScrollWindow.addButton(new GuiNpcButton(103, guiLeft + 40, y, 60, 20, "gui.clear"));
-            int index = getHairType();
-            cosmeticsScrollWindow.addButton(new GuiButtonBiDirectional(105, guiLeft + 47, y += 22, 100, 20, arrHair, index));
+            String[] currentHairArr = DBCRace.isSaiyan(display.race) ? arrHair : arrHairNonSaiyan;
+            int index = getHairType(currentHairArr);
+            cosmeticsScrollWindow.addButton(new GuiButtonBiDirectional(105, guiLeft + 47, y += 22, 100, 20, currentHairArr, index));
             cosmeticsScrollWindow.getButton(104).packedFGColour = display.hairColor != 0 ? display.hairColor : 1;
             cosmeticsScrollWindow.getButton(105).enabled = display.hairCode.length() == 786 || display.hairCode.length() == 784 || display.hairCode.length() == 392;
 
@@ -356,7 +360,8 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             setSubGui(new GuiDBCDisplayColor(this, playerdata, display, npc, 4, button.id));
         }
         if (button.id == 105) {
-            display.hairType = getHairString(button.getValue());
+            String[] currentHairArr = DBCRace.isSaiyan(display.race) ? arrHair : arrHairNonSaiyan;
+            display.hairType = getHairString(button.getValue(), currentHairArr);
             initGui();
         }
         if (button.id == 305) {
@@ -612,47 +617,42 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
     }
 
 
-    private int getHairType() {
-        int index = 0;
-        //  "base", "ssj", "ssj2", "ssj3", "ssj4", "oozaru"
-        if (!display.hairType.isEmpty()) {
-            if (display.hairType.toLowerCase().contains("base"))
-                index = 0;
-            else if (display.hairType.equalsIgnoreCase("ssj"))
-                index = 1;
-            else if (display.hairType.toLowerCase().contains("ssj2"))
-                index = 2;
-            else if (display.hairType.toLowerCase().contains("ssj3"))
-                index = 3;
-            else if (display.hairType.toLowerCase().contains("ssj4"))
-                index = 4;
-            else if (display.hairType.toLowerCase().contains("oozaru"))
-                index = 5;
-            else if (display.hairType.toLowerCase().contains("raditz"))
-                index = 6;
+    private int getHairType(String[] types) {
+        if (display.hairType.isEmpty())
+            return 0;
+        String ht = display.hairType.toLowerCase();
+        String key;
+        if (ht.equals("ssj"))
+            key = "display.ssj";
+        else if (ht.contains("ssj2"))
+            key = "display.ssj2";
+        else if (ht.contains("ssj3"))
+            key = "display.ssj3";
+        else if (ht.contains("ssj4"))
+            key = "display.ssj4";
+        else if (ht.contains("oozaru"))
+            key = "display.oozaru";
+        else if (ht.contains("raditz"))
+            key = "display.raditz";
+        else
+            key = "display.base";
+
+        for (int i = 0; i < types.length; i++) {
+            if (types[i].equals(key))
+                return i;
         }
-        return index;
+        return 0;
     }
 
-    private String getHairString(int i) {
-        switch (i) {
-            case 0:
-                return "base";
-            case 1:
-                return "ssj";
-            case 2:
-                return "ssj2";
-            case 3:
-                return "ssj3";
-            case 4:
-                return "ssj4";
-            case 5:
-                return "oozaru";
-            case 6:
-                return "raditz";
-            default:
-                return "";
+    private String getHairString(int i, String[] types) {
+        if (i < 0 || i >= types.length)
+            return "";
+        String displayKey = types[i];
+        for (int j = 0; j < hairDisplayKeys.length; j++) {
+            if (hairDisplayKeys[j].equals(displayKey))
+                return hairKeys[j];
         }
+        return "";
     }
 
 

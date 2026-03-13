@@ -58,6 +58,12 @@ public class ConfigDBCGameplay {
     public static boolean DodgeTeleport = true;
     public static boolean DodgeCameraLock = true;
 
+    public final static String KiAttacks = "Ki_Attacks";
+    public static boolean EnableMaxLifetime = true;
+    public static int MaxLifetimeTicks = 400;
+    public static boolean EnableMaxDistance = true;
+    public static double MaxDistance = 200.0;
+
     public final static String FixesMovement = "Fixes.Movement";
     public static boolean EnhancedMovement = true;
     public static boolean AllowSpeedModifierTurboFlight = true;
@@ -134,6 +140,26 @@ public class ConfigDBCGameplay {
 
             DodgeTeleport = config.get(Combat, "Teleport on UI Dodge", true, "True or false whether UI Dodge teleports to the target").getBoolean(true);
             DodgeCameraLock = config.get(Combat, "camera Turn on UI dodge", true, "True or false whether UI Dodge Turns camera").getBoolean(true);
+
+            config.setCategoryComment(KiAttacks,
+                "Server-side controls to automatically kill DBC ki attacks (EntityEnergyAtt) after a\n" +
+                    "configurable lifetime or distance. Helps reduce server lag from runaway projectiles.\n" +
+                    "These override DBC's own EnergyAttackMaxLifeTick if the addon limits are stricter.");
+            config.setCategoryPropertyOrder(KiAttacks, new ArrayList<>(Arrays.asList(
+                "Enable Max Lifetime", "Max Lifetime Ticks", "Enable Max Distance", "Max Distance")));
+            EnableMaxLifetime = config.get(KiAttacks, "Enable Max Lifetime", true,
+                "Kill ki attacks after a maximum number of ticks alive.\n" +
+                    "This acts as an additional cap alongside DBC's own lifetime configs.").getBoolean(true);
+            MaxLifetimeTicks = config.get(KiAttacks, "Max Lifetime Ticks", 400,
+                "Maximum ticks a ki attack can exist before being killed. 20 ticks = 1 second.\n" +
+                    "Default: 400 (20 seconds). Set to 0 to disable.").getInt(400);
+            MaxLifetimeTicks = Math.max(0, MaxLifetimeTicks);
+            EnableMaxDistance = config.get(KiAttacks, "Enable Max Distance", true,
+                "Kill ki attacks after they travel beyond a maximum distance from their spawn point.").getBoolean(true);
+            MaxDistance = config.get(KiAttacks, "Max Distance", 200.0,
+                "Maximum distance (in blocks) a ki attack can travel from its spawn point.\n" +
+                    "Default: 200. Set to 0 to disable.").getDouble(200.0);
+            MaxDistance = Math.max(0.0, MaxDistance);
 
             config.setCategoryPropertyOrder(FixesMovement, new ArrayList<>(Arrays.asList(
                 "Enhanced Movement", "Allow Speed Modifier Turbo-Flight", "Speed Modifier Turbo-Flight", "Flight Vertical Damping")));
