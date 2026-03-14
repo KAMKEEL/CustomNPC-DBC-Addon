@@ -306,7 +306,6 @@ public class AbilityOrbSurround extends AbilityEnergyProjectile<EntityAbilityOrb
                 entities[i].setSpeed(refireSpeed);
                 entities[i].setCombatDamage(combatData.damage);
                 setOrbMotionToward(entities[i], convergencePos.xCoord, convergencePos.yCoord, convergencePos.zCoord, refireSpeed);
-                entities[i].sendClientSync();
             }
 
             int lastRefirePhaseTick = (entities.length - 1) * refireDelay + 1;
