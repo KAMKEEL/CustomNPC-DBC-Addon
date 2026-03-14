@@ -15,20 +15,16 @@ import kamkeel.npcs.controllers.data.ability.type.energy.AbilityEnergyProjectile
 import kamkeel.npcs.controllers.data.telegraph.TelegraphType;
 import kamkeel.npcs.entity.EntityAbilityOrb;
 import kamkeel.npcs.util.AnchorPointHelper;
-import kamkeel.npcs.util.RaycastUtil;
+import kamkeel.npcdbc.util.RaycastUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import noppes.npcs.api.IPos;
-import noppes.npcs.api.entity.IEntity;
-import noppes.npcs.api.entity.IEntityLivingBase;
 import noppes.npcs.client.gui.builder.FieldDef;
 import noppes.npcs.controllers.data.MagicData;
 import noppes.npcs.entity.EntityNPCInterface;
-import noppes.npcs.scripted.NpcAPI;
 
 import java.util.Arrays;
 import java.util.List;
