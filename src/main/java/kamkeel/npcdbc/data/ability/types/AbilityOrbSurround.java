@@ -15,6 +15,8 @@ import kamkeel.npcs.controllers.data.ability.type.energy.AbilityEnergyProjectile
 import kamkeel.npcs.controllers.data.telegraph.TelegraphType;
 import kamkeel.npcs.entity.EntityAbilityOrb;
 import kamkeel.npcs.util.AnchorPointHelper;
+import kamkeel.npcs.util.RaycastUtil;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -419,7 +421,6 @@ public class AbilityOrbSurround extends AbilityEnergyProjectile<EntityAbilityOrb
             orb.motionY = 0;
             orb.motionZ = 0;
             orb.setSpeed(0);
-            orb.sendClientSync();
         }
     }
 
@@ -427,10 +428,10 @@ public class AbilityOrbSurround extends AbilityEnergyProjectile<EntityAbilityOrb
         if (target != null) {
             return Vec3.createVectorHelper(target.posX, target.posY + 1.0, target.posZ);
         }
-        IPos pos = ((IEntityLivingBase) NpcAPI.Instance().getIEntity(caster))
-            .getLookingAtPos((int) maxRange, true, false, true);
+
+        Vec3 pos = RaycastUtil.getLookingAtPos(caster, (int) maxRange, true, false, true);
         if (pos == null) return null;
-        return Vec3.createVectorHelper(pos.getXD(), pos.getYD(), pos.getZD());
+        return pos;
     }
 
     private boolean isNearGround(World world, EntityLivingBase entity, Vec3 center) {
@@ -464,13 +465,13 @@ public class AbilityOrbSurround extends AbilityEnergyProjectile<EntityAbilityOrb
         if (caster instanceof EntityNPCInterface) {
             return ((EntityNPCInterface) caster).getAttackTarget();
         }
+
         if (caster instanceof EntityPlayer) {
-            IEntityLivingBase player = (IEntityLivingBase) NpcAPI.Instance().getIEntity(caster);
-            IEntity[] ents = player.getLookingAtEntities(
-                new IEntity[]{NpcAPI.Instance().getIEntity(caster)},
-                (int) maxRange, 0, 1, true, false, true);
-            if (ents.length > 0 && ents[0].getMCEntity() instanceof EntityLivingBase)
-                return (EntityLivingBase) ents[0].getMCEntity();
+            Entity[] foundEntities = RaycastUtil.getLookingAtEntities(
+                caster, new Entity[]{caster}, (int) maxRange, 0, 1, true, false, true);
+
+            if (foundEntities.length > 0 && foundEntities[0] instanceof EntityLivingBase)
+                return (EntityLivingBase) foundEntities[0];
         }
         return fallback;
     }
