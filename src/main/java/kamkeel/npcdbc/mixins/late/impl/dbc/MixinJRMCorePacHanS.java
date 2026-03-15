@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 import JinRyuu.JRMCore.JRMCorePacHanS;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
+import kamkeel.npcdbc.data.ability.DBCAbilities;
 import kamkeel.npcdbc.data.ability.toggle.DBCToggle;
 import kamkeel.npcdbc.data.ability.toggle.DBCToggleAbility;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
@@ -110,6 +111,17 @@ public abstract class MixinJRMCorePacHanS {
         if (DBCEventHooks.onSkillEvent(event)) {
             ci.cancel();
         }
+    }
+
+    /**
+     * After a skill is learned or unlearned, refresh toggle ability grants
+     * so toggles appear/disappear based on the player's current skills.
+     */
+    @Inject(method = "handleStats3", at = @At("TAIL"), remap = false)
+    private void refreshToggleAbilitiesAfterSkillChange(byte b, byte b2, byte b3, EntityPlayer p, CallbackInfo ci) {
+        if (b != 1 && b != 2) return;  // 1 = learn, 2 = unlearn
+        if (p.worldObj.isRemote) return;
+        DBCAbilities.grantToggleAbilities(p);
     }
 
 }

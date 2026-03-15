@@ -14,6 +14,7 @@ import kamkeel.npcs.controllers.data.ability.data.AbilityIconData;
 import kamkeel.npcdbc.data.ability.toggle.DBCToggle;
 import kamkeel.npcdbc.data.ability.toggle.DBCToggleAbility;
 import kamkeel.npcdbc.util.DBCSettingsUtil;
+import kamkeel.npcs.controllers.AbilityController;
 import kamkeel.npcs.controllers.data.ability.conditions.ConditionFilter;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.controllers.data.ability.AbilityVariant;
@@ -628,8 +629,9 @@ public class DBCAbilities {
     };
 
     /**
-     * Ensures all DBC toggle abilities are in the player's unlocked list.
-     * Visibility is handled by each ability's playerRequirement predicate.
+     * Grants/revokes DBC toggle abilities based on the player's learned skills.
+     * Only unlocks a toggle if the player meets its playerRequirement (has the DBC skill).
+     * Revokes toggles the player no longer qualifies for.
      */
     public static void grantToggleAbilities(EntityPlayer player) {
         if (player.worldObj.isRemote || PlayerDataController.Instance == null)
@@ -646,10 +648,22 @@ public class DBCAbilities {
             }
         }
 
-        // Grant with canonical keys
+        // Grant or revoke based on skill requirements
         for (String key : TOGGLE_KEYS) {
-            if (!playerData.abilityData.hasUnlockedAbility(key)) {
+            Ability ability = AbilityController.Instance != null
+                ? AbilityController.Instance.peekAbility(key) : null;
+            boolean qualified = ability == null || ability.isAvailableFor(player);
+            boolean unlocked = playerData.abilityData.hasUnlockedAbility(key);
+
+            if (qualified && !unlocked) {
                 playerData.abilityData.unlockAbility(key);
+                changed = true;
+            } else if (!qualified && unlocked) {
+                playerData.abilityData.lockAbility(key);
+                // Also clear toggle state if the player lost the skill
+                if (playerData.abilityData.isAbilityToggled(key)) {
+                    playerData.abilityData.setToggleEntryDirect(key, 0);
+                }
                 changed = true;
             }
         }
