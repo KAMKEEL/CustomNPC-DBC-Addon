@@ -198,6 +198,10 @@ public abstract class MixinJRMCoreH {
                 return;
             if (!DBCData.get(player).isForm(DBCForm.Divine))
                 return;
+            if (race < 0 || race >= JRMCoreH.trans.length || st < 0 || st >= JRMCoreH.trans[race].length) {
+                currentResult = 0;
+                return;
+            }
             if (ConfigDBCEffects.canDivineBeApplied(race, getCurrentFormName(race, st, st2, false, mysticOn, uiOn, GoDOn)))
                 cir.setReturnValue((int) (cir.getReturnValue() + ((uiOn ? cir.getReturnValue() : currentResult) * (ConfigDBCEffects.getDivineMulti() - 1))));
             currentResult = 0;
