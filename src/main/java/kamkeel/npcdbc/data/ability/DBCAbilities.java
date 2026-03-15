@@ -13,6 +13,7 @@ import kamkeel.npcs.controllers.data.ability.data.effect.AbilityCustomEffect;
 import kamkeel.npcs.controllers.data.ability.data.AbilityIconData;
 import kamkeel.npcdbc.data.ability.toggle.DBCToggle;
 import kamkeel.npcdbc.data.ability.toggle.DBCToggleAbility;
+import kamkeel.npcdbc.util.DBCSettingsUtil;
 import kamkeel.npcs.controllers.data.ability.conditions.ConditionFilter;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.controllers.data.ability.AbilityVariant;
@@ -653,9 +654,40 @@ public class DBCAbilities {
             }
         }
 
+        // Sync DBC setting states → ability toggle map so hotbar matches the X menu
+        changed |= syncToggleStatesFromDBC(player, playerData);
+
         if (changed) {
             playerData.abilityData.syncToClient();
         }
+    }
+
+    /**
+     * Reads current DBC settings and updates ability toggle entries to match.
+     * Uses setToggleEntryDirect to avoid re-applying settings back to DBC.
+     * @return true if any toggle state was changed
+     */
+    private static boolean syncToggleStatesFromDBC(EntityPlayer player, PlayerData playerData) {
+        boolean changed = false;
+        for (DBCToggle toggle : DBCToggle.values()) {
+            String key = toggle.getAbilityKey();
+            int currentToggleState = playerData.abilityData.getToggleState(key);
+
+            int dbcState;
+            if (toggle == DBCToggle.KI_WEAPON) {
+                // Multi-state: read actual DBC mode value
+                int mode = DBCSettingsUtil.getKiWeapon(player);
+                dbcState = (mode >= 0) ? mode + 1 : 0;  // -1 = off, 0+ = mode (1-indexed for toggle)
+            } else {
+                dbcState = DBCSettingsUtil.isEnabled(player, toggle.setting) ? 1 : 0;
+            }
+
+            if (currentToggleState != dbcState) {
+                playerData.abilityData.setToggleEntryDirect(key, dbcState);
+                changed = true;
+            }
+        }
+        return changed;
     }
 
     public static void register() {

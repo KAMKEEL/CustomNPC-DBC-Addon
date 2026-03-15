@@ -4,6 +4,7 @@ import JinRyuu.JRMCore.JRMCorePacHanS;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.data.ability.toggle.DBCToggle;
+import kamkeel.npcdbc.data.ability.toggle.DBCToggleAbility;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -38,15 +39,25 @@ public abstract class MixinJRMCorePacHanS {
 
         if (b == 6) {
             // b3 == 0 → ON, b3 == 1 → OFF
-            // Use setToggleState so ToggleEvent fires for scripts.
-            // Exclusivity is handled by DBCToggleAbility.onToggle().
+            // Use setToggleEntryDirect: DBC already applied the setting in handleTri,
+            // so we only need to update the ability toggle map without re-triggering
+            // onToggle/applyState (which would double-apply the DBC setting).
             int state = (b3 == 0) ? 1 : 0;
-            playerData.abilityData.setToggleState(abilityKey, state);
+            playerData.abilityData.setToggleEntryDirect(abilityKey, state);
+
+            // For exclusive toggles, also clear conflicting entries in the toggle map
+            if (state > 0 && DBCToggleAbility.isExclusiveToggle(toggle)) {
+                for (String key : DBCToggleAbility.EXCLUSIVE_GROUP) {
+                    if (!key.equals(abilityKey)) {
+                        playerData.abilityData.setToggleEntryDirect(key, 0);
+                    }
+                }
+            }
             playerData.abilityData.syncToClient();
         } else if (b == 8) {
             // Setting set to specific value (e.g., Ki Weapon mode)
             // b3 = the value; treat as state (1-indexed for ability toggles)
-            playerData.abilityData.setToggleState(abilityKey, b3 + 1);
+            playerData.abilityData.setToggleEntryDirect(abilityKey, b3 + 1);
             playerData.abilityData.syncToClient();
         }
     }
