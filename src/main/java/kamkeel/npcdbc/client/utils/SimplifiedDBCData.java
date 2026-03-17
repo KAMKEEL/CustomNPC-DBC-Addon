@@ -238,7 +238,7 @@ public class SimplifiedDBCData implements ISimpleDBCData {
 
     @Override
     public boolean isInCustomForm() {
-        return dbcData.addonFormID != -1;
+        return dbcData.addonFormID > -1 && getCurrentForm() != null;
     }
 
     @Override

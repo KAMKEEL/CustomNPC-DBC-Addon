@@ -454,7 +454,7 @@ public class PlayerDBCInfo {
     public void loadNBTData(NBTTagCompound compound) {
         NBTTagCompound dbcCompound = compound.getCompoundTag("DBCInfo");
 
-        currentForm = dbcCompound.getInteger("CurrentForm");
+        currentForm = dbcCompound.hasKey("CurrentForm") ? dbcCompound.getInteger("CurrentForm") : -1;
         selectedForm = dbcCompound.hasKey("SelectedForm") ? dbcCompound.getInteger("SelectedForm") : -1;
         selectedDBCForm = dbcCompound.hasKey("SelectedDBCForm") ? dbcCompound.getInteger("SelectedDBCForm") : -1;
         lastFormBeforeStack = dbcCompound.hasKey("LastFormBeforeStack") ? dbcCompound.getInteger("LastFormBeforeStack") : -1;
