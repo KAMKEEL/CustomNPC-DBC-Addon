@@ -65,6 +65,7 @@ public class NPCDBCEarlyMixins implements IMixinConfigPlugin {
             }
 
             mixins.add("client.MixinForgeHooksClient");
+            mixins.add("client.FramebufferStencilCreation");
 
 
         }

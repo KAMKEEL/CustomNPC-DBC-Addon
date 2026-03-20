@@ -18,7 +18,7 @@ public abstract class MixinForgeHooksClient {
      * @reason Main window buffer on certain devices DOES NOT accelerate a 24depth 8stencil buffer.
      */
     @Inject(method = "createDisplay", at = @At("TAIL"))
-    public static void injectStencilBits() {
+    private static void injectStencilBits() {
         if (ConfigDBCClient.EnableShaders)
             stencilBits = 8;
     }
