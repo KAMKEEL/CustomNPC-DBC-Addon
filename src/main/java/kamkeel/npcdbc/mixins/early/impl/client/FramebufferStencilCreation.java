@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Framebuffer.class)
 public abstract class FramebufferStencilCreation {
@@ -24,7 +25,7 @@ public abstract class FramebufferStencilCreation {
     public int customNPC_DBC_Addon$stencilBuffer = -1;
 
     @Inject(method = "deleteFramebuffer()V", at = @At("HEAD"))
-    public void removeStencilBuffer() {
+    public void removeStencilBuffer(CallbackInfo info) {
         if (OpenGlHelper.isFramebufferEnabled()) {
             if (this.customNPC_DBC_Addon$stencilBuffer != -1) {
                 OpenGlHelper.func_153184_g(this.customNPC_DBC_Addon$stencilBuffer);
