@@ -51,14 +51,9 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit(FMLPreInitializationEvent ev) {
         super.preInit(ev);
-        forceStencilEnable(); // TODO change the stencil request.
         CustomNpcs.addClassesToClientClassFilter(filter -> {
             filter.addRegexes("kamkeel\\.npcdbc\\.api\\..*");
         });
-    }
-
-    private void forceStencilEnable() {
-        throw new RuntimeException("We're not supposed to request stencil bits on the main buffer.");
     }
 
     public void init(FMLInitializationEvent ev) {
