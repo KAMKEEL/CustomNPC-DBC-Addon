@@ -51,10 +51,14 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit(FMLPreInitializationEvent ev) {
         super.preInit(ev);
-        forceStencilEnable();
+        forceStencilEnable(); // TODO change the stencil request.
         CustomNpcs.addClassesToClientClassFilter(filter -> {
             filter.addRegexes("kamkeel\\.npcdbc\\.api\\..*");
         });
+    }
+
+    private void forceStencilEnable() {
+        throw new RuntimeException("We're not supposed to request stencil bits on the main buffer.");
     }
 
     public void init(FMLInitializationEvent ev) {
@@ -119,16 +123,5 @@ public class ClientProxy extends CommonProxy {
 
     public static boolean isRenderingWorld() {
         return ClientConstants.renderingWorld;
-    }
-
-    private void forceStencilEnable() {
-        try {
-            System.setProperty("forge.forceDisplayStencil", "true");
-            Field field = ForgeHooksClient.class.getDeclaredField("stencilBits");
-            field.setAccessible(true);
-            field.setInt(ForgeHooksClient.class, 8);
-        } catch (Exception e) {
-            LOGGER.error("Failed setting stencil bits to 8: " + e.getMessage());
-        }
     }
 }
