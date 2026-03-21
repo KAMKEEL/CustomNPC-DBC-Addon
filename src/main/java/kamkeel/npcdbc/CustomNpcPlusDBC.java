@@ -10,6 +10,7 @@ import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.event.IDBCEvent;
+import kamkeel.npcdbc.data.race.DBCAddonRaces;
 import noppes.npcs.controllers.APIRegistry;
 import kamkeel.npcdbc.config.LoadConfiguration;
 import kamkeel.npcdbc.data.ability.DBCAbilities;
@@ -72,6 +73,7 @@ public class CustomNpcPlusDBC {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         proxy.init(event);
+        DBCAddonRaces.register();
         CapsuleController.getInstance().load();
         BonusController.getInstance().load();
         DBCEffectController.getInstance().load();
