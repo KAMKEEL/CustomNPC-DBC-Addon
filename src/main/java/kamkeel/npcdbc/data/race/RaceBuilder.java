@@ -39,11 +39,6 @@ public class RaceBuilder {
         return create(id, name, "NEW RACE");
     }
 
-    public RaceBuilder displayName(String displayName) {
-        this.menuName = displayName;
-        return this;
-    }
-
     // ── Skill ────────────────────────────────────────────────
     public SkillBuilder skill() {
         return new SkillBuilder(this);

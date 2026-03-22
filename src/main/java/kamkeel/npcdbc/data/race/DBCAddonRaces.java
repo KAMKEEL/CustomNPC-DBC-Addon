@@ -3,8 +3,7 @@ package kamkeel.npcdbc.data.race;
 public class DBCAddonRaces {
     public static final RaceRegistry RACES = RaceRegistry.create("npcdbc", "DBC Addon");
 
-    public static final Race ANDROID = RACES.register(RaceBuilder.create(1, "android")
-            .displayName("Android")
+    public static final Race ANDROID = RACES.register(RaceBuilder.create(1, "android", "Android")
             .skill()
                 .maxLevel(5)
                 .tpCosts(1000, 2000, 3000, 4000, 5000)
