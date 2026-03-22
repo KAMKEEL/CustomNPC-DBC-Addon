@@ -9,7 +9,7 @@ public class Race {
 
     public final RaceDisplay display;
     public final RaceStats stats;
-    public final RaceSkill skill;
+    public final RaceSkill skill; //
 
     Race(int id, String name, RaceDisplay display, RaceStats stats, RaceSkill skill) {
         this.id = id;
