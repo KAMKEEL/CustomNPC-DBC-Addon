@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.data.race;
 
+import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.constants.enums.EnumDBCAttributes;
 import kamkeel.npcdbc.constants.enums.EnumDBCClasses;
 import kamkeel.npcdbc.constants.enums.EnumDBCStats;
@@ -148,6 +149,11 @@ public class RaceBuilder {
 
         public DisplayBuilder addColorPreset(ColorPreset preset) {
             parent.display.addColorPreset(preset);
+            return this;
+        }
+
+        public DisplayBuilder addColorOverride(String id, Color color) {
+            parent.display.addColorOverride(id, color);
             return this;
         }
 

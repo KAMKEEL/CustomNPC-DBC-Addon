@@ -1,10 +1,13 @@
 package kamkeel.npcdbc.data.race.display;
 
+import kamkeel.npcdbc.api.Color;
+
 import java.util.*;
 
 public class RaceDisplay {
     private final Map<String, ColorSlot> colorSlots = new LinkedHashMap<>();
     private final List<ColorPreset> colorPresets = new ArrayList<>();
+    private final Map<String, Color> colorOverrides = new HashMap<>();
     private final Map<String, TextureSlot> textureSlots = new LinkedHashMap<>();
 
     public RaceDisplay() {
@@ -28,6 +31,10 @@ public class RaceDisplay {
         colorPresets.add(preset);
     }
 
+    public void addColorOverride(String slotId, Color color) {
+        colorOverrides.put(slotId.toLowerCase(), color);
+    }
+
     public void addTextureSlot(TextureSlot slot) {
         textureSlots.put(slot.id, slot);
     }
@@ -38,6 +45,14 @@ public class RaceDisplay {
 
     public boolean hasColorSlot(String id) {
         return colorSlots.containsKey(id.toLowerCase());
+    }
+
+    public Color getColorOverride(String slotId) {
+        return colorOverrides.get(slotId.toLowerCase());
+    }
+
+    public boolean hasColorOverride(String slotId) {
+        return colorOverrides.containsKey(slotId.toLowerCase());
     }
 
     public TextureSlot getTextureSlot(String id) {
@@ -54,6 +69,10 @@ public class RaceDisplay {
 
     public List<ColorPreset> getColorPresets() {
         return Collections.unmodifiableList(colorPresets);
+    }
+
+    public Map<String, Color> getColorOverrides() {
+        return Collections.unmodifiableMap(colorOverrides);
     }
 
     public Map<String, TextureSlot> getTextureSlots() {
