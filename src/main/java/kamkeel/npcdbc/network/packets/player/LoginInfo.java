@@ -7,7 +7,7 @@ import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
-import kamkeel.npcdbc.constants.DBCClass;
+import kamkeel.npcdbc.constants.enums.EnumDBCClasses;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.PacketChannel;
@@ -118,9 +118,9 @@ public final class LoginInfo extends AbstractPacket {
             float spiritualist = in.readFloat();
             float warrior = in.readFloat();
 
-            ClientCache.chargingDexValues.put(DBCClass.MartialArtist, martialArtist);
-            ClientCache.chargingDexValues.put(DBCClass.Spiritualist, spiritualist);
-            ClientCache.chargingDexValues.put(DBCClass.Warrior, warrior);
+            ClientCache.chargingDexValues.put(EnumDBCClasses.MARTIAL_ARTIST, martialArtist);
+            ClientCache.chargingDexValues.put(EnumDBCClasses.SPIRITUALIST, spiritualist);
+            ClientCache.chargingDexValues.put(EnumDBCClasses.WARRIOR, warrior);
 
             ClientCache.allowTransformBypass = in.readBoolean();
 

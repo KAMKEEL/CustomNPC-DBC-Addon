@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.client;
 
 import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
-import kamkeel.npcdbc.constants.DBCClass;
+import kamkeel.npcdbc.constants.enums.EnumDBCClasses;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.config.ConfigClient;
@@ -17,7 +17,7 @@ public class ClientCache {
 
     public static boolean allowTransformBypass = false;
     public static boolean hasChargingDex = false;
-    public static HashMap<DBCClass, Float> chargingDexValues = new HashMap<>();
+    public static HashMap<EnumDBCClasses, Float> chargingDexValues = new HashMap<>();
 
     public static boolean kiRevamp = true;
 

@@ -1,7 +1,19 @@
 package kamkeel.npcdbc.data.race;
 
-import kamkeel.npcdbc.constants.DBCClass;
+import kamkeel.npcdbc.constants.enums.EnumDBCAttributes;
+import kamkeel.npcdbc.constants.enums.EnumDBCClasses;
+import kamkeel.npcdbc.constants.enums.EnumDBCStats;
+import kamkeel.npcdbc.data.race.display.ColorPreset;
+import kamkeel.npcdbc.data.race.display.ColorSlot;
+import kamkeel.npcdbc.data.race.display.RaceDisplay;
+import kamkeel.npcdbc.data.race.display.TextureSlot;
+import kamkeel.npcdbc.data.race.stats.ClassStats;
+import kamkeel.npcdbc.data.race.stats.RaceStats;
+import net.minecraft.util.ResourceLocation;
 import noppes.npcs.LogWriter;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 public class RaceBuilder {
     private final int id;
@@ -26,8 +38,13 @@ public class RaceBuilder {
     }
 
     // ── Stats ─────────────────────────────────────────────────
-    public ClassStatsBuilder forClass(DBCClass raceClass) {
+    public ClassStatsBuilder forClass(EnumDBCClasses raceClass) {
         return new ClassStatsBuilder(this, raceClass);
+    }
+
+    // ── Display ───────────────────────────────────────────────
+    public DisplayBuilder display() {
+        return new DisplayBuilder(this);
     }
 
     // ── Build ─────────────────────────────────────────────────
@@ -69,33 +86,45 @@ public class RaceBuilder {
 
     public static class ClassStatsBuilder {
         private final RaceBuilder parent;
-        private final DBCClass raceClass;
+        private final EnumDBCClasses raceClass;
 
-        private int[] initialAttributes = RaceStats.ClassStats.DEFAULT_INITIAL_ATTRIBUTES.clone();
-        private double[] attributeMultipliers = RaceStats.ClassStats.DEFAULT_ATTRIBUTE_MULTIPLIERS.clone();
-        private double[] statBonuses = RaceStats.ClassStats.DEFAULT_STAT_BONUSES.clone();
-        private double[] statAttributeMultipliers = RaceStats.ClassStats.DEFAULT_STAT_ATTRIBUTE_MULTIPLIERS.clone();
+        private final Map<EnumDBCAttributes, Integer> initialAttributes = new EnumMap<>(ClassStats.DEFAULT_INITIAL_ATTRIBUTES);
+        private final Map<EnumDBCAttributes, Double> attributeMultipliers = new EnumMap<>(ClassStats.DEFAULT_ATTRIBUTE_MULTIPLIERS);
+        private final Map<EnumDBCStats, Double> statBonuses = new EnumMap<>(ClassStats.DEFAULT_STAT_BONUSES);
+        private final Map<EnumDBCStats, Double> statAttributeMultipliers = new EnumMap<>(ClassStats.DEFAULT_STAT_ATTRIBUTE_MULTIPLIERS);
 
-        ClassStatsBuilder(RaceBuilder parent, DBCClass raceClass) {
+        ClassStatsBuilder(RaceBuilder parent, EnumDBCClasses raceClass) {
             this.parent = parent;
             this.raceClass = raceClass;
         }
 
-        public ClassStatsBuilder initialAttributes(int... values) {
-            this.initialAttributes = values; return this;
+        public ClassStatsBuilder initialAttribute(EnumDBCAttributes attr, int value) {
+            initialAttributes.put(attr, value);
+            return this;
         }
-        public ClassStatsBuilder attributeMultipliers(double... values) {
-            this.attributeMultipliers = values; return this;
+
+        public ClassStatsBuilder attributeMultiplier(EnumDBCAttributes attr, double value) {
+            attributeMultipliers.put(attr, value);
+            return this;
         }
-        public ClassStatsBuilder statBonuses(double... values) {
-            this.statBonuses = values; return this;
+
+        public ClassStatsBuilder statBonus(EnumDBCStats stat, double value) {
+            statBonuses.put(stat, value);
+            return this;
         }
-        public ClassStatsBuilder statAttributeMultipliers(double... values) {
-            this.statAttributeMultipliers = values; return this;
+
+        public ClassStatsBuilder statAttributeMultiplier(EnumDBCStats stat, double value) {
+            statAttributeMultipliers.put(stat, value);
+            return this;
+        }
+
+        public ClassStatsBuilder forClass(EnumDBCClasses next) {
+            and();
+            return new ClassStatsBuilder(parent, next);
         }
 
         public RaceBuilder and() {
-            parent.stats.set(raceClass, new RaceStats.ClassStats(
+            parent.stats.set(raceClass, new ClassStats(
                 initialAttributes,
                 attributeMultipliers,
                 statBonuses,
@@ -103,10 +132,34 @@ public class RaceBuilder {
             ));
             return parent;
         }
+    }
 
-        public ClassStatsBuilder forClass(DBCClass next) {
-            and();
-            return new ClassStatsBuilder(parent, next);
+    public static class DisplayBuilder {
+        private final RaceBuilder parent;
+
+        DisplayBuilder(RaceBuilder parent) {
+            this.parent = parent;
+        }
+
+        public DisplayBuilder addColorSlot(String id, String displayName) {
+            parent.display.addColorSlot(new ColorSlot(id, displayName));
+            return this;
+        }
+
+        public DisplayBuilder addColorPreset(ColorPreset preset) {
+            parent.display.addColorPreset(preset);
+            return this;
+        }
+
+        public DisplayBuilder addTexture(String slotId, ResourceLocation texture) {
+            TextureSlot slot = parent.display.getTextureSlot(slotId);
+            if (slot != null)
+                slot.add(texture);
+            return this;
+        }
+
+        public RaceBuilder and() {
+            return parent;
         }
     }
 }

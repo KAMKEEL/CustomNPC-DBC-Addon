@@ -1,5 +1,8 @@
 package kamkeel.npcdbc.data.race;
 
+import kamkeel.npcdbc.data.race.display.RaceDisplay;
+import kamkeel.npcdbc.data.race.stats.RaceStats;
+
 public class Race {
     public final int id;
     private final String name;
