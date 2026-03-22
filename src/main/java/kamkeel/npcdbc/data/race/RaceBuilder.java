@@ -19,18 +19,29 @@ import java.util.Map;
 public class RaceBuilder {
     private final int id;
     private final String name;
+    private String menuName;
 
     private RaceSkill skill;
     private RaceStats stats = new RaceStats();
     private RaceDisplay display = new RaceDisplay();
 
-    private RaceBuilder(int id, String name) {
+    private RaceBuilder(int id, String name, String menuName) {
         this.id = id;
         this.name = name;
+        this.menuName = menuName;
+    }
+
+    public static RaceBuilder create(int id, String name, String displayName) {
+        return new RaceBuilder(id, name, displayName);
     }
 
     public static RaceBuilder create(int id, String name) {
-        return new RaceBuilder(id, name);
+        return create(id, name, "NEW RACE");
+    }
+
+    public RaceBuilder displayName(String displayName) {
+        this.menuName = displayName;
+        return this;
     }
 
     // ── Skill ────────────────────────────────────────────────
@@ -54,7 +65,7 @@ public class RaceBuilder {
             LogWriter.error("Race '" + name + "' is missing a racial skill.");
             return null;
         }
-        return new Race(id, name, display, stats, skill);
+        return new Race(id, name, menuName, display, stats, skill);
     }
 
     // ══════════════════════════════════════════════════════════

@@ -34,6 +34,13 @@ public class RaceRegistry extends Register<Race> {
         return super.register(factoryName, factory);
     }
 
+    public Race register(RaceBuilder builder) {
+        Race race = builder.build();
+        if (race == null) return null;
+
+        return super.register(race.getName(), builder::build);
+    }
+
     public void register() {
         for (Map.Entry<String, Supplier<Race>> entry : entries.entrySet()) {
             RaceController.Instance.register(entry.getValue().get());
