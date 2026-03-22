@@ -12,7 +12,7 @@ public class RaceBuilder {
     private RaceDisplay display = new RaceDisplay();
 
     private RaceBuilder(int id, String name) {
-        this.id   = id;
+        this.id = id;
         this.name = name;
     }
 

@@ -27,6 +27,13 @@ public class RaceRegistry extends Register<Race> {
         return new RaceRegistry(namespace);
     }
 
+    @Override
+    public Race register(String factoryName, Supplier<Race> factory) {
+        if (factory.get() == null) return null;
+
+        return super.register(factoryName, factory);
+    }
+
     public void register() {
         for (Map.Entry<String, Supplier<Race>> entry : entries.entrySet()) {
             RaceController.Instance.register(entry.getValue().get());
