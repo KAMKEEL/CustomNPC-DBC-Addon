@@ -327,6 +327,7 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
 
             public Learn(IPlayer player, int type, int id, int cost) {
                 super(player, type, id);
+                this.cost = cost;
             }
 
             @Override
