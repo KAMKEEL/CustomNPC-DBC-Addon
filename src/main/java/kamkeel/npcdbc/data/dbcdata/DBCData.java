@@ -30,6 +30,7 @@ import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
 import kamkeel.npcdbc.data.overlay.OverlayManager;
 import kamkeel.npcdbc.data.skill.CustomSkillContainer;
+import kamkeel.npcdbc.data.skill.RacialSkillContainer;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.*;
@@ -105,6 +106,10 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public int addonFormID = -1, auraID = -1, outlineID = -1;
     public float addonFormLevel = 0, addonCurrentHeat = 0;
 
+    // Custom Race
+    public int addonRaceID = -1;
+    public RacialSkillContainer racialSkill = null;
+
     /** Sets addon heat and writes directly to NBT so DBC picks it up immediately. */
     public void setAddonHeat(float heat) {
         this.addonCurrentHeat = heat;
@@ -141,6 +146,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
     public DBCDataStats stats = new DBCDataStats(this);
     public DBCDataBonus bonus = new DBCDataBonus(this);
+    public DBCDataRace addonRace = new DBCDataRace(this);
 
     /**
      * ALL overlay chains that were drawn this tick, forms and everything
@@ -226,6 +232,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         comp.setFloat("addonFormLevel", addonFormLevel);
         comp.setFloat("addonCurrentHeat", addonCurrentHeat);
 
+        comp.setInteger("addonRaceID", addonRaceID);
+
         comp.setFloat("DBCBaseFlightSpeed", baseFlightSpeed);
         comp.setFloat("DBCDynamicFlightSpeed", dynamicFlightSpeed);
         comp.setFloat("DBCSprintSpeed", sprintSpeed);
@@ -238,6 +246,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         NBTTagList skillList = NBTHelper.nbtIntegerObjectMap(this.customSkills, skill -> skill.writeToNBT(new NBTTagCompound()), (i, skill) -> SkillController.Instance.getSkill(i) != null);
         comp.setTag("customSkills", skillList);
+
         return comp;
     }
 
@@ -291,6 +300,10 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         addonFormLevel = c.getFloat("addonFormLevel");
         addonCurrentHeat = c.getFloat("addonCurrentHeat");
+
+        if (!c.hasKey("addonRaceID"))
+            c.setInteger("addonRaceID", addonRaceID);
+        addonRaceID = c.getInteger("addonRaceID");
 
         if (!c.hasKey("auraID"))
             c.setInteger("auraID", auraID);

@@ -17,7 +17,6 @@ import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.data.form.FormMasteryLinkData;
 import kamkeel.npcdbc.data.overlay.OverlayManager;
-import kamkeel.npcdbc.data.race.PlayerRaceData;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.util.NBTHelper;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -42,8 +41,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PlayerDBCInfo {
     public PlayerData parent;
 
-    public PlayerRaceData raceData;
-
     public int currentForm = -1;
     public int selectedForm = -1, selectedDBCForm = -1, tempSelectedDBCForm = -1;
     public int lastFormBeforeStack = -1;
@@ -62,9 +59,6 @@ public class PlayerDBCInfo {
 
     public PlayerDBCInfo(PlayerData parent) {
         this.parent = parent;
-
-        DBCData data = parent.player != null ? DBCData.get(parent.player) : null;
-        this.raceData = new PlayerRaceData(data);
 
         for (int i = 0; i < formWheel.length; i++)
             formWheel[i] = new FormWheelData(i);
@@ -437,7 +431,6 @@ public class PlayerDBCInfo {
         dbcCompound.setTag("UnlockedForms", NBTTags.nbtIntegerSet(unlockedForms));
         dbcCompound.setTag("FormMastery", NBTTags.nbtIntegerFloatMap(formLevels));
         dbcCompound.setTag("FormTimers", NBTTags.nbtIntegerIntegerMap(formTimers));
-        dbcCompound.setTag("RaceData", raceData.writeToNBT());
         dbcCompound.setTag("ConfigurableFormColors",
             NBTHelper.nbtIntegerObjectMap(
                 configuredFormColors,
@@ -494,9 +487,6 @@ public class PlayerDBCInfo {
 
         if (dbcCompound.hasKey("OverlayManager"))
             overlayManager.readFromNBT(dbcCompound.getCompoundTag("OverlayManager"));
-
-        if (dbcCompound.hasKey("RaceData"))
-            raceData.readFromNBT(dbcCompound.getCompoundTag("RaceData"));
     }
 
 

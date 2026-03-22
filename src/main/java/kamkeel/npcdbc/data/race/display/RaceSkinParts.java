@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.data.race;
+package kamkeel.npcdbc.data.race.display;
 
 import net.minecraft.util.ResourceLocation;
 

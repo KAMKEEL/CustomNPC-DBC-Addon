@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.data.race;
 
+import kamkeel.npcdbc.data.race.display.RaceDisplay;
 import kamkeel.npcdbc.data.skill.RacialSkill;
 
 public class Race {
