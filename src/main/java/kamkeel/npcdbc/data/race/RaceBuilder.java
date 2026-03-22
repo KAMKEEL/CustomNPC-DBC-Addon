@@ -1,13 +1,14 @@
 package kamkeel.npcdbc.data.race;
 
 import kamkeel.npcdbc.constants.DBCClass;
+import noppes.npcs.LogWriter;
 
 public class RaceBuilder {
     private final int id;
     private final String name;
 
     private RaceSkill skill;
-    private RaceStats stats   = new RaceStats();
+    private RaceStats stats = new RaceStats();
     private RaceDisplay display = new RaceDisplay();
 
     private RaceBuilder(int id, String name) {
@@ -31,8 +32,10 @@ public class RaceBuilder {
 
     // ── Build ─────────────────────────────────────────────────
     public Race build() {
-        if (skill == null)
-            throw new IllegalStateException("Race '" + name + "' is missing a racial skill.");
+        if (skill == null) {
+            LogWriter.error("Race '" + name + "' is missing a racial skill.");
+            return null;
+        }
         return new Race(id, name, display, stats, skill);
     }
 
