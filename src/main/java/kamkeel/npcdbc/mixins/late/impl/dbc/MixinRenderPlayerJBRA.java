@@ -27,6 +27,7 @@ import kamkeel.npcdbc.client.race.RaceRenderContext;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.TransformController;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -37,12 +38,12 @@ import kamkeel.npcdbc.data.npc.KiWeaponData;
 import kamkeel.npcdbc.data.overlay.Overlay;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
 import kamkeel.npcdbc.data.overlay.OverlayContext;
-import kamkeel.npcdbc.data.race.DBCAddonRaces;
 import kamkeel.npcdbc.data.race.Race;
-import kamkeel.npcdbc.data.race.RaceRegistry;
+import kamkeel.npcdbc.data.race.helper.RaceSelectorHelper;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelRenderer;
@@ -349,9 +350,18 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                                             @Local(name = "bodyc1") LocalIntRef bodyC1,
                                             @Local(name = "bodyc2") LocalIntRef bodyC2) {
         DBCData data = DBCData.get(par1AbstractClientPlayer);
-        if (!data.addonRace.isCustomRace()) return;
+        Race addonRace = null;
 
-        Race addonRace = data.addonRace.getRace();
+        // GUI character creation preview
+        if (RaceSelectorHelper.isPreviewActive() && par1AbstractClientPlayer == Minecraft.getMinecraft().thePlayer)
+            addonRace = RaceSelectorHelper.getPreviewCustomRace();
+
+        PlayerDBCInfo info = PlayerDataUtil.getClientDBCInfo();
+        if (addonRace == null) {
+            if (!info.isCustomRace()) return;
+            addonRace =info.getRace();
+        }
+
         if (addonRace == null) return;
 
         IRaceRenderer renderer = addonRace.registry.getRenderer(addonRace);

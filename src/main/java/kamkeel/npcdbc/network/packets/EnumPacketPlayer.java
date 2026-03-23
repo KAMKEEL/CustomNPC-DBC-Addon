@@ -27,5 +27,6 @@ public enum EnumPacketPlayer {
     Turbo,
     AbilityToggle,
     KiAttackColorSync,
-    AllowFlight
+    AllowFlight,
+    RaceSelect
 }

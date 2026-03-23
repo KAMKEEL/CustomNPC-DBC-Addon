@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.controllers;
 
 import kamkeel.npcdbc.data.race.Race;
+import kamkeel.npcdbc.data.race.helper.RaceSelectorHelper;
 import noppes.npcs.LogWriter;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class RaceController {
     public void load() {
         races.clear();
         raceOrder.clear();
+        RaceSelectorHelper.markDirty();
         LogWriter.info("Loading custom races...");
         registerAddonRaces();
         LogWriter.info("Done loading custom races. Registered " + races.size() + " race(s).");
@@ -51,6 +53,7 @@ public class RaceController {
         }
         races.put(race.id, race);
         raceOrder.add(race);
+        RaceSelectorHelper.markDirty();
         LogWriter.info("Registered race: " + race.getName() + " (ID: " + race.id + ") at GUI index: " + (5 + raceOrder.size()));
     }
 

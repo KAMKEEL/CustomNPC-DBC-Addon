@@ -59,6 +59,8 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
             mixins.add("dbc.MixinJRMCoreGui");
             mixins.add("dbc.MixinEntityAura2");
             mixins.add("dbc.MixinEntityAuraRing");
+
+            mixins.add("dbc.race.MixinJRMCoreGuiScreenCreator");
         }
         mixins.add("npc.MixinDBCStats");
         mixins.add("npc.MixinPlayerData");

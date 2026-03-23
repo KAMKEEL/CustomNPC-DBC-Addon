@@ -184,6 +184,56 @@ public class RaceBuilder {
             return this;
         }
 
+        public DisplayBuilder skinLimits(int bodyType, int colorSlots, int nose, int mouth, int eyes, int eyeColorSlots) {
+            parent.display.skinLimits = new int[]{bodyType, colorSlots, nose, mouth, eyes, eyeColorSlots};
+            return this;
+        }
+
+        public DisplayBuilder genderCount(int count) {
+            parent.display.genderCount = count;
+            return this;
+        }
+
+        public DisplayBuilder hairType(String type) {
+            parent.display.hairType = type;
+            return this;
+        }
+
+        public DisplayBuilder bodyColorPresetCount(int count) {
+            parent.display.bodyColorPresetCount = count;
+            return this;
+        }
+
+        public DisplayBuilder defaultEyeColors(int... colors) {
+            parent.display.defaultEyeColors = colors;
+            return this;
+        }
+
+        public DisplayBuilder defaultBodyColors(int[][] colors) {
+            parent.display.defaultBodyColors = colors;
+            return this;
+        }
+
+        public DisplayBuilder allowedPowerTypes(String types) {
+            parent.display.allowedPowerTypes = types;
+            return this;
+        }
+
+        public DisplayBuilder customSkinMode(int mode) {
+            parent.display.customSkinMode = mode;
+            return this;
+        }
+
+        public DisplayBuilder fixedHairColor(int color) {
+            parent.display.fixedHairColor = color;
+            return this;
+        }
+
+        public DisplayBuilder raceAllow(String allow) {
+            parent.display.raceAllow = allow;
+            return this;
+        }
+
         public RaceBuilder and() {
             return parent;
         }

@@ -18,6 +18,24 @@ public class DBCAddonRaces {
             .and()
         .display()
             .renderer("npcdbc:android")
+            .skinLimits(1, 1, 5, 5, 6, 2)
+            .genderCount(2)
+            .hairType("H")
+            .bodyColorPresetCount(7)
+            .defaultEyeColors(1, 4896782, 14617612)
+            .defaultBodyColors(new int[][]{
+                {16297621, 6498048},
+                {10112303, 6498048},
+                {7225375, 6498048},
+                {3677711, 6498048},
+                {16297621, 6498048},
+                {10112303, 6498048},
+                {7225375, 6498048}
+            })
+            .allowedPowerTypes("012")
+            .customSkinMode(2)
+            .fixedHairColor(-1)
+            .raceAllow("DBC")
             .and()
     );
 
