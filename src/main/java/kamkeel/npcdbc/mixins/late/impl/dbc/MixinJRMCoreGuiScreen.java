@@ -22,6 +22,8 @@ import kamkeel.npcdbc.controllers.SkillController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.race.Race;
+import kamkeel.npcdbc.data.race.helper.StatSheetRaceHelper;
 import kamkeel.npcdbc.data.skill.CustomSkillContainer;
 import kamkeel.npcdbc.mixins.late.IDBCGuiScreen;
 import kamkeel.npcdbc.network.DBCPacketClient;
@@ -317,6 +319,12 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
 
         boolean isDrawingAttributes = (s1.contains("STR:") || s1.contains("DEX:") || s1.contains("WIL:")) && s1.contains("§");
         boolean isDrawingStats = s1.contains(JRMCoreH.trl("jrmc", "mleDB") + ":") || s1.contains(JRMCoreH.trl("jrmc", "DefDB") + ":") || s1.contains(JRMCoreH.trl("jrmc", "Passive") + ":") || s1.contains(JRMCoreH.trl("jrmc", "EnPwDB") + ":") && s1.contains("§");
+        Race customRace = StatSheetRaceHelper.getActiveCustomRace();
+
+        if (customRace != null && s1.contains(JRMCoreH.trl("jrmc", "Race") + ":")) {
+            s1 = JRMCoreH.trl("jrmc", "Race") + ": " + customRace.getMenuName();
+        }
+
         if (PlayerDataUtil.getClientDBCInfo().isInCustomForm()) {
             DBCData dbcData = DBCData.getClient();
             Form form = dbcData.getForm();
@@ -362,6 +370,13 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
                 s1 = replaceFormColor(s1, formData.getFormColorCode(form));
             }
 
+        } else if (customRace != null && s1.contains(JRMCoreH.trl("jrmc", "TRState") + ":")) {
+            final String TRState2 = JRMCoreH.trl("jrmc", "TRState");
+            s1 = TRState2 + ": " + customRace.getMenuName();
+
+            if (s2.contains(JRMCoreH.trl("jrmc", "Base"))) {
+                s2 = s2.replace(JRMCoreH.trl("jrmc", "Base"), customRace.getMenuName());
+            }
         } else if (DBCData.getClient().isForm(DBCForm.Legendary) && isInBaseForm(DBCData.getClient())) {
             if (!DBCData.getClient().containsSE(19)) { //If in UI, do not change colors
                 return;

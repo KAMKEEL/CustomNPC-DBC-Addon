@@ -9,7 +9,6 @@ import JinRyuu.JRMCore.JRMCoreGuiButtonsA3;
 import JinRyuu.JRMCore.JRMCoreGuiScreen;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
-import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -20,10 +19,12 @@ import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCAttribute;
 import kamkeel.npcdbc.constants.DBCStatistics;
+import kamkeel.npcdbc.constants.enums.EnumDBCClasses;
 import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.race.helper.StatSheetRaceHelper;
 import kamkeel.npcdbc.mixins.late.IDBCGuiScreen;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
@@ -51,7 +52,6 @@ import static JinRyuu.JRMCore.JRMCoreH.PlyrSettingsB;
 import static JinRyuu.JRMCore.JRMCoreH.PlyrSkillX;
 import static JinRyuu.JRMCore.JRMCoreH.PlyrSkills;
 import static JinRyuu.JRMCore.JRMCoreH.Race;
-import static JinRyuu.JRMCore.JRMCoreH.Races;
 import static JinRyuu.JRMCore.JRMCoreH.SklLvl;
 import static JinRyuu.JRMCore.JRMCoreH.SklLvlX;
 import static JinRyuu.JRMCore.JRMCoreH.SklLvl_KiBs;
@@ -319,7 +319,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             .updateTooltip(cllr + numSep(attrCst(PlyrAttrbts, 0)) + cldgy);
 
         dynamicLabels.get("race")
-            .updateDisplay(trl("jrmc", Races[dbcClient.Race]));
+            .updateDisplay(StatSheetRaceHelper.getPlayerRaceDisplayName());
 
         genderIcon.xPosition = guiWidthOffset + 5 + Minecraft.getMinecraft().fontRenderer.getStringWidth(dynamicLabels.get("race").display);
         genderIcon.textureY = (dnsGender(dns) < 1 ? 128 : 112);
@@ -445,7 +445,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                 attributeDesc += (hasWeight ? "\n" + trl("jrmc", "trainingweightworn") + ": §c" + (int) WeightOn + "§8" : "");
 
             if (ConfigDBCClient.AdvancedGui) {
-                attributeDesc += "\nRace-Class Multiplier: " + JGConfigRaces.CONFIG_RACES_ATTRIBUTE_MULTI[Race][JRMCoreH.Class][i];
+                attributeDesc += "\nRace-Class Multiplier: " + StatSheetRaceHelper.getRaceClassAttributeMulti(Race, JRMCoreH.Class, i);
                 attributeDesc += getAddonBonus(i);
             }
 
@@ -532,7 +532,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         String passiveDef = numSep(passiveDefInt);
         String chargingDef = null;
         if (ClientCache.hasChargingDex)
-            chargingDef = numSep((int) ((longValue - bonusOutput) * (ClientCache.chargingDexValues.get((int) dbcClient.Class) / 100)) + bonusOutput);
+            chargingDef = numSep((int) ((longValue - bonusOutput) * (ClientCache.chargingDexValues.get(EnumDBCClasses.fromOrdinal(dbcClient.Class)) / 100)) + bonusOutput);
 
         String defDesc = getDescription(
             attrNms(1, 1),
