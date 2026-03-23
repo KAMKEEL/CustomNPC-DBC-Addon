@@ -65,5 +65,6 @@ public final class DBCRaceSelect extends AbstractPacket {
         
         PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
         info.currentRace = raceID;
+        info.updateClient();
     }
 }
