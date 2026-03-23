@@ -58,7 +58,7 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
 
     @Redirect(method = "drawScreen", remap = true,
         at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;Races:[Ljava/lang/String;", remap = false))
-    private static String[] npcdbc$expandRaces_vanilla() {
+    private String[] npcdbc$expandRaces_vanilla() {
         return RaceSelectorHelper.getRaces();
     }
 
@@ -72,7 +72,7 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
 
     @Redirect(method = "drawScreen", remap = true,
         at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;RaceAllow:[Ljava/lang/String;", remap = false))
-    private static String[] npcdbc$expandRaceAllow_vanilla() {
+    private String[] npcdbc$expandRaceAllow_vanilla() {
         return RaceSelectorHelper.getRaceAllow();
     }
 
@@ -86,7 +86,7 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
 
     @Redirect(method = {"drawScreen", "actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V"}, remap = true,
         at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;customSknLimits:[[I", remap = false))
-    private static int[][] npcdbc$expandCustomSknLimits_vanilla() {
+    private int[][] npcdbc$expandCustomSknLimits_vanilla() {
         return RaceSelectorHelper.getCustomSknLimits();
     }
 
@@ -100,7 +100,7 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
 
     @Redirect(method = "actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", remap = true,
         at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;customSknLimitsBCP:[I", remap = false))
-    private static int[] npcdbc$expandCustomSknLimitsBCP() {
+    private int[] npcdbc$expandCustomSknLimitsBCP() {
         return RaceSelectorHelper.getCustomSknLimitsBCP();
     }
 
@@ -108,7 +108,7 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
 
     @Redirect(method = "actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", remap = true,
         at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;defeyecols:[[I", remap = false))
-    private static int[][] npcdbc$expandDefEyeCols_vanilla() {
+    private int[][] npcdbc$expandDefEyeCols_vanilla() {
         return RaceSelectorHelper.getDefEyeCols();
     }
 
@@ -130,7 +130,7 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
 
     @Redirect(method = "drawScreen", remap = true,
         at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;RaceGenders:[I", remap = false))
-    private static int[] npcdbc$expandRaceGenders_vanilla() {
+    private int[] npcdbc$expandRaceGenders_vanilla() {
         return RaceSelectorHelper.getRaceGenders();
     }
 
@@ -144,7 +144,7 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
 
     @Redirect(method = "drawScreen", remap = true,
         at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;RaceCanHaveHair:[Ljava/lang/String;", remap = false))
-    private static String[] npcdbc$expandRaceCanHaveHair() {
+    private String[] npcdbc$expandRaceCanHaveHair() {
         return RaceSelectorHelper.getRaceCanHaveHair();
     }
 
@@ -152,7 +152,7 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
 
     @Redirect(method = "drawScreen", remap = true,
         at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;RaceCanHavePwr:[Ljava/lang/String;", remap = false))
-    private static String[] npcdbc$expandRaceCanHavePwr_vanilla() {
+    private String[] npcdbc$expandRaceCanHavePwr_vanilla() {
         return RaceSelectorHelper.getRaceCanHavePwr();
     }
 
@@ -166,7 +166,7 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
 
     @Redirect(method = "drawScreen", remap = true,
         at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;RaceCustomSkin:[I", remap = false))
-    private static int[] npcdbc$expandRaceCustomSkin() {
+    private int[] npcdbc$expandRaceCustomSkin() {
         return RaceSelectorHelper.getRaceCustomSkin();
     }
 
@@ -174,7 +174,7 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
 
     @Redirect(method = "drawScreen", remap = true,
         at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;RaceHairColor:[I", remap = false))
-    private static int[] npcdbc$expandRaceHairColor() {
+    private int[] npcdbc$expandRaceHairColor() {
         return RaceSelectorHelper.getRaceHairColor();
     }
 
@@ -185,7 +185,7 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
     @Redirect(method = "actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", remap = true,
         at = @At(value = "INVOKE",
             target = "LJinRyuu/JRMCore/JRMCoreH;Char(BB)V", remap = false))
-    private static void npcdbc$clampCharRace_action(byte slot, byte value) {
+    private void npcdbc$clampCharRace_action(byte slot, byte value) {
         if (slot == 0 && value >= RaceSelectorHelper.VANILLA_RACE_COUNT) {
             JRMCoreH.Char(slot, (byte) 0);
             return;
@@ -196,7 +196,7 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
     @Redirect(method = "drawScreen", remap = true,
         at = @At(value = "INVOKE",
             target = "LJinRyuu/JRMCore/JRMCoreH;Char(BB)V", remap = false))
-    private static void npcdbc$clampCharRace_draw(byte slot, byte value) {
+    private void npcdbc$clampCharRace_draw(byte slot, byte value) {
         if (slot == 0 && value >= RaceSelectorHelper.VANILLA_RACE_COUNT) {
             JRMCoreH.Char(slot, (byte) 0);
             return;
@@ -207,14 +207,14 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
     @Redirect(method = "drawScreen", remap = true,
         at = @At(value = "INVOKE",
             target = "LJinRyuu/JRMCore/JRMCoreH;attributeStart(IIII)I", remap = false))
-    private static int npcdbc$redirectAttributeStart(int powerType, int attribute, int race, int classID) {
+    private int npcdbc$redirectAttributeStart(int powerType, int attribute, int race, int classID) {
         return JRMCoreH.attributeStart(powerType, attribute, RaceSelectorHelper.clampRaceForStats(race), classID);
     }
 
     @Redirect(method = "drawScreen", remap = true,
         at = @At(value = "INVOKE",
             target = "LJinRyuu/JRMCore/JRMCoreH;stat(Lnet/minecraft/entity/Entity;IIIIIIF)I", remap = false))
-    private static int npcdbc$redirectStat(Entity player, int attributeID, int powerType,
+    private int npcdbc$redirectStat(Entity player, int attributeID, int powerType,
                                            int stat, int attribute, int race, int classID, float skillBonus) {
         return JRMCoreH.stat(player, attributeID, powerType, stat, attribute,
             RaceSelectorHelper.clampRaceForStats(race), classID, skillBonus);
@@ -223,7 +223,7 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
     @Redirect(method = "drawScreen", remap = true,
         at = @At(value = "INVOKE",
             target = "LJinRyuu/JRMCore/JRMCoreH;statInc(IIIIIF)F", remap = false))
-    private static float npcdbc$redirectStatInc(int powerType, int stat, int attribute,
+    private float npcdbc$redirectStatInc(int powerType, int stat, int attribute,
                                                 int race, int classID, float skillBonus) {
         return JRMCoreH.statInc(powerType, stat, attribute,
             RaceSelectorHelper.clampRaceForStats(race), classID, skillBonus);
