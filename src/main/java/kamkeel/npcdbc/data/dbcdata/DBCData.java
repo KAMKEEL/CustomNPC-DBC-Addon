@@ -232,7 +232,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         comp.setFloat("addonFormLevel", addonFormLevel);
         comp.setFloat("addonCurrentHeat", addonCurrentHeat);
 
-        comp.setInteger("addonRaceID", addonRaceID);
 
         comp.setFloat("DBCBaseFlightSpeed", baseFlightSpeed);
         comp.setFloat("DBCDynamicFlightSpeed", dynamicFlightSpeed);
@@ -300,10 +299,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         addonFormLevel = c.getFloat("addonFormLevel");
         addonCurrentHeat = c.getFloat("addonCurrentHeat");
-
-        if (!c.hasKey("addonRaceID"))
-            c.setInteger("addonRaceID", addonRaceID);
-        addonRaceID = c.getInteger("addonRaceID");
 
         if (!c.hasKey("auraID"))
             c.setInteger("auraID", auraID);
@@ -413,8 +408,10 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         addonFormID = formData.currentForm;
         addonFormLevel = formData.getCurrentLevel();
         auraID = formData.currentAura;
+        addonRaceID = formData.currentRace;
         nbt.setInteger("addonFormID", addonFormID);
         nbt.setFloat("addonFormLevel", addonFormLevel);
+        nbt.setFloat("addonRaceID", addonRaceID);
         nbt.setInteger("auraID", auraID);
         nbt.setInteger("outlineID", outlineID);
 
@@ -433,6 +430,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         dbc.setInteger("addonFormID", formData.currentForm);
         dbc.setInteger("auraID", formData.currentAura);
         dbc.setFloat("addonFormLevel", formData.getCurrentLevel());
+        dbc.setInteger("addonRaceID", formData.currentRace);
         loadFromNBT(dbc);
         if (syncALL)
             syncTracking();

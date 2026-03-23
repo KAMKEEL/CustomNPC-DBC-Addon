@@ -5,11 +5,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcdbc.controllers.AuraController;
-import kamkeel.npcdbc.controllers.BonusController;
-import kamkeel.npcdbc.controllers.DBCEffectController;
-import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.controllers.TransformController;
+import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -17,6 +13,8 @@ import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.data.form.FormMasteryLinkData;
 import kamkeel.npcdbc.data.overlay.OverlayManager;
+import kamkeel.npcdbc.data.race.Race;
+import kamkeel.npcdbc.data.skill.RacialSkillContainer;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.util.NBTHelper;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -49,6 +47,9 @@ public class PlayerDBCInfo {
     public int selectedAura = -1;
     public HashSet<Integer> unlockedAuras = new HashSet<Integer>();
 
+    public int currentRace = -1;
+    public RacialSkillContainer racialSkill = null;
+    
     public HashSet<Integer> unlockedForms = new HashSet<Integer>();
     public HashMap<Integer, Float> formLevels = new HashMap<Integer, Float>();
     public HashMap<Integer, Integer> formTimers = new HashMap<>();
@@ -411,6 +412,10 @@ public class PlayerDBCInfo {
             clearAllAuras();
 
         configuredFormColors.clear();
+
+        currentRace = -1;
+        racialSkill = null;
+        
         DBCEffectController.getInstance().clearDBCEffects(parent.player);
         BonusController.getInstance().clearBonuses(parent.player);
 
@@ -445,6 +450,9 @@ public class PlayerDBCInfo {
         dbcCompound.setInteger("CurrentAura", currentAura);
         dbcCompound.setInteger("SelectedAura", selectedAura);
         dbcCompound.setTag("UnlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
+        
+        dbcCompound.setInteger("CurrentRace", currentRace);
+        
         saveBonuses(dbcCompound);
 
         dbcCompound.setTag("OverlayManager", overlayManager.writeToNBT());
@@ -470,6 +478,8 @@ public class PlayerDBCInfo {
         selectedAura = dbcCompound.getInteger("SelectedAura");
         unlockedAuras = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedAuras", 10));
 
+        currentRace =  dbcCompound.getInteger("CurrentRace");
+        
         if (dbcCompound.hasKey("ConfigurableFormColors"))
             configuredFormColors = NBTHelper.javaIntegerObjectMap(
                 dbcCompound.getTagList("ConfigurableFormColors", Constants.NBT.TAG_COMPOUND),
@@ -628,5 +638,13 @@ public class PlayerDBCInfo {
             configuredFormColors.remove(form.id);
         else
             configuredFormColors.put(form.id, colors);
+    }
+
+    public boolean isCustomRace() {
+        return currentRace > -1 && RaceController.getInstance().has(currentRace);
+    }
+
+    public Race getRace() {
+        return RaceController.getInstance().get(currentRace);
     }
 }
