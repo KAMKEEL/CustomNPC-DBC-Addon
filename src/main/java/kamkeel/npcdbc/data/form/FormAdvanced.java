@@ -3,6 +3,7 @@ package kamkeel.npcdbc.data.form;
 import kamkeel.npcdbc.api.form.IAdvancedFormStat;
 import kamkeel.npcdbc.api.form.IFormAdvanced;
 import kamkeel.npcdbc.constants.DBCStatistics;
+import kamkeel.npcdbc.constants.enums.EnumDBCStats;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class FormAdvanced implements IFormAdvanced {
@@ -10,11 +11,7 @@ public class FormAdvanced implements IFormAdvanced {
     private final Form parent;
 
     private static final int NUM_STATS = 12;
-    public static final String[] STAT_NAMES = {
-        "Melee", "Defense", "Body", "Stamina",
-        "EnergyPower", "EnergyPool", "MaxSkills", "Speed",
-        "RegenRateBody", "RegenRateStamina", "RegenRateEnergy", "FlySpeed"
-    };
+    public static final String[] STAT_NAMES = EnumDBCStats.getDisplayNames();
 
     private final AdvancedFormStat[] formStats;
 

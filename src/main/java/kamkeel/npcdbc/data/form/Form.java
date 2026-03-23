@@ -30,9 +30,9 @@ public class Form implements IForm {
     public String name = "";
 
     public String menuName = "§aNEW";
-    private int race = DBCRace.ALL;
     public int timer = -1;
 
+    public FormRace race = FormRace.ALL;
     public FormMastery mastery = new FormMastery(this);
     public FormDisplay display = new FormDisplay(this);
     public FormStackable stackable = new FormStackable(this);
@@ -78,7 +78,6 @@ public class Form implements IForm {
 
         name = compound.getString("name");
         menuName = compound.getString("menuName");
-        race = compound.getInteger("race");
         timer = compound.getInteger("timer");
         childID = compound.getInteger("childID");
         parentID = compound.getInteger("parentID");
@@ -97,6 +96,7 @@ public class Form implements IForm {
 
         tagUUIDs = TagController.readTagUUIDs(compound, "TagUUIDs");
 
+        race = FormRace.fromNBT(compound.getInteger("race"));
         mastery.readFromNBT(compound);
         display.readFromNBT(compound);
         stackable.readFromNBT(compound);
@@ -111,7 +111,6 @@ public class Form implements IForm {
         compound.setInteger("ID", id);
         compound.setString("name", name);
         compound.setString("menuName", menuName);
-        compound.setInteger("race", race);
         compound.setInteger("timer", timer);
         compound.setInteger("childID", childID);
         compound.setInteger("parentID", parentID);
@@ -132,6 +131,7 @@ public class Form implements IForm {
 
         TagController.writeTagUUIDs(compound, "TagUUIDs", tagUUIDs);
 
+        compound.setInteger("race", race.toNBT());
         mastery.writeToNBT(compound);
         display.writeToNBT(compound);
         stackable.writeToNBT(compound);
@@ -176,25 +176,30 @@ public class Form implements IForm {
         this.menuName = name;
     }
 
-    //internal usage
+    // internal usage
     public int race() {
-        if (race == DBCRace.ALL_SAIYANS)
+        if (race.getRaceId() == DBCRace.ALL_SAIYANS)
             return 1;
-        else
-            return race;
+        return race.getRaceId();
     }
 
     @Override
     public int getRace() {
-        return race;
+        return race.getRaceId();
     }
 
     @Override
-    public void setRace(int race) {
-        if ((race > 5 || race < -1) && race != DBCRace.ALL_SAIYANS)
-            return;
+    public void setRace(int raceId) {
+        race = FormRace.of(raceId);
+    }
 
-        this.race = race;
+    public void setRace(FormRace formRace) {
+        race = formRace;
+    }
+
+    @Override
+    public boolean raceEligible(int race) {
+        return this.race.isEligible(race);
     }
 
     @Override
@@ -204,13 +209,6 @@ public class Form implements IForm {
 
     public boolean raceEligible(EntityPlayer player) {
         return raceEligible(DBCData.get(player).Race);
-    }
-
-    public boolean raceEligible(int race) {
-        if (this.race == DBCRace.ALL_SAIYANS)
-            return DBCRace.isSaiyan(race);
-
-        return this.race == DBCRace.ALL || this.race == race;
     }
 
     @Override

@@ -1,13 +1,17 @@
-package kamkeel.npcdbc.data.race;
+package kamkeel.npcdbc.data.race.builder;
 
 import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.constants.enums.EnumDBCAttributes;
 import kamkeel.npcdbc.constants.enums.EnumDBCClasses;
 import kamkeel.npcdbc.constants.enums.EnumDBCStats;
+import kamkeel.npcdbc.data.form.BuiltInForm;
+import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.race.display.ColorPreset;
 import kamkeel.npcdbc.data.race.display.ColorSlot;
 import kamkeel.npcdbc.data.race.display.RaceDisplay;
 import kamkeel.npcdbc.data.race.display.TextureSlot;
+import kamkeel.npcdbc.data.race.progression.FormTree;
+import kamkeel.npcdbc.data.race.progression.RaceSkill;
 import kamkeel.npcdbc.data.race.stats.ClassStats;
 import kamkeel.npcdbc.data.race.stats.RaceStats;
 import net.minecraft.util.ResourceLocation;
@@ -19,48 +23,46 @@ import java.util.Map;
 public class RaceBuilder {
     private final int id;
     private final String name;
-    private String menuName;
+    private final String menuName;
 
     private RaceSkill skill;
     private RaceStats stats = new RaceStats();
     private RaceDisplay display = new RaceDisplay();
+    private FormTree formTree = null;
 
-    private RaceBuilder(int id, String name, String menuName) {
+    private final String namespace;
+
+    private RaceBuilder(int id, String name, String menuName, String namespace) {
         this.id = id;
         this.name = name;
         this.menuName = menuName;
+        this.namespace = namespace;
     }
 
-    public static RaceBuilder create(int id, String name, String displayName) {
-        return new RaceBuilder(id, name, displayName);
+    public static RaceBuilder create(int id, String name, String menuName, String namespace) {
+        return new RaceBuilder(id, name, menuName, namespace);
     }
 
-    public static RaceBuilder create(int id, String name) {
-        return create(id, name, "NEW RACE");
+    public FormTreeBuilder formTree() {
+        return new FormTreeBuilder(this, namespace);
     }
 
-    // ── Skill ────────────────────────────────────────────────
     public SkillBuilder skill() {
         return new SkillBuilder(this);
     }
 
-    // ── Stats ─────────────────────────────────────────────────
-    public ClassStatsBuilder forClass(EnumDBCClasses raceClass) {
-        return new ClassStatsBuilder(this, raceClass);
-    }
-
-    // ── Display ───────────────────────────────────────────────
     public DisplayBuilder display() {
         return new DisplayBuilder(this);
     }
 
-    // ── Build ─────────────────────────────────────────────────
+    public ClassStatsBuilder forClass(EnumDBCClasses raceClass) {
+        return new ClassStatsBuilder(this, raceClass);
+    }
+
     public Race build() {
-        if (skill == null) {
-            LogWriter.error("Race '" + name + "' is missing a racial skill.");
-            return null;
-        }
-        return new Race(id, name, menuName, display, stats, skill);
+        if (skill == null)
+            throw new IllegalStateException("Race '" + name + "' is missing a racial skill.");
+        return new Race(id, name, menuName, display, stats, skill, formTree);
     }
 
     // ══════════════════════════════════════════════════════════
@@ -172,6 +174,52 @@ public class RaceBuilder {
 
         public RaceBuilder and() {
             return parent;
+        }
+    }
+
+    public static class FormTreeBuilder {
+        private final RaceBuilder parent;
+        private final FormTree formTree;
+
+        FormTreeBuilder(RaceBuilder parent, String raceNamespace) {
+            this.parent = parent;
+            this.formTree = new FormTree(raceNamespace);
+        }
+
+        public LevelBuilder level(int level) {
+            return new LevelBuilder(this, level);
+        }
+
+        public RaceBuilder and() {
+            parent.formTree = formTree;
+            return parent;
+        }
+
+        public FormTree getFormTree() {
+            return formTree;
+        }
+
+        public class LevelBuilder {
+            private final FormTreeBuilder parent;
+            private final int level;
+
+            LevelBuilder(FormTreeBuilder parent, int level) {
+                this.parent = parent;
+                this.level = level;
+            }
+
+            public LevelBuilder add(BuiltInForm form) {
+                parent.formTree.add(level, form);
+                return this;
+            }
+
+            public LevelBuilder level(int nextLevel) {
+                return new LevelBuilder(parent, nextLevel);
+            }
+
+            public RaceBuilder and() {
+                return parent.and();
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.data.race;
+package kamkeel.npcdbc.data.race.progression;
 
 public class RaceSkill {
     private int maxLevel;

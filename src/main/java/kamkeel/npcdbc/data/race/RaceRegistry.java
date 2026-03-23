@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data.race;
 
 import kamkeel.npcdbc.controllers.RaceController;
+import kamkeel.npcdbc.data.race.builder.RaceBuilder;
 import kamkeel.npcs.util.Register;
 import noppes.npcs.LogWriter;
 

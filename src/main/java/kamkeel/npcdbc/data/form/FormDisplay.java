@@ -15,12 +15,15 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.overlay.Overlay;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
+import kamkeel.npcdbc.data.race.display.ColorSlot;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class FormDisplay implements IFormDisplay {
@@ -156,25 +159,25 @@ public class FormDisplay implements IFormDisplay {
     public int getFurColor(DBCData data) {
         int c1 = data.skinType == 1 ? JRMCoreH.dnsBodyC1(data.DNS) : JRMCoreH.dnsBodyC1_0(data.DNS);
 
-        if (c1 != 6498048 && bodyColors.furColor == -1)  //default
+        if (c1 != 6498048 && bodyColors.getColor(BodyColor.FUR) == -1)  //default
             return c1;
 
-        if (bodyColors.furColor == -1)
+        if (bodyColors.getColor(BodyColor.FUR) == -1)
             return 0xDA152C;
 
-        return bodyColors.furColor;
+        return bodyColors.getColor(BodyColor.FUR);
     }
     //internal usage
 
     public boolean hasHairCol(DBCData data) {
-        return bodyColors.hairColor != -1 && data.Race != DBCRace.NAMEKIAN;
+        return bodyColors.getColor(BodyColor.HAIR) != -1 && data.Race != DBCRace.NAMEKIAN;
     }
 
     //internal usage
     public int getHairColor(DBCData data) {
         if (data.Race == DBCRace.NAMEKIAN)
-            return bodyColors.bodyCM;
-        return bodyColors.hairColor;
+            return bodyColors.getColor(BodyColor.BODY_CM);
+        return bodyColors.getColor(BodyColor.HAIR);
     }
 
     @Override
@@ -261,63 +264,20 @@ public class FormDisplay implements IFormDisplay {
     }
 
     @Override
-    public boolean hasColor(String type) {
-        switch (type.toLowerCase()) {
-            case "kibar":
-                return kiBarColor != -1;
-            case "aura":
-                return auraColor != -1;
-            case "hair":
-                return bodyColors.hairColor != -1;
-            case "eye":
-                return bodyColors.eyeColor != -1;
-            case "bodycm":
-                return bodyColors.bodyCM != -1;
-            case "bodyc1":
-                return bodyColors.bodyC1 != -1;
-            case "bodyc2":
-                return bodyColors.bodyC2 != -1;
-            case "bodyc3":
-                return bodyColors.bodyC3 != -1;
-            case "fur":
-                return bodyColors.furColor != -1;
-
+    public boolean hasColor(String slotId) {
+        switch (slotId.toLowerCase()) {
+            case "kibar": return kiBarColor != -1;
+            case "aura": return auraColor != -1;
+            default: return bodyColors.hasColor(slotId);
         }
-        throw new CustomNPCsException("Invalid type! Legal types: kiBar, aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
     }
 
     @Override
-    public void setColor(String type, int color) {
-        switch (type.toLowerCase()) {
-            case "kibar":
-                kiBarColor = color;
-                break;
-            case "aura":
-                auraColor = color;
-                break;
-            case "hair":
-                bodyColors.hairColor = color;
-                break;
-            case "eye":
-                bodyColors.eyeColor = color;
-                break;
-            case "bodycm":
-                bodyColors.bodyCM = color;
-                break;
-            case "bodyc1":
-                bodyColors.bodyC1 = color;
-                break;
-            case "bodyc2":
-                bodyColors.bodyC2 = color;
-                break;
-            case "bodyc3":
-                bodyColors.bodyC3 = color;
-                break;
-            case "fur":
-                bodyColors.furColor = color;
-                break;
-            default:
-                throw new CustomNPCsException("Invalid type! Legal types: kiBar, aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
+    public void setColor(String slotId, int color) {
+        switch (slotId.toLowerCase()) {
+            case "kibar": kiBarColor = color; break;
+            case "aura": auraColor = color; break;
+            default: bodyColors.setColor(slotId, color);
         }
     }
 
@@ -339,28 +299,12 @@ public class FormDisplay implements IFormDisplay {
     }
 
     @Override
-    public int getColor(String type) {
-        switch (type.toLowerCase()) {
-            case "kibar":
-                return kiBarColor;
-            case "aura":
-                return auraColor;
-            case "hair":
-                return bodyColors.hairColor;
-            case "eye":
-                return bodyColors.eyeColor;
-            case "bodycm":
-                return bodyColors.bodyCM;
-            case "bodyc1":
-                return bodyColors.bodyC1;
-            case "bodyc2":
-                return bodyColors.bodyC2;
-            case "bodyc3":
-                return bodyColors.bodyC3;
-            case "fur":
-                return bodyColors.furColor;
+    public int getColor(String slotId) {
+        switch (slotId.toLowerCase()) {
+            case "kibar": return kiBarColor;
+            case "aura": return auraColor;
+            default: return bodyColors.getColor(slotId);
         }
-        throw new CustomNPCsException("Invalid type! Legal types: kiBar, aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
     }
 
 
@@ -484,54 +428,94 @@ public class FormDisplay implements IFormDisplay {
      * Class made for the purpose of letting players customize their forms from the default colors.
      */
     public static class BodyColor {
-        public int bodyCM = -1, bodyC1 = -1, bodyC2 = -1, bodyC3 = -1, furColor = -1;
-        public int hairColor = -1;
-        public int eyeColor = -1;
+        private final Map<String, Integer> colors = new HashMap<>();
 
-        public static boolean canBeCustomized(String type, int race, Form form) {
-            String hairType = form.display.hairType;
-            boolean isHumanoid = (DBCRace.isSaiyan(race) || race == DBCRace.HUMAN);
-            switch (type.toLowerCase()) {
-                case "bodycm":
-                    return !isHumanoid;
-                case "eye":
-                    return true;
-                case "bodyc1":
-                case "bodyc2":
-                case "bodyc3":
-                    return race == DBCRace.NAMEKIAN || race == DBCRace.ARCOSIAN;
-                case "hair":
-                    return (isHumanoid || (DBCRace.MAJIN == race && form.display.effectMajinHair)) && (!hairType.equals("oozaru"));
-                case "fur":
-                    return DBCRace.isSaiyan(race) && (hairType.equals("ssj4") || form.display.hasBodyFur);
+        public static final String EYES = ColorSlot.EYES;
+        public static final String HAIR = ColorSlot.HAIR;
+        public static final String FUR = ColorSlot.FUR;
+        public static final String BODY_CM = ColorSlot.BODY_CM;
+        public static final String BODY_C1 = ColorSlot.BODY_C1;
+        public static final String BODY_C2 = ColorSlot.BODY_C2;
+        public static final String BODY_C3 = ColorSlot.BODY_C3;
+
+        public boolean hasColor(String slotId) {
+            Integer val = colors.get(slotId.toLowerCase());
+            return val != null && val != -1;
+        }
+
+        public int getColor(String slotId) {
+            return colors.getOrDefault(slotId.toLowerCase(), -1);
+        }
+
+        public void setColor(String slotId, int color) {
+            colors.put(slotId.toLowerCase(), color);
+        }
+
+        public void clearColor(String slotId) {
+            colors.put(slotId.toLowerCase(), -1);
+        }
+
+        public boolean isEmpty() {
+            return colors.values().stream().allMatch(v -> v == -1);
+        }
+
+        public void readFromNBT(NBTTagCompound compound) {
+            colors.clear();
+            if (compound.hasKey("bodyColors")) {
+                NBTTagCompound tag = compound.getCompoundTag("bodyColors");
+                for (Object key : tag.func_150296_c()) {
+                    String id = (String) key;
+                    colors.put(id.toLowerCase(), tag.getInteger(id));
+                }
+            } else {
+                // compat with old forms
+                readLegacyNBT(compound);
             }
-            return true;
+        }
+
+        private void readLegacyNBT(NBTTagCompound compound) {
+            colors.put(EYES, compound.getInteger("eyeColor"));
+            colors.put(HAIR, compound.getInteger("hairColor"));
+            colors.put(FUR, compound.getInteger("furColor"));
+            colors.put(BODY_CM, compound.getInteger("bodyCM"));
+            colors.put(BODY_C1, compound.getInteger("bodyC1"));
+            colors.put(BODY_C2, compound.getInteger("bodyC2"));
+            colors.put(BODY_C3, compound.getInteger("bodyC3"));
+        }
+
+        public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+            NBTTagCompound tag = new NBTTagCompound();
+            for (Map.Entry<String, Integer> entry : colors.entrySet()) {
+                tag.setInteger(entry.getKey(), entry.getValue());
+            }
+            compound.setTag("bodyColors", tag);
+            return compound;
         }
 
         @SideOnly(Side.CLIENT)
-        public int getProperColor(FormDisplay formDisplay, String type) {
-            return getProperColor(formDisplay.getColor(type), type);
+        public int getProperColor(FormDisplay formDisplay, String slotId) {
+            return getProperColor(formDisplay.getColor(slotId), slotId);
         }
 
         @SideOnly(Side.CLIENT)
-        public int getProperColor(int formColor, String type) {
-            int customColor = getColor(type);
+        public int getProperColor(int formColor, String slotId) {
+            int customColor = getColor(slotId);
             if (customColor != -1)
                 return customColor;
             return formColor;
         }
 
         @SideOnly(Side.CLIENT)
-        public boolean hasAnyColor(FormDisplay formDisplay, String type) {
-            if (hasColor(type))
+        public boolean hasAnyColor(FormDisplay formDisplay, String slotId) {
+            if (hasColor(slotId))
                 return true;
-            return formDisplay.hasColor(type);
+            return formDisplay.hasColor(slotId);
         }
 
         @SideOnly(Side.CLIENT)
         public int getFurColor(FormDisplay display, DBCData data) {
-            if (this.furColor != -1)
-                return this.furColor;
+            if (hasColor(FUR))
+                return getColor(FUR);
             return display.getFurColor(data);
         }
 
@@ -539,101 +523,7 @@ public class FormDisplay implements IFormDisplay {
         public boolean hasHairColor(DBCData data, FormDisplay display) {
             if (data.Race == DBCRace.NAMEKIAN)
                 return false;
-            return hairColor != -1 || display.bodyColors.hairColor != -1;
-        }
-
-        public void readFromNBT(NBTTagCompound compound) {
-            eyeColor = compound.getInteger("eyeColor");
-            hairColor = compound.getInteger("hairColor");
-            bodyCM = compound.getInteger("bodyCM");
-            bodyC1 = compound.getInteger("bodyC1");
-            bodyC2 = compound.getInteger("bodyC2");
-            bodyC3 = compound.getInteger("bodyC3");
-            furColor = compound.getInteger("furColor");
-        }
-
-        public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-            compound.setInteger("eyeColor", eyeColor);
-            compound.setInteger("hairColor", hairColor);
-            compound.setInteger("furColor", furColor);
-            compound.setInteger("bodyCM", bodyCM);
-            compound.setInteger("bodyC1", bodyC1);
-            compound.setInteger("bodyC2", bodyC2);
-            compound.setInteger("bodyC3", bodyC3);
-            return compound;
-        }
-
-        public boolean hasColor(String type) {
-            switch (type.toLowerCase()) {
-                case "hair":
-                    return this.hairColor != -1;
-                case "eye":
-                    return this.eyeColor != -1;
-                case "bodycm":
-                    return this.bodyCM != -1;
-                case "bodyc1":
-                    return this.bodyC1 != -1;
-                case "bodyc2":
-                    return this.bodyC2 != -1;
-                case "bodyc3":
-                    return this.bodyC3 != -1;
-                case "fur":
-                    return this.furColor != -1;
-                default:
-                    return false;
-            }
-        }
-
-        public int getColor(String type) {
-            switch (type.toLowerCase()) {
-                case "hair":
-                    return this.hairColor;
-                case "eye":
-                    return this.eyeColor;
-                case "bodycm":
-                    return this.bodyCM;
-                case "bodyc1":
-                    return this.bodyC1;
-                case "bodyc2":
-                    return this.bodyC2;
-                case "bodyc3":
-                    return this.bodyC3;
-                case "fur":
-                    return this.furColor;
-                default:
-                    return -1;
-            }
-        }
-
-        public void setColor(String type, int color) {
-            switch (type.toLowerCase()) {
-                case "hair":
-                    hairColor = color;
-                    break;
-                case "eye":
-                    eyeColor = color;
-                    break;
-                case "bodycm":
-                    bodyCM = color;
-                    break;
-                case "bodyc1":
-                    bodyC1 = color;
-                    break;
-                case "bodyc2":
-                    bodyC2 = color;
-                    break;
-                case "bodyc3":
-                    bodyC3 = color;
-                    break;
-                case "fur":
-                    furColor = color;
-                    break;
-            }
-        }
-
-        public boolean isEmpty() {
-            return bodyCM == -1 && bodyC1 == -1 && bodyC2 == -1 && bodyC3 == -1 &&
-                furColor == -1 && hairColor == -1 && eyeColor == -1;
+            return hasColor(HAIR) || display.bodyColors.hasColor(HAIR);
         }
     }
 }

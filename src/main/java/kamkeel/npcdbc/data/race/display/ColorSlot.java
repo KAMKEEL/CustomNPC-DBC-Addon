@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.data.race.display;
 
 public class ColorSlot {
-    public static final String EYES = "eyes";
+    public static final String EYES = "eye";
     public static final String HAIR = "hair";
     public static final String FUR = "fur";
     public static final String BODY_CM = "bodycm";
