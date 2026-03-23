@@ -6,6 +6,7 @@ import kamkeel.npcdbc.constants.enums.EnumDBCClasses;
 import kamkeel.npcdbc.constants.enums.EnumDBCStats;
 import kamkeel.npcdbc.data.form.BuiltInForm;
 import kamkeel.npcdbc.data.race.Race;
+import kamkeel.npcdbc.data.race.RaceRegistry;
 import kamkeel.npcdbc.data.race.display.ColorPreset;
 import kamkeel.npcdbc.data.race.display.ColorSlot;
 import kamkeel.npcdbc.data.race.display.RaceDisplay;
@@ -25,6 +26,7 @@ public class RaceBuilder {
     private final String name;
     private final String menuName;
 
+    private RaceRegistry registry;
     private RaceSkill skill;
     private RaceStats stats = new RaceStats();
     private RaceDisplay display = new RaceDisplay();
@@ -58,11 +60,16 @@ public class RaceBuilder {
     public ClassStatsBuilder forClass(EnumDBCClasses raceClass) {
         return new ClassStatsBuilder(this, raceClass);
     }
-
+    
+    public RaceBuilder registry(RaceRegistry registry) {
+        this.registry = registry;
+        return this;
+    }
+    
     public Race build() {
         if (skill == null)
             throw new IllegalStateException("Race '" + name + "' is missing a racial skill.");
-        return new Race(id, name, menuName, display, stats, skill, formTree);
+        return new Race(id, name, menuName, registry,display, stats, skill, formTree);
     }
 
     // ══════════════════════════════════════════════════════════
@@ -169,6 +176,11 @@ public class RaceBuilder {
             TextureSlot slot = parent.display.getTextureSlot(slotId);
             if (slot != null)
                 slot.add(texture);
+            return this;
+        }
+        
+        public DisplayBuilder renderer(String rendererKey){
+            parent.display.rendererKey = rendererKey;
             return this;
         }
 

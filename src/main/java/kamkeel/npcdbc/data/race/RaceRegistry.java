@@ -1,11 +1,15 @@
 package kamkeel.npcdbc.data.race;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.client.race.IRaceRenderer;
 import kamkeel.npcdbc.controllers.RaceController;
 import kamkeel.npcdbc.data.race.builder.RaceBuilder;
 import kamkeel.npcs.util.Register;
 import noppes.npcs.LogWriter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -14,6 +18,9 @@ public class RaceRegistry extends Register<Race> {
         super("race", namespace);
     }
 
+    @SideOnly(Side.CLIENT)
+    private final Map<String, IRaceRenderer> renderers = new HashMap<>();
+    
     public static RaceRegistry create(String namespace, String displayName) {
         if (!REGISTERED_NAMESPACES.containsKey("race"))
             REGISTERED_NAMESPACES.put("race", new ArrayList<>());
@@ -36,7 +43,7 @@ public class RaceRegistry extends Register<Race> {
     }
 
     public Race register(RaceBuilder builder) {
-        Race race = builder.build();
+        Race race = builder.registry(this).build();
         if (race == null) return null;
 
         return super.register(race.getName(), builder::build);
@@ -46,5 +53,20 @@ public class RaceRegistry extends Register<Race> {
         for (Map.Entry<String, Supplier<Race>> entry : entries.entrySet()) {
             RaceController.Instance.register(entry.getValue().get());
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void registerRenderer(String key, IRaceRenderer renderer) {
+        renderers.put(key, renderer);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public IRaceRenderer getRenderer(String key) {
+        return key == null ? null : renderers.get(key);
+    } 
+    
+    @SideOnly(Side.CLIENT)
+    public IRaceRenderer getRenderer(Race race) {
+        return getRenderer(race.display.rendererKey);
     }
 }

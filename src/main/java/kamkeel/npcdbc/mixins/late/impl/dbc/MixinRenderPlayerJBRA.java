@@ -22,6 +22,8 @@ import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.client.render.OverlayModelRenderer;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
+import kamkeel.npcdbc.client.race.IRaceRenderer;
+import kamkeel.npcdbc.client.race.RaceRenderContext;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.TransformController;
@@ -35,12 +37,16 @@ import kamkeel.npcdbc.data.npc.KiWeaponData;
 import kamkeel.npcdbc.data.overlay.Overlay;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
 import kamkeel.npcdbc.data.overlay.OverlayContext;
+import kamkeel.npcdbc.data.race.DBCAddonRaces;
+import kamkeel.npcdbc.data.race.Race;
+import kamkeel.npcdbc.data.race.RaceRegistry;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.Entity;
@@ -328,6 +334,52 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 String hair = form.display.hairType.equals("raditz") ? "D" : "D01";
                 this.modelMain.renderHairs(0.0625F, hair);
             }
+        }
+    }
+
+    // Dispatch custom race rendering. Fires after DBC local vars (race, bodyCM, etc.)
+    // are initialised but before DBC's own body/hair rendering runs.
+    // If the addon race has a registered client renderer that returns true, the
+    // rest of renderEquippedItemsJBRA is skipped (glPopMatrix balances the push).
+    @Inject(method = "renderEquippedItemsJBRA",
+        at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.AFTER),
+        cancellable = true)
+    private void dispatchCustomRaceRenderer(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci,
+                                            @Local(name = "bodycm") LocalIntRef bodyCM,
+                                            @Local(name = "bodyc1") LocalIntRef bodyC1,
+                                            @Local(name = "bodyc2") LocalIntRef bodyC2) {
+        DBCData data = DBCData.get(par1AbstractClientPlayer);
+        if (!data.addonRace.isCustomRace()) return;
+
+        Race addonRace = data.addonRace.getRace();
+        if (addonRace == null) return;
+
+        IRaceRenderer renderer = addonRace.registry.getRenderer(addonRace);
+        if (renderer == null) return;
+
+        double renderX = par1AbstractClientPlayer.lastTickPosX
+            + (par1AbstractClientPlayer.posX - par1AbstractClientPlayer.lastTickPosX) * par2
+            - RenderManager.renderPosX;
+        double renderY = par1AbstractClientPlayer.lastTickPosY
+            + (par1AbstractClientPlayer.posY - par1AbstractClientPlayer.lastTickPosY) * par2
+            - RenderManager.renderPosY;
+        double renderZ = par1AbstractClientPlayer.lastTickPosZ
+            + (par1AbstractClientPlayer.posZ - par1AbstractClientPlayer.lastTickPosZ) * par2
+            - RenderManager.renderPosZ;
+
+        RaceRenderContext ctx = new RaceRenderContext(
+            par1AbstractClientPlayer, renderX, renderY, renderZ,
+            par1AbstractClientPlayer.rotationYaw, par2,
+            (RenderPlayerJBRA) (Object) this, this.modelMain,
+            data, addonRace
+        );
+        ctx.bodyCM = bodyCM.get();
+        ctx.bodyC1 = bodyC1.get();
+        ctx.bodyC2 = bodyC2.get();
+
+        if (renderer.render(ctx)) {
+            GL11.glPopMatrix();
+            ci.cancel();
         }
     }
 

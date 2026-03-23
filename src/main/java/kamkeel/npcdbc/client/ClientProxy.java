@@ -14,6 +14,7 @@ import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.ability.DBCAbilityFieldProvider;
+import kamkeel.npcdbc.data.race.DBCAddonRaces;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.items.ModItems;
 import kamkeel.npcs.controllers.AbilityController;
@@ -68,7 +69,7 @@ public class ClientProxy extends CommonProxy {
         ShaderHelper.loadShaders(false);
         ClientConstants.startTime = Instant.now();
 
-
+        DBCAddonRaces.registerClient();
     }
 
     public void postInit(FMLPostInitializationEvent ev) {

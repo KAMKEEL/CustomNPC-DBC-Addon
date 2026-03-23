@@ -1,6 +1,9 @@
 package kamkeel.npcdbc.data.race.display;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.Color;
+import kamkeel.npcdbc.client.race.IRaceRenderer;
 
 import java.util.*;
 
@@ -10,6 +13,14 @@ public class RaceDisplay {
     private final Map<String, Color> colorOverrides = new HashMap<>();
     private final Map<String, TextureSlot> textureSlots = new LinkedHashMap<>();
 
+    /**
+     * Opaque key used by the client-side race renderer registry to look up
+     * the {@code IRaceRenderer} implementation for this race.
+     * Common-safe: this is just a plain string, never a client class reference.
+     * May be {@code null} if the race has no custom client renderer.
+     */
+    public String rendererKey;
+    
     public RaceDisplay() {
         addColorSlot(new ColorSlot(ColorSlot.EYES, "Eyes"));
         addColorSlot(new ColorSlot(ColorSlot.BODY_CM, "Body Color Main"));
