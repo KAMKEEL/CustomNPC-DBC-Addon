@@ -567,8 +567,8 @@ public class DBCHair extends ModelHairRenderer {
             if (race == 5 && !form.display.effectMajinHair) {
                 effectMajinHair = false;
                 hairCode = MAJIN_HAIR;
-                if (form.display.bodyColors.bodyCM != -1)
-                    hairColor = form.display.bodyColors.bodyCM;
+                if (form.display.bodyColors.bodyCM() != -1)
+                    hairColor = form.display.bodyColors.bodyCM();
             } else {
                 if ((d.hairCode.equalsIgnoreCase("bald") || d.hairType.equals("oozaru")))
                     return;

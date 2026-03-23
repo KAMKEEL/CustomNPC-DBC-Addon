@@ -455,6 +455,45 @@ public class FormDisplay implements IFormDisplay {
             colors.put(slotId.toLowerCase(), -1);
         }
 
+        public int bodyCM(){
+            return colors.get(BODY_CM);
+        } 
+        public int bodyC1(){
+            return colors.get(BODY_CM);
+        } public int bodyC2(){
+            return colors.get(BODY_CM);
+        } public int bodyC3(){
+            return colors.get(BODY_CM);
+        } public int bodyC4(){
+            return colors.get(BODY_CM);
+        } public int eyeColor(){
+            return colors.get(BODY_CM);
+        } public int hairColor(){
+            return colors.get(BODY_CM);
+        } public int furColor(){
+            return colors.get(BODY_CM);
+        }
+
+        public static boolean canBeCustomized(String type, int race, Form form) {
+            String hairType = form.display.hairType;
+            boolean isHumanoid = (DBCRace.isSaiyan(race) || race == DBCRace.HUMAN);
+            switch (type.toLowerCase()) {
+                case "bodycm":
+                    return !isHumanoid;
+                case "eye":
+                    return true;
+                case "bodyc1":
+                case "bodyc2":
+                case "bodyc3":
+                    return race == DBCRace.NAMEKIAN || race == DBCRace.ARCOSIAN;
+                case "hair":
+                    return (isHumanoid || (DBCRace.MAJIN == race && form.display.effectMajinHair)) && (!hairType.equals("oozaru"));
+                case "fur":
+                    return DBCRace.isSaiyan(race) && (hairType.equals("ssj4") || form.display.hasBodyFur);
+            }
+            return true;
+        }
+        
         public boolean isEmpty() {
             return colors.values().stream().allMatch(v -> v == -1);
         }

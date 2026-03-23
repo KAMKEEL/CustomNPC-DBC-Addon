@@ -19,7 +19,7 @@ public class RacialSkillContainer {
         Race race = RaceController.getInstance().get(raceID);
         if (race == null)
             return null;
-        return new RacialSkillContainer(data, race.getRacialSkill());
+        return new RacialSkillContainer(data,null);// race.getRacialSkill());
     }
 
     // -------------------------
