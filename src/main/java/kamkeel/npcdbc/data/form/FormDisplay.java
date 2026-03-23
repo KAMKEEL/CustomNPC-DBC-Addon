@@ -457,21 +457,30 @@ public class FormDisplay implements IFormDisplay {
 
         public int bodyCM(){
             return colors.get(BODY_CM);
-        } 
+        }
+
         public int bodyC1(){
-            return colors.get(BODY_CM);
-        } public int bodyC2(){
-            return colors.get(BODY_CM);
-        } public int bodyC3(){
-            return colors.get(BODY_CM);
-        } public int bodyC4(){
-            return colors.get(BODY_CM);
-        } public int eyeColor(){
-            return colors.get(BODY_CM);
-        } public int hairColor(){
-            return colors.get(BODY_CM);
-        } public int furColor(){
-            return colors.get(BODY_CM);
+            return colors.get(BODY_C1);
+        }
+
+        public int bodyC2(){
+            return colors.get(BODY_C2);
+        }
+
+        public int bodyC3(){
+            return colors.get(BODY_C3);
+        }
+
+        public int eyeColor(){
+            return colors.get(EYES);
+        }
+
+        public int hairColor(){
+            return colors.get(HAIR);
+        }
+
+        public int furColor(){
+            return colors.get(FUR);
         }
 
         public static boolean canBeCustomized(String type, int race, Form form) {
@@ -493,7 +502,7 @@ public class FormDisplay implements IFormDisplay {
             }
             return true;
         }
-        
+
         public boolean isEmpty() {
             return colors.values().stream().allMatch(v -> v == -1);
         }
