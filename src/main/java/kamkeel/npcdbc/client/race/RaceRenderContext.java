@@ -27,6 +27,16 @@ public class RaceRenderContext {
     public int bodyCM;
     public int bodyC1;
     public int bodyC2;
+    public int bodyC3;
+
+    public int eyeC1;
+    public int eyeC2;
+    public int skinType;
+    public int state;
+    public int bodyType;
+
+    public boolean isFirstPersonArm;
+    public int armAnimationId = -1;
 
     public RaceRenderContext(Entity entity, double x, double y, double z,
                              float yaw, float partialTicks,

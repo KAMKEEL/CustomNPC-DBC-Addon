@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data.race;
 
 import kamkeel.npcdbc.data.race.builder.RaceBuilder;
+import kamkeel.npcdbc.data.race.display.ColorSlot;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -10,7 +11,7 @@ public class DBCAddonRaces {
     public static final RaceRegistry RACES = RaceRegistry.create("npcdbc", "DBC Addon");
     
     // ID 6: first custom race slot after vanilla DBC races (0-5)
-    public static final Race ANDROID = RACES.register(RaceBuilder.create(6, "android", "Android", "npcdbc:android")
+    public static final Race ANDROID = RACES.register(RaceBuilder.create(6, "bio_android", "Bio-Android", "npcdbc:bio_android")
         .skill()
             .maxLevel(5)
             .tpCosts(100, 200, 300, 400, 500)
@@ -18,24 +19,14 @@ public class DBCAddonRaces {
             .and()
         .display()
             .renderer("npcdbc:android")
-            .skinLimits(1, 1, 5, 5, 6, 2)
-            .genderCount(2)
-            .hairType("H")
-            .bodyColorPresetCount(7)
-            .defaultEyeColors(1, 4896782, 14617612)
-            .defaultBodyColors(new int[][]{
-                {16297621, 6498048},
-                {10112303, 6498048},
-                {7225375, 6498048},
-                {3677711, 6498048},
-                {16297621, 6498048},
-                {10112303, 6498048},
-                {7225375, 6498048}
-            })
-            .allowedPowerTypes("012")
-            .customSkinMode(2)
-            .fixedHairColor(-1)
-            .raceAllow("DBC")
+            .hairType("X")
+            .bodyColorSlots(3)                                                   
+            .defaultColor(ColorSlot.EYES, 0xff00ff)
+            .defaultColor(ColorSlot.LEFT_EYE, 0x0)
+            .defaultColor(ColorSlot.RIGHT_EYE, 0x0)
+            .defaultColor(ColorSlot.BODY_CM, 0x2FED38)
+            .defaultColor(ColorSlot.BODY_C1, 0xFFDE50)
+            .defaultColor(ColorSlot.BODY_C2, 0xFF9850)
             .and()
     );
 

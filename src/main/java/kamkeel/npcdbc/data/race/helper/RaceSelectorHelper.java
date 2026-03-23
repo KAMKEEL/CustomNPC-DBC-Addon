@@ -3,6 +3,7 @@ package kamkeel.npcdbc.data.race.helper;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.controllers.RaceController;
 import kamkeel.npcdbc.data.race.Race;
+import kamkeel.npcdbc.data.race.display.ColorPreset;
 
 import java.util.Arrays;
 import java.util.List;
@@ -79,6 +80,10 @@ public final class RaceSelectorHelper {
         List<Race> customRaces = RaceController.Instance.getRaceOrder();
         int customCount = customRaces.size();
         int totalCount = VANILLA_RACE_COUNT + customCount;
+
+        for (Race race : customRaces) {
+            race.display.syncCreatorMetadata();
+        }
 
         expandedRaces = expandStringArray(JRMCoreH.Races, totalCount, customRaces, RaceSelectorHelper::raceName);
         expandedRaceAllow = expandStringArray(JRMCoreH.RaceAllow, totalCount, customRaces, RaceSelectorHelper::raceAllow);
@@ -211,7 +216,8 @@ public final class RaceSelectorHelper {
         int[] vanilla = JRMCoreH.customSknLimitsBCP;
         int[] result = Arrays.copyOf(vanilla, totalCount);
         for (int i = 0; i < customRaces.size(); i++) {
-            result[VANILLA_RACE_COUNT + i] = customRaces.get(i).display.bodyColorPresetCount;
+            Race race = customRaces.get(i);
+            result[VANILLA_RACE_COUNT + i] = Math.max(1, race.display.getColorPresets().size());
         }
         return result;
     }
@@ -227,7 +233,7 @@ public final class RaceSelectorHelper {
         for (int p = 0; p < presetCount; p++) {
             System.arraycopy(vanilla[p], 0, result[p], 0, Math.min(vanilla[p].length, totalCount));
             for (int i = 0; i < customRaces.size(); i++) {
-                int[] eyeColors = customRaces.get(i).display.defaultEyeColors;
+                int[] eyeColors = customRaces.get(i).display.buildEyeColorRows();
                 result[p][VANILLA_RACE_COUNT + i] = p < eyeColors.length ? eyeColors[p] : 1;
             }
         }
@@ -237,6 +243,15 @@ public final class RaceSelectorHelper {
     /**
      * defbodycols structure: int[presetRow][raceIndex][colorComponents]
      * Each preset row needs a new column per custom race.
+     * <p>
+     * For custom races, body color data is synthesized from the display model:
+     * <ul>
+     *   <li>If the race has {@link kamkeel.npcdbc.data.race.display.ColorPreset}s,
+     *       each preset provides one row of body colors.</li>
+     *   <li>If no presets exist, all rows are filled with the per-slot
+     *       default colors declared via
+     *       {@link kamkeel.npcdbc.data.race.display.RaceDisplay#setDefaultColor}.</li>
+     * </ul>
      */
     private static int[][][] buildExpandedDefBodyCols(List<Race> customRaces, int totalCount) {
         int[][][] vanilla = JRMCoreH.defbodycols;
@@ -247,8 +262,13 @@ public final class RaceSelectorHelper {
                 result[p][r] = vanilla[p][r];
             }
             for (int i = 0; i < customRaces.size(); i++) {
-                int[][] bodyColors = customRaces.get(i).display.defaultBodyColors;
-                result[p][VANILLA_RACE_COUNT + i] = p < bodyColors.length ? bodyColors[p].clone() : new int[]{0};
+                Race race = customRaces.get(i);
+                List<ColorPreset> presets = race.display.getColorPresets();
+                result[p][VANILLA_RACE_COUNT + i] = (p == 0)
+                    ? race.display.buildDefaultBodyColorRow()
+                    : (!presets.isEmpty() && (p - 1) < presets.size())
+                        ? race.display.buildBodyColorRow(presets.get(p - 1))
+                        : race.display.buildDefaultBodyColorRow();
             }
         }
         return result;

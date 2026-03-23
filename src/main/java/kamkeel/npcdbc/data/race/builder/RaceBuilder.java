@@ -162,6 +162,31 @@ public class RaceBuilder {
             return this;
         }
 
+        /**
+         * Adds the specified number of body color slots (1-4) in DBC order:
+         * bodycm, bodyc1, bodyc2, bodyc3. The constructor already adds bodycm,
+         * so this adds the additional slots on top.
+         * <p>
+         * This is the preferred way to declare multi-body-color support.
+         * {@link RaceDisplay#syncCreatorMetadata()} will later derive
+         * {@code skinLimits[1]} from the slot count automatically.
+         */
+        public DisplayBuilder bodyColorSlots(int count) {
+            if (count < 1 || count > 4)
+                throw new IllegalArgumentException("bodyColorSlots count must be 1-4, got " + count);
+
+            String[][] extras = {
+                {},
+                {ColorSlot.BODY_C1, "Body Color 1"},
+                {ColorSlot.BODY_C2, "Body Color 2"},
+                {ColorSlot.BODY_C3, "Body Color 3"}
+            };
+            for (int i = 1; i < count; i++) {
+                parent.display.addColorSlot(new ColorSlot(extras[i][0], extras[i][1]));
+            }
+            return this;
+        }
+
         public DisplayBuilder addColorPreset(ColorPreset preset) {
             parent.display.addColorPreset(preset);
             return this;
@@ -199,18 +224,8 @@ public class RaceBuilder {
             return this;
         }
 
-        public DisplayBuilder bodyColorPresetCount(int count) {
-            parent.display.bodyColorPresetCount = count;
-            return this;
-        }
-
-        public DisplayBuilder defaultEyeColors(int... colors) {
-            parent.display.defaultEyeColors = colors;
-            return this;
-        }
-
-        public DisplayBuilder defaultBodyColors(int[][] colors) {
-            parent.display.defaultBodyColors = colors;
+        public DisplayBuilder defaultColor(String slotId, int color) {
+            parent.display.setDefaultColor(slotId, color);
             return this;
         }
 

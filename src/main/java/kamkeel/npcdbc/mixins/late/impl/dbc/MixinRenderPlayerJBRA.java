@@ -348,18 +348,21 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     private void dispatchCustomRaceRenderer(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci,
                                             @Local(name = "bodycm") LocalIntRef bodyCM,
                                             @Local(name = "bodyc1") LocalIntRef bodyC1,
-                                            @Local(name = "bodyc2") LocalIntRef bodyC2) {
+                                            @Local(name = "bodyc2") LocalIntRef bodyC2,
+                                            @Local(name = "bodyc3") LocalIntRef bodyC3,
+                                            @Local(name = "skintype") LocalIntRef skintype,
+                                            @Local(name = "eyec1") LocalIntRef eyec1,
+                                            @Local(name = "eyec2") LocalIntRef eyec2) {
         DBCData data = DBCData.get(par1AbstractClientPlayer);
         Race addonRace = null;
 
-        // GUI character creation preview
         if (RaceSelectorHelper.isPreviewActive() && par1AbstractClientPlayer == Minecraft.getMinecraft().thePlayer)
             addonRace = RaceSelectorHelper.getPreviewCustomRace();
 
         PlayerDBCInfo info = PlayerDataUtil.getClientDBCInfo();
         if (addonRace == null) {
             if (!info.isCustomRace()) return;
-            addonRace =info.getRace();
+            addonRace = info.getRace();
         }
 
         if (addonRace == null) return;
@@ -386,6 +389,11 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         ctx.bodyCM = bodyCM.get();
         ctx.bodyC1 = bodyC1.get();
         ctx.bodyC2 = bodyC2.get();
+        ctx.bodyC3 = bodyC3.get();
+        ctx.skinType = skintype.get();
+        ctx.state = data.State;
+        ctx.eyeC1 = eyec1.get();
+        ctx.eyeC2 = eyec2.get();
 
         if (renderer.render(ctx)) {
             GL11.glPopMatrix();
@@ -781,6 +789,50 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 else if (form.display.bodyType.equals("ultimatecooler"))
                     st.set(5);
             }
+        }
+    }
+
+    @Inject(method = "renderFirstPersonArm",
+        at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;DBC()Z", ordinal = 0, shift = At.Shift.AFTER),
+        cancellable = true, remap = true)
+    private void dispatchCustomRaceArmRenderer(EntityPlayer par1EntityPlayer, CallbackInfo ci,
+                                                @Local(name = "race") LocalIntRef race,
+                                                @Local(name = "State") LocalIntRef st,
+                                                @Local(name = "bodycm") LocalIntRef bodyCM,
+                                                @Local(name = "bodyc1") LocalIntRef bodyC1,
+                                                @Local(name = "bodyc2") LocalIntRef bodyC2,
+                                                @Local(name = "bodyc3") LocalIntRef bodyC3,
+                                                @Local(name = "skintype") LocalIntRef skintype,
+                                                @Local(name = "id") LocalIntRef id) {
+        PlayerDBCInfo info = PlayerDataUtil.getClientDBCInfo();
+        if (info == null || !info.isCustomRace()) return;
+
+        Race addonRace = info.getRace();
+        if (addonRace == null) return;
+
+        IRaceRenderer renderer = addonRace.registry.getRenderer(addonRace);
+        if (renderer == null) return;
+
+        DBCData data = DBCData.get(par1EntityPlayer);
+        RaceRenderContext ctx = new RaceRenderContext(
+            par1EntityPlayer, 0, 0, 0, 0, 0,
+            (RenderPlayerJBRA) (Object) this, this.modelMain,
+            data, addonRace
+        );
+        ctx.bodyCM = bodyCM.get();
+        ctx.bodyC1 = bodyC1.get();
+        ctx.bodyC2 = bodyC2.get();
+        ctx.bodyC3 = bodyC3.get();
+        ctx.skinType = skintype.get();
+        ctx.state = data.State;
+        ctx.eyeC1 = data.getColor("left_eye");
+        ctx.eyeC2 = data.getColor("right_eye");
+        ctx.isFirstPersonArm = true;
+        ctx.armAnimationId = id.get();
+
+        if (renderer.renderArm(ctx)) {
+            GL11.glPopMatrix();
+            ci.cancel();
         }
     }
 

@@ -671,3 +671,7 @@ statsheet.bonus.type.flat=Flat
 statsheet.bonus.type.multiplicative=Multiplicative
 statsheet.bonus.label.addonMultiplicative=Bonus Multi
 statsheet.bonus.label.addonPercentage=Bonus Percent
+
+# Races
+jinryuujrmcore.Bio-Android=Bio-Android
+

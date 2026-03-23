@@ -1307,7 +1307,10 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             case "hair":
                 return JRMCoreH.dnsHairC(DNS);
             case "eye":
+            case "left_eye":
                 return JRMCoreH.dnsEyeC1(DNS);
+            case "right_eye":
+                return JRMCoreH.dnsEyeC2(DNS);
             case "bodycm":
                 return JRMCoreH.dnsBodyCM(DNS);
             case "bodyc1":
