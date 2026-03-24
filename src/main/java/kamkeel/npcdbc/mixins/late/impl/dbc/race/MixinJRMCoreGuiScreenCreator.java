@@ -3,6 +3,8 @@ package kamkeel.npcdbc.mixins.late.impl.dbc.race;
 import JinRyuu.JRMCore.JRMCoreGuiScreen;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.controllers.RaceController;
+import kamkeel.npcdbc.client.gui.dbc.creator.CharacterCreationGui;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.race.helper.RaceSelectorHelper;
@@ -13,6 +15,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import cpw.mods.fml.common.FMLCommonHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -237,6 +240,11 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
     private void npcdbc$seedCustomRaceOnInit(CallbackInfo ci) {
         if (this.guiID != 0) return;
 
+        if (true) {// ConfigDBCClient.UseEnhancedCreator
+            FMLCommonHandler.instance().showGuiScreen(new CharacterCreationGui());
+            return;
+        }
+
         RaceSelectorHelper.setPreviewActive(true);
 
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
@@ -256,6 +264,11 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
 
     @Inject(method = "actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", at = @At("RETURN"), remap = true)
     private void npcdbc$updatePreviewRaceAfterButtons(GuiButton button, CallbackInfo ci) {
+        if (this.guiID == 0 && CharacterCreationGui.hasPendingReturn()) {
+            FMLCommonHandler.instance().showGuiScreen(new CharacterCreationGui());
+            return;
+        }
+
         if (this.guiID != 0) {
             return;
         }
@@ -276,7 +289,7 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
 
     @Inject(method = "actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", at = @At("HEAD"), remap = true)
     private void npcdbc$interceptCreatorFinalize(GuiButton button, CallbackInfo ci) {
-        if (button.id != 13) return;
+        if (button.id != 13 || ConfigDBCClient.UseEnhancedCreator) return;
 
         int addonRaceId = -1;
         if (RaceSelectorHelper.isCustomRaceIndex(RaceSlcted)) {
@@ -294,7 +307,11 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
 
     @Override
     public void onGuiClosed() {
-        RaceSelectorHelper.setPreviewActive(false);
+        boolean suspendingToEnhancedCreator = this.guiID == JRMCoreGuiScreen.ID_COLOR_PICKER && CharacterCreationGui.hasPendingReturn();
+        if (!suspendingToEnhancedCreator) {
+            CharacterCreationGui.clearPendingReturn();
+            RaceSelectorHelper.setPreviewActive(false);
+        }
         super.onGuiClosed();
     }
 }
