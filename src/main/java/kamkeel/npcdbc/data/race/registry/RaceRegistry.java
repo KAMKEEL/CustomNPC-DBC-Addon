@@ -1,9 +1,10 @@
-package kamkeel.npcdbc.data.race;
+package kamkeel.npcdbc.data.race.registry;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.race.IRaceRenderer;
 import kamkeel.npcdbc.controllers.RaceController;
+import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.race.builder.RaceBuilder;
 import kamkeel.npcs.util.Register;
 import noppes.npcs.LogWriter;
@@ -20,7 +21,7 @@ public class RaceRegistry extends Register<Race> {
 
     @SideOnly(Side.CLIENT)
     private final Map<String, IRaceRenderer> renderers = new HashMap<>();
-    
+
     public static RaceRegistry create(String namespace, String displayName) {
         if (!REGISTERED_NAMESPACES.containsKey("race"))
             REGISTERED_NAMESPACES.put("race", new ArrayList<>());
@@ -63,8 +64,8 @@ public class RaceRegistry extends Register<Race> {
     @SideOnly(Side.CLIENT)
     public IRaceRenderer getRenderer(String key) {
         return key == null ? null : renderers.get(key);
-    } 
-    
+    }
+
     @SideOnly(Side.CLIENT)
     public IRaceRenderer getRenderer(Race race) {
         return getRenderer(race.display.rendererKey);

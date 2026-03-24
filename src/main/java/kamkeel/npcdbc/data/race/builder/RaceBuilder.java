@@ -6,7 +6,7 @@ import kamkeel.npcdbc.constants.enums.EnumDBCClasses;
 import kamkeel.npcdbc.constants.enums.EnumDBCStats;
 import kamkeel.npcdbc.data.form.BuiltInForm;
 import kamkeel.npcdbc.data.race.Race;
-import kamkeel.npcdbc.data.race.RaceRegistry;
+import kamkeel.npcdbc.data.race.registry.RaceRegistry;
 import kamkeel.npcdbc.data.race.display.ColorPreset;
 import kamkeel.npcdbc.data.race.display.ColorSlot;
 import kamkeel.npcdbc.data.race.display.RaceDisplay;
@@ -15,10 +15,11 @@ import kamkeel.npcdbc.data.race.progression.FormTree;
 import kamkeel.npcdbc.data.race.progression.RaceSkill;
 import kamkeel.npcdbc.data.race.stats.ClassStats;
 import kamkeel.npcdbc.data.race.stats.RaceStats;
+import kamkeel.npcs.controllers.data.ability.Ability;
 import net.minecraft.util.ResourceLocation;
-import noppes.npcs.LogWriter;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 public class RaceBuilder {
@@ -60,12 +61,12 @@ public class RaceBuilder {
     public ClassStatsBuilder forClass(EnumDBCClasses raceClass) {
         return new ClassStatsBuilder(this, raceClass);
     }
-    
+
     public RaceBuilder registry(RaceRegistry registry) {
         this.registry = registry;
         return this;
     }
-    
+
     public Race build() {
         if (skill == null)
             throw new IllegalStateException("Race '" + name + "' is missing a racial skill.");
@@ -76,26 +77,51 @@ public class RaceBuilder {
     // Sub-builders
     // ══════════════════════════════════════════════════════════
 
-    public static class SkillBuilder {
+    public class SkillBuilder {
         private final RaceBuilder parent;
         private int maxLevel = 5;
         private int[] tpCosts = {100};
         private int[] mindCosts = {10};
+        private final RaceSkill skill;
 
-        SkillBuilder(RaceBuilder parent) { this.parent = parent; }
+        SkillBuilder(RaceBuilder parent) {
+            this.parent = parent;
+            this.skill = new RaceSkill(maxLevel, tpCosts, mindCosts);
+        }
 
         public SkillBuilder maxLevel(int level) {
-            this.maxLevel = level; return this;
+            this.maxLevel = level;
+            return this;
         }
+
         public SkillBuilder tpCosts(int... costs) {
-            this.tpCosts = costs; return this;
+            this.tpCosts = costs;
+            return this;
         }
+
         public SkillBuilder mindCosts(int... costs) {
-            this.mindCosts = costs; return this;
+            this.mindCosts = costs;
+            return this;
+        }
+
+        public SkillBuilder ability(int level, Ability ability) {
+            skill.addAbility(level, ability);
+            return this;
+        }
+
+        public SkillBuilder toggle(int level, Ability ability) {
+            skill.addToggle(level, ability);
+            return this;
         }
 
         public RaceBuilder and() {
             parent.skill = new RaceSkill(maxLevel, tpCosts, mindCosts);
+            for (Map.Entry<Integer, List<Ability>> entry : skill.getAbilities().entrySet())
+                for (Ability a : entry.getValue())
+                    parent.skill.addAbility(entry.getKey(), a);
+            for (Map.Entry<Integer, List<Ability>> entry : skill.getToggles().entrySet())
+                for (Ability a : entry.getValue())
+                    parent.skill.addToggle(entry.getKey(), a);
             return parent;
         }
     }
@@ -203,7 +229,7 @@ public class RaceBuilder {
                 slot.add(texture);
             return this;
         }
-        
+
         public DisplayBuilder renderer(String rendererKey){
             parent.display.rendererKey = rendererKey;
             return this;

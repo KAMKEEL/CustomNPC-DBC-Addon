@@ -3,6 +3,7 @@ package kamkeel.npcdbc.data.race;
 import kamkeel.npcdbc.data.race.display.RaceDisplay;
 import kamkeel.npcdbc.data.race.progression.FormTree;
 import kamkeel.npcdbc.data.race.progression.RaceSkill;
+import kamkeel.npcdbc.data.race.registry.RaceRegistry;
 import kamkeel.npcdbc.data.race.stats.RaceStats;
 
 public class Race {

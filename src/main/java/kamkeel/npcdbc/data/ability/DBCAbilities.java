@@ -2,11 +2,16 @@ package kamkeel.npcdbc.data.ability;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.DBCSkills;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.constants.enums.EnumDBCRaces;
+import kamkeel.npcdbc.data.ability.effect.DBCEffectAbility;
+import kamkeel.npcdbc.data.ability.effect.DBCHealAbility;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.ability.conditions.ConditionRace;
+import kamkeel.npcdbc.data.race.Race;
+import kamkeel.npcdbc.data.race.registry.DBCAddonRaces;
 import kamkeel.npcs.controllers.data.ability.conditions.ConditionHPThreshold;
 import kamkeel.npcs.controllers.data.ability.conditions.ConditionThreshold;
 import kamkeel.npcs.controllers.data.ability.data.effect.AbilityCustomEffect;
@@ -62,8 +67,22 @@ public class DBCAbilities {
     public static final Ability ULTRA_INSTINCT = ABILITIES.register("ultra_instinct", () -> withSkill(new DBCToggleAbility(DBCToggle.ULTRA_INSTINCT), DBCSkills.UltraInstinct));
     public static final Ability GOD_OF_DESTRUCTION = ABILITIES.register("god_of_destruction", () -> withSkill(new DBCToggleAbility(DBCToggle.GOD_OF_DESTRUCTION), DBCSkills.GodOfDestruction));
 
-    private static DBCToggleAbility withSkill(DBCToggleAbility ability, DBCSkills skill) {
+    // Effect Abilities
+    public static final Ability NAMEK_REGEN = ABILITIES.register("namek_regen", () -> withRace(DBCHealAbility.NAMEKIAN.get(), DBCRace.NAMEKIAN));
+    public static final Ability BIO_ANDROID_REGEN = ABILITIES.register("bio_android_regen", () -> withCustomRace(DBCHealAbility.BIO_ANDROID.get(), DBCAddonRaces.BIO_ANDROID));
+
+    private static Ability withSkill(Ability ability, DBCSkills skill) {
         ability.setPlayerRequirement(player -> DBCData.get(player).hasSkill(skill.getId()));
+        return ability;
+    }
+
+    private static Ability withRace(Ability ability, int race) {
+        ability.setPlayerRequirement(player -> DBCData.get(player).Race == race);
+        return ability;
+    }
+
+    private static Ability withCustomRace(Ability ability, Race race) {
+        ability.setPlayerRequirement(player -> DBCData.get(player).addonRaceID == race.id);
         return ability;
     }
 
@@ -580,7 +599,7 @@ public class DBCAbilities {
         dome.setDomeRadius(4.0f);
     });
 
-    public static final AbilityVariant NAMEK_REGEN = ABILITIES.registerVariant(EFFECT, "ability.npcdbc.namek_regen", GROUP, a -> {
+    public static final AbilityVariant NAMEK_REGEN_VARIANT = ABILITIES.registerVariant(EFFECT, "ability.npcdbc.namek_regen", GROUP, a -> {
         AbilityEffect effect = (AbilityEffect) a;
         a.setName("Namekian Regeneration");
         a.setDisplayName("&2Namekian Regeneration");

@@ -474,7 +474,7 @@ public class AndroidRaceRenderer implements IRaceRenderer {
         model.renderBody(0.0625F);
 
         // Head crest
-        bindAndColor(ctx, "bioskinsemi.png", 0xFFFFFF);
+        bindAndColor(ctx, "bioskinsemi.png", ctx.bodyCM);
         renderHeadCrestWithHeadTransform(ctx);
 
         bindAndColor(ctx, "bio1S.png", ctx.bodyC1);
@@ -506,7 +506,7 @@ public class AndroidRaceRenderer implements IRaceRenderer {
         model.renderBody(0.0625F);
 
         // Head crest
-        bindAndColor(ctx, "bioskin.png", 0xFFFFFF);
+        bindAndColor(ctx, "bioskin.png", ctx.bodyCM);
         renderHeadCrestWithHeadTransform(ctx);
 
         // Wings
@@ -533,7 +533,7 @@ public class AndroidRaceRenderer implements IRaceRenderer {
         model.renderBody(0.0625F);
 
         // Head crest
-        bindAndColor(ctx, "bioheadM.png", 0xFFFFFF);
+        bindAndColor(ctx, "bioheadM.png", ctx.bodyCM);
         renderHeadCrestWithHeadTransform(ctx);
 
         // Animated max tail
@@ -564,7 +564,7 @@ public class AndroidRaceRenderer implements IRaceRenderer {
         model.renderBody(0.0625F);
 
         // Head crest
-        bindAndColor(ctx, "bioheadUM.png", 0xFFFFFF);
+        bindAndColor(ctx, "bioheadUM.png", ctx.bodyCM);
         renderHeadCrestWithHeadTransform(ctx);
 
         // Animated max tail
