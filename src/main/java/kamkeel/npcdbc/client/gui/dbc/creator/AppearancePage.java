@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.gui.dbc.creator;
 
 import JinRyuu.JRMCore.*;
+import kamkeel.npcdbc.client.gui.dbc.EntityPreviewRenderer;
 import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.race.helper.RaceSelectorHelper;
 import net.minecraft.client.Minecraft;
@@ -35,6 +36,11 @@ public final class AppearancePage extends CreatorPage {
     private int guiLeft, guiTop;
 
     private int lastMouseX, lastMouseY;
+    private final EntityPreviewRenderer previewRenderer = new EntityPreviewRenderer()
+        .setDefaultZoom(2.5f)
+        .setZoomBounds(1f, 5f)
+        .setFollowMouse(true)
+        .setAllowRotate(true);
 
     AppearancePage(CharacterCreationGui parent, CreatorSession session, VanillaCreatorBridge bridge) {
         super(parent, session, bridge);
@@ -334,12 +340,8 @@ public final class AppearancePage extends CreatorPage {
     }
 
     private void drawPlayerPreview() {
-        JRMCoreGuiScreen.func_110423_a_I(
-            guiLeft + 51, guiTop + 155, 60,
-            (float)(guiLeft + 51) - lastMouseX,
-            (float)(guiTop + 80 - 40) - lastMouseY,
-            Minecraft.getMinecraft().thePlayer
-        );
+        previewRenderer.setAnchor(guiLeft + 60, guiTop + 152);
+        previewRenderer.draw(Minecraft.getMinecraft().thePlayer, lastMouseX, lastMouseY, 0);
     }
 
     @Override
