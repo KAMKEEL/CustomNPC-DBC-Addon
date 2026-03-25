@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.race.IRaceRenderer;
 import kamkeel.npcdbc.controllers.RaceController;
+import kamkeel.npcdbc.data.form.FormRace;
 import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.race.builder.RaceBuilder;
 import kamkeel.npcs.util.Register;
@@ -52,7 +53,12 @@ public class RaceRegistry extends Register<Race> {
 
     public void register() {
         for (Map.Entry<String, Supplier<Race>> entry : entries.entrySet()) {
-            RaceController.Instance.register(entry.getValue().get());
+            Race race = entry.getValue().get();
+            RaceController.Instance.register(race);
+
+            if (race.formTree != null) {
+                race.formTree.register(FormRace.of(race.id));
+            }
         }
     }
 

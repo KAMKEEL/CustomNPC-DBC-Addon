@@ -5,7 +5,6 @@ import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.constants.enums.EnumDBCAttributes;
 import kamkeel.npcdbc.constants.enums.EnumDBCClasses;
 import kamkeel.npcdbc.constants.enums.EnumDBCStats;
-import kamkeel.npcdbc.data.form.BuiltInForm;
 import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.race.display.*;
 import kamkeel.npcdbc.data.race.registry.RaceRegistry;
@@ -47,6 +46,15 @@ public class RaceBuilder {
 
     public FormTreeBuilder formTree() {
         return new FormTreeBuilder(this, namespace);
+    }
+
+    public RaceBuilder formTree(FormTree tree) {
+        this.formTree = tree;
+        return this;
+    }
+
+    void setFormTree(FormTree tree) {
+        this.formTree = tree;
     }
 
     public SkillBuilder skill() {
@@ -597,56 +605,6 @@ public class RaceBuilder {
                 public BodyStateBuilder and() {
                     return stateParent;
                 }
-            }
-        }
-    }
-
-    // ══════════════════════════════════════════════════════════
-    // FormTreeBuilder
-    // ══════════════════════════════════════════════════════════
-
-    public static class FormTreeBuilder {
-        private final RaceBuilder parent;
-        private final FormTree formTree;
-
-        FormTreeBuilder(RaceBuilder parent, String raceNamespace) {
-            this.parent = parent;
-            this.formTree = new FormTree(raceNamespace);
-        }
-
-        public LevelBuilder level(int level) {
-            return new LevelBuilder(this, level);
-        }
-
-        public RaceBuilder and() {
-            parent.formTree = formTree;
-            return parent;
-        }
-
-        public FormTree getFormTree() {
-            return formTree;
-        }
-
-        public class LevelBuilder {
-            private final FormTreeBuilder parent;
-            private final int level;
-
-            LevelBuilder(FormTreeBuilder parent, int level) {
-                this.parent = parent;
-                this.level = level;
-            }
-
-            public LevelBuilder add(BuiltInForm form) {
-                parent.formTree.add(level, form);
-                return this;
-            }
-
-            public LevelBuilder level(int nextLevel) {
-                return new LevelBuilder(parent, nextLevel);
-            }
-
-            public RaceBuilder and() {
-                return parent.and();
             }
         }
     }
