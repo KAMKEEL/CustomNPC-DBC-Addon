@@ -240,7 +240,7 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
     private void npcdbc$seedCustomRaceOnInit(CallbackInfo ci) {
         if (this.guiID != 0) return;
 
-        if (ConfigDBCClient.UseEnhancedCreator) {
+        if (ConfigDBCClient.EnhancedGui) {
             FMLCommonHandler.instance().showGuiScreen(new CharacterCreationGui());
             return;
         }
@@ -289,7 +289,7 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
 
     @Inject(method = "actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", at = @At("HEAD"), remap = true)
     private void npcdbc$interceptCreatorFinalize(GuiButton button, CallbackInfo ci) {
-        if (button.id != 13 || ConfigDBCClient.UseEnhancedCreator) return;
+        if (button.id != 13 || ConfigDBCClient.EnhancedGui) return;
 
         int addonRaceId = -1;
         if (RaceSelectorHelper.isCustomRaceIndex(RaceSlcted)) {

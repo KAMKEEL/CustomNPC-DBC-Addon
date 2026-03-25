@@ -15,6 +15,7 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.api.skill.ICustomSkill;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.gui.dbc.StatSheetGui;
+import kamkeel.npcdbc.client.gui.dbc.skill.SkillScreen;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
@@ -124,6 +125,7 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
 
     @Inject(method = "drawScreen", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreGuiScreen;scrollMouseJump:I", opcode = Opcodes.PUTFIELD, shift = At.Shift.BEFORE, remap = false, ordinal = 3), remap = true)
     private void modifySkillCountForScrollSize(int x, int y, float f, CallbackInfo ci, @Local(index = 36) LocalIntRef sw) {
+        if (ConfigDBCClient.EnhancedGui) return;
         DBCData data = DBCData.getClient();
         sw.set(sw.get() + data.customSkills.size());
         skillsDrawnAlready = 0;
@@ -131,6 +133,7 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
 
     @Redirect(method = "drawScreen", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreGuiScreen;confirmationWindow:Z"))
     private boolean hijackSkillDeleteConfirmation(JRMCoreGuiScreen instance) {
+        if (ConfigDBCClient.EnhancedGui) return confirmationWindow;
         if (!dealingWithCustomSkills)
             return confirmationWindow;
         int xSize = 140;
@@ -156,6 +159,7 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
 
     @Inject(method = "drawScreen", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;canAffordSkill(II)Z", ordinal = 2, remap = false), remap = true)
     private void incrementDrawnSkills(int x, int y, float f, CallbackInfo ci) {
+        if (ConfigDBCClient.EnhancedGui) return;
         skillsDrawnAlready++;
     }
 
@@ -180,6 +184,8 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
      */
     @Inject(method = "drawScreen", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawString(Ljava/lang/String;III)I", remap = true, ordinal = 81))
     private void drawCustomSkills(int x, int y, float f, CallbackInfo ci) {
+        if (ConfigDBCClient.EnhancedGui) return;
+
         if (JRMCoreH.PlyrSkills == null)
             customNPC_DBC_Addon$drawSliderIfNoSkills();
 
@@ -255,6 +261,13 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
     private void onUpdateScreen(CallbackInfo ci) {
         if (this.guiID == 10 && (ConfigDBCClient.EnhancedGui || !ConfigDBCClient.EnableDebugStatSheetSwitching) && DBCData.getClient().Powertype == 1)
             FMLCommonHandler.instance().showGuiScreen(new StatSheetGui());
+
+        // Guard against direct guiID 16 opens while replacement is active.
+        // Vanilla uses guiID 16 as an internal transition within JRMCoreGuiScreen;
+        // if something opens it directly, redirect to the replacement.
+        // GuiID 19 (Arcosian color customization) is left to vanilla.
+        if ((this.guiID == 11 ||this.guiID == 16) && ConfigDBCClient.EnhancedGui)
+            FMLCommonHandler.instance().showGuiScreen(new SkillScreen());
     }
 
 
@@ -497,7 +510,7 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
 
     @Inject(method = "actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", at = @At("HEAD"), remap = true, cancellable = true)
     public void onActionPerformed(GuiButton button, CallbackInfo ci) {
-        if (this.isGUIOpen(11) && !JRMCoreH.isFused()) {
+        if (this.isGUIOpen(11) && !JRMCoreH.isFused() && !ConfigDBCClient.EnhancedGui) {
             if (button.id >= 360 && button.id <= 399) {
                 dealingWithCustomSkills = false;
             }

@@ -22,10 +22,7 @@ public class ConfigDBCClient {
     public static boolean EnhancedGui = true;
     public static Property DarkModeProperty;
     public static boolean DarkMode = true;
-
-    public static Property UseEnhancedCreatorProperty;
-    public static boolean UseEnhancedCreator = false;
-
+    
     public static Property AdvancedGuiModeProperty;
     public static boolean AdvancedGui = false;
 
@@ -75,8 +72,6 @@ public class ConfigDBCClient {
             EnhancedGui = EnhancedGuiProperty.getBoolean(true);
             DarkModeProperty = config.get(GUI, "Dark Mode", true, "Uses Dark Mode GUI in Enhanced Menu");
             DarkMode = DarkModeProperty.getBoolean(true);
-            UseEnhancedCreatorProperty = config.get(GUI, "Use Enhanced Creator", false, "Uses DBC Addons GUI for Character Creation\n\nWhen enabled, the addon replaces the vanilla DBC character creator with an enhanced version.");
-            UseEnhancedCreator = UseEnhancedCreatorProperty.getBoolean(false);
             AdvancedGuiModeProperty = config.get(GUI, "Advanced GUI", false, "Shows Advanced Status Effects and Calculations in Menu");
             AdvancedGui = AdvancedGuiModeProperty.getBoolean(false);
             AlternateSelectionWheelTextureProperty = config.get(GUI, "Use Alternate Wheel GUI Texture", false, "Uses alternate texture for Wheel GUIs");
