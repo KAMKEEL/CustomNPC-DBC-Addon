@@ -18,6 +18,7 @@ public final class AppearancePage extends CreatorPage {
     private static final int RACE_PREV = 100, RACE_NEXT = 101;
     private static final int GENDER_PREV = 102, GENDER_NEXT = 103;
     private static final int HAIR_PREV = 104, HAIR_NEXT = 105;
+    private static final int CUSTOM_HAIR_BTN = 5100;
     private static final int COLOR_BTN = 106;
     private static final int YEARS_PREV = 107, YEARS_NEXT = 108;
     private static final int TAIL_BTN = 109;
@@ -78,6 +79,12 @@ public final class AppearancePage extends CreatorPage {
         if (flags.canHair) {
             buttonList.add(new JRMCoreGuiButtonsA2(HAIR_PREV, controlX, guiTop + 5 + row * 10, "<"));
             buttonList.add(new JRMCoreGuiButtonsA2(HAIR_NEXT, arrowRight, guiTop + 5 + row * 10, ">"));
+            if (session.hairBack == 12) {
+                String customHairLabel = JRMCoreH.trl("jrmc", "CustomHair");
+                int sw = Minecraft.getMinecraft().fontRenderer.getStringWidth(customHairLabel) / 2;
+                buttonList.add(new JRMCoreGuiButtons01(CUSTOM_HAIR_BTN, labelCenterX - sw, guiTop + 5 + row * 10, sw,
+                    customHairLabel, JRMCoreH.techNCCol[1]).setShadow(false));
+            }
         }
         row++;
 
@@ -352,6 +359,7 @@ public final class AppearancePage extends CreatorPage {
             case GENDER_NEXT: case GENDER_PREV: cycleGender(); return true;
             case HAIR_NEXT: cycleHair(true); return true;
             case HAIR_PREV: cycleHair(false); return true;
+            case CUSTOM_HAIR_BTN: parent.openVanillaCustomHairEditor(); return true;
             case YEARS_NEXT: cycleYears(true); return true;
             case YEARS_PREV: cycleYears(false); return true;
             case TAIL_BTN: session.tail = !session.tail; syncAndRefresh(); return true;

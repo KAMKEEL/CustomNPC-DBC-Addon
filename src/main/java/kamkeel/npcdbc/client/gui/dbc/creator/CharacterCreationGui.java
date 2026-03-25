@@ -5,7 +5,6 @@ import JinRyuu.JRMCore.JRMCoreGuiScreen;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.gui.dbc.AbstractJRMCGui;
 import kamkeel.npcdbc.data.race.helper.RaceSelectorHelper;
-import kamkeel.npcdbc.mixins.late.IDBCGuiScreen;
 import net.minecraft.client.gui.GuiButton;
 import org.lwjgl.input.Keyboard;
 
@@ -78,10 +77,10 @@ public class CharacterCreationGui extends AbstractJRMCGui {
             BUTTON_NEXT, posX + 130, btnY, nextW, 20, nextText, 0
         ));
 
+        pages[currentPageIndex].initPage(this.buttonList, guiWidthOffset, guiHeightOffset);
+
         RaceSelectorHelper.setPreviewActive(true);
         bridge.applyPreview();
-
-        pages[currentPageIndex].initPage(this.buttonList, guiWidthOffset, guiHeightOffset);
 
         if (lastInitPageIndex != currentPageIndex) {
             pages[currentPageIndex].onPageEnter();
@@ -159,6 +158,16 @@ public class CharacterCreationGui extends AbstractJRMCGui {
 
         JRMCoreGuiScreen vanillaScreen = new JRMCoreGuiScreen(JRMCoreGuiScreen.ID_COLOR_PICKER);
         JRMCoreGuiScreen.colorType = colorType;
+        vanillaScreen.guiIDprev = 0;
+        this.mc.displayGuiScreen(vanillaScreen);
+    }
+
+    void openVanillaCustomHairEditor() {
+        session.syncToVanillaStatics();
+        pendingSession = session;
+        pendingPageIndex = currentPageIndex;
+
+        JRMCoreGuiScreen vanillaScreen = new JRMCoreGuiScreen(20);
         vanillaScreen.guiIDprev = 0;
         this.mc.displayGuiScreen(vanillaScreen);
     }
