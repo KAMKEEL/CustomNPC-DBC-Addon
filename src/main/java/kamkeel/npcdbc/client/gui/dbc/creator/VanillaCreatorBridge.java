@@ -49,6 +49,13 @@ public final class VanillaCreatorBridge {
         syncLocalPreviewCache();
     }
 
+    public void applyPreviewWithTailSync() {
+        session.syncToVanillaStatics();
+        pushPreviewDns();
+        JRMCoreH.Char((byte) 103, (byte) (session.tail ? 1 : 0));
+        syncLocalPreviewCache();
+    }
+
     private void pushPreviewDns() {
         JRMCoreGuiScreen.setdns();
         JRMCoreH.jrmcDataFC(0, IJRMCoreGuiScreenAccessor.npcdbc$getDns());

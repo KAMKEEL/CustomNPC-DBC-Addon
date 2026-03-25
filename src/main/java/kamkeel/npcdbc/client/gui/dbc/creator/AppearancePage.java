@@ -2,6 +2,7 @@ package kamkeel.npcdbc.client.gui.dbc.creator;
 
 import JinRyuu.JRMCore.*;
 import kamkeel.npcdbc.client.gui.dbc.EntityPreviewRenderer;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.race.helper.RaceSelectorHelper;
 import net.minecraft.client.Minecraft;
@@ -21,7 +22,7 @@ public final class AppearancePage extends CreatorPage {
     private static final int CUSTOM_HAIR_BTN = 5100;
     private static final int COLOR_BTN = 106;
     private static final int YEARS_PREV = 107, YEARS_NEXT = 108;
-    private static final int TAIL_BTN = 109;
+    private static final int TAIL_BTN = 127;
     private static final int SKIN_PREV = 110, SKIN_NEXT = 111;
     private static final int BODY_PREV = 112, BODY_NEXT = 113;
     private static final int BODYCOL_PRESET_PREV = 114, BODYCOL_PRESET_NEXT = 115;
@@ -118,6 +119,11 @@ public final class AppearancePage extends CreatorPage {
             buttonList.add(new JRMCoreGuiButtons01(TAIL_BTN, labelCenterX - sw, guiTop + 5 + row * 10, sw,
                 tailLabel, session.tail ? 3452672 : 4210752).setShadow(false));
         }
+        
+        if(session.getVanillaRaceIndex() == DBCRace.SAIYAN && !session.tail) {
+            session.tail = true;
+            syncAndRefreshTail();
+        }
         row++;
 
         // Skin type
@@ -196,8 +202,9 @@ public final class AppearancePage extends CreatorPage {
 
     private void enforceConstraints(CreatorSession.AppearanceFlags flags) {
         if (!flags.canRace && session.raceIndex != 0) {
+            int previousRaceIndex = session.raceIndex;
             session.raceIndex = 0;
-            session.applyRaceChange();
+            session.applyRaceChange(previousRaceIndex);
         }
 
         if (!flags.canGender && session.gender != 0) {
@@ -206,10 +213,6 @@ public final class AppearancePage extends CreatorPage {
 
         if (!flags.canYears && session.years != 0) {
             session.years = 0;
-        }
-
-        if (!flags.canHair && session.hairBack != 10) {
-            session.hairBack = 10;
         }
 
         int[] raceHairColor = RaceSelectorHelper.getRaceHairColor();
@@ -275,7 +278,7 @@ public final class AppearancePage extends CreatorPage {
             String stateLabel = JRMCoreH.trl("jrmc", "TRState") + ": " +
                 JRMCoreH.cldgy + JRMCoreH.trl("jrmc", JRMCoreH.TransNms[4][stateIdx]);
             drawCentered(font, stateLabel, labelCenterX, guiTop + 5 + row * 10);
-        } else if (session.getVanillaRaceIndex() != 3) {
+        } else if (flags.canHair) {
             drawColorSwatch(session.hairColor, labelCenterX - 25, guiTop + 4 + row * 10, 50, 10);
         }
         row++;
@@ -362,7 +365,7 @@ public final class AppearancePage extends CreatorPage {
             case CUSTOM_HAIR_BTN: parent.openVanillaCustomHairEditor(); return true;
             case YEARS_NEXT: cycleYears(true); return true;
             case YEARS_PREV: cycleYears(false); return true;
-            case TAIL_BTN: session.tail = !session.tail; syncAndRefresh(); return true;
+            case TAIL_BTN: session.tail = !session.tail; syncAndRefreshTail(); return true;
             case SKIN_NEXT: cycleSkinType(true); return true;
             case SKIN_PREV: cycleSkinType(false); return true;
             case BODY_NEXT: cycleBodyType(true); return true;
@@ -403,6 +406,7 @@ public final class AppearancePage extends CreatorPage {
             if (next >= total) next = 0;
             if (next < 0) next = total - 1;
             if (next < raceAllow.length && JRMCoreH.Allow(raceAllow[next])) {
+                int previousRaceIndex = session.raceIndex;
                 session.raceIndex = next;
                 if (RaceSelectorHelper.isCustomRaceIndex(next)) {
                     Race race = RaceSelectorHelper.getCustomRaceByIndex(next);
@@ -410,7 +414,7 @@ public final class AppearancePage extends CreatorPage {
                 } else {
                     session.addonRaceId = -1;
                 }
-                session.applyRaceChange();
+                session.applyRaceChange(previousRaceIndex);
                 syncAndRefreshRace();
                 return;
             }
@@ -449,9 +453,10 @@ public final class AppearancePage extends CreatorPage {
     }
 
     private void cycleSkinType(boolean forward) {
+        int previousRaceIndex = session.raceIndex;
         session.skinType = forward ? JRMCoreGuiScreen.SlctF(session.skinType, 2)
             : JRMCoreGuiScreen.SlctB(session.skinType, 2);
-        session.applyRaceChange();
+        session.applyRaceChange(previousRaceIndex);
         syncAndRefresh();
     }
 
@@ -545,6 +550,11 @@ public final class AppearancePage extends CreatorPage {
 
     private void syncAndRefreshYears() {
         bridge.applyPreviewWithYearsSync();
+        parent.refreshPage();
+    }
+
+    private void syncAndRefreshTail() {
+        bridge.applyPreviewWithTailSync();
         parent.refreshPage();
     }
 

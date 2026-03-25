@@ -62,6 +62,11 @@ public final class CreatorSession {
     public boolean tail;
     public float brightness;
 
+    public int preMajinHairBack;
+    public int preMajinHairFront;
+    public int preMajinHairColor;
+    public boolean hasPreMajinHair;
+
     // ── Snapshot (captured on open for cancel/reset) ──
     private int snapRaceIndex;
     private int snapAddonRaceId;
@@ -131,7 +136,10 @@ public final class CreatorSession {
         s.kiColor = JRMCoreGuiScreen.KiColorSlcted;
         s.tail = JRMCoreGuiScreen.tail;
         s.brightness = JRMCoreGuiScreen.BrghtSlcted;
-
+        s.preMajinHairBack = s.hairBack;
+        s.preMajinHairFront = s.hairFront;
+        s.preMajinHairColor = s.hairColor;
+        s.hasPreMajinHair = !JRMCoreH.isRaceMajin(s.getVanillaRaceIndex());
         // Seed race from vanilla; then check addon override
         s.addonRaceId = -1;
         DBCData clientData = DBCData.getClient();
@@ -211,6 +219,10 @@ public final class CreatorSession {
         kiColor = snapKiColor;
         tail = snapTail;
         brightness = snapBrightness;
+        preMajinHairBack = snapHairBack;
+        preMajinHairFront = snapHairFront;
+        preMajinHairColor = snapHairColor;
+        hasPreMajinHair = !JRMCoreH.isRaceMajin(getVanillaRaceIndex());
     }
 
     /** Whether the currently selected race is a custom addon race (index >= 6). */
@@ -240,23 +252,20 @@ public final class CreatorSession {
      * <p>
      * Uses the expanded arrays from {@link RaceSelectorHelper} so custom races are handled.
      */
-    public void applyRaceChange() {
-        String[] races = RaceSelectorHelper.getRaces();
+    public void applyRaceChange(int previousRaceIndex) {
         int[] raceGenders = RaceSelectorHelper.getRaceGenders();
+        int[] raceHairColor = RaceSelectorHelper.getRaceHairColor();
         int[][] sknLimits = RaceSelectorHelper.getCustomSknLimits();
-        int[] sknLimitsBCP = RaceSelectorHelper.getCustomSknLimitsBCP();
-
+        int race = getVanillaRaceIndex();
+        int previousVanillaRace = RaceSelectorHelper.clampRaceForStats(previousRaceIndex);
+        boolean enteringMajin = JRMCoreH.isRaceMajin(race);
+        boolean leavingMajin =  JRMCoreH.isRaceMajin(previousVanillaRace);
         // Single-gender race: force male
         if (raceIndex < raceGenders.length && raceGenders[raceIndex] == 1) {
             gender = 0;
         }
 
-        // Arcosian state
-        if (JRMCoreH.isRaceArcosian(getVanillaRaceIndex())) {
-            stateSelected = 4;
-        } else {
-            stateSelected = 0;
-        }
+        stateSelected = 0;
 
         // Clamp body type
         if (raceIndex < sknLimits.length) {
@@ -280,9 +289,24 @@ public final class CreatorSession {
         // Apply eye color preset
         applyEyeColorPreset();
 
-        // Namekian: force tail on
-        if (JRMCoreH.isRaceNamekian(getVanillaRaceIndex())) {
-            tail = true;
+        if (enteringMajin) {
+            preMajinHairBack = hairBack;
+            preMajinHairFront = hairFront;
+            preMajinHairColor = hairColor;
+            hasPreMajinHair = true;
+        } else if (leavingMajin) {
+            hairBack = preMajinHairBack;
+            hairFront = preMajinHairFront;
+            hairColor = preMajinHairColor;
+        }
+
+        if (JRMCoreH.isRaceMajin(race)) {
+            syncMajinHairColor();
+            if (hairBack < 10) {
+                hairBack = 10;
+            }
+        } else if (raceIndex < raceHairColor.length && raceHairColor[raceIndex] != -1) {
+            hairColor = raceHairColor[raceIndex];
         }
 
     }
@@ -345,14 +369,13 @@ public final class CreatorSession {
             int[] raceCustomSkin = RaceSelectorHelper.getRaceCustomSkin();
             int[] raceHairColor = RaceSelectorHelper.getRaceHairColor();
             int[][] sknLimits = RaceSelectorHelper.getCustomSknLimits();
-
+            
             canRace = s.raceIndex < raceAllow.length && JRMCoreH.Allow(raceAllow[s.raceIndex]);
             canGender = s.raceIndex < raceGenders.length && raceGenders[s.raceIndex] != 1
                 && JRMCoreH.Allow(JRMCoreH.GenderAllow[s.gender < JRMCoreH.GenderAllow.length ? s.gender : 0]);
             canYears = JRMCoreH.Allow("JYC");
             canHair = s.raceIndex < raceCanHaveHair.length && raceCanHaveHair[s.raceIndex].contains("H");
-            canTail = JRMCoreH.isRaceSaiyan(s.getVanillaRaceIndex())
-                || JRMCoreH.isRaceHalfSaiyan(s.getVanillaRaceIndex());
+            canTail = JRMCoreH.isRaceHalfSaiyan(s.getVanillaRaceIndex());
 
             // Hair color: Majin copies body color; fixed-color races can't change
             if (JRMCoreH.isRaceMajin(s.getVanillaRaceIndex())) {
