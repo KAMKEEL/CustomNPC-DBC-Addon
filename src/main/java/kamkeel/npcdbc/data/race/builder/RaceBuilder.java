@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data.race.builder;
 
 import kamkeel.npcdbc.api.Color;
+import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.constants.enums.EnumDBCAttributes;
 import kamkeel.npcdbc.constants.enums.EnumDBCClasses;
 import kamkeel.npcdbc.constants.enums.EnumDBCStats;
