@@ -23,12 +23,13 @@ public class DBCAddonRaces {
         .display()
             .renderer("npcdbc:android")
             .hairType("X")
-            .bodyColorSlots(3)
+            .bodyColorSlots(4)
             .defaultColor(ColorSlot.LEFT_EYE, 0xff00ff)
             .defaultColor(ColorSlot.RIGHT_EYE, 0xff00ff)
-            .defaultColor(ColorSlot.BODY_CM, 0x2FED38)
-            .defaultColor(ColorSlot.BODY_C1, 0xFFDE50)
-            .defaultColor(ColorSlot.BODY_C2, 0xFF9850)
+            .defaultColor(ColorSlot.BODY_CM, 0x568D32)
+            .defaultColor(ColorSlot.BODY_C1, 0xB7C913)
+            .defaultColor(ColorSlot.BODY_C2, 0xD59406)
+            .defaultColor(ColorSlot.BODY_C3, 0x909CC4)
             .and()
     );
 
