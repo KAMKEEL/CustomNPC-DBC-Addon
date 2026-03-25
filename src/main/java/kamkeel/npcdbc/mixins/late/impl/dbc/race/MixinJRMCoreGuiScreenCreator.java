@@ -240,7 +240,7 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
     private void npcdbc$seedCustomRaceOnInit(CallbackInfo ci) {
         if (this.guiID != 0) return;
 
-        if (true) {// ConfigDBCClient.UseEnhancedCreator
+        if (ConfigDBCClient.UseEnhancedCreator) {
             FMLCommonHandler.instance().showGuiScreen(new CharacterCreationGui());
             return;
         }
@@ -307,7 +307,8 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
 
     @Override
     public void onGuiClosed() {
-        boolean suspendingToEnhancedCreator = this.guiID == JRMCoreGuiScreen.ID_COLOR_PICKER && CharacterCreationGui.hasPendingReturn();
+        boolean suspendingToEnhancedCreator = CharacterCreationGui.hasPendingReturn()
+            && (this.guiID == JRMCoreGuiScreen.ID_COLOR_PICKER || (this.guiID >= 20 && this.guiID <= 24));
         if (!suspendingToEnhancedCreator) {
             CharacterCreationGui.clearPendingReturn();
             RaceSelectorHelper.setPreviewActive(false);
