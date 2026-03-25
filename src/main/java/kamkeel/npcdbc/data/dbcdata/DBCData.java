@@ -29,8 +29,8 @@ import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
 import kamkeel.npcdbc.data.overlay.OverlayManager;
+import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.skill.CustomSkillContainer;
-import kamkeel.npcdbc.data.skill.RacialSkillContainer;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.*;
@@ -108,7 +108,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
     // Custom Race
     public int addonRaceID = -1;
-    public RacialSkillContainer racialSkill = null;
 
     /** Sets addon heat and writes directly to NBT so DBC picks it up immediately. */
     public void setAddonHeat(float heat) {
@@ -411,7 +410,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         addonRaceID = formData.currentRace;
         nbt.setInteger("addonFormID", addonFormID);
         nbt.setFloat("addonFormLevel", addonFormLevel);
-        nbt.setFloat("addonRaceID", addonRaceID);
+        nbt.setInteger("addonRaceID", addonRaceID);
         nbt.setInteger("auraID", auraID);
         nbt.setInteger("outlineID", outlineID);
 
@@ -1246,7 +1245,13 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         }
 
         int mindSpentOnSkills = JRMCoreH.skillSlot_SpentMindRequirement(this.Skills.split(","), skls, sklsMR);
-        int mindSpentOnRacialForms = JRMCoreH.skillSlot_SpentMindRequirement_X(this.RacialSkills, this.Race, rSklsMR);
+        int mindSpentOnRacialForms;
+        if (addonRace != null && addonRace.isCustomRace()) {
+            Race race = addonRace.getRace();
+            mindSpentOnRacialForms = race != null && race.skill != null ? race.skill.getTotalMindCost(addonRace.getRacialSkillLevel()) : 0;
+        } else {
+            mindSpentOnRacialForms = JRMCoreH.skillSlot_SpentMindRequirement_X(this.RacialSkills, this.Race, rSklsMR);
+        }
         int raceStuff = JRMCoreH.skillSlot_SpentMindRequirement(this.getRawCompound().getString("jrmcSSltY"), cSkls, cSklsMR);
         int addonTakenAwayMind = calculateMindBonuses();
 
@@ -1344,4 +1349,17 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         DBCPacketHandler.Instance.sendTracking(new PingFormColorPacket(this, dataNeededOnClient), player);
     }
+
+    /**
+     * Re-reads skill-related fields from the raw entity NBT compound.
+     * Used on the client to pick up server-synced changes (via jrmct(3))
+     * without a full loadFromNBT call.
+     */
+    public void refreshSkillFieldsFromNBT() {
+        NBTTagCompound c = getRawCompound();
+        TP = c.getInteger("jrmcTpint");
+        if (c.hasKey("customSkills"))
+            this.customSkills = NBTHelper.javaIntegerObjectMap(c.getTagList("customSkills", Constants.NBT.TAG_COMPOUND), tag -> CustomSkillContainer.fromNBT(this, tag));
+    }
+
 }
