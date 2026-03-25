@@ -224,6 +224,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         comp.setString("jrmcMajinAbsorptionData", MajinAbsorptionData);
         comp.setString("jrmcFuzion", Fusion);
         // DBC Addon
+        comp.setInteger("addonRaceID", addonRaceID);
         comp.setInteger("addonFormID", addonFormID);
         comp.setInteger("auraID", auraID);
         comp.setInteger("outlineID", outlineID);
@@ -292,6 +293,10 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         isFlying = c.getBoolean("DBCisFlying");
 
         // DBC Addon
+        if (!c.hasKey("addonRaceID"))
+            c.setInteger("addonRaceID", addonRaceID);
+        addonRaceID = c.getInteger("addonRaceID");
+
         if (!c.hasKey("addonFormID"))
             c.setInteger("addonFormID", addonFormID);
         addonFormID = c.getInteger("addonFormID");
