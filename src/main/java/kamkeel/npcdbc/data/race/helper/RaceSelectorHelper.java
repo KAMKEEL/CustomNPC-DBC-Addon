@@ -207,7 +207,7 @@ public final class RaceSelectorHelper {
             result[i] = vanilla[i];
         }
         for (int i = 0; i < customRaces.size(); i++) {
-            result[VANILLA_RACE_COUNT + i] = customRaces.get(i).display.skinLimits.clone();
+            result[VANILLA_RACE_COUNT + i] = customRaces.get(i).display.getSkinLimits().clone();
         }
         return result;
     }
@@ -281,26 +281,26 @@ public final class RaceSelectorHelper {
     }
 
     private static String raceAllow(Race race) {
-        return race.display.raceAllow;
+        return race.display.getRaceAllow();
     }
 
     private static String hairType(Race race) {
-        return race.display.hairType;
+        return race.display.getHairType();
     }
 
     private static String allowedPowerTypes(Race race) {
-        return race.display.allowedPowerTypes;
+        return race.display.getRaceAllow();
     }
 
     private static int genderCount(Race race) {
-        return race.display.genderCount;
+        return race.display.getGenderCount();
     }
 
     private static int customSkinMode(Race race) {
-        return race.display.customSkinMode;
+        return race.display.getCustomSkinMode();
     }
 
     private static int fixedHairColor(Race race) {
-        return race.display.fixedHairColor;
+        return race.display.getFixedHairColor();
     }
 }

@@ -18,9 +18,11 @@ import noppes.npcs.LogWriter;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @SideOnly(Side.CLIENT)
-public class AndroidRaceRenderer implements IRaceRenderer {
+public class BioAndroidRaceRenderer implements IRaceRenderer {
 
     // ── Normal tail chain (6 segments, parent-child) ──
     private ModelRenderer bioTailRoot;
@@ -28,11 +30,11 @@ public class AndroidRaceRenderer implements IRaceRenderer {
 
     // ── Max tail chain (6 segments, parent-child) ──
     private ModelRenderer bioTailMaxRoot;
-    private ModelRenderer btailS1M, btailS2M, btailS3M, btailS4M, btailS5M, btailS6M;
+    private ModelRenderer btailS1M, btailS2M, btailS3M, btailS4M, btailS5M, btailS6M, btailS7M;
 
     // ── Head crest (parent with 2 children) ──
     private ModelRenderer bioheadRoot;
-    private ModelRenderer biohead1, biohead2;
+    private ModelRenderer biohead1, biohead2, biohead1I, biohead2I;
 
     // ── Wings ──
     private ModelRenderer wing, wing2;
@@ -44,8 +46,8 @@ public class AndroidRaceRenderer implements IRaceRenderer {
 
     private String textureDir() {
         return ConfigDBCClient.EnableHDTextures
-            ? CustomNpcPlusDBC.ID + ":textures/sd/android/"
-            : CustomNpcPlusDBC.ID + ":textures/sd/android/";
+            ? CustomNpcPlusDBC.ID + ":textures/sd/bio_android/"
+            : CustomNpcPlusDBC.ID + ":textures/sd/bio_android/";
     }
 
     // ── IRaceRenderer ──
@@ -54,7 +56,7 @@ public class AndroidRaceRenderer implements IRaceRenderer {
     public boolean render(RaceRenderContext ctx) {
         if (!hasRequiredAssets()) {
             if (!loggedMissingAssets) {
-                LogWriter.info("Skipping Android custom race renderer: required Android textures not present.");
+                LogWriter.info("Skipping Bio-Android custom race renderer: required Bio-Android textures not present.");
                 loggedMissingAssets = true;
             }
             return false;
@@ -65,16 +67,13 @@ public class AndroidRaceRenderer implements IRaceRenderer {
         int state = ctx.state;
         switch (state) {
             case 1:
-                renderSemiPerfect(ctx);
-                break;
-            case 2:
                 renderPerfect(ctx);
                 break;
-            case 3:
-                renderPerfectMax(ctx);
+            case 2:
+                renderSemiPerfect(ctx);
                 break;
-            case 4:
-                renderUncontrolledMax(ctx);
+            case 3:
+                renderMax(ctx);
                 break;
             default:
                 renderBase(ctx);
@@ -96,16 +95,13 @@ public class AndroidRaceRenderer implements IRaceRenderer {
 
         switch (state) {
             case 1:
-                renderArmSemiPerfect(ctx, model, id);
-                break;
-            case 2:
                 renderArmPerfect(ctx, model, id);
                 break;
-            case 3:
-                renderArmPerfectMax(ctx, model, id);
+            case 2:
+                renderArmSemiPerfect(ctx, model, id);
                 break;
-            case 4:
-                renderArmUncontrolledMax(ctx, model, id);
+            case 3:
+                renderArmMax(ctx, model, id);
                 break;
             default:
                 renderArmBase(ctx, model, id);
@@ -155,7 +151,7 @@ public class AndroidRaceRenderer implements IRaceRenderer {
         btailS5.addBox(-2, -2, 0, 4, 4, 6);
         btailS5.setRotationPoint(0, 0, 5);
 
-        btailS6 = new ModelRenderer(model, 44, 16);
+        btailS6 = new ModelRenderer(model, 0, 10);
         btailS6.addBox(-1, -1.5F, -0.5F, 2, 2, 6);
         btailS6.setRotationPoint(0, 0, 4);
 
@@ -199,9 +195,13 @@ public class AndroidRaceRenderer implements IRaceRenderer {
         btailS6M = new ModelRenderer(model, 0, 0);
         btailS6M.setRotationPoint(0, 0, 5);
         btailS6M.cubeList.add(new ModelBox(btailS6M, 0, 0, -2, -2, 0, 4, 4, 6, 0));
-        btailS6M.cubeList.add(new ModelBox(btailS6M, 20, 16, -3.5F, -3.5F, 6, 7, 7, 6, 0));
 
-        // Chain: root -> s1M -> s2M -> s3M -> s4M -> s5M -> s6M
+        btailS7M = new ModelRenderer(model, 0, 0);
+        btailS7M.setRotationPoint(0, 0, 5);
+        btailS7M.cubeList.add(new ModelBox(btailS7M, 0, 10, -3.5f, -3.5f, 0, 7, 7, 7, 0));
+
+        // Chain: root -> s1M -> s2M -> s3M -> s4M -> s5M -> s6M -> s7M
+        btailS6M.addChild(btailS7M);
         btailS5M.addChild(btailS6M);
         btailS4M.addChild(btailS5M);
         btailS3M.addChild(btailS4M);
@@ -226,8 +226,21 @@ public class AndroidRaceRenderer implements IRaceRenderer {
         biohead2.setRotationPoint(0, 0, 0);
         setRotation(biohead2, 0, 0, 0.2094395F);
 
+        biohead1I = new ModelRenderer(model, 0, 0);
+        biohead1I.addBox(-2.5F, -14, -3.5F, 3, 6, 5);
+        biohead1I.setRotationPoint(0, 0, 0);
+        setRotation(biohead1I, 0, 0, -0.2094395F);
+
+        biohead2I = new ModelRenderer(model, 0, 0);
+        biohead2I.mirror = true;
+        biohead2I.addBox(-0.5F, -14, -3.5F, 3, 6, 5);
+        biohead2I.setRotationPoint(0, 0, 0);
+        setRotation(biohead2I, 0, 0, 0.2094395F);
+
         bioheadRoot.addChild(biohead1);
         bioheadRoot.addChild(biohead2);
+        bioheadRoot.addChild(biohead1I);
+        bioheadRoot.addChild(biohead2I);
     }
 
     private void initWings(ModelBipedDBC model) {
@@ -321,6 +334,14 @@ public class AndroidRaceRenderer implements IRaceRenderer {
         if (anim) btailS6M.rotateAngleY += MathHelper.cos(rot3 * 0.09F) * 0.4F - 0.2F + r + r3;
         btailS6M.rotateAngleX = -0.2F;
         if (anim) btailS6M.rotateAngleX += MathHelper.sin(rot3 * 0.09F) * 0.1F - 0.3F;
+
+        btailS7M.rotateAngleY = btailS6M.rotateAngleY;
+        btailS7M.rotateAngleX = btailS6M.rotateAngleX;
+
+//        btailS7M.rotateAngleY = 0.2F;
+//        if (anim) btailS7M.rotateAngleY += MathHelper.cos(rot3 * 0.09F) * 0.4F - 0.2F + r + r3;
+//        btailS7M.rotateAngleX = -0.2F;
+//        if (anim) btailS7M.rotateAngleX += MathHelper.sin(rot3 * 0.09F) * 0.1F - 0.3F;
     }
 
     // ── Body-part rendering ──
@@ -394,6 +415,13 @@ public class AndroidRaceRenderer implements IRaceRenderer {
         bioheadRoot.rotateAngleX = model.bipedHead.rotateAngleX;
         bioheadRoot.rotationPointX = model.bipedHead.rotationPointX;
         bioheadRoot.rotationPointY = model.bipedHead.rotationPointY;
+
+        biohead1I.isHidden = ctx.state != 0;
+        biohead2I.isHidden = ctx.state != 0;
+
+        biohead1.isHidden = ctx.state == 0;
+        biohead2.isHidden = ctx.state == 0;
+
         bioheadRoot.render(f);
 
         GL11.glPopMatrix();
@@ -420,20 +448,71 @@ public class AndroidRaceRenderer implements IRaceRenderer {
         GL11.glColor3f(1.0F, 1.0F, 1.0F);
     }
 
+    private String[] getRequiredAssets() {
+        List<String> list = new ArrayList<>();
+
+        String[] states = {"imperfect", "semiperfect", "perfect", "max"};
+        String[] facial = {"eye_base.png", "eye_left.png", "eye_right.png", "nose.png", "mouth.png"};
+        String[] tail = {"tail_0.png", "tail_1.png", "stinger.png"};
+
+        for (String state : states) {
+            for (int i = 0; i < 5; i++) {
+                list.add(textureDir() + state + "/bio_" + state + "_" + i + ".png");
+            }
+
+            // face
+            for (String f : facial) {
+                list.add(textureDir() + state + "/face/" + f);
+            }
+
+            list.add(textureDir() + state + "/bio_" + state + "_crest.png");
+
+            if (!state.equals("semiperfect")) {
+                list.add(textureDir() + state + "/bio_" + state + "_wings.png");
+            }
+
+            if (!state.equals("perfect")) {
+                for (String t : tail) {
+                    list.add(textureDir() + state + "/bio_" + state + "_" + t);
+                }
+            }
+        }
+
+        return list.toArray(new String[0]);
+    }
+
     private boolean hasRequiredAssets() {
         if (assetsAvailable != null) return assetsAvailable;
 
-        String[] required = {"bio3.png", "bio1.png", "bio2.png", "bioeyesbase.png", "bioeyeleft.png", "bioeyeright.png"};
-        for (String name : required) {
-            try {
-                Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(textureDir() + name));
-            } catch (IOException ignored) {
-                assetsAvailable = false;
-                return false;
+        String[] assets = getRequiredAssets();
+
+        for (String asset : assets) {
+            if (!resourceExists(asset)) {
+                printMissingTexture(asset);
+                return setAssets(false);
             }
         }
-        assetsAvailable = true;
-        return true;
+
+        return setAssets(true);
+    }
+
+    private boolean resourceExists(String path) {
+        try {
+            Minecraft.getMinecraft().getResourceManager()
+                .getResource(new ResourceLocation(path));
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    private boolean setAssets(boolean value) {
+        assetsAvailable = value;
+        return value;
+    }
+
+    private void printMissingTexture(String texture) {
+        LogWriter.error("Missing Texture for Bio Android: " + texture);
     }
 
     // ── State renderers (third person) ──
@@ -441,150 +520,154 @@ public class AndroidRaceRenderer implements IRaceRenderer {
     private void renderBase(RaceRenderContext ctx) {
         ModelBipedDBC model = ctx.model;
 
+        // Head crest
+        bindAndColor(ctx, "imperfect/bio_imperfect_crest.png", ctx.bodyCM);
+        renderHeadCrestWithHeadTransform(ctx);
+
         // Tail
-        bindAndColor(ctx, "biotail2.png", 0xFFFFFF);
+        bindAndColor(ctx, "imperfect/bio_imperfect_stinger.png", 0xFFFFFF);
         renderTailStaticWithBodyTransform(ctx, bioTailRoot);
 
-        bindAndColor(ctx, "biotail.png", ctx.bodyCM);
+        bindAndColor(ctx, "imperfect/bio_imperfect_tail_0.png", ctx.bodyCM);
+        renderTailWithBodyTransform(ctx, bioTailRoot, true);
+
+        bindAndColor(ctx, "imperfect/bio_imperfect_tail_1.png", 0xFFFFFF);
         renderTailWithBodyTransform(ctx, bioTailRoot, true);
 
         // Wings
-        bindAndColor(ctx, "biowings.png", ctx.bodyCM);
+        bindAndColor(ctx, "imperfect/bio_imperfect_wings.png", ctx.bodyCM);
         renderWingsWithBodyTransform(ctx);
 
         // Body layers
-        bindAndColor(ctx, "bio3.png", ctx.bodyCM);
+        bindAndColor(ctx, "imperfect/bio_imperfect_0.png", ctx.bodyCM);
         model.renderBody(0.0625F);
 
-        bindAndColor(ctx, "bio1.png", ctx.bodyC1);
+        bindAndColor(ctx, "imperfect/bio_imperfect_1.png", ctx.bodyC1);
         model.renderBody(0.0625F);
 
-        bindAndColor(ctx, "bio2.png", ctx.bodyC2);
+        bindAndColor(ctx, "imperfect/bio_imperfect_2.png", ctx.bodyC2);
+        model.renderBody(0.0625F);
+
+        bindAndColor(ctx, "imperfect/bio_imperfect_3.png", ctx.bodyC3);
+        model.renderBody(0.0625F);
+
+        bindAndColor(ctx, "imperfect/bio_imperfect_4.png", 0xFFFFFF);
         model.renderBody(0.0625F);
 
         // Eyes
-        renderEyes(ctx, "bioeyesbase.png", "bioeyeleft.png", "bioeyeright.png");
+        renderEyes(ctx, "imperfect/face/eye_base.png", "imperfect/face/eye_left.png", "imperfect/face/eye_right.png");
     }
 
     private void renderSemiPerfect(RaceRenderContext ctx) {
         ModelBipedDBC model = ctx.model;
 
-        // Body layers
-        bindAndColor(ctx, "bio3S.png", ctx.bodyCM);
-        model.renderBody(0.0625F);
-
         // Head crest
-        bindAndColor(ctx, "bioskinsemi.png", ctx.bodyCM);
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_crest.png", ctx.bodyCM);
         renderHeadCrestWithHeadTransform(ctx);
 
-        bindAndColor(ctx, "bio1S.png", ctx.bodyC1);
-        model.renderBody(0.0625F);
-
         // Tail
-        whiteColor();
-        ctx.bindTexture(new ResourceLocation(textureDir() + "biotail2.png"));
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_stinger.png", 0xFFFFFF);
         renderTailStaticWithBodyTransform(ctx, bioTailRoot);
 
-        bindAndColor(ctx, "biotailS.png", 0xFFFFFF);
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_tail_0.png", ctx.bodyC2);
         renderTailWithBodyTransform(ctx, bioTailRoot, true);
 
-        bindAndColor(ctx, "bio2S.png", ctx.bodyC2);
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_tail_1.png", 0xFFFFFF);
+        renderTailWithBodyTransform(ctx, bioTailRoot, true);
+
+        // Body layers
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_0.png", ctx.bodyCM);
         model.renderBody(0.0625F);
 
-        bindAndColor(ctx, "bio4S.png", 0xFFFFFF);
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_1.png", ctx.bodyC1);
+        model.renderBody(0.0625F);
+
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_2.png", ctx.bodyC2);
+        model.renderBody(0.0625F);
+
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_3.png", ctx.bodyC3);
+        model.renderBody(0.0625F);
+
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_4.png", 0xFFFFFF);
         model.renderBody(0.0625F);
 
         // Eyes
-        renderEyes(ctx, "bioeyesbaseS.png", "bioeyeleftS.png", "bioeyerightS.png");
+        renderEyes(ctx, "semiperfect/face/eye_base.png", "semiperfect/face/eye_left.png", "semiperfect/face/eye_right.png");
+        renderFacialFeatures(ctx, "semiperfect/face/nose.png", 0xFFFFFF, "semiperfect/face/mouth.png", 0xFFE0FA);
     }
 
     private void renderPerfect(RaceRenderContext ctx) {
         ModelBipedDBC model = ctx.model;
 
         // Body layers
-        bindAndColor(ctx, "bio2P.png", ctx.bodyCM);
+        bindAndColor(ctx, "perfect/bio_perfect_0.png", ctx.bodyCM);
         model.renderBody(0.0625F);
 
         // Head crest
-        bindAndColor(ctx, "bioskin.png", ctx.bodyCM);
+        bindAndColor(ctx, "perfect/bio_perfect_crest.png", ctx.bodyCM);
         renderHeadCrestWithHeadTransform(ctx);
 
         // Wings
-        bindAndColor(ctx, "biowingsP.png", 0xFFFFFF);
+        bindAndColor(ctx, "perfect/bio_perfect_wings.png", 0xFFFFFF);
         renderWingsWithBodyTransform(ctx);
 
-        bindAndColor(ctx, "bio1P.png", 0xFFFFFF);
+        bindAndColor(ctx, "perfect/bio_perfect_1.png", ctx.bodyC1);
+        model.renderBody(0.0625F);
+
+        bindAndColor(ctx, "perfect/bio_perfect_2.png", ctx.bodyC2);
+        model.renderBody(0.0625F);
+
+        bindAndColor(ctx, "perfect/bio_perfect_3.png", ctx.bodyC3);
+        model.renderBody(0.0625F);
+
+        bindAndColor(ctx, "perfect/bio_perfect_4.png", 0xFFFFFF);
         model.renderBody(0.0625F);
 
         // Eyes
-        renderEyes(ctx, "bioeyesbaseS.png", "bioeyeleftS.png", "bioeyerightS.png");
+        renderEyes(ctx, "perfect/face/eye_base.png", "perfect/face/eye_left.png", "perfect/face/eye_right.png");
+        renderFacialFeatures(ctx, "perfect/face/nose.png", ctx.bodyC1, "perfect/face/mouth.png", ctx.bodyC1);
     }
 
-    private void renderPerfectMax(RaceRenderContext ctx) {
-        ModelBipedDBC model = ctx.model;
-
-        // Max tail overlay (white)
-        whiteColor();
-        ctx.bindTexture(new ResourceLocation(textureDir() + "biotailmax2.png"));
-        renderTailStaticWithBodyTransform(ctx, bioTailMaxRoot);
-
-        // Body
-        bindAndColor(ctx, "bio2M.png", ctx.bodyCM);
-        model.renderBody(0.0625F);
-
-        // Head crest
-        bindAndColor(ctx, "bioheadM.png", ctx.bodyCM);
-        renderHeadCrestWithHeadTransform(ctx);
-
-        // Animated max tail
-        bindAndColor(ctx, "biotailmax.png", 0xFFFFFF);
-        renderTailWithBodyTransform(ctx, bioTailMaxRoot, true);
-
-        // White body overlay
-        whiteColor();
-        ctx.bindTexture(new ResourceLocation(textureDir() + "bio1M.png"));
-        model.renderBody(0.0625F);
-
-        // Wings
-        bindAndColor(ctx, "biowingsP.png", 0xFFFFFF);
-        renderWingsWithBodyTransform(ctx);
-
-        // Eyes
-        renderEyes(ctx, "bioeyesbaseS.png", "bioeyeleftS.png", "bioeyerightS.png");
-    }
-
-    private void renderUncontrolledMax(RaceRenderContext ctx) {
+    private void renderMax(RaceRenderContext ctx) {
         ModelBipedDBC model = ctx.model;
 
         // Base body
-        RenderPlayerJBRA.glColor3f(ctx.bodyCM);
-        model.renderBody(0.0625F);
-
-        bindAndColor(ctx, "bio2UM.png", 0xFFFFFF);
+        bindAndColor(ctx, "max/bio_max_0.png", ctx.bodyCM);
         model.renderBody(0.0625F);
 
         // Head crest
-        bindAndColor(ctx, "bioheadUM.png", ctx.bodyCM);
+        bindAndColor(ctx, "max/bio_max_crest.png", ctx.bodyCM);
         renderHeadCrestWithHeadTransform(ctx);
 
-        // Animated max tail
-        bindAndColor(ctx, "biotailUM.png", 0xFFFFFF);
-        renderTailWithBodyTransform(ctx, bioTailMaxRoot, true);
-
-        // Max tail overlay
-        whiteColor();
-        ctx.bindTexture(new ResourceLocation(textureDir() + "biotailmax2.png"));
+        // Tail
+        bindAndColor(ctx, "max/bio_max_stinger.png", 0xFFFFFF);
         renderTailStaticWithBodyTransform(ctx, bioTailMaxRoot);
 
-        bindAndColor(ctx, "bio1UM.png", 0xFFFFFF);
-        model.renderBody(0.0625F);
+        bindAndColor(ctx, "max/bio_max_tail_0.png", ctx.bodyCM);
+        renderTailWithBodyTransform(ctx, bioTailMaxRoot, true);
+
+        bindAndColor(ctx, "max/bio_max_tail_1.png", ctx.bodyC1);
+        renderTailWithBodyTransform(ctx, bioTailMaxRoot, true);
 
         // Wings
-        bindAndColor(ctx, "biowingsP.png", 0xFFFFFF);
+        bindAndColor(ctx, "max/bio_max_wings.png", 0xFFFFFF);
         renderWingsWithBodyTransform(ctx);
 
+        bindAndColor(ctx, "max/bio_max_1.png", ctx.bodyC1);
+        model.renderBody(0.0625F);
+
+        bindAndColor(ctx, "max/bio_max_2.png", ctx.bodyC2);
+        model.renderBody(0.0625F);
+
+        bindAndColor(ctx, "max/bio_max_3.png", ctx.bodyC3);
+        model.renderBody(0.0625F);
+
+        bindAndColor(ctx, "max/bio_max_4.png", 0xFFFFFF);
+        model.renderBody(0.0625F);
+
         // Eyes
-        renderEyes(ctx, "bioeyesbaseUM.png", "bioeyeleftUM.png", "bioeyerightUM.png");
+        renderEyes(ctx, "max/face/eye_base.png", "max/face/eye_left.png", "max/face/eye_right.png");
+        renderFacialFeatures(ctx, "max/face/nose.png", 0xFFFFFF, "max/face/mouth.png", 0xFFE0FA);
     }
 
     // ── Eye rendering ──
@@ -592,80 +675,106 @@ public class AndroidRaceRenderer implements IRaceRenderer {
     private void renderEyes(RaceRenderContext ctx, String baseTexture, String leftTexture, String rightTexture) {
         ModelBipedDBC model = ctx.model;
 
+        boolean semiPerfect = ctx.state == 2;
+
         whiteColor();
         ctx.bindTexture(new ResourceLocation(textureDir() + baseTexture));
         model.renderHairs(0.0625F, "EYEBASE");
 
-        RenderPlayerJBRA.glColor3f(ctx.eyeC1);
+        RenderPlayerJBRA.glColor3f(semiPerfect ? 0xDFEEEE : ctx.eyeC1);
         ctx.bindTexture(new ResourceLocation(textureDir() + leftTexture));
         model.renderHairs(0.0625F, "EYELEFT");
 
-        RenderPlayerJBRA.glColor3f(ctx.eyeC2);
+        RenderPlayerJBRA.glColor3f(semiPerfect ? 0xDFEEEE : ctx.eyeC2);
         ctx.bindTexture(new ResourceLocation(textureDir() + rightTexture));
         model.renderHairs(0.0625F, "EYERIGHT");
+    }
+
+    private void renderFacialFeatures(RaceRenderContext ctx, String noseTexture, int noseColor, String mouthTexture, int mouthColor) {
+        ModelBipedDBC model = ctx.model;
+
+        RenderPlayerJBRA.glColor3f(noseColor);
+        ctx.bindTexture(new ResourceLocation(textureDir() + noseTexture));
+        model.renderHairs(0.0625F, "FACENOSE");
+
+        RenderPlayerJBRA.glColor3f(mouthColor);
+        ctx.bindTexture(new ResourceLocation(textureDir() + mouthTexture));
+        model.renderHairs(0.0625F, "FACEMOUTH");
     }
 
     // ── First-person arm rendering ──
 
     private void renderArmBase(RaceRenderContext ctx, ModelBipedDBC model, int id) {
-        bindAndColor(ctx, "bio1.png", ctx.bodyC1);
+        bindAndColor(ctx, "imperfect/bio_imperfect_0.png", ctx.bodyCM);
         renderArmPiece(model, id, ctx.entity instanceof EntityPlayer ? (EntityPlayer) ctx.entity : null);
 
-        bindAndColor(ctx, "bio2.png", ctx.bodyC2);
+        bindAndColor(ctx, "imperfect/bio_imperfect_1.png", ctx.bodyC1);
         renderArmPiece(model, id, ctx.entity instanceof EntityPlayer ? (EntityPlayer) ctx.entity : null);
 
-        bindAndColor(ctx, "bio3.png", ctx.bodyCM);
+        bindAndColor(ctx, "imperfect/bio_imperfect_2.png", ctx.bodyC2);
+        renderArmPiece(model, id, ctx.entity instanceof EntityPlayer ? (EntityPlayer) ctx.entity : null);
+
+        bindAndColor(ctx, "imperfect/bio_imperfect_3.png", ctx.bodyC3);
+        renderArmPiece(model, id, ctx.entity instanceof EntityPlayer ? (EntityPlayer) ctx.entity : null);
+
+        bindAndColor(ctx, "imperfect/bio_imperfect_4.png", 0xFFFFFF);
         renderArmPiece(model, id, ctx.entity instanceof EntityPlayer ? (EntityPlayer) ctx.entity : null);
     }
 
     private void renderArmSemiPerfect(RaceRenderContext ctx, ModelBipedDBC model, int id) {
         EntityPlayer player = ctx.entity instanceof EntityPlayer ? (EntityPlayer) ctx.entity : null;
 
-        bindAndColor(ctx, "bio3S.png", ctx.bodyCM);
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_0.png", ctx.bodyCM);
         renderArmPiece(model, id, player);
 
-        bindAndColor(ctx, "bio1S.png", ctx.bodyC1);
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_1.png", ctx.bodyC1);
         renderArmPiece(model, id, player);
 
-        bindAndColor(ctx, "bio2S.png", ctx.bodyC2);
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_2.png", ctx.bodyC2);
         renderArmPiece(model, id, player);
 
-        whiteColor();
-        ctx.bindTexture(new ResourceLocation(textureDir() + "bio4S.png"));
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_3.png", ctx.bodyC3);
+        renderArmPiece(model, id, player);
+
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_4.png", 0xFFFFFF);
         renderArmPiece(model, id, player);
     }
 
     private void renderArmPerfect(RaceRenderContext ctx, ModelBipedDBC model, int id) {
         EntityPlayer player = ctx.entity instanceof EntityPlayer ? (EntityPlayer) ctx.entity : null;
 
-        bindAndColor(ctx, "bio2P.png", ctx.bodyCM);
+        bindAndColor(ctx, "perfect/bio_perfect_0.png", ctx.bodyCM);
         renderArmPiece(model, id, player);
 
-        whiteColor();
-        ctx.bindTexture(new ResourceLocation(textureDir() + "bio1P.png"));
-        renderArmPiece(model, id, player);
-    }
-
-    private void renderArmPerfectMax(RaceRenderContext ctx, ModelBipedDBC model, int id) {
-        EntityPlayer player = ctx.entity instanceof EntityPlayer ? (EntityPlayer) ctx.entity : null;
-
-        bindAndColor(ctx, "bio2M.png", ctx.bodyCM);
+        bindAndColor(ctx, "perfect/bio_perfect_1.png", ctx.bodyC1);
         renderArmPiece(model, id, player);
 
-        whiteColor();
-        ctx.bindTexture(new ResourceLocation(textureDir() + "bio1M.png"));
+        bindAndColor(ctx, "perfect/bio_perfect_2.png", ctx.bodyC2);
+        renderArmPiece(model, id, player);
+
+        bindAndColor(ctx, "perfect/bio_perfect_3.png", ctx.bodyC3);
+        renderArmPiece(model, id, player);
+
+        bindAndColor(ctx, "perfect/bio_perfect_4.png", 0xFFFFFF);
         renderArmPiece(model, id, player);
     }
 
-    private void renderArmUncontrolledMax(RaceRenderContext ctx, ModelBipedDBC model, int id) {
+    private void renderArmMax(RaceRenderContext ctx, ModelBipedDBC model, int id) {
         EntityPlayer player = ctx.entity instanceof EntityPlayer ? (EntityPlayer) ctx.entity : null;
 
-        RenderPlayerJBRA.glColor3f(ctx.bodyCM);
-        ctx.bindTexture(new ResourceLocation(textureDir() + "bio2UM.png"));
+        bindAndColor(ctx, "max/bio_max_0.png", ctx.bodyCM);
         renderArmPiece(model, id, player);
 
-        whiteColor();
-        ctx.bindTexture(new ResourceLocation(textureDir() + "bio1UM.png"));
+        bindAndColor(ctx, "max/bio_max_1.png", ctx.bodyC1);
+        renderArmPiece(model, id, player);
+
+        bindAndColor(ctx, "max/bio_max_2.png", ctx.bodyC2);
+        renderArmPiece(model, id, player);
+
+        bindAndColor(ctx, "max/bio_max_3.png", ctx.bodyC3);
+        renderArmPiece(model, id, player);
+
+        bindAndColor(ctx, "max/bio_max_4.png", 0xFFFFFF);
         renderArmPiece(model, id, player);
     }
 

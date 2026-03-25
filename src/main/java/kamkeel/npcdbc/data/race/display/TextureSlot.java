@@ -18,7 +18,7 @@ public class TextureSlot {
     private final List<ResourceLocation> variations = new ArrayList<>();
 
     public TextureSlot(String id) {
-        this.id = id;
+        this.id = id.toLowerCase().trim().replace(" ", "_");
     }
 
     public TextureSlot add(ResourceLocation texture) {
