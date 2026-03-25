@@ -10,13 +10,14 @@ import kamkeel.npcdbc.data.race.display.*;
 import kamkeel.npcdbc.data.race.registry.RaceRegistry;
 import kamkeel.npcdbc.data.race.progression.FormTree;
 import kamkeel.npcdbc.data.race.progression.RaceSkill;
+import kamkeel.npcdbc.data.race.registry.RaceRegistry;
 import kamkeel.npcdbc.data.race.stats.ClassStats;
 import kamkeel.npcdbc.data.race.stats.RaceStats;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.EnumMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class RaceBuilder {
@@ -51,6 +52,10 @@ public class RaceBuilder {
         return new SkillBuilder(this);
     }
 
+    public SkillBuilder racialSkill() {
+        return skill();
+    }
+
     public DisplayBuilder display() {
         return new DisplayBuilder(this);
     }
@@ -77,48 +82,71 @@ public class RaceBuilder {
     public static class SkillBuilder {
         private final RaceBuilder parent;
         private int maxLevel = 5;
-        private int[] tpCosts = {100};
-        private int[] mindCosts = {10};
-        private final RaceSkill skill;
+        private int defaultTPCost = 100;
+        private int defaultMindCost = 10;
+        private String displayName = "Super Form";
+        private String description = "Super Form";
+        private final LinkedHashMap<Integer, RaceSkill.LevelEntry> levelEntries = new LinkedHashMap<Integer, RaceSkill.LevelEntry>();
 
-        SkillBuilder(RaceBuilder parent) {
-            this.parent = parent;
-            this.skill = new RaceSkill(maxLevel, tpCosts, mindCosts);
-        }
+        SkillBuilder(RaceBuilder parent) { this.parent = parent; }
 
         public SkillBuilder maxLevel(int level) {
-            this.maxLevel = level;
+            this.maxLevel = level; return this;
+        }
+
+        public SkillBuilder defaultTPCost(int tpCost) {
+            this.defaultTPCost = tpCost;
             return this;
         }
 
-        public SkillBuilder tpCosts(int... costs) {
-            this.tpCosts = costs;
+        public SkillBuilder defaultMindCost(int mindCost) {
+            this.defaultMindCost = mindCost;
             return this;
         }
 
-        public SkillBuilder mindCosts(int... costs) {
-            this.mindCosts = costs;
+        public SkillBuilder displayName(String name) {
+            this.displayName = name;
             return this;
         }
 
-        public SkillBuilder ability(int level, Ability ability) {
-            skill.addAbility(level, ability);
+        public SkillBuilder description(String description) {
+            this.description = description;
             return this;
         }
 
-        public SkillBuilder toggle(int level, Ability ability) {
-            skill.addToggle(level, ability);
+        public SkillBuilder level(int level, IForm form) {
+            return level(level, form, defaultTPCost, defaultMindCost);
+        }
+
+        public SkillBuilder level(int level, IForm form, int tpCost, int mindCost) {
+            if (form == null)
+                throw new IllegalArgumentException("Form must not be null for level " + level);
+            int formId = form.getID();
+            if (formId < 0)
+                throw new IllegalArgumentException("Form '" + form.getName() + "' has invalid ID " + formId);
+            return level(level, formId, tpCost, mindCost);
+        }
+
+        public SkillBuilder level(int level, int formId) {
+            return level(level, formId, defaultTPCost, defaultMindCost);
+        }
+
+        public SkillBuilder level(int level, int formId, int tpCost, int mindCost) {
+            RaceSkill.LevelEntry entry = new RaceSkill.LevelEntry(level, formId, tpCost, mindCost);
+            if (levelEntries.containsKey(level))
+                throw new IllegalArgumentException("Duplicate racial skill entry for level " + level);
+            levelEntries.put(level, entry);
             return this;
         }
 
         public RaceBuilder and() {
-            parent.skill = new RaceSkill(maxLevel, tpCosts, mindCosts);
-            for (Map.Entry<Integer, List<Ability>> entry : skill.getAbilities().entrySet())
-                for (Ability a : entry.getValue())
-                    parent.skill.addAbility(entry.getKey(), a);
-            for (Map.Entry<Integer, List<Ability>> entry : skill.getToggles().entrySet())
-                for (Ability a : entry.getValue())
-                    parent.skill.addToggle(entry.getKey(), a);
+            RaceSkill skill = new RaceSkill(maxLevel);
+            skill.setDisplayName(displayName);
+            skill.setDescription(description);
+            for (RaceSkill.LevelEntry entry : levelEntries.values()) {
+                skill.addLevelEntry(entry);
+            }
+            parent.skill = skill;
             return parent;
         }
     }
@@ -127,10 +155,10 @@ public class RaceBuilder {
         private final RaceBuilder parent;
         private final EnumDBCClasses raceClass;
 
-        private final Map<EnumDBCAttributes, Integer> initialAttributes      = new EnumMap<>(ClassStats.DEFAULT_INITIAL_ATTRIBUTES);
-        private final Map<EnumDBCAttributes, Double>  attributeMultipliers   = new EnumMap<>(ClassStats.DEFAULT_ATTRIBUTE_MULTIPLIERS);
-        private final Map<EnumDBCStats, Double>        statBonuses            = new EnumMap<>(ClassStats.DEFAULT_STAT_BONUSES);
-        private final Map<EnumDBCStats, Double>        statAttributeMultipliers = new EnumMap<>(ClassStats.DEFAULT_STAT_ATTRIBUTE_MULTIPLIERS);
+        private final Map<EnumDBCAttributes, Integer> initialAttributes = new EnumMap<>(ClassStats.DEFAULT_INITIAL_ATTRIBUTES);
+        private final Map<EnumDBCAttributes, Double> attributeMultipliers = new EnumMap<>(ClassStats.DEFAULT_ATTRIBUTE_MULTIPLIERS);
+        private final Map<EnumDBCStats, Double> statBonuses = new EnumMap<>(ClassStats.DEFAULT_STAT_BONUSES);
+        private final Map<EnumDBCStats, Double> statAttributeMultipliers = new EnumMap<>(ClassStats.DEFAULT_STAT_ATTRIBUTE_MULTIPLIERS);
 
         ClassStatsBuilder(RaceBuilder parent, EnumDBCClasses raceClass) {
             this.parent = parent;
@@ -231,6 +259,7 @@ public class RaceBuilder {
         public DisplayBuilder bodyColorSlots(int count) {
             if (count < 1 || count > 4)
                 throw new IllegalArgumentException("bodyColorSlots count must be 1-4, got " + count);
+
             String[][] extras = {
                 {},
                 {ColorSlot.BODY_C1, "Body Color 1"},
@@ -265,7 +294,8 @@ public class RaceBuilder {
 
         public DisplayBuilder addTexture(String slotId, ResourceLocation texture) {
             TextureSlot slot = parent.display.getTextureSlot(slotId);
-            if (slot != null) slot.add(texture);
+            if (slot != null)
+                slot.add(texture);
             return this;
         }
 
