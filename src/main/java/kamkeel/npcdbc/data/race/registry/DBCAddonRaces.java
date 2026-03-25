@@ -7,7 +7,7 @@ import kamkeel.npcdbc.data.race.display.ColorSlot;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import kamkeel.npcdbc.client.race.AndroidRaceRenderer;
+import kamkeel.npcdbc.client.race.BioAndroidRaceRenderer;
 
 public class DBCAddonRaces {
     public static final RaceRegistry RACES = RaceRegistry.create("npcdbc", "DBC Addon");
@@ -21,7 +21,7 @@ public class DBCAddonRaces {
             .ability(1, DBCAbilities.BIO_ANDROID_REGEN)
             .and()
         .display()
-            .renderer("npcdbc:android")
+            .renderer("npcdbc:bio_android")
             .hairType("X")
             .bodyColorSlots(4)
             .defaultColor(ColorSlot.LEFT_EYE, 0xff00ff)
@@ -39,6 +39,6 @@ public class DBCAddonRaces {
 
     @SideOnly(Side.CLIENT)
     public static void registerClient(){
-        RACES.registerRenderer("npcdbc:android", new AndroidRaceRenderer());
+        RACES.registerRenderer("npcdbc:bio_android", new BioAndroidRaceRenderer());
     }
 }
