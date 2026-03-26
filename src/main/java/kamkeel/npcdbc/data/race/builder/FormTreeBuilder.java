@@ -2,6 +2,7 @@ package kamkeel.npcdbc.data.race.builder;
 
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.race.progression.FormTree;
+import kamkeel.npcdbc.data.race.progression.FormTree.Branch;
 
 public class FormTreeBuilder {
     private final RaceBuilder raceBuilder;
@@ -20,9 +21,15 @@ public class FormTreeBuilder {
         return new FormTreeBuilder(raceNamespace);
     }
 
+    public BranchBuilder branch(Form rootForm) {
+        return branch(rootForm.name, rootForm);
+    }
 
-    public LevelBuilder level(int level) {
-        return new LevelBuilder(this, level);
+    public BranchBuilder branch(String name, Form rootForm) {
+        Branch branch = new Branch(name);
+        branch.addForm(rootForm);
+        formTree.addBranch(branch);
+        return new BranchBuilder(this, branch);
     }
 
     public int scopedId(int localId) {
@@ -32,42 +39,44 @@ public class FormTreeBuilder {
     public RaceBuilder and() {
         if (raceBuilder == null)
             throw new IllegalStateException("FormTreeBuilder was not created from a RaceBuilder; use build() instead.");
+        formTree.scopeAllIds();
         raceBuilder.setFormTree(formTree);
         return raceBuilder;
     }
 
     public FormTree build() {
+        formTree.scopeAllIds();
         return formTree;
     }
 
-    public FormTree getFormTree() {
-        return formTree;
-    }
+    public static class BranchBuilder {
+        private final FormTreeBuilder treeBuilder;
+        private final Branch branch;
 
-    public static class LevelBuilder {
-        private final FormTreeBuilder parent;
-        private final int level;
-
-        LevelBuilder(FormTreeBuilder parent, int level) {
-            this.parent = parent;
-            this.level = level;
+        BranchBuilder(FormTreeBuilder treeBuilder, Branch branch) {
+            this.treeBuilder = treeBuilder;
+            this.branch = branch;
         }
 
-        public LevelBuilder add(Form form) {
-            parent.formTree.add(level, form);
+        public BranchBuilder child(Form form) {
+            branch.addForm(form);
             return this;
         }
 
-        public LevelBuilder level(int nextLevel) {
-            return new LevelBuilder(parent, nextLevel);
+        public BranchBuilder branch(Form rootForm) {
+            return treeBuilder.branch(rootForm);
         }
 
-        public FormTreeBuilder and() {
-            return parent;
+        public BranchBuilder branch(String name, Form rootForm) {
+            return treeBuilder.branch(name, rootForm);
         }
 
         public FormTree build() {
-            return parent.build();
+            return treeBuilder.build();
+        }
+
+        public RaceBuilder and() {
+            return treeBuilder.and();
         }
     }
 }

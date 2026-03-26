@@ -62,6 +62,8 @@ public class Form implements IForm {
 
     public HashSet<UUID> tagUUIDs = new HashSet<>();
 
+    public boolean builtIn = false;
+
     public Form() {
     }
 

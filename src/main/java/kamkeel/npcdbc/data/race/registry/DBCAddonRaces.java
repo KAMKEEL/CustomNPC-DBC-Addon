@@ -16,7 +16,7 @@ public class DBCAddonRaces {
     public static final RaceRegistry RACES = RaceRegistry.create("npcdbc", "DBC Addon");
 
     private static final String BIO_ANDROID_NS = "npcdbc:bio_android";
-    
+
     public static final Form SEMI_PERFECT = FormBuilder.create(1)
         .menuName("\u00a7eSemi-Perfect")
         .strengthMulti(2.0f).dexMulti(1.8f).willMulti(1.5f)
@@ -25,19 +25,15 @@ public class DBCAddonRaces {
     public static final Form PERFECT = FormBuilder.create(2)
         .menuName("\u00a76Perfect")
         .strengthMulti(4.0f).dexMulti(3.5f).willMulti(3.0f)
-        .parent(SEMI_PERFECT)
         .build();
 
     public static final Form MAX = FormBuilder.create(3)
         .menuName("\u00a7cMax")
         .strengthMulti(8.0f).dexMulti(7.0f).willMulti(6.0f)
-        .parent(PERFECT)
         .build();
 
     public static final FormTree BIO_ANDROID_FORMS = FormTreeBuilder.create(BIO_ANDROID_NS)
-        .level(1).add(SEMI_PERFECT)
-        .level(2).add(PERFECT)
-        .level(3).add(MAX)
+        .branch(SEMI_PERFECT).child(PERFECT).child(MAX)
         .build();
 
     public static final Race BIO_ANDROID = RACES.register(RaceBuilder.create(6, "bio_android", "Bio-Android", BIO_ANDROID_NS)
