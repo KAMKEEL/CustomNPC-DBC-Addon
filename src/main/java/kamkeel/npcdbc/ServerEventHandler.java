@@ -172,7 +172,7 @@ public class ServerEventHandler {
             PlayerDBCInfo dbcInfo = PlayerDataUtil.getDBCInfo((EntityPlayer) event.entityLiving);
             DBCData dbcData = DBCData.get((EntityPlayer) event.entityLiving);
             dbcData.addonFormID = -1;
-            dbcInfo.currentForm = -1;
+            dbcInfo.clearCurrentForm();
             dbcInfo.updateClient();
         }
     }
@@ -198,7 +198,7 @@ public class ServerEventHandler {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         // Reverts player from form when ki or release are 0
         if (dbcData.Release <= 0 || dbcData.Ki <= 0) {
-            formData.currentForm = -1;
+            formData.clearCurrentForm();
             formData.updateClient();
             dbcData.loadNBTData(true);
         }

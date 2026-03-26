@@ -448,7 +448,7 @@ public abstract class MixinJRMCoreH {
             PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
             Form form = DBCData.getForm(player);
             if (form != null) {
-                formData.currentForm = -1;
+                formData.clearCurrentForm();
                 formData.updateClient();
             }
         }
@@ -461,7 +461,7 @@ public abstract class MixinJRMCoreH {
             PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
             Form form = DBCData.getForm(player);
             if (form != null) {
-                formData.currentForm = -1;
+                formData.clearCurrentForm();
                 formData.updateClient();
             }
         }

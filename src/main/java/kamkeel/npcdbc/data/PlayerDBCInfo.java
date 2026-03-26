@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PlayerDBCInfo {
     public PlayerData parent;
 
-    public int currentForm = -1;
+    private String currentFormKey = null;
     private String selectedFormKey = null;
     public int selectedDBCForm = -1, tempSelectedDBCForm = -1;
     public int lastFormBeforeStack = -1;
@@ -138,7 +138,7 @@ public class PlayerDBCInfo {
     }
 
     public boolean isInCustomForm() {
-        return currentForm > -1 && getCurrentForm() != null;
+        return currentFormKey != null && getCurrentForm() != null;
     }
 
     public String getFormColorCode(Form f) {
@@ -164,13 +164,35 @@ public class PlayerDBCInfo {
     }
 
     public boolean isInForm(int formID) {
-        return formID == currentForm;
+        Form current = getCurrentForm();
+        return current != null && current.id == formID;
     }
 
     public Form getCurrentForm() {
-        if (currentForm > 0)
-            return (Form) FormController.Instance.get(currentForm);
+        if (currentFormKey == null) return null;
+        Form f = FormController.Instance.getFromKey(currentFormKey);
+        if (f != null) return f;
         return null;
+    }
+
+    public String getCurrentFormKey() {
+        return currentFormKey;
+    }
+
+    public void setCurrentForm(Form form) {
+        if (form == null) {
+            currentFormKey = null;
+            return;
+        }
+        currentFormKey = form.key != null ? form.key.toString() : FormKey.custom(form.name).toString();
+    }
+
+    public void setCurrentForm(String key) {
+        currentFormKey = key;
+    }
+
+    public void clearCurrentForm() {
+        currentFormKey = null;
     }
 
     public Form getUnlockedForm(int id) {
@@ -213,8 +235,8 @@ public class PlayerDBCInfo {
 
     public void resetFormData(boolean removeForms, boolean removeMasteries) {
         TransformController.handleFormDescend(parent.player, -10);
-        currentForm = -1;
-        selectedFormKey = null;
+        clearCurrentForm();
+        clearSelectedForm();
         if (removeForms)
             unlockedForms.clear();
         if (removeMasteries)
@@ -227,7 +249,9 @@ public class PlayerDBCInfo {
     /// /////////////////////////////////////////////
     // Form mastery stuff
     public void updateCurrentFormMastery(String gainType) {
-        updateFormMastery(currentForm, gainType);
+        Form current = getCurrentForm();
+        if (current != null)
+            updateFormMastery(current.id, gainType);
     }
 
     public void updateFormMastery(int formID, String gainType) {
@@ -310,7 +334,8 @@ public class PlayerDBCInfo {
     }
 
     public float getCurrentLevel() {
-        return getFormLevel(currentForm);
+        Form current = getCurrentForm();
+        return current != null ? getFormLevel(current.id) : 0f;
     }
 
     /// /////////////////////////////////////////////
@@ -458,7 +483,7 @@ public class PlayerDBCInfo {
 
     public void saveNBTData(NBTTagCompound compound) {
         NBTTagCompound dbcCompound = new NBTTagCompound();
-        dbcCompound.setInteger("CurrentForm", currentForm);
+        dbcCompound.setString("CurrentFormKey", currentFormKey != null ? currentFormKey : "");
         dbcCompound.setString("SelectedFormKey", selectedFormKey != null? selectedFormKey : "");
         dbcCompound.setInteger("SelectedDBCForm", selectedDBCForm);
         dbcCompound.setInteger("LastFormBeforeStack", lastFormBeforeStack);
@@ -492,8 +517,21 @@ public class PlayerDBCInfo {
     public void loadNBTData(NBTTagCompound compound) {
         NBTTagCompound dbcCompound = compound.getCompoundTag("DBCInfo");
 
-        currentForm = dbcCompound.hasKey("CurrentForm") ? dbcCompound.getInteger("CurrentForm") : -1;
-        
+        //Migrate old CurrentForm id
+        if (dbcCompound.hasKey("CurrentFormKey")) {
+            currentFormKey = dbcCompound.getString("CurrentFormKey");
+            if (currentFormKey.isEmpty()) currentFormKey = null;
+        } else if (dbcCompound.hasKey("CurrentForm")) {
+            int legacyId = dbcCompound.getInteger("CurrentForm");
+            if (legacyId > -1) {
+                Form legacyForm = (Form) FormController.Instance.get(legacyId);
+                if (legacyForm != null)
+                    currentFormKey = legacyForm.key != null ? legacyForm.key.toString() : FormKey.custom(legacyForm.name).toString();
+            }
+            dbcCompound.removeTag("CurrentForm");
+        }
+
+        //Migrate old SelectedForm id
         if (dbcCompound.hasKey("SelectedFormKey")) {
             selectedFormKey = dbcCompound.getString("SelectedFormKey");
             if (selectedFormKey.isEmpty()) selectedFormKey = null;

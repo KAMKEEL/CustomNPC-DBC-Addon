@@ -409,7 +409,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         NBTTagCompound nbt = this.saveFromNBT(this.player.getEntityData().getCompoundTag(DBCPersisted));
 
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
-        addonFormID = formData.currentForm;
+        Form currentForm = formData.getCurrentForm();
+        addonFormID = currentForm != null ? currentForm.id : -1;
         addonFormLevel = formData.getCurrentLevel();
         auraID = formData.currentAura;
         addonRaceID = formData.currentRace;
@@ -431,7 +432,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         // Save the DBC Addon tags to PlayerPersisted before loading it to fields
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
-        dbc.setInteger("addonFormID", formData.currentForm);
+        Form currentAddonForm = formData.getCurrentForm();
+        dbc.setInteger("addonFormID", currentAddonForm != null ? currentAddonForm.id : -1);
         dbc.setInteger("auraID", formData.currentAura);
         dbc.setFloat("addonFormLevel", formData.getCurrentLevel());
         dbc.setInteger("addonRaceID", formData.currentRace);

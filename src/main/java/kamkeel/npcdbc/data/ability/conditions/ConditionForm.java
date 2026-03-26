@@ -66,7 +66,7 @@ public class ConditionForm extends AbilityCondition {
             } else {
                 PlayerDBCInfo info = data.getDBCInfo();
                 hasFormUnlocked = !needsFormUnlocked() || info.unlockedForms.contains(getFormID());
-                isTransformed = !isFormActive() || info.currentForm == getFormID();
+                isTransformed = !isFormActive() || info.isInForm(getFormID());
             }
 
             return isTransformed && hasFormUnlocked;

@@ -865,7 +865,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public void setCustomForm(int formID, boolean ignoreUnlockCheck) {
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
         if (formID == -1) {
-            c.currentForm = -1;
+            c.clearCurrentForm();
             c.updateClient();
             return;
         }
@@ -894,7 +894,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
             }
 
 
-            c.currentForm = f.id;
+            c.setCurrentForm(f);
             c.updateClient();
         } else {
             throw new CustomNPCsException("Player doesn't have form " + f.name + " unlocked!");
