@@ -226,7 +226,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         comp.setString("jrmcFuzion", Fusion);
         // DBC Addon
         comp.setInteger("addonRaceID", addonRaceID);
-        comp.setString("addonFormID", currentFormKey != null ? currentFormKey : "");
+        comp.setString("currentFormKey", currentFormKey != null ? currentFormKey : "");
         comp.setInteger("auraID", auraID);
         comp.setInteger("outlineID", outlineID);
 

@@ -14,8 +14,8 @@ public class FormBuilder {
     private float dexMulti = 1.0f;
     private float willMulti = 1.0f;
 
-    private int childID = -1;
-    private int parentID = -1;
+    private String childKey = null;
+    private String parentKey = null;
 
     private final FormDisplay display = new FormDisplay(null);
 
@@ -64,23 +64,23 @@ public class FormBuilder {
         return this;
     }
 
-    public FormBuilder child(int id) {
-        this.childID = id;
+    public FormBuilder child(String childKey) {
+        this.childKey = childKey;
         return this;
     }
 
     public FormBuilder child(Form child) {
-        this.childID = child.id;
+        this.childKey = child.getKeyString();
         return this;
     }
 
-    public FormBuilder parent(int id) {
-        this.parentID = id;
+    public FormBuilder parent(String parentKey) {
+        this.parentKey = parentKey;
         return this;
     }
 
     public FormBuilder parent(Form parent) {
-        this.parentID = parent.id;
+        this.parentKey = parent.getKeyString();
         return this;
     }
 
@@ -99,8 +99,10 @@ public class FormBuilder {
         form.strengthMulti = strengthMulti;
         form.dexMulti = dexMulti;
         form.willMulti = willMulti;
-        form.childID = childID;
-        form.parentID = parentID;
+        form.childKey = childKey;
+        form.parentKey = parentKey;
+        form.childID = -1;
+        form.parentID = -1;
         form.display = display;
 
         if(registry != null)

@@ -111,6 +111,7 @@ public class FormController implements IFormHandler {
         }
 
         verifyLinkedForms();
+        resolveLegacyIntLinks();
         saveFormLoadMap();
     }
 
@@ -158,11 +159,32 @@ public class FormController implements IFormHandler {
 
     private void verifyLinkedForms() {
         for (Form form : customForms.values()) {
-            if (!has(form.childID))
-                form.childID = -1;
-            if (!has(form.parentID))
-                form.parentID = -1;
+            if (form.childKey != null && getFromKey(form.childKey) == null)
+                form.childKey = null;
+            if (form.parentKey != null && getFromKey(form.parentKey) == null)
+                form.parentKey = null;
         }
+    }
+
+    private void resolveLegacyIntLinks() {
+        List<Form> toResolve = new ArrayList<>(customForms.values());
+        for (Form form : toResolve) {
+            if (form.childKey == null && form.childID != -1) {
+                Form child = customForms.get(form.childID);
+                if (child != null && child.key != null) {
+                    form.childKey = child.key.toString();
+                    child.parentKey = form.key != null ? form.key.toString() : null;
+                }
+            }
+            if (form.parentKey == null && form.parentID != -1) {
+                Form parent = customForms.get(form.parentID);
+                if (parent != null && parent.key != null) {
+                    form.parentKey = parent.key.toString();
+                    parent.childKey = form.key != null ? form.key.toString() : null;
+                }
+            }
+        }
+
     }
 
     private File getDir() {
@@ -232,6 +254,8 @@ public class FormController implements IFormHandler {
         clone.id = getUnusedId();
         clone.parentID = -1;
         clone.childID = -1;
+        clone.parentKey = null;
+        clone.childKey = null;
 
         String name = clone.name;
         while (hasName(name)) name += "_";

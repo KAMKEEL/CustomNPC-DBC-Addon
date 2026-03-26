@@ -51,6 +51,7 @@ public class Form implements IForm {
      * ID of parent and child forms of this
      */
     public int childID = -1, parentID = -1;
+    public String childKey = null, parentKey = null;
     public boolean fromParentOnly = true;
 
     public float strengthMulti = 1.0f;
@@ -92,8 +93,12 @@ public class Form implements IForm {
         name = compound.getString("name");
         menuName = compound.getString("menuName");
         timer = compound.getInteger("timer");
-        childID = compound.getInteger("childID");
-        parentID = compound.getInteger("parentID");
+        // Key-based links (new format)
+        childKey = compound.hasKey("childKey") ? compound.getString("childKey") : null;
+        parentKey = compound.hasKey("parentKey") ? compound.getString("parentKey") : null;
+        // Legacy int links — kept only so FormController's post-load resolve pass can convert them
+        childID = compound.hasKey("childID") ? compound.getInteger("childID") : -1;
+        parentID = compound.hasKey("parentID") ? compound.getInteger("parentID") : -1;
         fromParentOnly = compound.getBoolean("fromParentOnly");
         requiredForm = NBTTags.getIntegerByteMap(compound.getTagList("requiredForm", 10));
         mindRequirement = compound.getInteger("mindRequirement");
@@ -129,8 +134,10 @@ public class Form implements IForm {
         compound.setString("name", name);
         compound.setString("menuName", menuName);
         compound.setInteger("timer", timer);
-        compound.setInteger("childID", childID);
-        compound.setInteger("parentID", parentID);
+        if (childKey != null)
+            compound.setString("childKey", childKey);
+        if (parentKey != null)
+            compound.setString("parentKey", parentKey);
         compound.setBoolean("fromParentOnly", fromParentOnly);
         compound.setInteger("mindRequirement", mindRequirement);
         compound.setTag("requiredForm", NBTTags.nbtIntegerByteMap(requiredForm));
@@ -358,7 +365,9 @@ public class Form implements IForm {
 
         Form form = (Form) FormController.getInstance().get(formID);
         if (form != null) {
+            childKey = form.getKeyString();
             childID = formID;
+            form.parentKey = this.getKeyString();
             form.parentID = this.id;
         }
     }
@@ -375,7 +384,9 @@ public class Form implements IForm {
 
         Form form = (Form) FormController.getInstance().get(formID);
         if (form != null) {
+            parentKey = form.getKeyString();
             parentID = formID;
+            form.childKey = this.getKeyString();
             form.childID = this.id;
         }
     }
@@ -433,30 +444,32 @@ public class Form implements IForm {
 
     @Override
     public IForm getChild() {
-        return FormController.Instance.get(childID);
+        return FormController.Instance.getFromKey(childKey);
     }
 
     @Override
     public int getChildID() {
-        return childID;
+        Form child = (Form) getChild();
+        return child != null ? child.id : -1;
     }
 
     @Override
     public boolean hasChild() {
-        return childID != -1 && FormController.getInstance().has(childID);
+        return childKey != null && FormController.getInstance().getFromKey(childKey) != null;
     }
 
     public void removeChildForm() {
-        if (childID != -1) {
+        if (childKey != null) {
             Form child = (Form) getChild();
             if (child != null)
-                child.parentID = -1;
+                child.parentKey = null;
         }
+        childKey = null;
         childID = -1;
     }
 
     public IForm getParent() {
-        return FormController.Instance.get(parentID);
+        return FormController.Instance.getFromKey(parentKey);
     }
 
     @Override
@@ -476,20 +489,22 @@ public class Form implements IForm {
 
     @Override
     public int getParentID() {
-        return parentID;
+        Form parent = (Form) getParent();
+        return parent != null ? parent.id : -1;
     }
 
     @Override
     public boolean hasParent() {
-        return parentID != -1 && FormController.getInstance().has(parentID);
+        return parentKey != null && FormController.getInstance().getFromKey(parentKey) != null;
     }
 
     public void removeParentForm() {
-        if (parentID != -1) {
+        if (parentKey != null) {
             Form parent = (Form) getParent();
             if (parent != null)
-                parent.childID = -1;
+                parent.childKey = null;
         }
+        parentKey = null;
         parentID = -1;
     }
 

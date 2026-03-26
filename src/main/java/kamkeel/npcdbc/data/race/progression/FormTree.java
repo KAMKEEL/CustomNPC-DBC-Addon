@@ -163,6 +163,8 @@ public class FormTree {
             Form form = forms.get(i);
             form.parentID = (i > 0) ? forms.get(i - 1).id : -1;
             form.childID = (i + 1 < forms.size()) ? forms.get(i + 1).id : -1;
+            form.parentKey = (i > 0 && forms.get(i - 1).key != null) ? forms.get(i - 1).key.toString() : null;
+            form.childKey = (i + 1 < forms.size() && forms.get(i + 1).key != null) ? forms.get(i + 1).key.toString() : null;
         }
     }
 
