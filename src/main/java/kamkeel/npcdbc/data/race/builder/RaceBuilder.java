@@ -3,6 +3,7 @@ package kamkeel.npcdbc.data.race.builder;
 import kamkeel.npcdbc.AddonRegistries;
 import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.api.form.IForm;
+import kamkeel.npcdbc.client.race.RaceRenderContext;
 import kamkeel.npcdbc.constants.enums.EnumDBCAttributes;
 import kamkeel.npcdbc.constants.enums.EnumDBCClasses;
 import kamkeel.npcdbc.constants.enums.EnumDBCStats;
@@ -20,6 +21,7 @@ import net.minecraft.util.ResourceLocation;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public class RaceBuilder {
     private final int id;
@@ -252,178 +254,163 @@ public class RaceBuilder {
             return addLayer(componentId, layer, false);
         }
 
-        public DisplayBuilder defaultColor(String componentId, String layerId, int color, boolean checkSubLayer) {
+        public DisplayBuilder color(String componentId, String layerId, Color color, boolean override, boolean checkSubLayer) {
             DisplayComponent component = resolveComponent(componentId, checkSubLayer);
             if (component == null) return this;
 
             DisplayLayer layer = component.findLayer(layerId);
             if (layer == null) return this;
 
-            layer.setDefaultColor(color);
+            if (override) layer.setColorOverride(color);
+            else layer.setDefaultColor(color);
             return this;
         }
 
-        public DisplayBuilder defaultColor(String componentId, String layerId, int color) {
-            return defaultColor(componentId, layerId, color, false);
+        public DisplayBuilder color(String componentId, String layerId, Color color, boolean override) {
+            return color(componentId, layerId, color, override, false);
         }
 
-        public DisplayBuilder fixedColor(String componentId, String layerId, int color, boolean checkSubLayer) {
+        public DisplayBuilder color(String componentId, String layerId, Color color) {
+            return color(componentId, layerId, color, false, false);
+        }
+
+        public DisplayBuilder color(String componentId, String layerId, int color, boolean override, boolean checkSubLayer) {
+            return color(componentId, layerId, new Color(color), override, checkSubLayer);
+        }
+
+        public DisplayBuilder color(String componentId, String layerId, int color, boolean override) {
+            return color(componentId, layerId, new Color(color), override, false);
+        }
+
+        public DisplayBuilder color(String componentId, String layerId, int color) {
+            return color(componentId, layerId, new Color(color), false, false);
+        }
+
+        public DisplayBuilder color(String componentId, String layerId, boolean checkSubLayer, Function<RaceRenderContext, Color> colorFunc) {
             DisplayComponent component = resolveComponent(componentId, checkSubLayer);
             if (component == null) return this;
 
             DisplayLayer layer = component.findLayer(layerId);
             if (layer == null) return this;
 
-            layer.setColorOverride(color);
+            layer.setColorFunction(colorFunc);
             return this;
         }
 
-        public DisplayBuilder fixedColor(String componentId, String layerId, int color) {
-            return fixedColor(componentId, layerId, color, false);
+        public DisplayBuilder color(String componentId, String layerId, Function<RaceRenderContext, Color> colorFunc) {
+            return color(componentId, layerId, false, colorFunc);
         }
 
-        public DisplayBuilder texture(String componentId, String layerId, String texture, boolean checkSubLayer) {
+        public DisplayBuilder texture(String componentId, String layerId, String texture, boolean override, boolean checkSubLayer) {
             DisplayComponent component = resolveComponent(componentId, checkSubLayer);
             if (component == null) return this;
 
             DisplayLayer layer = component.findLayer(layerId);
             if (layer == null) return this;
 
-            layer.addTextureVariant(texture);
+            if (override) layer.setTextureOverride(texture);
+            else layer.addTextureVariant(texture);
             return this;
+        }
+
+        public DisplayBuilder texture(String componentId, String layerId, String texture, boolean override) {
+            return texture(componentId, layerId, texture, override, false);
         }
 
         public DisplayBuilder texture(String componentId, String layerId, String texture) {
-            return texture(componentId, layerId, texture, false);
-        }
-
-        public DisplayBuilder fixedTexture(String componentId, String layerId, String texture, boolean checkSubLayer) {
-            DisplayComponent component = resolveComponent(componentId, checkSubLayer);
-            if (component == null) return this;
-
-            DisplayLayer layer = component.findLayer(layerId);
-            if (layer == null) return this;
-
-            layer.setTextureOverride(texture);
-            return this;
-        }
-
-        public DisplayBuilder fixedTexture(String componentId, String layerId, String texture) {
-            return fixedTexture(componentId, layerId, texture, false);
+            return texture(componentId, layerId, texture, false, false);
         }
 
         // ── General Components Colors ────────────────────────────────────────────────
 
         public DisplayBuilder bodyCM(int color, boolean override) {
-            if (override) return fixedColor(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_CM, color);
-            else return defaultColor(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_CM, color);
+            return color(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_CM, color, override);
         }
 
         public DisplayBuilder bodyC1(int color, boolean override) {
-            if (override) return fixedColor(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_C1, color);
-            else return defaultColor(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_C1, color);
+            return color(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_C1, color, override);
         }
 
         public DisplayBuilder bodyC2(int color, boolean override) {
-            if (override) return fixedColor(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_C2, color);
-            else return defaultColor(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_C2, color);
+            return color(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_C2, color, override);
         }
 
         public DisplayBuilder bodyC3(int color, boolean override) {
-            if (override) return fixedColor(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_C3, color);
-            else return defaultColor(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_C3, color);
+            return color(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_C3, color, override);
         }
 
         public DisplayBuilder eyebaseC(int color, boolean override) {
-            if (override) return fixedColor(RaceDisplay.COMPONENT_EYES, RaceDisplay.LAYER_EYEBASE, color, true);
-            else return defaultColor(RaceDisplay.COMPONENT_EYES, RaceDisplay.LAYER_EYEBASE, color, true);
+            return color(RaceDisplay.COMPONENT_FACE, RaceDisplay.LAYER_EYEBASE, color, override);
         }
 
         public DisplayBuilder eyebrowC(int color, boolean override) {
-            if (override) return fixedColor(RaceDisplay.COMPONENT_EYES, RaceDisplay.LAYER_EYEBROWS, color, true);
-            else return defaultColor(RaceDisplay.COMPONENT_EYES, RaceDisplay.LAYER_EYEBROWS, color, true);
+            return color(RaceDisplay.COMPONENT_FACE, RaceDisplay.LAYER_EYEBROWS, color, override);
         }
 
         public DisplayBuilder eyeC1(int color, boolean override) {
-            if (override) return fixedColor(RaceDisplay.COMPONENT_EYES, RaceDisplay.LAYER_LEFT_EYE, color, true);
-            else return defaultColor(RaceDisplay.COMPONENT_EYES, RaceDisplay.LAYER_LEFT_EYE, color, true);
+            return color(RaceDisplay.COMPONENT_EYES, RaceDisplay.LAYER_LEFT_EYE, color, override, true);
         }
 
         public DisplayBuilder eyeC2(int color, boolean override) {
-            if (override) return fixedColor(RaceDisplay.COMPONENT_EYES, RaceDisplay.LAYER_RIGHT_EYE, color, true);
-            else return defaultColor(RaceDisplay.COMPONENT_EYES, RaceDisplay.LAYER_RIGHT_EYE, color, true);
-        }
-
-        public DisplayBuilder hairC(int color, boolean override) {
-            if (override) return fixedColor(RaceDisplay.COMPONENT_HAIR, RaceDisplay.LAYER_HAIR, color);
-            else return defaultColor(RaceDisplay.COMPONENT_HAIR, RaceDisplay.LAYER_HAIR, color);
+            return color(RaceDisplay.COMPONENT_EYES, RaceDisplay.LAYER_RIGHT_EYE, color, override, true);
         }
 
         public DisplayBuilder noseC(int color, boolean override) {
-            if (override) return fixedColor(RaceDisplay.COMPONENT_FACE, RaceDisplay.LAYER_NOSE, color);
-            else return defaultColor(RaceDisplay.COMPONENT_FACE, RaceDisplay.LAYER_NOSE, color);
+            return color(RaceDisplay.COMPONENT_FACE, RaceDisplay.LAYER_NOSE, color, override);
         }
 
         public DisplayBuilder mouthC(int color, boolean override) {
-            if (override) return fixedColor(RaceDisplay.COMPONENT_FACE, RaceDisplay.LAYER_MOUTH, color);
-            else return defaultColor(RaceDisplay.COMPONENT_FACE, RaceDisplay.LAYER_MOUTH, color);
+            return color(RaceDisplay.COMPONENT_FACE, RaceDisplay.LAYER_MOUTH, color, override);
+        }
+
+        public DisplayBuilder hairC(int color, boolean override) {
+            return color(RaceDisplay.COMPONENT_HAIR, RaceDisplay.LAYER_HAIR, color, override);
         }
 
         // ── General Components Textures ────────────────────────────────────────────
 
-        public DisplayBuilder bodyCMTexture(String texture, boolean override) {
-            if (override) return fixedTexture(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_CM, texture);
-            else return texture(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_CM, texture);
+        public DisplayBuilder bodyM(String texture, boolean override) {
+            return texture(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_CM, texture, override);
         }
 
-        public DisplayBuilder bodyC1Texture(String texture, boolean override) {
-            if (override) return fixedTexture(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_C1, texture);
-            else return texture(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_C1, texture);
+        public DisplayBuilder body1(String texture, boolean override) {
+            return texture(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_C1, texture, override);
         }
 
-        public DisplayBuilder bodyC2Texture(String texture, boolean override) {
-            if (override) return fixedTexture(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_C2, texture);
-            else return texture(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_C2, texture);
+        public DisplayBuilder body2(String texture, boolean override) {
+            return texture(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_C2, texture, override);
         }
 
-        public DisplayBuilder bodyC3Texture(String texture, boolean override) {
-            if (override) return fixedTexture(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_C3, texture);
-            else return texture(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_C3, texture);
+        public DisplayBuilder body3(String texture, boolean override) {
+            return texture(RaceDisplay.COMPONENT_BODY, RaceDisplay.LAYER_BODY_C3, texture, override);
         }
 
-        public DisplayBuilder eyebaseTexture(String texture, boolean override) {
-            if (override) return fixedTexture(RaceDisplay.COMPONENT_EYES, RaceDisplay.LAYER_EYEBASE, texture, true);
-            else return texture(RaceDisplay.COMPONENT_EYES, RaceDisplay.LAYER_EYEBASE, texture, true);
+        public DisplayBuilder eyebase(String texture, boolean override) {
+            return texture(RaceDisplay.COMPONENT_FACE, RaceDisplay.LAYER_EYEBASE, texture, override);
         }
 
-        public DisplayBuilder eyebrowTexture(String texture, boolean override) {
-            if (override) return fixedTexture(RaceDisplay.COMPONENT_EYES, RaceDisplay.LAYER_EYEBROWS, texture, true);
-            else return texture(RaceDisplay.COMPONENT_EYES, RaceDisplay.LAYER_EYEBROWS, texture, true);
+        public DisplayBuilder eyebrow(String texture, boolean override) {
+            return texture(RaceDisplay.COMPONENT_FACE, RaceDisplay.LAYER_EYEBROWS, texture, override);
         }
 
-        public DisplayBuilder eyeLeftTexture(String texture, boolean override) {
-            if (override) return fixedTexture(RaceDisplay.COMPONENT_EYES, RaceDisplay.LAYER_LEFT_EYE, texture, true);
-            else return texture(RaceDisplay.COMPONENT_EYES, RaceDisplay.LAYER_LEFT_EYE, texture, true);
+        public DisplayBuilder eyeLeft(String texture, boolean override) {
+            return texture(RaceDisplay.COMPONENT_EYES, RaceDisplay.LAYER_LEFT_EYE, texture, override, true);
         }
 
-        public DisplayBuilder eyeRightTexture(String texture, boolean override) {
-            if (override) return fixedTexture(RaceDisplay.COMPONENT_EYES, RaceDisplay.LAYER_RIGHT_EYE, texture, true);
-            else return texture(RaceDisplay.COMPONENT_EYES, RaceDisplay.LAYER_RIGHT_EYE, texture, true);
+        public DisplayBuilder eyeRight(String texture, boolean override) {
+            return texture(RaceDisplay.COMPONENT_EYES, RaceDisplay.LAYER_RIGHT_EYE, texture, override, true);
         }
 
-        public DisplayBuilder hairTexture(String texture, boolean override) {
-            if (override) return fixedTexture(RaceDisplay.COMPONENT_HAIR, RaceDisplay.LAYER_HAIR, texture);
-            else return texture(RaceDisplay.COMPONENT_HAIR, RaceDisplay.LAYER_HAIR, texture);
+        public DisplayBuilder nose(String texture, boolean override) {
+            return texture(RaceDisplay.COMPONENT_FACE, RaceDisplay.LAYER_NOSE, texture, override);
         }
 
-        public DisplayBuilder noseTexture(String texture, boolean override) {
-            if (override) return fixedTexture(RaceDisplay.COMPONENT_FACE, RaceDisplay.LAYER_NOSE, texture);
-            else return texture(RaceDisplay.COMPONENT_FACE, RaceDisplay.LAYER_NOSE, texture);
+        public DisplayBuilder mouth(String texture, boolean override) {
+            return texture(RaceDisplay.COMPONENT_FACE, RaceDisplay.LAYER_MOUTH, texture, override);
         }
 
-        public DisplayBuilder mouthTexture(String texture, boolean override) {
-            if (override) return fixedTexture(RaceDisplay.COMPONENT_FACE, RaceDisplay.LAYER_MOUTH, texture);
-            else return texture(RaceDisplay.COMPONENT_FACE, RaceDisplay.LAYER_MOUTH, texture);
+        public DisplayBuilder hair(String texture, boolean override) {
+            return texture(RaceDisplay.COMPONENT_HAIR, RaceDisplay.LAYER_HAIR, texture, override);
         }
 
         // ── Metadata ───────────────────────────────────────────────────────────────

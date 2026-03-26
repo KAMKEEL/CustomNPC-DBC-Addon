@@ -96,42 +96,45 @@ public class DisplayComponentBuilder {
             this.layer = layer;
         }
 
-        public LayerBuilder textureVariant(String texturePath) {
-            layer.addTextureVariant(texturePath);
+        public LayerBuilder texture(String texturePath, boolean override) {
+            if (override) layer.setTextureOverride(texturePath);
+            else layer.addTextureVariant(texturePath);
             return this;
         }
 
-        public LayerBuilder textureOverride(String texturePath) {
-            layer.setTextureOverride(texturePath);
+        public LayerBuilder texture(String texturePath) {
+            return texture(texturePath, false);
+        }
+
+        public LayerBuilder color(int color, boolean override) {
+            if (override) layer.setColorOverride(color);
+            else layer.setDefaultColor(color);
             return this;
         }
 
-        public LayerBuilder colorOverride(int color) {
-            layer.setColorOverride(color);
-            return this;
+        public LayerBuilder color(int color) {
+            return color(color, false);
         }
 
-        public LayerBuilder colorOverride(Color color) {
-            layer.setColorOverride(color);
-            return this;
+        public LayerBuilder color(Color color, boolean override) {
+            return color(color.color, override);
         }
 
-        public LayerBuilder defaultColor(int color) {
-            layer.setDefaultColor(color);
-            return this;
+        public LayerBuilder color(Color color) {
+            return color(color, false);
         }
 
-        public LayerBuilder defaultColor(Color color) {
-            layer.setDefaultColor(color);
-            return this;
-        }
-
-        public LayerBuilder colorFunction(Function<RaceRenderContext, Color> function) {
+        public LayerBuilder color(Function<RaceRenderContext, Color> function) {
             layer.setColorFunction(function);
             return this;
         }
 
-        public LayerBuilder addColorPreset(int color) {
+        public LayerBuilder colorPreset(Color color) {
+            layer.addColorPreset(color);
+            return this;
+        }
+
+        public LayerBuilder colorPreset(int color) {
             layer.addColorPreset(color);
             return this;
         }
@@ -181,12 +184,59 @@ public class DisplayComponentBuilder {
             this.subParent = subParent;
         }
 
-        @Override public SubComponentLayerBuilder textureVariant(String p) { layer.addTextureVariant(p);  return this; }
-        @Override public SubComponentLayerBuilder textureOverride(String p) { layer.setTextureOverride(p); return this; }
-        @Override public SubComponentLayerBuilder colorOverride(int c) { layer.setColorOverride(c);   return this; }
-        @Override public SubComponentLayerBuilder colorOverride(Color c) { layer.setColorOverride(c);   return this; }
-        @Override public SubComponentLayerBuilder defaultColor(int c) { layer.setDefaultColor(c);    return this; }
-        @Override public SubComponentLayerBuilder addColorPreset(int c) { layer.addColorPreset(c);     return this; }
+        @Override
+        public SubComponentLayerBuilder texture(String p, boolean o) {
+            if (o) layer.setTextureOverride(p);
+            else layer.addTextureVariant(p);
+            return this;
+        }
+
+        @Override
+        public SubComponentLayerBuilder texture(String p) {
+            return texture(p, false);
+        }
+
+        @Override
+        public SubComponentLayerBuilder color(int c, boolean o) {
+            if (o) layer.setColorOverride(c);
+            else layer.setDefaultColor(c);
+            return this;
+        }
+
+        @Override
+        public SubComponentLayerBuilder color(Color c, boolean o) {
+            if (o) layer.setColorOverride(c);
+            else layer.setDefaultColor(c);
+            return this;
+        }
+
+        @Override
+        public SubComponentLayerBuilder color(int c) {
+            return color(c, false);
+        }
+
+        @Override
+        public SubComponentLayerBuilder color(Color c) {
+            return color(c, false);
+        }
+
+        @Override
+        public SubComponentLayerBuilder color(Function<RaceRenderContext, Color> function) {
+            layer.setColorFunction(function);
+            return this;
+        }
+
+        @Override
+        public SubComponentLayerBuilder colorPreset(int c) {
+            layer.addColorPreset(c);
+            return this;
+        }
+
+        @Override
+        public SubComponentLayerBuilder colorPreset(Color c) {
+            layer.addColorPreset(c);
+            return this;
+        }
 
         public SubComponentBuilder andSub() { return subParent; }
     }
