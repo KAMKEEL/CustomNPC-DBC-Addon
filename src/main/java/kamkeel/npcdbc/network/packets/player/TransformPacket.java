@@ -6,18 +6,29 @@ import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.PacketChannel;
 import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
+import kamkeel.npcs.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.io.IOException;
 
 public final class TransformPacket extends AbstractPacket {
     public static final String packetName = "NPC|Transform";
-    private int state;
-    private boolean ascend;
+    
+    public static final int DESCEND = -1; //once
+    public static final int FULL_DESCEND = -10; //to base
 
-    public TransformPacket(int state, boolean ascend) {
+    private boolean ascend;
+    private String formKey;
+    private int state;
+
+    public TransformPacket(String formKey) {
+        this.ascend = true;
+        this.formKey = formKey;
+    }
+
+    public TransformPacket(int state) {
+        this.ascend = false;
         this.state = state;
-        this.ascend = ascend;
     }
 
     public TransformPacket() {
@@ -35,8 +46,11 @@ public final class TransformPacket extends AbstractPacket {
 
     @Override
     public void sendData(ByteBuf out) throws IOException {
-        out.writeInt(this.state);
         out.writeBoolean(ascend);
+        if (ascend)
+            ByteBufUtils.writeUTF8String(out, formKey);
+        else
+            out.writeInt(state);
     }
 
     @Override
@@ -44,12 +58,10 @@ public final class TransformPacket extends AbstractPacket {
         if (player == null)
             return;
 
-        int state = in.readInt();
         boolean ascend = in.readBoolean();
         if (ascend)
-            TransformController.handleFormAscend(player, state);
+            TransformController.handleFormAscend(player, ByteBufUtils.readUTF8String(in));
         else
-            TransformController.handleFormDescend(player, state);
-
+            TransformController.handleFormDescend(player, in.readInt());
     }
 }

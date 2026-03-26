@@ -86,7 +86,7 @@ public class TransformController {
             releaseTime = 0;
         }
         if (rage >= 100) { //transform when rage meter reaches 100 (max)
-            DBCPacketHandler.Instance.sendToServer(new TransformPacket(form.getID(), true));
+            DBCPacketHandler.Instance.sendToServer(new TransformPacket(form.key != null ? form.key.toString() : form.name));
             resetTimers();
             cantTransform = true;
             transformed = true;
@@ -228,25 +228,27 @@ public class TransformController {
     /// ///////////////////////////////////////////////
     /// ///////////////////////////////////////////////
     // Server side handling
-    public static void handleFormAscend(EntityPlayer player, int formID) {
-        Form form = (Form) FormController.getInstance().get(formID);
-        if (form == null)
+    public static void handleFormAscend(EntityPlayer player, String formKey) {
+        Form form = FormController.getInstance().getFromKey(formKey);
+        if (form == null) {
+            LogWriter.error("TransformController: could not resolve form for key \"" + formKey + "\"");
             return;
+        }
 
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         DBCData data = DBCData.getData(player);
 
         int originalForm = formData.currentForm;
         if (!formData.hasForm(form)) {
-            LogWriter.error(String.format("Potential exploiting: %s tried to transform into a form they don't have unlocked (\"%s\" - ID: %d)",
-                player.getCommandSenderName(), form.getName(), formID));
+            LogWriter.error(String.format("Potential exploiting: %s tried to transform into a form they don't have unlocked (\"%s\" - key: %s)",
+                player.getCommandSenderName(), form.getName(), formKey));
             return;
         }
 
         if (formData.isCustomRace() && form.hasKey()) {
             if (!formData.hasRacialForm(form.getKeyString())) {
-                LogWriter.error(String.format("Player %s tried to transform into racial form \"%s\" (ID: %d) but it is not valid for their progression",
-                    player.getCommandSenderName(), form.getName(), formID));
+                LogWriter.error(String.format("Player %s tried to transform into racial form \"%s\" (key: %s) but it is not valid for their progression",
+                    player.getCommandSenderName(), form.getName(), formKey));
                 return;
             }
         }
@@ -255,7 +257,7 @@ public class TransformController {
         if (stackedForm != null)
             form = stackedForm;
 
-        if (formData.currentForm != formID) {
+        if (formData.currentForm != form.id) {
             DBCData dbcData = DBCData.get(player);
             boolean allowBypass = form.mastery.canInstantTransform(formData.getFormLevel(form.id)) && ConfigDBCGameplay.InstantTransform;
             if (!allowBypass) {
