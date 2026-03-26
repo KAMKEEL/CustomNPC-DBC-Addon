@@ -776,32 +776,40 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public IForm getSelectedForm() {
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
-        if (c.selectedForm == -1)
-            return null;
-
-        return FormController.getInstance().get(c.selectedForm);
+        return c.getSelectedForm();
     }
 
     @Override
     public void setSelectedForm(IForm form) {
-        setSelectedForm(form != null ? form.getID() : -1);
+        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
+        if (form != null) {
+            Form f = (Form) FormController.getInstance().get(form.getID());
+            if (f != null) {
+                c.setSelectedForm(f);
+                c.updateClient();
+                return;
+            }
+        }
+        c.clearSelectedForm();
+        c.updateClient();
     }
 
     @Override
     public void setSelectedForm(int formID) {
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
-        if (FormController.getInstance().has(formID))
-            c.selectedForm = formID;
-        else
-            c.selectedForm = -1;
-
+        if (FormController.getInstance().has(formID)) {
+            Form f = (Form) FormController.getInstance().get(formID);
+            c.setSelectedForm(f);
+        } else {
+            c.clearSelectedForm();
+        }
         c.updateClient();
     }
 
     @Override
     public void removeSelectedForm() {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
-        formData.selectedForm = -1;
+        formData.clearSelectedForm();
         formData.updateClient();
     }
 

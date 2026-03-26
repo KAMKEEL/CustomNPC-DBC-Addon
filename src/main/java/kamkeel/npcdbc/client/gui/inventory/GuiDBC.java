@@ -2,6 +2,7 @@ package kamkeel.npcdbc.client.gui.inventory;
 
 import kamkeel.npcdbc.client.gui.component.GuiFormAuraScroll;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -299,12 +300,14 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                 if (selected != null) {
                     if (loadedData.containsKey(selected)) {
                         int formID = loadedData.get(selected);
-                        DBCPacketHandler.Instance.sendToServer(new DBCSelectForm(formID, false));
+                        Form form = (Form) FormController.getInstance().get(formID);
+                        if (form != null)
+                            DBCPacketHandler.Instance.sendToServer(new DBCSelectForm(form));;
                         loaded = false;
                     }
                 }
             } else if (guibutton.id == 2) {
-                DBCPacketHandler.Instance.sendToServer(new DBCSelectForm(-1, false));
+                DBCPacketHandler.Instance.sendToServer(new DBCSelectForm(null));
                 selected = null;
                 guiScroll.selected = -1;
                 loaded = false;

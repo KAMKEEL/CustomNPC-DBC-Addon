@@ -15,6 +15,7 @@ import kamkeel.npcdbc.network.PacketChannel;
 import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcs.network.packets.data.large.GuiDataPacket;
+import kamkeel.npcs.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,12 +32,26 @@ import static kamkeel.npcdbc.constants.DBCForm.UltraInstinct;
 
 public final class DBCSelectForm extends AbstractPacket {
     public static final String packetName = "NPC|SelectForm";
+
     private int formID;
     private boolean isDBC;
+    private String formKey;
+
+    public DBCSelectForm(Form form) {
+        this.isDBC = false;
+        if (form == null) {
+            this.formID = -1;
+            this.formKey = "";
+        } else {
+            this.formID = form.id;
+            this.formKey = form.key != null ? form.key.toString() : "";
+        }
+    }
 
     public DBCSelectForm(int formID, boolean isDBC) {
         this.formID = formID;
         this.isDBC = isDBC;
+        this.formKey = "";
     }
 
     public DBCSelectForm() {
@@ -54,28 +69,35 @@ public final class DBCSelectForm extends AbstractPacket {
 
     @Override
     public void sendData(ByteBuf out) throws IOException {
-        out.writeInt(this.formID);
-        out.writeBoolean(this.isDBC);
+        out.writeInt(formID);
+        out.writeBoolean(isDBC);
+        if (!isDBC && formID != -1)
+            ByteBufUtils.writeUTF8String(out, formKey);
     }
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
         int formID = in.readInt();
         boolean isDBC = in.readBoolean();
+        String formKey = (!isDBC && formID != -1) ? ByteBufUtils.readUTF8String(in) : "";
+
         PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(playerData);
         NBTTagCompound compound = new NBTTagCompound();
-        if (formID == -1 && (isDBC ? formData.selectedDBCForm == -1 : formData.selectedForm == -1))
-            return;
 
-        if (isDBC && formID != -1) {
+        if (formID == -1) {
+            if (formData.selectedDBCForm == -1 && !formData.hasSelectedForm())
+                return;
+            formData.clearSelectedForm();
+            formData.selectedDBCForm = formData.tempSelectedDBCForm = -1;
+            NetworkUtility.sendServerMessage(player, "§9", "npcdbc.clearedSelection");
+        } else if (isDBC) {
             if (formID == formData.selectedDBCForm)
                 return;
 
             DBCData dbc = DBCData.get(player);
-            int selected = 0;
-            formData.selectedDBCForm = formData.tempSelectedDBCForm = selected = formID;
-            formData.selectedForm = -1;
+            int selected = formData.selectedDBCForm = formData.tempSelectedDBCForm = formID;
+            formData.clearSelectedForm();
             if (selected == Mystic) {
                 JRMCoreH.PlyrSettingsRem(player, DBCSettings.KAIOKEN_ENABLED);
                 JRMCoreH.PlyrSettingsRem(player, DBCSettings.ULTRA_INSTINCT);
@@ -102,24 +124,22 @@ public final class DBCSelectForm extends AbstractPacket {
                 JRMCoreH.PlyrSettingsRem(player, DBCSettings.ULTRA_INSTINCT);
                 JRMCoreH.PlyrSettingsRem(player, DBCSettings.GOD_OF_DESTRUCTION);
             }
-            if (formID != -1)
-                NetworkUtility.sendServerMessage(player, "§a", "npcdbc.formSelect", " ", DBCForm.getMenuName(dbc.Race, formID, dbc.isForm(DBCForm.Divine)));
-        } else if (formID != -1 && FormController.getInstance().has(formID)) {
-            if (formID == formData.selectedForm)
+            NetworkUtility.sendServerMessage(player, "§a", "npcdbc.formSelect", " ", DBCForm.getMenuName(dbc.Race, formID, dbc.isForm(DBCForm.Divine)));
+        } else {
+            if (!formKey.isEmpty() && formKey.equals(formData.getSelectedFormKey()))
                 return;
 
-            Form form = (Form) FormController.getInstance().get(formID);
-            if (form != null && formData.hasFormUnlocked(formID)) {
-                formData.selectedForm = formID;
+            Form form = FormController.getInstance().getFromKey(formKey);
+            if (form == null)
+                form = (Form) FormController.getInstance().get(formID);
+
+            if (form != null && formData.hasFormUnlocked(form.id)) {
+                formData.setSelectedForm(form);
                 formData.selectedDBCForm = formData.tempSelectedDBCForm = -1;
                 NetworkUtility.sendServerMessage(player, "§a", "npcdbc.formSelect", " ", form.getMenuName());
                 compound = form.writeToNBT();
             }
-        } else {
-            formData.selectedForm = formData.selectedDBCForm = formData.tempSelectedDBCForm = -1;
-            NetworkUtility.sendServerMessage(player, "§9", "npcdbc.clearedSelection");
         }
-
 
         formData.updateClient();
         GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);

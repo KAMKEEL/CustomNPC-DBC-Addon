@@ -302,6 +302,17 @@ public class FormController implements IFormHandler {
         return builtInForms.get(key);
     }
 
+    public Form getFromKey(String key) {
+        if (key == null || key.isEmpty()) return null;
+        Form form = builtInForms.get(key);
+        if (form != null) return form;
+        for (Form f : customForms.values()) {
+            if (f.key != null && f.key.toString().equals(key))
+                return f;
+        }
+        return null;
+    }
+
     public void registerBuiltIn(Form builtIn) {
         if (builtIn == null || builtIn.key == null) {
             LogWriter.error("Cannot register built-in form without FormKey.");

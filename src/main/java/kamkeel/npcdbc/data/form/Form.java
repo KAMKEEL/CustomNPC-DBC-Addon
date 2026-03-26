@@ -309,8 +309,9 @@ public class Form implements IForm {
     public void removeFromPlayer(IPlayer player, boolean removesMastery) {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo((EntityPlayer) player.getMCEntity());
         formData.removeForm(this, removesMastery);
-        if (formData.selectedForm == this.id)
-            formData.selectedForm = -1;
+        Form currentSelected = formData.getSelectedForm();
+        if (currentSelected != null && currentSelected.id == this.id)
+            formData.clearSelectedForm();
 
         formData.updateClient();
     }

@@ -10,6 +10,7 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
+import kamkeel.npcdbc.data.form.FormKey;
 import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.data.form.FormMasteryLinkData;
 import kamkeel.npcdbc.data.overlay.OverlayManager;
@@ -39,7 +40,8 @@ public class PlayerDBCInfo {
     public PlayerData parent;
 
     public int currentForm = -1;
-    public int selectedForm = -1, selectedDBCForm = -1, tempSelectedDBCForm = -1;
+    private String selectedFormKey = null;
+    public int selectedDBCForm = -1, tempSelectedDBCForm = -1;
     public int lastFormBeforeStack = -1;
 
     public int currentAura = -1;
@@ -123,12 +125,15 @@ public class PlayerDBCInfo {
 
 
     public boolean hasSelectedForm() {
-        return selectedForm > -1 && getSelectedForm() != null;
+        return selectedFormKey != null && getSelectedForm() != null;
     }
 
     public boolean hasForm(Form form) {
         if (form == null)
             return false;
+        if (hasRacialForm(form.getKeyString()))
+            return true;
+
         return unlockedForms.contains(form.id);
     }
 
@@ -175,7 +180,31 @@ public class PlayerDBCInfo {
     }
 
     public Form getSelectedForm() {
-        return (Form) FormController.Instance.get(selectedForm);
+        if (selectedFormKey == null) return null;
+        
+        Form f = FormController.Instance.getFromKey(selectedFormKey);
+        if (f != null) return f;
+        return null;
+    }
+
+    public String getSelectedFormKey() {
+        return selectedFormKey;
+    }
+
+    public void setSelectedForm(Form form) {
+        if (form == null) {
+            selectedFormKey = null;
+            return;
+        }
+        selectedFormKey = form.key != null ? form.key.toString() : FormKey.custom(form.name).toString();
+    }
+
+    public void setSelectedForm(String key) {
+        selectedFormKey = key;
+    }
+
+    public void clearSelectedForm() {
+        selectedFormKey = null;
     }
 
     public void clearAllForms() {
@@ -185,7 +214,7 @@ public class PlayerDBCInfo {
     public void resetFormData(boolean removeForms, boolean removeMasteries) {
         TransformController.handleFormDescend(parent.player, -10);
         currentForm = -1;
-        selectedForm = -1;
+        selectedFormKey = null;
         if (removeForms)
             unlockedForms.clear();
         if (removeMasteries)
@@ -430,7 +459,7 @@ public class PlayerDBCInfo {
     public void saveNBTData(NBTTagCompound compound) {
         NBTTagCompound dbcCompound = new NBTTagCompound();
         dbcCompound.setInteger("CurrentForm", currentForm);
-        dbcCompound.setInteger("SelectedForm", selectedForm);
+        dbcCompound.setString("SelectedFormKey", selectedFormKey != null? selectedFormKey : "");
         dbcCompound.setInteger("SelectedDBCForm", selectedDBCForm);
         dbcCompound.setInteger("LastFormBeforeStack", lastFormBeforeStack);
         dbcCompound.setTag("UnlockedForms", NBTTags.nbtIntegerSet(unlockedForms));
@@ -464,7 +493,20 @@ public class PlayerDBCInfo {
         NBTTagCompound dbcCompound = compound.getCompoundTag("DBCInfo");
 
         currentForm = dbcCompound.hasKey("CurrentForm") ? dbcCompound.getInteger("CurrentForm") : -1;
-        selectedForm = dbcCompound.hasKey("SelectedForm") ? dbcCompound.getInteger("SelectedForm") : -1;
+        
+        if (dbcCompound.hasKey("SelectedFormKey")) {
+            selectedFormKey = dbcCompound.getString("SelectedFormKey");
+            if (selectedFormKey.isEmpty()) selectedFormKey = null;
+        } else if (dbcCompound.hasKey("SelectedForm")) {
+            int legacyId = dbcCompound.getInteger("SelectedForm");
+            if (legacyId > -1) {
+                Form legacyForm = (Form) FormController.Instance.get(legacyId);
+                if (legacyForm != null)
+                    selectedFormKey = legacyForm.key != null ? legacyForm.key.toString() : FormKey.custom(legacyForm.name).toString();
+            }
+            dbcCompound.removeTag("SelectedForm");
+        }
+        
         selectedDBCForm = dbcCompound.hasKey("SelectedDBCForm") ? dbcCompound.getInteger("SelectedDBCForm") : -1;
         lastFormBeforeStack = dbcCompound.hasKey("LastFormBeforeStack") ? dbcCompound.getInteger("LastFormBeforeStack") : -1;
         unlockedForms = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedForms", 10));
