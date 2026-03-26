@@ -27,6 +27,7 @@ import java.util.UUID;
 public class Form implements IForm {
 
     public int id = -1; // Only for internal usage
+    public FormKey key = null;
     public String name = "";
 
     public String menuName = "§aNEW";
@@ -67,6 +68,16 @@ public class Form implements IForm {
     public Form() {
     }
 
+    public Form(FormKey key) {
+        this.key = key;
+        this.builtIn = true;
+        this.name = key.name;
+    }
+
+    public Form(String formKey) {
+        this(new FormKey(formKey));
+    }
+
     public Form(int id, String name) {
         this.id = id;
         this.name = name;
@@ -99,6 +110,10 @@ public class Form implements IForm {
         tagUUIDs = TagController.readTagUUIDs(compound, "TagUUIDs");
 
         race = FormRace.fromNBT(compound.getInteger("race"));
+        if (compound.hasKey("FormKey")) {
+            key = new FormKey(compound.getString("FormKey"));
+            builtIn = true;
+        }
         mastery.readFromNBT(compound);
         display.readFromNBT(compound);
         stackable.readFromNBT(compound);
@@ -134,6 +149,8 @@ public class Form implements IForm {
         TagController.writeTagUUIDs(compound, "TagUUIDs", tagUUIDs);
 
         compound.setInteger("race", race.toNBT());
+        if (key != null)
+            compound.setString("FormKey", key.toString());
         mastery.writeToNBT(compound);
         display.writeToNBT(compound);
         stackable.writeToNBT(compound);
@@ -158,6 +175,14 @@ public class Form implements IForm {
     @Override
     public String getName() {
         return name;
+    }
+
+    public boolean hasKey() {
+        return key != null;
+    }
+
+    public String getKeyString() {
+        return key != null ? key.toString() : "";
     }
 
     @Override

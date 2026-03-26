@@ -116,7 +116,10 @@ public class FormTree {
         for (int i = 0; i < forms.size(); i++) {
             Form form = forms.get(i);
             form.id = getScopedId(form.id);
-            form.name = "builtin_" + form.id;
+            if (form.key != null)
+                form.name = form.key.name;
+            else
+                form.name = "builtin_" + form.id;
             form.builtIn = true;
         }
         for (int i = 0; i < forms.size(); i++) {
@@ -129,8 +132,8 @@ public class FormTree {
     public void register(FormRace race) {
         for (Branch branch : branches) {
             for (Form form : branch.forms) {
-                form.race = race;
-                FormController.getInstance().registerBuiltIn(form.id, form);
+             //   form.race = race;
+             //   FormController.getInstance().registerBuiltIn(form);
             }
         }
     }

@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data.race.races;
 
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormKey;
 import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.race.builder.FormBuilder;
 import kamkeel.npcdbc.data.race.builder.FormTreeBuilder;
@@ -14,17 +15,21 @@ public class BioAndroid {
 
     private static final String BIO_ANDROID_NS = "npcdbc:bio_android";
 
-    public static final Form SEMI_PERFECT = FormBuilder.create(1)
+    public static void init() {
+        // Triggers class loading — static fields below self-register into RaceRegistry.
+    }
+
+    public static final Form SEMI_PERFECT = FormBuilder.create(FormKey.of(BIO_ANDROID_NS, "semi_perfect"))
         .menuName("§eSemi-Perfect")
         .strengthMulti(2.0f).dexMulti(1.8f).willMulti(1.5f)
         .build();
 
-    public static final Form PERFECT = FormBuilder.create(2)
+    public static final Form PERFECT = FormBuilder.create(FormKey.of(BIO_ANDROID_NS, "perfect"))
         .menuName("§6Perfect")
         .strengthMulti(4.0f).dexMulti(3.5f).willMulti(3.0f)
         .build();
 
-    public static final Form MAX = FormBuilder.create(3)
+    public static final Form MAX = FormBuilder.create(FormKey.of(BIO_ANDROID_NS, "max"))
         .menuName("§cMax")
         .strengthMulti(8.0f).dexMulti(7.0f).willMulti(6.0f)
         .build();
