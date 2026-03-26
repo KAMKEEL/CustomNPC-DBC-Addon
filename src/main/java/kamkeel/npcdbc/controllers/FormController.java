@@ -4,6 +4,7 @@ import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormHandler;
 import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormKey;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
 import kamkeel.npcs.network.enums.EnumSyncAction;
@@ -37,6 +38,15 @@ public class FormController implements IFormHandler {
     public HashMap<Integer, Form> customForms;
     private HashMap<Integer, String> bootOrder;
     private int lastUsedID = 0;
+
+    /**
+     * Built-in forms are race-specific forms registered at startup via
+     * {@link #registerBuiltIn(Form)}. They live in a separate
+     * map so they never collide with user-created custom form IDs and are
+     * never persisted to disk. The {@link #has(int)} and {@link #get(int)}
+     * methods check this map as a fallback after the custom forms map.
+     */
+    private final HashMap<String, Form> builtInForms = new HashMap<>();
 
     public CategoryManager categoryManager = new CategoryManager();
 
@@ -165,6 +175,9 @@ public class FormController implements IFormHandler {
     }
 
     public IForm saveForm(IForm customForm) {
+        if (isBuiltInForm(customForm.getID()))
+            return customForm;
+
         if (customForm.getID() < 0) {
             customForm.setID(getUnusedId());
             while (hasName(customForm.getName()))
@@ -243,7 +256,7 @@ public class FormController implements IFormHandler {
     }
 
     public void delete(int id) {
-        if (!this.customForms.containsKey(id))
+        if (!this.customForms.containsKey(id) || isBuiltInForm(id))
             return;
 
         Form foundForm = this.customForms.remove(id);
@@ -264,7 +277,8 @@ public class FormController implements IFormHandler {
     }
 
     public boolean has(int id) {
-        return get(id) != null;
+        if (id == -1) return false;
+        return this.customForms.containsKey(id);
     }
 
     public IForm get(String name) {
@@ -275,6 +289,34 @@ public class FormController implements IFormHandler {
         if (id == -1)
             return null;
         return this.customForms.get(id);
+    }
+
+    public Form getBuiltIn(String key) {
+        return builtInForms.get(key);
+    }
+
+    public void registerBuiltIn(Form builtIn) {
+        if (builtIn == null || builtIn.key == null) {
+            LogWriter.error("Cannot register built-in form without FormKey.");
+            return;
+        }
+
+        String key = builtIn.key.toString();
+        if (builtInForms.containsKey(key)) {
+            LogWriter.error("Duplicate built-in form registration for key " + key + ", skipping.");
+            return;
+        }
+
+        builtInForms.put(key, builtIn);
+    }
+
+    public boolean isBuiltInForm(int id) {
+        Form form = customForms.get(id);
+        return form != null && form.builtIn;
+    }
+
+    public boolean hasBuiltIn(String key) {
+        return key != null && builtInForms.containsKey(key);
     }
 
     public IForm[] getForms() {
@@ -335,6 +377,7 @@ public class FormController implements IFormHandler {
         NBTTagCompound nbt = new NBTTagCompound();
         NBTTagList formList = new NBTTagList();
         for (Integer key : customForms.keySet()) {
+            if (isBuiltInForm(key)) continue;
             Form customForm = customForms.get(key);
             if (!customForm.getName().isEmpty()) {
                 NBTTagCompound formCompound = new NBTTagCompound();

@@ -2,9 +2,11 @@ package kamkeel.npcdbc.data.race.builder;
 
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
+import kamkeel.npcdbc.data.form.FormKey;
 
 public class FormBuilder {
     private final int id;
+    private FormKey key;
     private String menuName = "§aNEW";
 
     private float strengthMulti = 1.0f;
@@ -22,6 +24,16 @@ public class FormBuilder {
 
     public static FormBuilder create(int id) {
         return new FormBuilder(id);
+    }
+
+    public static FormBuilder create(FormKey key) {
+        FormBuilder builder = new FormBuilder(-1);
+        builder.key = key;
+        return builder;
+    }
+
+    public static FormBuilder create(String formKey) {
+        return create(new FormKey(formKey));
     }
 
     public FormBuilder menuName(String name) {
@@ -76,7 +88,7 @@ public class FormBuilder {
     }
 
     public Form build() {
-        Form form = new Form();
+        Form form = key != null ? new Form(key) : new Form();
         form.id = this.id;
         form.menuName = menuName;
         form.strengthMulti = strengthMulti;
