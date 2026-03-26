@@ -38,7 +38,7 @@ public class FormKey {
      * The key will be "custom/&lt;name&gt;" (lowercased).
      */
     public static FormKey custom(String name) {
-        return new FormKey("npcdbc:custom/", name);
+        return new FormKey("npcdbc:custom", name);
     }
 
     @Override

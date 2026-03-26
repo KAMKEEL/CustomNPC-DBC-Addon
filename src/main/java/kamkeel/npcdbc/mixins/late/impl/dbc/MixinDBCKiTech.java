@@ -264,7 +264,7 @@ public abstract class MixinDBCKiTech {
     private static void Ascend(KeyBinding K, CallbackInfo ci) {
         PlayerDBCInfo dbc = PlayerDataUtil.getClientDBCInfo();
         if (K.getIsKeyPressed()) {
-            if (dbc.selectedForm != -1)
+            if (dbc.hasSelectedForm())
                 ci.cancel();
 
             Form form = DBCData.getClient().getForm();
@@ -295,7 +295,7 @@ public abstract class MixinDBCKiTech {
 
 
         if (form != null) {
-            if (dbc.selectedForm != -1) {
+            if (dbc.hasSelectedForm()) {
             } else if (JRMCoreH.PlyrSettingsB(0)) {
                 if (dbcData.isForm(DBCForm.Kaioken))
                     return;
@@ -311,7 +311,7 @@ public abstract class MixinDBCKiTech {
 
 
             if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
-                DBCPacketHandler.Instance.sendToServer(new TransformPacket(-10, false));
+                DBCPacketHandler.Instance.sendToServer(new TransformPacket(TransformPacket.FULL_DESCEND));
             else {
                 if (form.requiredForm.containsKey((int) JRMCoreH.Race)) {
                     int id = dbcData.stats.getJRMCPlayerID();
@@ -319,7 +319,7 @@ public abstract class MixinDBCKiTech {
                     JRMCoreH.data2[id] = JRMCoreH.State + ";" + JRMCoreH.data2[id].split(";")[1];
                 }
 
-                DBCPacketHandler.Instance.sendToServer(new TransformPacket(-1, false));
+                DBCPacketHandler.Instance.sendToServer(new TransformPacket(TransformPacket.DESCEND));
             }
             ci.cancel();
 

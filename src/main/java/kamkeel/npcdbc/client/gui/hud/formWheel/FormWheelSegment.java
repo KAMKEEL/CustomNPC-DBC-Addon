@@ -38,21 +38,40 @@ class FormWheelSegment extends WheelSegment {
     }
 
     public void selectForm() {
-        DBCPacketHandler.Instance.sendToServer(new DBCSelectForm(data.formID, data.isDBC));
+        if (!data.isDBC && form != null)
+            DBCPacketHandler.Instance.sendToServer(new DBCSelectForm(form));
+        else
+            DBCPacketHandler.Instance.sendToServer(new DBCSelectForm(data.formID, data.isDBC));
+    }
+
+    public void setForm(Form form, boolean updateServer) {
+        data.formID = form.id;
+        data.isDBC = false;
+        data.formKey = form.key != null ? form.key.toString() : "";
+        this.form = form;
+        if (updateServer)
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data));
+        icon = new FormIcon(parent, form);
     }
 
     public void setForm(int formID, boolean isDBC, boolean updateServer) {
         data.formID = formID;
         data.isDBC = isDBC;
-        form = !data.isDBC ? (Form) FormController.getInstance().get(data.formID) : null;
+        data.formKey = "";
+        form = !isDBC ? (Form) FormController.getInstance().get(formID) : null;
         if (updateServer)
             DBCPacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data));
-        icon = form != null ? new FormIcon(parent, form) : new FormIcon(parent, data.formID);
+        icon = form != null ? new FormIcon(parent, form) : new FormIcon(parent, formID);
     }
 
     public void setForm(FormWheelData data, boolean updateServer) {
         this.data = data;
-        form = !data.isDBC ? (Form) FormController.getInstance().get(data.formID) : null;
+        if (!data.isDBC && !data.formKey.isEmpty())
+            form = FormController.getInstance().getFromKey(data.formKey);
+        else if (!data.isDBC)
+            form = (Form) FormController.getInstance().get(data.formID);
+        else
+            form = null;
         if (updateServer)
             DBCPacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data));
         icon = form != null ? new FormIcon(parent, form) : new FormIcon(parent, data.formID);

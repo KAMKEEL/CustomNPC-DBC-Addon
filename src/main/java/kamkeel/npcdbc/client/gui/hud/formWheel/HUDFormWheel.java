@@ -8,6 +8,7 @@ import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -267,8 +268,15 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
                 if (form != null && selectForm.selectedFormID == form.id)
                     return;
 
-
-                slot.setForm(selectForm.selectedFormID, selectForm.isDBC, true);
+                if (!selectForm.isDBC) {
+                    Form selected = (Form) FormController.getInstance().get(selectForm.selectedFormID);
+                    if (selected != null)
+                        slot.setForm(selected, true);
+                    else
+                        slot.setForm(selectForm.selectedFormID, false, true);
+                } else {
+                    slot.setForm(selectForm.selectedFormID, true, true);
+                }
             } else if (selectForm.removeForm) {
                 int slotID = selectForm.buttonID == 8 ? hoveredSlot : selectForm.buttonID;
                 FormWheelSegment slot = wheelSlot[slotID];
@@ -337,7 +345,7 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
                     mc.mouseHelper.grabMouseCursor();
                 }
             } else {
-                DBCPacketHandler.Instance.sendToServer(new DBCSelectForm(-1, false));
+                DBCPacketHandler.Instance.sendToServer(new DBCSelectForm(null));
                 close();
             }
         } else {
@@ -412,8 +420,17 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
                     }
                 }
 
-                if (newForm != -1)
-                    slot.setForm(newForm, slot.data.isDBC, true);
+                if (newForm != -1) {
+                    if (!slot.data.isDBC) {
+                        Form next = (Form) FormController.getInstance().get(newForm);
+                        if (next != null)
+                            slot.setForm(next, true);
+                        else
+                            slot.setForm(newForm, false, true);
+                    } else {
+                        slot.setForm(newForm, true, true);
+                    }
+                }
             }
         }
         if (isClosing && guiAnimationScale >= 0) {

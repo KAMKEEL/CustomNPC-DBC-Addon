@@ -53,8 +53,8 @@ public class NetworkUtility {
         PlayerDataUtil.sendFormDBCInfo((EntityPlayerMP) player, useMenuName);
         PlayerDBCInfo data = ((IPlayerDBCInfo) PlayerDataController.Instance.getPlayerData(player)).getPlayerDBCInfo();
         NBTTagCompound compound = new NBTTagCompound();
-        if (data != null && data.selectedForm != -1) {
-            Form customForm = (Form) FormController.getInstance().get(data.selectedForm);
+        if (data != null && data.hasSelectedForm()) {
+            Form customForm = data.getSelectedForm();
             if (customForm != null)
                 compound = customForm.writeToNBT();
         }
