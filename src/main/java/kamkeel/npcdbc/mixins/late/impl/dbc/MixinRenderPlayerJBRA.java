@@ -11,6 +11,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+import kamkeel.npcdbc.AddonRegistries;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.api.Color;
@@ -367,7 +368,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
         if (addonRace == null) return;
 
-        IRaceRenderer renderer = addonRace.registry.getRenderer(addonRace);
+        IRaceRenderer renderer = AddonRegistries.Races.getRenderer(addonRace);
         if (renderer == null) return;
 
         double renderX = par1AbstractClientPlayer.lastTickPosX
@@ -810,7 +811,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         Race addonRace = info.getRace();
         if (addonRace == null) return;
 
-        IRaceRenderer renderer = addonRace.registry.getRenderer(addonRace);
+        IRaceRenderer renderer = AddonRegistries.Races.getRenderer(addonRace);
         if (renderer == null) return;
 
         DBCData data = DBCData.get(par1EntityPlayer);

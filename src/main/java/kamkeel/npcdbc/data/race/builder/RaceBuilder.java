@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.data.race.builder;
 
+import kamkeel.npcdbc.AddonRegistries;
 import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.constants.enums.EnumDBCAttributes;
@@ -8,13 +9,12 @@ import kamkeel.npcdbc.constants.enums.EnumDBCStats;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.race.display.*;
-import kamkeel.npcdbc.data.race.registry.RaceRegistry;
 import kamkeel.npcdbc.data.race.progression.FormTree;
 import kamkeel.npcdbc.data.race.progression.RaceSkill;
-import kamkeel.npcdbc.data.race.registry.RaceRegistry;
 import kamkeel.npcdbc.data.race.stats.ClassStats;
 import kamkeel.npcdbc.data.race.stats.RaceStats;
 import kamkeel.npcs.controllers.data.ability.Ability;
+import kamkeel.npcs.util.Register;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.EnumMap;
@@ -26,7 +26,6 @@ public class RaceBuilder {
     private final String name;
     private final String menuName;
 
-    private RaceRegistry registry;
     private RaceSkill skill;
     private RaceStats stats = new RaceStats();
     private RaceDisplay display = new RaceDisplay();
@@ -70,13 +69,12 @@ public class RaceBuilder {
     public ClassStatsBuilder forClass(EnumDBCClasses raceClass) {
         return new ClassStatsBuilder(this, raceClass);
     }
-
-    public RaceBuilder registry(RaceRegistry registry) {
-        this.registry = registry;
-        return this;
-    }
-
+    
     public Race build() {
+        return build(null);
+    }
+    
+    public Race build(AddonRegistries.Races registry) {
         if (skill == null)
             throw new IllegalStateException("Race '" + name + "' is missing a racial skill.");
 
@@ -85,8 +83,12 @@ public class RaceBuilder {
                 branch.setUnlockLevel(skill.getBranchUnlockLevel(branch));
             }
         }
-
-        return new Race(id, name, menuName, registry, display, stats, skill, formTree);
+        
+        Race race = new Race(id, name, menuName,display, stats, skill, formTree);
+        if(registry != null) 
+            registry.register(race);
+        
+        return race;
     }
 
     // ══════════════════════════════════════════════════════════
