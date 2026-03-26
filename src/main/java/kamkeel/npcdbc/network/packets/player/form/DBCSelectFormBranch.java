@@ -48,7 +48,7 @@ public final class DBCSelectFormBranch extends AbstractPacket {
             return;
 
         PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
-        info.selectedFormBranch = branchIndex;
+        info.setSelectedFormBranch(branchIndex); 
 
         DBCDataRace raceData = DBCData.get(player).addonRace;
         if (raceData != null && raceData.isCustomRace()) {

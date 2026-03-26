@@ -49,8 +49,9 @@ public class PlayerDBCInfo {
     public HashSet<Integer> unlockedAuras = new HashSet<Integer>();
 
     public int currentRace = -1;
+    
     /** Addon-side branch cursor for multi-branch custom race FormTrees. 0 = first branch (default). */
-    public int selectedFormBranch = 0;
+    private int selectedFormBranch = 0;
 
     public HashSet<Integer> unlockedForms = new HashSet<Integer>();
     public HashMap<Integer, Float> formLevels = new HashMap<Integer, Float>();
@@ -113,17 +114,14 @@ public class PlayerDBCInfo {
         if (wheelSlot <= 5 && wheelSlot >= 0)
             formWheel[wheelSlot].reset();
     }
-
-
-
+    
     public Form getForm(int id) {
         if (unlockedForms.contains(id))
             return (Form) FormController.getInstance().get(id);
 
         return null;
     }
-
-
+    
     public boolean hasSelectedForm() {
         return selectedFormKey != null && getSelectedForm() != null;
     }
@@ -243,6 +241,15 @@ public class PlayerDBCInfo {
             formLevels.clear();
 
         for (FormWheelData formWheelData : formWheel) formWheelData.reset();
+    }
+
+    
+    public void setSelectedFormBranch(int selectedFormBranch) {
+        this.selectedFormBranch = selectedFormBranch;
+    }
+    
+    public int getSelectedFormBranch() {
+        return selectedFormBranch;
     }
 
     /// /////////////////////////////////////////////

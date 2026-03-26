@@ -61,7 +61,7 @@ public class MixinJRMCoreHDBCRace {
             // ── Label path: show current branch/form info ──
             String label = race.getMenuName();
             FormTree.Branch branch = race.skill.resolveActiveBranch(race.formTree, raceData.getRacialSkillLevel(),
-                    formData.selectedFormBranch);
+                    formData.getSelectedFormBranch());
 
             if (branch != null && !branch.getName().isEmpty())
                 label += "\n" + branch.getName();
@@ -71,7 +71,7 @@ public class MixinJRMCoreHDBCRace {
             // ── Action path: cycle to next unlocked branch ──
             // Multi-branch: cycle to next unlocked branch
             int nextIdx = race.skill.getNextUnlockedBranchIndex(race.formTree, raceData.getRacialSkillLevel(),
-                    formData.selectedFormBranch);
+                    formData.getSelectedFormBranch());
 
             if (nextIdx >= 0)
                 DBCPacketHandler.Instance.sendToServer(new DBCSelectFormBranch(nextIdx));
