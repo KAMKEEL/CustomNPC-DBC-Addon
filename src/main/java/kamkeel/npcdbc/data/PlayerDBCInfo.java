@@ -14,7 +14,6 @@ import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.data.form.FormMasteryLinkData;
 import kamkeel.npcdbc.data.overlay.OverlayManager;
 import kamkeel.npcdbc.data.race.Race;
-import kamkeel.npcdbc.data.skill.RacialSkillContainer;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.util.NBTHelper;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -49,7 +48,7 @@ public class PlayerDBCInfo {
 
     public int currentRace = -1;
     /** Addon-side branch cursor for multi-branch custom race FormTrees. 0 = first branch (default). */
-    public int selectedBranchIndex = 0;
+    public int selectedFormBranch = 0;
 
     public HashSet<Integer> unlockedForms = new HashSet<Integer>();
     public HashMap<Integer, Float> formLevels = new HashMap<Integer, Float>();
