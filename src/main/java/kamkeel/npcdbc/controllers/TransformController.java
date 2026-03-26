@@ -243,13 +243,13 @@ public class TransformController {
             return;
         }
 
-        if (formData.isCustomRace() && form.hasKey()) {
-            if (!formData.hasRacialForm(form.getKeyString())) {
-                LogWriter.error(String.format("Player %s tried to transform into racial form \"%s\" (ID: %d) but it is not valid for their progression",
-                    player.getCommandSenderName(), form.getName(), formID));
-                return;
-            }
-        }
+//        if (formData.isCustomRace() && form.hasKey()) {
+//            if (!formData.hasRacialForm(form.getKeyString())) {
+//                LogWriter.error(String.format("Player %s tried to transform into racial form \"%s\" (ID: %d) but it is not valid for their progression",
+//                    player.getCommandSenderName(), form.getName(), formID));
+//                return;
+//            }
+//        }
 
         Form stackedForm = getStackForm(data.getForm(), form);
         if (stackedForm != null)

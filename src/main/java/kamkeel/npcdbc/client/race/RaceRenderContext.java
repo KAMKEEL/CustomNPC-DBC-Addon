@@ -4,12 +4,10 @@ import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.race.Race;
-import kamkeel.npcdbc.data.race.display.BodyState;
-import kamkeel.npcdbc.data.race.display.ColorLayer;
-import kamkeel.npcdbc.data.race.display.ColorSlot;
+import kamkeel.npcdbc.data.race.display.DisplayComponent;
+import kamkeel.npcdbc.data.race.display.DisplayLayer;
 import kamkeel.npcdbc.data.race.display.RaceDisplay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -43,8 +41,6 @@ public class RaceRenderContext {
     public boolean isFirstPersonArm;
     public int armAnimationId = -1;
 
-    private BodyState activeBodyState;
-
     public RaceRenderContext(Entity entity, double x, double y, double z,
                              float yaw, float partialTicks,
                              RenderPlayerJBRA renderer, ModelBipedDBC model,
@@ -61,87 +57,51 @@ public class RaceRenderContext {
         this.race = race;
     }
 
-    // ── BodyState ─────────────────────────────────────────────────────────────
-
-//    public void setActiveBodyState(BodyState bodyState) {
-//        this.activeBodyState = bodyState;
-//    }
-//
-//    public void setActiveBodyState(String stateId) {
-//        RaceDisplay display = race != null ? race.display : null;
-//        this.activeBodyState = display != null ? display.getBodyState(stateId) : null;
-//    }
-//
-//    public BodyState getActiveBodyState() { return activeBodyState; }
-
-    // ── Layer access ──────────────────────────────────────────────────────────
+    // ── Component access ───────────────────────────────────────────────────────
 
     /**
-     * Returns a {@link LayerColorView} for the named top-level layer, respecting
-     * the active {@link BodyState}. The view resolves each slot's color through
-     * the BodyState override chain → raw DBC field.
+     * Returns a {@link ComponentColorView} for the named top-level component.
+     * The view resolves each layer's color through the raw DBC fields.
      * <p>
      * Example:
      * <pre>{@code
-     * int main = ctx.getLayer("body").getColor("bodycm");
-     * int left = ctx.getLayer("face").getSubLayer("eyes").getColor("lefteye");
+     * int main = ctx.getComponent("body").getColor("bodycm");
+     * int left = ctx.getComponent("face").getSubComponent("eyes").getColor("lefteye");
      * }</pre>
      *
-     * @param layerId top-level layer id (e.g. {@link ColorLayer#BODY})
-     * @return a view over the layer, or an empty no-op view if the layer is absent
+     * @param componentId top-level component id (e.g. {@link RaceDisplay#COMPONENT_BODY})
+     * @return a view over the component, or an empty no-op view if absent
      */
-    public LayerColorView getLayer(String layerId) {
+    public ComponentColorView getComponent(String componentId) {
         RaceDisplay display = race != null ? race.display : null;
-        ColorLayer layer = null;
-
-        if (display != null) {
-            // State overrides first, then parent display
-            if (activeBodyState != null) {
-                layer = activeBodyState.resolveLayer(layerId, display);
-            } else {
-                layer = display.getLayer(layerId);
-            }
-        }
-        return new LayerColorView(layer, display);
+        DisplayComponent component = display != null ? display.getComponent(componentId) : null;
+        return new ComponentColorView(component);
     }
 
     // ── Color resolution (internal) ───────────────────────────────────────────
 
     /**
-     * Resolves the color for a given slot id.
-     * <ol>
-     *   <li>Active {@link BodyState} color override, if any.</li>
-     *   <li>Raw DBC field mapped to the slot.</li>
-     * </ol>
-     * Returns {@code 0} for unrecognised slots.
+     * Resolves the color for a given layer id from the raw DBC fields.
+     * Returns {@code 0} for unrecognised layer ids.
      */
-    int resolveColor(String slotId) {
-        if (activeBodyState != null && race != null) {
-            Color override = activeBodyState.resolveColorOverride(slotId, race.display);
-            if (override != null) return override.color;
-        }
-        return getRawColor(slotId);
+    int resolveColor(String layerId) {
+        return getRawColor(layerId);
     }
 
     /**
-     * Returns the raw DBC field value for the given slot id, bypassing any
-     * active {@link BodyState} overrides.
+     * Returns the raw DBC field value for the given layer id
      */
-    public int getRawColor(String slotId) {
-        switch (slotId.toLowerCase()) {
-            case ColorSlot.BODY_CM:   return bodyCM;
-            case ColorSlot.BODY_C1:   return bodyC1;
-            case ColorSlot.BODY_C2:   return bodyC2;
-            case ColorSlot.BODY_C3:   return bodyC3;
-            case ColorSlot.EYES:
-            case ColorSlot.LEFT_EYE:  return eyeC1;
-            case ColorSlot.RIGHT_EYE: return eyeC2;
-            default:                  return 0;
+    public int getRawColor(String layerId) {
+        switch (layerId.toLowerCase()) {
+            case RaceDisplay.LAYER_BODY_CM: return bodyCM;
+            case RaceDisplay.LAYER_BODY_C1: return bodyC1;
+            case RaceDisplay.LAYER_BODY_C2: return bodyC2;
+            case RaceDisplay.LAYER_BODY_C3: return bodyC3;
+            case RaceDisplay.LAYER_EYE:
+            case RaceDisplay.LAYER_LEFT_EYE: return eyeC1;
+            case RaceDisplay.LAYER_RIGHT_EYE: return eyeC2;
+            default: return 0;
         }
-    }
-
-    public boolean hasColorOverride(String slotId) {
-        return activeBodyState != null && activeBodyState.hasColorOverride(slotId);
     }
 
     // ── Utilities ─────────────────────────────────────────────────────────────
@@ -151,57 +111,79 @@ public class RaceRenderContext {
     }
 
     // ══════════════════════════════════════════════════════════════════════════
-    // LayerColorView
+    // ComponentColorView
     // ══════════════════════════════════════════════════════════════════════════
 
     /**
-     * A thin view over a {@link ColorLayer} that resolves slot colors through
-     * the active BodyState override chain and the raw DBC fields.
+     * A thin view over a {@link DisplayComponent} that resolves layer colors
+     * through the active BodyState override chain and the raw DBC fields.
      * <p>
-     * Obtain via {@link RaceRenderContext#getLayer(String)}.
+     * Obtain via {@link RaceRenderContext#getComponent(String)}.
      */
-    public final class LayerColorView {
+    public final class ComponentColorView {
 
-        private final ColorLayer  layer;
-        private final RaceDisplay display;
+        private final DisplayComponent component;
 
-        LayerColorView(ColorLayer layer, RaceDisplay display) {
-            this.layer   = layer;
-            this.display = display;
+        ComponentColorView(DisplayComponent component) {
+            this.component = component;
         }
 
         /**
-         * Returns the resolved color for the given slot id in this layer.
-         * Resolution: BodyState override → raw DBC field → 0.
+         * Returns the resolved color for the given layer id in this component.
+         * Checks that the layer exists in this component before resolving.
+         * Returns {@code 0} if the component is absent or the layer is not declared.
          *
-         * @param slotId one of the {@link ColorSlot} constants
+         * @param layerId one of the {@link RaceDisplay} LAYER_* constants
          */
-        public int getColor(String slotId) {
-            if (layer != null && !layer.hasSlot(slotId)) return 0;
-            return resolveColor(slotId);
+        public int getColor(String layerId) {
+            if (component == null || !component.hasLayer(layerId)) return 0;
+            return resolveColor(layerId);
         }
 
         /**
-         * Returns whether this layer declares the given slot id.
-         * Always {@code false} for a missing/null layer.
+         * Returns whether this component declares the given layer id.
+         * Always {@code false} for a missing/null component.
          */
-        public boolean hasSlot(String slotId) {
-            return layer != null && layer.hasSlot(slotId);
+        public boolean hasLayer(String layerId) {
+            return component != null && component.hasLayer(layerId);
         }
 
         /**
-         * Returns a view over a direct sub-layer of this layer.
-         * Example: {@code ctx.getLayer("face").getSubLayer("eyes").getColor("lefteye")}
+         * Returns the underlying {@link DisplayLayer} for the given id,
+         * or {@code null} if absent.
+         */
+        public DisplayLayer getLayer(String layerId) {
+            return component != null ? component.getLayer(layerId) : null;
+        }
+
+        /**
+         * Returns a view over the sub-component of this component.
+         * Example: {@code ctx.getComponent("face").getSubComponent().getColor("lefteye")}
          *
-         * @param subLayerId the child layer id
-         * @return a view over the sub-layer, or an empty view if absent
+         * @return a view over the sub-component, or an empty view if none is set
          */
-        public LayerColorView getSubLayer(String subLayerId) {
-            ColorLayer sub = layer != null ? layer.getSubLayer(subLayerId) : null;
-            return new LayerColorView(sub, display);
+        public ComponentColorView getSubComponent() {
+            DisplayComponent sub = component != null ? component.getSubComponent() : null;
+            return new ComponentColorView(sub);
         }
 
-        /** Returns the underlying {@link ColorLayer}, or {@code null} if absent. */
-        public ColorLayer getColorLayer() { return layer; }
+        /**
+         * Returns a view over the sub-component by id.
+         * Checks that the sub-component's id matches before returning it.
+         * Returns an empty view if absent or id does not match.
+         *
+         * @param subComponentId the expected sub-component id
+         */
+        public ComponentColorView getSubComponent(String subComponentId) {
+            if (component == null) return new ComponentColorView(null);
+            DisplayComponent sub = component.getSubComponent();
+            if (sub == null || !sub.id.equals(subComponentId.toLowerCase())) {
+                return new ComponentColorView(null);
+            }
+            return new ComponentColorView(sub);
+        }
+
+        /** Returns the underlying {@link DisplayComponent}, or {@code null} if absent. */
+        public DisplayComponent getDisplayComponent() { return component; }
     }
 }

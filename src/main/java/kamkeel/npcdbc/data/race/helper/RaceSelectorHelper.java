@@ -3,7 +3,8 @@ package kamkeel.npcdbc.data.race.helper;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.controllers.RaceController;
 import kamkeel.npcdbc.data.race.Race;
-import kamkeel.npcdbc.data.race.display.ColorPreset;
+import kamkeel.npcdbc.data.race.display.DisplayComponent;
+import kamkeel.npcdbc.data.race.display.RaceDisplay;
 
 import java.util.Arrays;
 import java.util.List;
@@ -212,12 +213,17 @@ public final class RaceSelectorHelper {
         return result;
     }
 
+    /**
+     * Builds the expanded customSknLimitsBCP array.
+     * Uses {@link RaceDisplay#bodyColorPresetCount} which is auto-derived
+     * by {@link RaceDisplay#syncCreatorMetadata()} from the body component's presetCount.
+     */
     private static int[] buildExpandedSkinLimitsBCP(List<Race> customRaces, int totalCount) {
         int[] vanilla = JRMCoreH.customSknLimitsBCP;
         int[] result = Arrays.copyOf(vanilla, totalCount);
         for (int i = 0; i < customRaces.size(); i++) {
             Race race = customRaces.get(i);
-            result[VANILLA_RACE_COUNT + i] = Math.max(1, race.display.getColorPresets().size());
+            result[VANILLA_RACE_COUNT + i] = Math.max(1, race.display.bodyColorPresetCount);
         }
         return result;
     }
@@ -246,29 +252,29 @@ public final class RaceSelectorHelper {
      * <p>
      * For custom races, body color data is synthesized from the display model:
      * <ul>
-     *   <li>If the race has {@link kamkeel.npcdbc.data.race.display.ColorPreset}s,
-     *       each preset provides one row of body colors.</li>
-     *   <li>If no presets exist, all rows are filled with the per-slot
-     *       default colors declared via
-     *       {@link kamkeel.npcdbc.data.race.display.RaceDisplay#setDefaultColor}.</li>
+     *   <li>Row 0 is always the default colors declared on each body layer.</li>
+     *   <li>Row p (p >= 1) reads preset index {@code p - 1} from each layer via
+     *       {@link RaceDisplay#buildBodyColorRowForPreset(int)}.
+     *       If a layer has fewer presets than expected (not yet normalized),
+     *       it falls back to the layer's default color.</li>
      * </ul>
+     * Call {@link DisplayComponent#normalizeLayerPresets()} on the body component
+     * before registration to guarantee all layers have a consistent preset count.
      */
     private static int[][][] buildExpandedDefBodyCols(List<Race> customRaces, int totalCount) {
         int[][][] vanilla = JRMCoreH.defbodycols;
         int presetCount = vanilla.length;
         int[][][] result = new int[presetCount][totalCount][];
+
         for (int p = 0; p < presetCount; p++) {
             for (int r = 0; r < vanilla[p].length && r < totalCount; r++) {
                 result[p][r] = vanilla[p][r];
             }
             for (int i = 0; i < customRaces.size(); i++) {
                 Race race = customRaces.get(i);
-                List<ColorPreset> presets = race.display.getColorPresets();
                 result[p][VANILLA_RACE_COUNT + i] = (p == 0)
                     ? race.display.buildDefaultBodyColorRow()
-                    : (!presets.isEmpty() && (p - 1) < presets.size())
-                        ? race.display.buildBodyColorRow(presets.get(p - 1))
-                        : race.display.buildDefaultBodyColorRow();
+                    : race.display.buildBodyColorRowForPreset(p - 1);
             }
         }
         return result;

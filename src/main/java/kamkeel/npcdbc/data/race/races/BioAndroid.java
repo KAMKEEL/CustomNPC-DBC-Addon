@@ -6,7 +6,6 @@ import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.race.builder.FormBuilder;
 import kamkeel.npcdbc.data.race.builder.FormTreeBuilder;
 import kamkeel.npcdbc.data.race.builder.RaceBuilder;
-import kamkeel.npcdbc.data.race.display.ColorSlot;
 import kamkeel.npcdbc.data.race.progression.FormTree;
 
 import kamkeel.npcdbc.data.race.registry.RaceRegistry;
@@ -33,7 +32,7 @@ public class BioAndroid {
         .menuName("Max")
         .strengthMulti(8.0f).dexMulti(7.0f).willMulti(6.0f)
         .build();
-    
+
     public static final Form GOD = FormBuilder.create(FormKey.of(BIO_ANDROID_NS, "god"))
         .menuName("God")
         .strengthMulti(8.0f).dexMulti(7.0f).willMulti(6.0f)
@@ -41,7 +40,7 @@ public class BioAndroid {
 
     public static final FormTree BIO_ANDROID_FORMS = FormTreeBuilder.create(BIO_ANDROID_NS)
         .branch(SEMI_PERFECT).child(PERFECT).child(MAX)
-        .branch(GOD)                                                        
+        .branch(GOD)
         .build();
 
     public static final Race RACE = RaceRegistry.INSTANCE.register(RaceBuilder.create(6, "bio_android", "Bio-Android", BIO_ANDROID_NS)
@@ -57,13 +56,13 @@ public class BioAndroid {
         .display()
             .renderer("npcdbc:bio_android")
             .hairType("X")
-            .bodyColorSlots(4)
-            .defaultColor(ColorSlot.LEFT_EYE, 0xff00ff)
-            .defaultColor(ColorSlot.RIGHT_EYE, 0xff00ff)
-            .defaultColor(ColorSlot.BODY_CM, 0x568D32)
-            .defaultColor(ColorSlot.BODY_C1, 0xB7C913)
-            .defaultColor(ColorSlot.BODY_C2, 0xFCB054)
-            .defaultColor(ColorSlot.BODY_C3, 0x909CC4)
+//            .bodyColorSlots(4)
+//            .defaultColor(ColorSlot.LEFT_EYE, 0xff00ff)
+//            .defaultColor(ColorSlot.RIGHT_EYE, 0xff00ff)
+//            .defaultColor(ColorSlot.BODY_CM, 0x568D32)
+//            .defaultColor(ColorSlot.BODY_C1, 0xB7C913)
+//            .defaultColor(ColorSlot.BODY_C2, 0xFCB054)
+//            .defaultColor(ColorSlot.BODY_C3, 0x909CC4)
             .and()
     );
 }
