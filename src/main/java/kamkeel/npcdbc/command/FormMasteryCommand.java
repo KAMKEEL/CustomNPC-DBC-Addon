@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.command;
 
+import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.scripted.DBCAPI;
@@ -64,9 +65,9 @@ public class FormMasteryCommand extends CommandKamkeelBase {
                 return;
             }
 
-            info.addFormLevel(form.id, amount);
+            info.addFormLevel(form.getKeyString(), amount);
             info.updateClient();
-            sendResult(sender, String.format("\u00A7b%s's\u00A7e mastery of \u00A77'%s'\u00A7e was adjusted by \u00A77%s §d(%s)", playerdata.playername, form.getName(), amount, info.getFormLevel(form.id)));
+            sendResult(sender, String.format("\u00A7b%s's\u00A7e mastery of \u00A77'%s'\u00A7e was adjusted by \u00A77%s §d(%s)", playerdata.playername, form.getName(), amount, info.getFormLevel(form.getKeyString())));
 
             return;
         }
@@ -109,9 +110,9 @@ public class FormMasteryCommand extends CommandKamkeelBase {
                 return;
             }
 
-            info.setFormLevel(form.id, amount);
+            info.setFormLevel(form.getKeyString(), amount);
             info.updateClient();
-            sendResult(sender, String.format("\u00A7b%s's\u00A7e mastery of \u00A77'%s'\u00A7e was set to §d%s", playerdata.playername, form.getName(), info.getFormLevel(form.id)));
+            sendResult(sender, String.format("\u00A7b%s's\u00A7e mastery of \u00A77'%s'\u00A7e was set to §d%s", playerdata.playername, form.getName(), info.getFormLevel(form.getKeyString())));
 
             return;
         }
@@ -150,9 +151,9 @@ public class FormMasteryCommand extends CommandKamkeelBase {
                 return;
             }
 
-            info.addFormLevel(form.id, amount);
+            info.addFormLevel(form.getKeyString(), amount);
             info.updateClient();
-            sendResult(sender, String.format("\u00A7b%s's\u00A7e mastery of \u00A77'%s'\u00A7e was adjusted by \u00A77%s §d(%s)", playerdata.playername, form.getName(), amount, info.getFormLevel(form.id)));
+            sendResult(sender, String.format("\u00A7b%s's\u00A7e mastery of \u00A77'%s'\u00A7e was adjusted by \u00A77%s §d(%s)", playerdata.playername, form.getName(), amount, info.getFormLevel(form.getKeyString())));
 
             return;
         }
@@ -191,9 +192,9 @@ public class FormMasteryCommand extends CommandKamkeelBase {
                 return;
             }
 
-            info.setFormLevel(form.id, amount);
+            info.setFormLevel(form.getKeyString(), amount);
             info.updateClient();
-            sendResult(sender, String.format("\u00A7b%s's\u00A7e mastery of \u00A77'%s'\u00A7e was set to §d%s", playerdata.playername, form.getName(), info.getFormLevel(form.id)));
+            sendResult(sender, String.format("\u00A7b%s's\u00A7e mastery of \u00A77'%s'\u00A7e was set to §d%s", playerdata.playername, form.getName(), info.getFormLevel(form.getKeyString())));
 
             return;
         }
@@ -214,12 +215,12 @@ public class FormMasteryCommand extends CommandKamkeelBase {
 
             sendResult(sender, "--------------------");
             sendResult(sender, String.format("§b%s's §emastery:", playerdata.playername));
-            for (int id : info.unlockedForms) {
-                Form form = info.getForm(id);
+            for (String formKey : info.unlockedForms) {
+                Form form = FormController.getInstance().getFromKey(formKey);
                 if (form == null)
                     continue;
 
-                float formLevel = info.getFormLevel(form.id);
+                float formLevel = info.getFormLevel(form);
                 float formMaxLevel = form.getMastery().getMaxLevel();
                 String formatted = new DecimalFormat("#.##").format(formLevel / formMaxLevel * 100);
 

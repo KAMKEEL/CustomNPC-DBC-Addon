@@ -132,7 +132,7 @@ public final class DBCSelectForm extends AbstractPacket {
             if (form == null)
                 form = (Form) FormController.getInstance().get(formID);
 
-            if (form != null && formData.hasFormUnlocked(form.id)) {
+            if (form != null && formData.hasFormUnlocked(form.getKeyString())) {
                 formData.setSelectedForm(form);
                 NetworkUtility.sendServerMessage(player, "§a", "npcdbc.formSelect", " ", form.getMenuName());
                 compound = form.writeToNBT();

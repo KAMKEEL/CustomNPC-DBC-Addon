@@ -221,8 +221,8 @@ public class ServerEventHandler {
 
 
         // Updates form Timer
-        if (formData.hasTimer(form.id)) {
-            formData.decrementTimer(form.id);
+        if (formData.hasTimer(form.getKeyString())) {
+            formData.decrementTimer(form.getKeyString());
             if (player.ticksExisted % 20 == 0)
                 formData.updateClient();
         }

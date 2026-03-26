@@ -2,10 +2,13 @@ package kamkeel.npcdbc.util;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 public class NBTHelper {
@@ -95,6 +98,179 @@ public class NBTHelper {
     @FunctionalInterface
     public interface KeepConditionCallback<Param1, Param2> {
         boolean check(Param1 param1, Param2 param2);
+    }
+
+    // ──────────────────────────────────────────────────────────────────
+    //  String-keyed write helpers
+    // ──────────────────────────────────────────────────────────────────
+
+    /**
+     * Serialises a {@code HashSet<String>} into an {@link NBTTagList} of {@code TAG_STRING} entries.
+     */
+    public static NBTTagList nbtStringSet(HashSet<String> set) {
+        NBTTagList list = new NBTTagList();
+        if (set != null) {
+            for (String s : set) {
+                if (s != null)
+                    list.appendTag(new NBTTagString(s));
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Serialises a {@code Map<String, Float>} into an {@link NBTTagList} of {@code TAG_COMPOUND}
+     * entries, each with a {@code "key"} string and a {@code "level"} float.
+     */
+    public static NBTTagList nbtStringFloatMap(Map<String, Float> map) {
+        NBTTagList list = new NBTTagList();
+        if (map != null) {
+            for (Map.Entry<String, Float> entry : map.entrySet()) {
+                if (entry.getKey() == null) continue;
+                NBTTagCompound tag = new NBTTagCompound();
+                tag.setString("key", entry.getKey());
+                tag.setFloat("level", entry.getValue());
+                list.appendTag(tag);
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Serialises a {@code Map<String, Integer>} into an {@link NBTTagList} of {@code TAG_COMPOUND}
+     * entries, each with a {@code "key"} string and a {@code "value"} int.
+     */
+    public static NBTTagList nbtStringIntMap(Map<String, Integer> map) {
+        NBTTagList list = new NBTTagList();
+        if (map != null) {
+            for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                if (entry.getKey() == null) continue;
+                NBTTagCompound tag = new NBTTagCompound();
+                tag.setString("key", entry.getKey());
+                tag.setInteger("value", entry.getValue());
+                list.appendTag(tag);
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Serialises a {@code Map<String, V>} into an {@link NBTTagList} of {@code TAG_COMPOUND}
+     * entries, each with a {@code "key"} string and a {@code "Content"} sub-compound produced by
+     * {@code toNBT}.
+     */
+    public static <V> NBTTagList nbtStringObjectMap(Map<String, V> map, Function<V, NBTTagCompound> toNBT) {
+        return nbtStringObjectMap(map, toNBT, (k, v) -> true);
+    }
+
+    /**
+     * Serialises a {@code Map<String, V>} with an optional keep-condition filter.
+     */
+    public static <V> NBTTagList nbtStringObjectMap(Map<String, V> map, Function<V, NBTTagCompound> toNBT, BiPredicate<String, V> keepCondition) {
+        NBTTagList list = new NBTTagList();
+        if (map != null) {
+            for (Map.Entry<String, V> entry : map.entrySet()) {
+                String key = entry.getKey();
+                V value = entry.getValue();
+                if (key == null || value == null) continue;
+                if (!keepCondition.test(key, value)) continue;
+                NBTTagCompound tag = new NBTTagCompound();
+                tag.setString("key", key);
+                tag.setTag("Content", toNBT.apply(value));
+                list.appendTag(tag);
+            }
+        }
+        return list;
+    }
+
+    // ──────────────────────────────────────────────────────────────────
+    //  String-keyed read helpers
+    // ──────────────────────────────────────────────────────────────────
+
+    /**
+     * Reads a {@code HashSet<String>} from an {@link NBTTagList} of {@code TAG_STRING} entries.
+     */
+    public static HashSet<String> getStringSet(NBTTagList list) {
+        HashSet<String> set = new HashSet<>();
+        if (list != null && list.func_150303_d() == Constants.NBT.TAG_STRING) {
+            for (int i = 0; i < list.tagCount(); i++) {
+                String s = list.getStringTagAt(i);
+                if (s != null && !s.isEmpty())
+                    set.add(s);
+            }
+        }
+        return set;
+    }
+
+    /**
+     * Reads a {@code HashMap<String, Float>} from an {@link NBTTagList} of {@code TAG_COMPOUND}
+     * entries that each have a {@code "key"} string and a {@code "level"} float.
+     */
+    public static HashMap<String, Float> getStringFloatMap(NBTTagList list) {
+        HashMap<String, Float> map = new HashMap<>();
+        if (list != null && list.func_150303_d() == Constants.NBT.TAG_COMPOUND) {
+            for (int i = 0; i < list.tagCount(); i++) {
+                NBTTagCompound tag = list.getCompoundTagAt(i);
+                if (tag.hasKey("key")) {
+                    String key = tag.getString("key");
+                    float level = tag.getFloat("level");
+                    if (!key.isEmpty())
+                        map.put(key, level);
+                }
+            }
+        }
+        return map;
+    }
+
+    /**
+     * Reads a {@code HashMap<String, Integer>} from an {@link NBTTagList} of {@code TAG_COMPOUND}
+     * entries that each have a {@code "key"} string and a {@code "value"} int.
+     */
+    public static HashMap<String, Integer> getStringIntMap(NBTTagList list) {
+        HashMap<String, Integer> map = new HashMap<>();
+        if (list != null && list.func_150303_d() == Constants.NBT.TAG_COMPOUND) {
+            for (int i = 0; i < list.tagCount(); i++) {
+                NBTTagCompound tag = list.getCompoundTagAt(i);
+                if (tag.hasKey("key")) {
+                    String key = tag.getString("key");
+                    int value = tag.getInteger("value");
+                    if (!key.isEmpty())
+                        map.put(key, value);
+                }
+            }
+        }
+        return map;
+    }
+
+    /**
+     * Reads a {@code HashMap<String, V>} from an {@link NBTTagList} of {@code TAG_COMPOUND}
+     * entries that each have a {@code "key"} string and a {@code "Content"} sub-compound.
+     *
+     * @param fromNBT       converts the {@code "Content"} compound into a value
+     * @param keepCondition optional filter; return {@code true} to keep the entry
+     */
+    public static <V> HashMap<String, V> getStringObjectMap(NBTTagList list, Function<NBTTagCompound, V> fromNBT, BiPredicate<String, V> keepCondition) {
+        HashMap<String, V> map = new HashMap<>();
+        if (list != null && list.func_150303_d() == Constants.NBT.TAG_COMPOUND) {
+            for (int i = 0; i < list.tagCount(); i++) {
+                NBTTagCompound tag = list.getCompoundTagAt(i);
+                if (tag.hasKey("key")) {
+                    String key = tag.getString("key");
+                    NBTTagCompound content = tag.getCompoundTag("Content");
+                    V value = fromNBT.apply(content);
+                    if (!key.isEmpty() && keepCondition.test(key, value))
+                        map.put(key, value);
+                }
+            }
+        }
+        return map;
+    }
+
+    /**
+     * Convenience overload without keep-condition.
+     */
+    public static <V> HashMap<String, V> getStringObjectMap(NBTTagList list, Function<NBTTagCompound, V> fromNBT) {
+        return getStringObjectMap(list, fromNBT, (k, v) -> true);
     }
 
 }

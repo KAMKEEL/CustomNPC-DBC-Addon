@@ -53,18 +53,18 @@ public class TransformController {
     public static void Ascend(Form form) {
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
         Form currentForm = DBCData.getForm(player);
-        if (cantTransform || (rage > 0 && transformed) || currentForm != null && currentForm.getID() == form.id)
+        if (cantTransform || (rage > 0 && transformed) || currentForm != null && currentForm.getKeyString() == form.getKeyString())
             return;
         dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
         if (dbcData == null || JRMCoreH.curRelease <= 0 || JRMCoreH.curEnergy <= 0)
             return;
 
-        float formLevel = PlayerDataUtil.getClientDBCInfo().getFormLevel(form.id);
+        float formLevel = PlayerDataUtil.getClientDBCInfo().getFormLevel(form.getKeyString());
         time++;
         releaseTime++;
         TransformController.setAscending(true);
         rageValue = getRageMeterIncrementation(form, formLevel);
-        rage += rageValue;
+        rage += rageValue*5;
         JRMCoreH.TransSaiCurRg = (byte) rage;
         DBCPacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage));
 
@@ -257,9 +257,9 @@ public class TransformController {
         if (stackedForm != null)
             form = stackedForm;
 
-        if (!formData.isInForm(form.id)) {
+        if (!formData.isInForm(form.getKeyString())) {
             DBCData dbcData = DBCData.get(player);
-            boolean allowBypass = form.mastery.canInstantTransform(formData.getFormLevel(form.id)) && ConfigDBCGameplay.InstantTransform;
+            boolean allowBypass = form.mastery.canInstantTransform(formData.getFormLevel(form.getKeyString())) && ConfigDBCGameplay.InstantTransform;
             if (!allowBypass) {
                 // Check for in Required DBC Form before Transforming
                 if (form.requiredForm.containsKey((int) dbcData.Race)) {
@@ -267,7 +267,7 @@ public class TransformController {
                         return;
                 } else {
                     // Must be in Parent Form to Transform
-                    if (form.isFromParentOnly() && form.parentID != -1 && !formData.isInForm(form.parentID))
+                    if (form.isFromParentOnly() && form.parentID != -1 && !formData.isInForm(form.parentKey))
                         return;
                 }
             }
@@ -317,7 +317,7 @@ public class TransformController {
             formData.setCurrentForm(form);
 
             if (form.hasTimer())
-                formData.addTimer(form.id, form.getTimer());
+                formData.addTimer(form.getKeyString(), form.getTimer());
 
             formData.updateClient();
             NetworkUtility.sendInfoMessage(player, "§a", "npcdbc.transform", "§r ", form.getMenuName());
@@ -337,7 +337,7 @@ public class TransformController {
             DBCData dbcData = DBCData.get(player);
 
             Form parent = (Form) form.getParent();
-            boolean intoParent = parent != null && formData.hasFormUnlocked(form.getParentID());
+            boolean intoParent = parent != null && formData.hasFormUnlocked(parent.getKeyString());
 
             if (!intoParent && !form.stackable.vanillaStackable) {
                 if (JRMCoreH.rSai(dbcData.Race) && (dbcData.State == 7 || dbcData.State == 8)) {
@@ -384,7 +384,7 @@ public class TransformController {
                 } else if (intoParent) {
                     NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descend", "§r ", form.getParent().getMenuName());
                     formData.setCurrentForm((Form) form.getParent());
-                } else if (formData.getTimer(form.id) == 0) {
+                } else if (formData.getTimer(form.getKeyString()) == 0) {
                     NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.timeExpired");
                 } else {
                     NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descendFrom", "§r ", form.getMenuName());

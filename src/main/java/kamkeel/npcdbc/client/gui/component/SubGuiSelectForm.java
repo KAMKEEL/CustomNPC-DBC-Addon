@@ -29,6 +29,7 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
     public boolean confirmed = false;
     public boolean selectionChild;
     public int selectedFormID = -1;
+    public String selectedFormKey = null;
     public int buttonID = -1;
     public boolean isDBC;
     public boolean removeForm = false;
@@ -102,10 +103,13 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
 
         if (id == 0 && selected != null) {
             confirmed = true;
-            if (page == 0)
+            if (page == 0) {
                 selectedFormID = data.get(selected);
-            else
+                selectedFormKey = selected;
+            } else {
                 selectedFormID = stateIDs.get(scrollForms.selected).byteValue();
+                selectedFormKey = null;
+            }
             isDBC = page == 1;
             this.close();
         }

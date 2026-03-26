@@ -75,8 +75,8 @@ public class PlayerDataUtil {
         PlayerDBCInfo data = ((IPlayerDBCInfo) PlayerDataController.Instance.getPlayerData(player)).getPlayerDBCInfo();
 
         Map<String, Integer> map = new HashMap<String, Integer>();
-        for (int formID : data.unlockedForms) {
-            Form form = (Form) FormController.getInstance().get(formID);
+        for (String formKey : data.unlockedForms) {
+            Form form = FormController.getInstance().getFromKey(formKey);
             if (form != null) {
                 map.put(useMenuName ? form.menuName : form.name, form.id);
             }

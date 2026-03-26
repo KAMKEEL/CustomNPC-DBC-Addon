@@ -1111,9 +1111,9 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         Form form = controller.getForm();
         if (form != null) {
-            mastery = controller.getDBCInfo().getFormLevel(form.id);
-            if (spectator.getDBCInfo().hasFormUnlocked(form.id))
-                mastery = ValueUtil.clamp(mastery + spectator.getDBCInfo().getFormLevel(form.id), 0, form.mastery.getMaxLevel());
+            mastery = controller.getDBCInfo().getFormLevel(form);
+            if (spectator.getDBCInfo().hasFormUnlocked(form.getKeyString()))
+                mastery = ValueUtil.clamp(mastery + spectator.getDBCInfo().getFormLevel(form), 0, form.mastery.getMaxLevel());
         }
         return mastery;
     }
@@ -1271,8 +1271,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         PlayerDBCInfo formData = getDBCInfo();
         FormController formController = FormController.getInstance();
-        for (int formID : formData.unlockedForms) {
-            IForm form = formController.get(formID);
+        for (String formKey : formData.unlockedForms) {
+            IForm form = formController.getFromKey(formKey);
             if (form != null)
                 mindBonus -= form.getMindRequirement();
         }
@@ -1299,7 +1299,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             return null;
 
         PlayerDBCInfo info = getDBCInfo();
-        return info.configuredFormColors.get(form.id);
+        return info.configuredFormColors.get(form.getKeyString());
     }
 
     public int getColor(String type) {
