@@ -727,11 +727,21 @@ public class PlayerDBCInfo {
             configuredFormColors.put(form.id, colors);
     }
 
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    // RACE
     public boolean isCustomRace() {
         return currentRace > -1 && RaceController.getInstance().has(currentRace);
     }
 
     public Race getRace() {
         return RaceController.getInstance().get(currentRace);
+    }
+
+    public boolean hasRacialForm(String formKey) {
+        if (parent == null || parent.player == null)
+            return false;
+
+        return DBCData.get(parent.player).addonRace.hasForm(formKey);
     }
 }
