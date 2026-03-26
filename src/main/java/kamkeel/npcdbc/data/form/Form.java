@@ -187,7 +187,16 @@ public class Form implements IForm {
 
     @Override
     public void setName(String name) {
+        if (name == null || name.trim().isEmpty())
+            return;
+        if (!builtIn && FormController.Instance != null) {
+            Form existing = FormController.Instance.getFormFromName(name);
+            if (existing != null && existing.id != this.id)
+                return;
+        }
         this.name = name;
+        if (!builtIn)
+            key = FormKey.custom(name);
     }
 
     @Override

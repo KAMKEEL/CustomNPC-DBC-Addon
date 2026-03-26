@@ -4,6 +4,7 @@ import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.client.gui.component.SubGuiSetParents;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormKey;
 import net.minecraft.client.gui.GuiButton;
 import noppes.npcs.client.gui.SubGuiTagSelect;
 import noppes.npcs.client.gui.select.GuiSoundSelection;
@@ -215,13 +216,16 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
             if (form.id < 0)
                 guiNpcTextField.setText("");
             else {
-                String name = guiNpcTextField.getText();
-                if (name.isEmpty() || this.parent.getFormData().containsKey(name)) {
+                String name = guiNpcTextField.getText().trim();
+                boolean takenByOther = this.parent.getFormData().containsKey(name)
+                        && !name.equalsIgnoreCase(form.name);
+                if (name.isEmpty() || takenByOther) {
                     guiNpcTextField.setText(form.name);
                 } else if (form.id >= 0) {
                     String old = form.name;
                     this.parent.getFormData().remove(old);
                     form.name = name;
+                    form.key = FormKey.custom(name);
                     this.parent.getFormData().put(form.name, form.id);
                     this.parent.getFormScroll().replace(old, form.name);
                 }
