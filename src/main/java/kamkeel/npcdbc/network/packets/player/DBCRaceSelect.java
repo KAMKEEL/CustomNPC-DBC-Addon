@@ -3,6 +3,7 @@ package kamkeel.npcdbc.network.packets.player;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.RaceController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.PacketChannel;
@@ -64,7 +65,10 @@ public final class DBCRaceSelect extends AbstractPacket {
         }
         
         PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
+        DBCData data = DBCData.get(player);
         info.currentRace = raceID;
+        info.selectedBranchIndex = 0;
+        data.addonRaceID = raceID;
         info.updateClient();
     }
 }

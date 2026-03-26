@@ -35,17 +35,6 @@ public class DBCDataRace {
         return data.addonRaceID;
     }
 
-    public void assignRace(int raceID, PlayerDBCInfo info) {
-        if (raceID != -1 && !RaceController.getInstance().has(raceID))
-            return;
-
-        info.currentRace = raceID;
-        info.selectedBranchIndex = 0;
-        data.addonRaceID = raceID;
-
-        data.saveNBTData(true);
-    }
-
     public int getRacialSkillLevel() {
         if (!isCustomRace())
             return 0;
