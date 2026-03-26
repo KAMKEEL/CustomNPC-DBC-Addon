@@ -415,7 +415,7 @@ public class PlayerDBCInfo {
         configuredFormColors.clear();
 
         currentRace = -1;
-        selectedBranchIndex = 0;
+        selectedFormBranch = 0;
 
         DBCEffectController.getInstance().clearDBCEffects(parent.player);
         BonusController.getInstance().clearBonuses(parent.player);
@@ -453,7 +453,7 @@ public class PlayerDBCInfo {
         dbcCompound.setTag("UnlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
         
         dbcCompound.setInteger("CurrentRace", currentRace);
-        dbcCompound.setInteger("SelectedBranchIndex", selectedBranchIndex);
+        dbcCompound.setInteger("SelectedBranchIndex", selectedFormBranch);
 
         saveBonuses(dbcCompound);
 
@@ -481,7 +481,7 @@ public class PlayerDBCInfo {
         unlockedAuras = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedAuras", 10));
 
         currentRace =  dbcCompound.getInteger("CurrentRace");
-        selectedBranchIndex = dbcCompound.hasKey("SelectedBranchIndex") ? dbcCompound.getInteger("SelectedBranchIndex") : 0;
+        selectedFormBranch = dbcCompound.hasKey("SelectedBranchIndex") ? dbcCompound.getInteger("SelectedBranchIndex") : 0;
 
         if (dbcCompound.hasKey("ConfigurableFormColors"))
             configuredFormColors = NBTHelper.javaIntegerObjectMap(
