@@ -102,8 +102,15 @@ public class ClientEventHandler {
 
         DBCData dbcData = DBCData.getClient();
 
-        if (!form.raceEligible(dbcData.Race))
+        int effectiveRace = formData.isCustomRace() ? formData.currentRace : dbcData.Race;
+        if (!form.raceEligible(effectiveRace))
             return false;
+
+        if (formData.isCustomRace() && form.hasKey()) {
+            if (!formData.hasRacialForm(form.getKeyString()))
+                return false;
+        }
+
         if ((form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")) && DBCRace.isSaiyan(dbcData.Race) && !dbcData.hasTail())
             return false;
 
@@ -180,7 +187,8 @@ public class ClientEventHandler {
                         form = formData.getSelectedForm();
                         if (form != null) {
 
-                            if (!form.raceEligible(dbcData.Race)) {
+                            int effectiveRace = formData.isCustomRace() ? formData.currentRace : dbcData.Race;
+                            if (!form.raceEligible(effectiveRace)) {
                                 Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.raceIneligible"));
                                 return;
                             }

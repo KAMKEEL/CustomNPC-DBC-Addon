@@ -84,6 +84,7 @@ public class FormController implements IFormHandler {
                 setID++;
             }
             form.id = setID;
+            form.key = FormKey.custom(form.name);
             customForms.put(form.id, form);
             form.save();
             return form;
@@ -144,6 +145,9 @@ public class FormController implements IFormHandler {
                     form.save();
                 }
 
+                if (form.key == null)
+                    form.key = FormKey.custom(form.name);
+
                 customForms.put(form.id, form);
                 categoryManager.registerItem(form.id, catId);
             } catch (Exception e) {
@@ -184,9 +188,11 @@ public class FormController implements IFormHandler {
                 customForm.setName(customForm.getName() + "_");
         } else {
             Form existing = customForms.get(customForm.getID());
-            if (existing != null && !existing.name.equals(customForm.getName()))
+            if (existing != null && !existing.name.equals(customForm.getName())) {
                 while (hasName(customForm.getName()))
                     customForm.setName(customForm.getName() + "_");
+                ((Form) customForm).key = FormKey.custom(customForm.getName());
+            }
         }
 
         TagController.validateTagUUIDs(((Form) customForm).tagUUIDs);
@@ -230,6 +236,7 @@ public class FormController implements IFormHandler {
         String name = clone.name;
         while (hasName(name)) name += "_";
         clone.name = name;
+        clone.key = FormKey.custom(clone.name);
 
         if (originalCatId > CategoryManager.UNCATEGORIZED_ID) {
             categoryManager.registerItem(clone.id, originalCatId);

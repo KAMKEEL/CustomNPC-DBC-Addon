@@ -33,6 +33,14 @@ public class FormKey {
         return new FormKey(namespace, name);
     }
 
+    /**
+     * Creates a key for a user-created custom form.
+     * The key will be "custom/&lt;name&gt;" (lowercased).
+     */
+    public static FormKey custom(String name) {
+        return new FormKey("npcdbc:custom/", name);
+    }
+
     @Override
     public String toString() {
         return namespace + "/" + name;

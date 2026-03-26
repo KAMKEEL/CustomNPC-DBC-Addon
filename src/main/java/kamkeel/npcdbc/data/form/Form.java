@@ -187,7 +187,16 @@ public class Form implements IForm {
 
     @Override
     public void setName(String name) {
+        if (name == null || name.trim().isEmpty())
+            return;
+        if (!builtIn && FormController.Instance != null) {
+            Form existing = FormController.Instance.getFormFromName(name);
+            if (existing != null && existing.id != this.id)
+                return;
+        }
         this.name = name;
+        if (!builtIn)
+            key = FormKey.custom(name);
     }
 
     @Override
@@ -235,7 +244,14 @@ public class Form implements IForm {
     }
 
     public boolean raceEligible(EntityPlayer player) {
-        return raceEligible(DBCData.get(player).Race);
+        DBCData data = DBCData.get(player);
+        if (data == null)
+            return false;
+
+        if (data.addonRace != null && data.addonRace.isCustomRace())
+            return raceEligible(data.addonRace.getRaceID());
+
+        return raceEligible(data.Race);
     }
 
     @Override
