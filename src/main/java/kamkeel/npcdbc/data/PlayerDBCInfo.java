@@ -49,8 +49,9 @@ public class PlayerDBCInfo {
     public HashSet<Integer> unlockedAuras = new HashSet<Integer>();
 
     public int currentRace = -1;
+
     /** Addon-side branch cursor for multi-branch custom race FormTrees. 0 = first branch (default). */
-    public int selectedFormBranch = 0;
+    private int selectedFormBranch = 0;
 
     public HashSet<Integer> unlockedForms = new HashSet<Integer>();
     public HashMap<Integer, Float> formLevels = new HashMap<Integer, Float>();
@@ -114,15 +115,12 @@ public class PlayerDBCInfo {
             formWheel[wheelSlot].reset();
     }
 
-
-
     public Form getForm(int id) {
         if (unlockedForms.contains(id))
             return (Form) FormController.getInstance().get(id);
 
         return null;
     }
-
 
     public boolean hasSelectedForm() {
         return selectedFormKey != null && getSelectedForm() != null;
@@ -203,7 +201,7 @@ public class PlayerDBCInfo {
 
     public Form getSelectedForm() {
         if (selectedFormKey == null) return null;
-        
+
         Form f = FormController.Instance.getFromKey(selectedFormKey);
         if (f != null) return f;
         return null;
@@ -214,11 +212,8 @@ public class PlayerDBCInfo {
     }
 
     public void setSelectedForm(Form form) {
-        if (form == null) {
-            selectedFormKey = null;
-            return;
-        }
-        selectedFormKey = form.key != null ? form.key.toString() : FormKey.custom(form.name).toString();
+        selectedFormKey = form != null ? form.key.toString() : null;
+        selectedDBCForm = tempSelectedDBCForm = -1;
     }
 
     public void setSelectedForm(String key) {
@@ -227,6 +222,7 @@ public class PlayerDBCInfo {
 
     public void clearSelectedForm() {
         selectedFormKey = null;
+        selectedDBCForm = tempSelectedDBCForm = -1;
     }
 
     public void clearAllForms() {
@@ -243,6 +239,15 @@ public class PlayerDBCInfo {
             formLevels.clear();
 
         for (FormWheelData formWheelData : formWheel) formWheelData.reset();
+    }
+
+
+    public void setSelectedFormBranch(int selectedFormBranch) {
+        this.selectedFormBranch = selectedFormBranch;
+    }
+
+    public int getSelectedFormBranch() {
+        return selectedFormBranch;
     }
 
     /// /////////////////////////////////////////////
@@ -504,7 +509,7 @@ public class PlayerDBCInfo {
         dbcCompound.setInteger("CurrentAura", currentAura);
         dbcCompound.setInteger("SelectedAura", selectedAura);
         dbcCompound.setTag("UnlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
-        
+
         dbcCompound.setInteger("CurrentRace", currentRace);
         dbcCompound.setInteger("SelectedBranchIndex", selectedFormBranch);
 
@@ -544,7 +549,7 @@ public class PlayerDBCInfo {
             }
             dbcCompound.removeTag("SelectedForm");
         }
-        
+
         selectedDBCForm = dbcCompound.hasKey("SelectedDBCForm") ? dbcCompound.getInteger("SelectedDBCForm") : -1;
         lastFormBeforeStack = dbcCompound.hasKey("LastFormBeforeStack") ? dbcCompound.getInteger("LastFormBeforeStack") : -1;
         unlockedForms = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedForms", 10));

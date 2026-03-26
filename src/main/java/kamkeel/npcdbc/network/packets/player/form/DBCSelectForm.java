@@ -89,7 +89,6 @@ public final class DBCSelectForm extends AbstractPacket {
             if (formData.selectedDBCForm == -1 && !formData.hasSelectedForm())
                 return;
             formData.clearSelectedForm();
-            formData.selectedDBCForm = formData.tempSelectedDBCForm = -1;
             NetworkUtility.sendServerMessage(player, "§9", "npcdbc.clearedSelection");
         } else if (isDBC) {
             if (formID == formData.selectedDBCForm)
@@ -135,7 +134,6 @@ public final class DBCSelectForm extends AbstractPacket {
 
             if (form != null && formData.hasFormUnlocked(form.id)) {
                 formData.setSelectedForm(form);
-                formData.selectedDBCForm = formData.tempSelectedDBCForm = -1;
                 NetworkUtility.sendServerMessage(player, "§a", "npcdbc.formSelect", " ", form.getMenuName());
                 compound = form.writeToNBT();
             }

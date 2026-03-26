@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.data.race.builder;
 
+import kamkeel.npcdbc.AddonRegistries;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.form.FormKey;
@@ -66,8 +67,8 @@ public class FormBuilder {
     public FormBuilder child(int id) {
         this.childID = id;
         return this;
-    }  
-    
+    }
+
     public FormBuilder child(Form child) {
         this.childID = child.id;
         return this;
@@ -76,8 +77,8 @@ public class FormBuilder {
     public FormBuilder parent(int id) {
         this.parentID = id;
         return this;
-    } 
-    
+    }
+
     public FormBuilder parent(Form parent) {
         this.parentID = parent.id;
         return this;
@@ -88,6 +89,10 @@ public class FormBuilder {
     }
 
     public Form build() {
+        return build(null);
+    }
+
+    public Form build(AddonRegistries.Forms registry) {
         Form form = key != null ? new Form(key) : new Form();
         form.id = this.id;
         form.menuName = menuName;
@@ -97,6 +102,9 @@ public class FormBuilder {
         form.childID = childID;
         form.parentID = parentID;
         form.display = display;
+
+        if(registry != null)
+            registry.register(form);
         return form;
     }
 

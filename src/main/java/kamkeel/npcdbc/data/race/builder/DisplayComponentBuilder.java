@@ -1,8 +1,11 @@
 package kamkeel.npcdbc.data.race.builder;
 
 import kamkeel.npcdbc.api.Color;
+import kamkeel.npcdbc.client.race.RaceRenderContext;
 import kamkeel.npcdbc.data.race.display.DisplayComponent;
 import kamkeel.npcdbc.data.race.display.DisplayLayer;
+
+import java.util.function.Function;
 
 /**
  * Standalone fluent builder for a {@link DisplayComponent}.
@@ -118,6 +121,16 @@ public class DisplayComponentBuilder {
             return this;
         }
 
+        public LayerBuilder defaultColor(Color color) {
+            layer.setDefaultColor(color);
+            return this;
+        }
+
+        public LayerBuilder colorFunction(Function<RaceRenderContext, Color> function) {
+            layer.setColorFunction(function);
+            return this;
+        }
+
         public LayerBuilder addColorPreset(int color) {
             layer.addColorPreset(color);
             return this;
@@ -168,12 +181,12 @@ public class DisplayComponentBuilder {
             this.subParent = subParent;
         }
 
-        @Override public SubComponentLayerBuilder textureVariant(String p)  { layer.addTextureVariant(p);  return this; }
-        @Override public SubComponentLayerBuilder textureOverride(String p)  { layer.setTextureOverride(p); return this; }
-        @Override public SubComponentLayerBuilder colorOverride(int c)       { layer.setColorOverride(c);   return this; }
-        @Override public SubComponentLayerBuilder colorOverride(Color c)     { layer.setColorOverride(c);   return this; }
-        @Override public SubComponentLayerBuilder defaultColor(int c)        { layer.setDefaultColor(c);    return this; }
-        @Override public SubComponentLayerBuilder addColorPreset(int c)      { layer.addColorPreset(c);     return this; }
+        @Override public SubComponentLayerBuilder textureVariant(String p) { layer.addTextureVariant(p);  return this; }
+        @Override public SubComponentLayerBuilder textureOverride(String p) { layer.setTextureOverride(p); return this; }
+        @Override public SubComponentLayerBuilder colorOverride(int c) { layer.setColorOverride(c);   return this; }
+        @Override public SubComponentLayerBuilder colorOverride(Color c) { layer.setColorOverride(c);   return this; }
+        @Override public SubComponentLayerBuilder defaultColor(int c) { layer.setDefaultColor(c);    return this; }
+        @Override public SubComponentLayerBuilder addColorPreset(int c) { layer.addColorPreset(c);     return this; }
 
         public SubComponentBuilder andSub() { return subParent; }
     }

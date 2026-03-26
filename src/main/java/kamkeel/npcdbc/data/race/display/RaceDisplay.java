@@ -10,6 +10,7 @@ public class RaceDisplay {
     public static final String COMPONENT_BODY = "body";
     public static final String COMPONENT_FACE = "face";
     public static final String COMPONENT_EYES = "eyes";
+    public static final String COMPONENT_HAIR = "hair";
 
     // ── Built-in layer IDs ─────────────────────────────────────────────────────
     public static final String LAYER_BODY_CM = "bodycm";
@@ -17,8 +18,12 @@ public class RaceDisplay {
     public static final String LAYER_BODY_C2 = "bodyc2";
     public static final String LAYER_BODY_C3 = "bodyc3";
     public static final String LAYER_EYE = "eye";
+    public static final String LAYER_EYEBROWS = "eyebrows";
+    public static final String LAYER_EYEBASE = "eyebase";
     public static final String LAYER_LEFT_EYE = "lefteye";
     public static final String LAYER_RIGHT_EYE = "righteye";
+    public static final String LAYER_NOSE = "nose";
+    public static final String LAYER_MOUTH = "mouth";
     public static final String LAYER_HAIR = "hair";
     public static final String LAYER_FUR = "fur";
 
@@ -95,19 +100,28 @@ public class RaceDisplay {
     public RaceDisplay() {
         // Built-in body component: bodycm always present
         DisplayComponent bodyComponent = new DisplayComponent(COMPONENT_BODY, "Body");
-        bodyComponent.addLayer(new DisplayLayer(LAYER_BODY_CM, "Body Color Main"));
+        bodyComponent.addLayer(new DisplayLayer(LAYER_BODY_CM, "Body Main"));
         addComponent(bodyComponent);
 
         // Built-in eyes sub-component
         DisplayComponent eyesComponent = new DisplayComponent(COMPONENT_EYES, "Eyes");
-        eyesComponent.addLayer(new DisplayLayer(LAYER_EYE, "Eyes"));
         eyesComponent.addLayer(new DisplayLayer(LAYER_LEFT_EYE, "Left Eye"));
         eyesComponent.addLayer(new DisplayLayer(LAYER_RIGHT_EYE, "Right Eye"));
+        eyesComponent.addLayer(new DisplayLayer(LAYER_EYE, "Eyes"));
 
         // Built-in face component; eyes is its sub-component
         DisplayComponent faceComponent = new DisplayComponent(COMPONENT_FACE, "Face");
+        faceComponent.addLayer(new DisplayLayer(LAYER_EYEBASE, "Eye Base"));
+        faceComponent.addLayer(new DisplayLayer(LAYER_EYEBROWS, "Eyebrows"));
         faceComponent.setSubComponent(eyesComponent);
+        faceComponent.addLayer(new DisplayLayer(LAYER_NOSE, "Nose"));
+        faceComponent.addLayer(new DisplayLayer(LAYER_MOUTH, "Mouth"));
         addComponent(faceComponent);
+
+        // Built-in hair component: hair always present, visibility defined by renderer
+        DisplayComponent hairComponent = new DisplayComponent(COMPONENT_HAIR, "Hair");
+        hairComponent.addLayer(new DisplayLayer(LAYER_HAIR, "Hair"));
+        addComponent(hairComponent);
     }
 
     // ── Component management ───────────────────────────────────────────────────
@@ -332,24 +346,24 @@ public class RaceDisplay {
      * @param playerColors player-chosen colors indexed by body layer order;
      *                     may be {@code null} or shorter than the layer count
      */
-    public int[] buildBodyColorRow(int[] playerColors) {
-        List<String> layerIds = getBodyColorLayerIds();
-        DisplayComponent bodyComponent = getComponent(COMPONENT_BODY);
-        int[] row = new int[layerIds.size()];
-
-        for (int i = 0; i < layerIds.size(); i++) {
-            int playerColor = (playerColors != null && i < playerColors.length) ? playerColors[i] : 0;
-            if (bodyComponent != null) {
-                DisplayLayer layer = bodyComponent.getLayer(layerIds.get(i));
-                if (layer != null) {
-                    row[i] = layer.resolveColor(playerColor);
-                    continue;
-                }
-            }
-            row[i] = playerColor;
-        }
-        return row;
-    }
+    //    public int[] buildBodyColorRow(int[] playerColors) {
+    //        List<String> layerIds = getBodyColorLayerIds();
+    //        DisplayComponent bodyComponent = getComponent(COMPONENT_BODY);
+    //        int[] row = new int[layerIds.size()];
+    //
+    //        for (int i = 0; i < layerIds.size(); i++) {
+    //            int playerColor = (playerColors != null && i < playerColors.length) ? playerColors[i] : 0;
+    //            if (bodyComponent != null) {
+    //                DisplayLayer layer = bodyComponent.getLayer(layerIds.get(i));
+    //                if (layer != null) {
+    //                    row[i] = layer.resolveColor(playerColor);
+    //                    continue;
+    //                }
+    //            }
+    //            row[i] = playerColor;
+    //        }
+    //        return row;
+    //    }
 
     /** Builds the default body color row using each layer's default color. */
     public int[] buildDefaultBodyColorRow() {

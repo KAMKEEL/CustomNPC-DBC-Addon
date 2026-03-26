@@ -48,7 +48,7 @@ public final class DBCSelectFormBranch extends AbstractPacket {
             return;
 
         PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
-        info.selectedFormBranch = branchIndex;
+        info.setSelectedFormBranch(branchIndex);
 
         DBCDataRace raceData = DBCData.get(player).addonRace;
         if (raceData != null && raceData.isCustomRace()) {
@@ -56,7 +56,6 @@ public final class DBCSelectFormBranch extends AbstractPacket {
             Form firstForm = race.skill.getFirstUnlockedFormInBranch(race.formTree, raceData.getRacialSkillLevel(),branchIndex);
             if (firstForm != null) {
                 info.setSelectedForm(firstForm);
-                info.selectedDBCForm = info.tempSelectedDBCForm = -1;
                 info.updateClient();
             }
         }

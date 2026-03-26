@@ -63,11 +63,11 @@ public final class DBCRaceSelect extends AbstractPacket {
                     + " sent invalid addon race ID: " + raceID);
             return;
         }
-        
+
         PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
         DBCData data = DBCData.get(player);
         info.currentRace = raceID;
-        info.selectedFormBranch = 0;
+        info.setSelectedFormBranch(0);
         data.addonRaceID = raceID;
         info.updateClient();
     }

@@ -1,10 +1,12 @@
 package kamkeel.npcdbc.data.race.display;
 
 import kamkeel.npcdbc.api.Color;
+import kamkeel.npcdbc.client.race.RaceRenderContext;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * A single visual layer within a {@link DisplayComponent}.
@@ -49,12 +51,14 @@ public class DisplayLayer {
 
     /**
      * Default color for this layer. Used when no player color has been set.
-     * {@code null} means no default (falls back to 0).
+     * falls back to white.
      */
-    private Color defaultColor = null;
+    private Color defaultColor = new Color(0xFFFFFF);
+
+    private Function<RaceRenderContext, Color> colorFunction = null;
 
     public DisplayLayer(String id, String displayName) {
-        this.id          = id.toLowerCase();
+        this.id = id.toLowerCase();
         this.displayName = displayName;
     }
 
@@ -211,12 +215,28 @@ public class DisplayLayer {
         return defaultColor != null;
     }
 
+    // ── Color function ─────────────────────────────────────────────────────────
+
+    public DisplayLayer setColorFunction(Function<RaceRenderContext, Color> colorFunction) {
+        this.colorFunction = colorFunction;
+        return this;
+    }
+
+    public Function<RaceRenderContext, Color> getColorFunction() {
+        return colorFunction;
+    }
+
+    public boolean hasColorFunction() {
+        return colorFunction != null;
+    }
+
     /**
      * Resolves the effective color: override takes priority,
      * then default, then 0.
      */
-    public int resolveColor(int playerColor) {
-        if (colorOverride != null) return colorOverride.color;
-        return playerColor != 0 ? playerColor : getDefaultColor();
+    public int resolveColor(RaceRenderContext ctx) {
+        if (colorOverride != null) return getColorOverride().color;
+        if (colorFunction != null && colorFunction.apply(ctx) != null) return colorFunction.apply(ctx).color;
+        return getDefaultColor();
     }
 }
