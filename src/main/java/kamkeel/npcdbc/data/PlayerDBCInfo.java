@@ -212,11 +212,8 @@ public class PlayerDBCInfo {
     }
 
     public void setSelectedForm(Form form) {
-        if (form == null) {
-            selectedFormKey = null;
-            return;
-        }
-        selectedFormKey = form.key != null ? form.key.toString() : FormKey.custom(form.name).toString();
+        selectedFormKey = form != null ? form.key.toString() : null;
+        selectedDBCForm = tempSelectedDBCForm = -1;
     }
 
     public void setSelectedForm(String key) {
@@ -225,6 +222,7 @@ public class PlayerDBCInfo {
 
     public void clearSelectedForm() {
         selectedFormKey = null;
+        selectedDBCForm = tempSelectedDBCForm = -1;
     }
 
     public void clearAllForms() {
