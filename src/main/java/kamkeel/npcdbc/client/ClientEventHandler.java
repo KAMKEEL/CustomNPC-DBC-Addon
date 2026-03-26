@@ -130,7 +130,7 @@ public class ClientEventHandler {
             return allowBypass || form.requiredForm.get((int) dbcData.Race) == dbcData.State;
         } else {
             if (form.hasParent() && form.isFromParentOnly()) {
-                return allowBypass || form.parentID == formData.currentForm;
+                return allowBypass || formData.isInForm(form.parentID);
             }
         }
         return true;
@@ -202,7 +202,7 @@ public class ClientEventHandler {
                             } else {
                                 // Must be in Parent Form to Transform
                                 if (form.parentID != -1 && form.isFromParentOnly() && !allowBypass) {
-                                    if (form.parentID != formData.currentForm) {
+                                    if (!formData.isInForm(form.parentID)) {
                                         Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.transformFromParent"));
                                         return;
                                     }

@@ -329,7 +329,7 @@ public class MixinDBCPacketHandler {
         Form form = data.getForm();
         if (form != null) {
             if (!form.stackable.vanillaStackable && !isGoDAvailable.get() && !isMysticAvailable.get() && !isUIAvailable.get() && !isKaiokenAvailable.get()) {
-                dbc.currentForm = -1;
+                dbc.clearCurrentForm();
                 update = true;
             }
         }

@@ -238,7 +238,7 @@ public class TransformController {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         DBCData data = DBCData.getData(player);
 
-        int originalForm = formData.currentForm;
+        int originalForm = formData.isInCustomForm() ? formData.getCurrentForm().id : -1;
         if (!formData.hasForm(form)) {
             LogWriter.error(String.format("Potential exploiting: %s tried to transform into a form they don't have unlocked (\"%s\" - key: %s)",
                 player.getCommandSenderName(), form.getName(), formKey));
@@ -257,7 +257,7 @@ public class TransformController {
         if (stackedForm != null)
             form = stackedForm;
 
-        if (formData.currentForm != form.id) {
+        if (!formData.isInForm(form.id)) {
             DBCData dbcData = DBCData.get(player);
             boolean allowBypass = form.mastery.canInstantTransform(formData.getFormLevel(form.id)) && ConfigDBCGameplay.InstantTransform;
             if (!allowBypass) {
@@ -267,7 +267,7 @@ public class TransformController {
                         return;
                 } else {
                     // Must be in Parent Form to Transform
-                    if (form.isFromParentOnly() && form.parentID != -1 && form.parentID != formData.currentForm)
+                    if (form.isFromParentOnly() && form.parentID != -1 && !formData.isInForm(form.parentID))
                         return;
                 }
             }
@@ -286,8 +286,9 @@ public class TransformController {
             }
             // If new form doesn't use heat, residual heat is kept and decays passively
 
-            int prevID = formData.currentForm != 1 ? formData.currentForm : dbcData.State;
-            if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), formData.currentForm != 1, prevID, true, form.id)))
+            Form prevForm = formData.getCurrentForm();
+            int prevID = prevForm != null ? prevForm.id : dbcData.State;
+            if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), prevForm != null, prevID, true, form.id)))
                 return;
 
             PlaySound.play(new SoundSource(form.getAscendSound(), player));
@@ -313,7 +314,7 @@ public class TransformController {
 
             formData.lastFormBeforeStack = stackedForm != null ? originalForm : -1;
 
-            formData.currentForm = form.id;
+            formData.setCurrentForm(form);
 
             if (form.hasTimer())
                 formData.addTimer(form.id, form.getTimer());
@@ -344,8 +345,8 @@ public class TransformController {
                 }
             }
 
-            int prevID = formData.currentForm != 1 ? formData.currentForm : dbcData.State;
-            if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), formData.currentForm != 1, prevID, true, intoParent ? form.getParentID() : -1)))
+            int prevID = formData.isInCustomForm() ? form.id : dbcData.State;
+            if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), formData.isInCustomForm(), prevID, true, intoParent ? form.getParentID() : -1)))
                 return;
 
             PlaySound.play(new SoundSource(form.getDescendSound(), player));
@@ -365,10 +366,10 @@ public class TransformController {
                 dbcData.setAddonHeat(dbcData.addonCurrentHeat);
             }
             if (formID == FULL_DESCEND) {
-                formData.currentForm = -1;
+                formData.clearCurrentForm();
                 formData.lastFormBeforeStack = -1;
             } else if (form.requiredForm.containsKey((int) dbcData.Race)) {
-                formData.currentForm = -1;
+                formData.clearCurrentForm();
                 formData.lastFormBeforeStack = -1;
                 NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descend", "§r ", form.getMenuName());
                 dbcData.State = form.requiredForm.get((int) dbcData.Race);
@@ -379,15 +380,15 @@ public class TransformController {
                 if (realStackedFrom != -1 && FormController.Instance.has(realStackedFrom)) {
                     Form previousForm = (Form) FormController.Instance.get(realStackedFrom);
                     NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descend", "§r ", previousForm.getMenuName());
-                    formData.currentForm = realStackedFrom;
+                    formData.setCurrentForm(previousForm);
                 } else if (intoParent) {
                     NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descend", "§r ", form.getParent().getMenuName());
-                    formData.currentForm = form.getParentID();
+                    formData.setCurrentForm((Form) form.getParent());
                 } else if (formData.getTimer(form.id) == 0) {
                     NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.timeExpired");
                 } else {
                     NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descendFrom", "§r ", form.getMenuName());
-                    formData.currentForm = -1;
+                    formData.clearCurrentForm();
                 }
             }
 
