@@ -28,7 +28,7 @@ public interface IAuraData {
 
     public byte getRace();
 
-    public int getFormID();
+    public String getFormID();
 
     public byte getRelease();
 

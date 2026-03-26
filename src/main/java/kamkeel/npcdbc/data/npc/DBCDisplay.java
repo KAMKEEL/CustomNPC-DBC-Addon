@@ -806,8 +806,11 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
 
     @Override
-    public int getFormID() {
-        return formID;
+    public String getFormID() {
+        if (formID <= -1)
+            return null;
+        Form f = (Form) FormController.Instance.get(formID);
+        return f != null ? f.getKeyString() : null;
     }
 
     @Override

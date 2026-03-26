@@ -268,7 +268,7 @@ public class MixinRenderAura2 implements IRenderEntityAura2 {
             DBCData dbcData = DBCData.get((EntityPlayer) auraOwner);
             float size = JRMCoreHDBC.DBCsizeBasedOnRace2(dbcData.Race, dbcData.State);
 
-            if (dbcData.addonFormID > -1)
+            if (dbcData.currentFormKey != null)
                 s1.set(8.0f * size);
 
 

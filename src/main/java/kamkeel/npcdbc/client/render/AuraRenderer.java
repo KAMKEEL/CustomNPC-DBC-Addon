@@ -510,7 +510,7 @@ public class AuraRenderer extends RenderDBC {
             return sizeFactor * (float) ValueUtil.clamp(npc.display.modelSize, 1, 20) * (1f + (float) ValueUtil.clamp(npc.display.modelSize, 1, 20) / 15);
         }
 
-        if (data.getFormID() > -1 || race == DBCRace.NAMEKIAN && state == DBCForm.NamekGiant) {
+        if (data.getFormID() != null || race == DBCRace.NAMEKIAN && state == DBCForm.NamekGiant) {
             int release = data.getRelease();
             float size = JRMCoreHDBC.DBCsizeBasedOnRace2(race, state);
             float effectiveSize = size * ValueUtil.clamp(release, 15, 25) * 0.025f;

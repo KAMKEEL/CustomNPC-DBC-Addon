@@ -9,6 +9,7 @@ import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
+import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -238,12 +239,13 @@ public class SimplifiedDBCData implements ISimpleDBCData {
 
     @Override
     public boolean isInCustomForm() {
-        return dbcData.addonFormID > -1 && getCurrentForm() != null;
+        return dbcData.currentFormKey != null && getCurrentForm() != null;
     }
 
     @Override
     public boolean isInCustomForm(int id) {
-        return dbcData.addonFormID == id;
+        Form form = (Form) FormController.getInstance().get(id);
+        return form != null && form.getKeyString().equals(dbcData.currentFormKey);
     }
 
     @Override

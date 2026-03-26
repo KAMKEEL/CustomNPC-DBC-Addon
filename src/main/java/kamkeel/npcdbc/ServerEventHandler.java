@@ -171,7 +171,7 @@ public class ServerEventHandler {
         if (event.entityLiving.worldObj instanceof WorldServer && event.entityLiving instanceof EntityPlayer) {
             PlayerDBCInfo dbcInfo = PlayerDataUtil.getDBCInfo((EntityPlayer) event.entityLiving);
             DBCData dbcData = DBCData.get((EntityPlayer) event.entityLiving);
-            dbcData.addonFormID = -1;
+            dbcData.currentFormKey = null;
             dbcInfo.clearCurrentForm();
             dbcInfo.updateClient();
         }

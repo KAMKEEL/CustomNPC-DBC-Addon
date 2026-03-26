@@ -3,7 +3,9 @@ package kamkeel.npcdbc.client.gui.component;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
+import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -81,10 +83,10 @@ public class GuiRenderPlayer extends GuiScreen {
         inv.mainInventory[inv.currentItem] = null; //Removes held item
 
         boolean changeForm = (DBCForm != -1 || customFormID != -1), isGoD = false, isKaioken = false, isUI = false;
-        int oldForm = data.addonFormID;
+        String oldForm = data.currentFormKey;
         byte oldState = data.State, oldState2 = data.State2;
         FormDisplay.BodyColor oldColors = data.currentCustomizedColors;
-        data.addonFormID = -1; // Removes addon forms
+        data.currentFormKey = null; // Removes addon forms
         data.State = 0; // Removes DBC state
         data.State2 = 0; // Removes DBC state 2
 
@@ -94,8 +96,10 @@ public class GuiRenderPlayer extends GuiScreen {
         if (changeForm) {
             int id = DBCForm;
 
-            if (customFormID != -1)
-                data.addonFormID = customFormID;
+            if (customFormID != -1) {
+                Form lookupForm = (Form) FormController.getInstance().get(customFormID);
+                data.currentFormKey = lookupForm != null ? lookupForm.getKeyString() : null;
+            }
             else if (id < 20)
                 data.State = (byte) id;
             else if (isKaioken = id >= Kaioken && id <= Kaioken6) {
@@ -159,7 +163,7 @@ public class GuiRenderPlayer extends GuiScreen {
         glPopMatrix();
 
 
-        data.addonFormID = oldForm;
+        data.currentFormKey = oldForm;
         data.State = oldState;
         data.State2 = oldState2;
         data.currentCustomizedColors = oldColors;
