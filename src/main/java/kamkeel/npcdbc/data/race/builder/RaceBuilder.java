@@ -5,6 +5,7 @@ import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.constants.enums.EnumDBCAttributes;
 import kamkeel.npcdbc.constants.enums.EnumDBCClasses;
 import kamkeel.npcdbc.constants.enums.EnumDBCStats;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.race.display.*;
 import kamkeel.npcdbc.data.race.registry.RaceRegistry;
@@ -123,25 +124,14 @@ public class RaceBuilder {
             return this;
         }
 
-        public SkillBuilder level(int level, IForm form) {
+        public SkillBuilder level(int level, Form form) {
             return level(level, form, defaultTPCost, defaultMindCost);
         }
 
-        public SkillBuilder level(int level, IForm form, int tpCost, int mindCost) {
+        public SkillBuilder level(int level, Form form, int tpCost, int mindCost) {
             if (form == null)
                 throw new IllegalArgumentException("Form must not be null for level " + level);
-            int formId = form.getID();
-            if (formId < 0)
-                throw new IllegalArgumentException("Form '" + form.getName() + "' has invalid ID " + formId);
-            return level(level, formId, tpCost, mindCost);
-        }
-
-        public SkillBuilder level(int level, int formId) {
-            return level(level, formId, defaultTPCost, defaultMindCost);
-        }
-
-        public SkillBuilder level(int level, int formId, int tpCost, int mindCost) {
-            RaceSkill.LevelEntry entry = new RaceSkill.LevelEntry(level, formId, tpCost, mindCost);
+            RaceSkill.LevelEntry entry = new RaceSkill.LevelEntry(level, form, tpCost, mindCost);
             if (levelEntries.containsKey(level))
                 throw new IllegalArgumentException("Duplicate racial skill entry for level " + level);
             levelEntries.put(level, entry);
