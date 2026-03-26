@@ -2,6 +2,7 @@ package kamkeel.npcdbc.data.race.registry;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.client.race.BioAndroidRaceRenderer;
 import kamkeel.npcdbc.client.race.IRaceRenderer;
 import kamkeel.npcdbc.controllers.RaceController;
 import kamkeel.npcdbc.data.form.FormRace;
@@ -16,6 +17,8 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class RaceRegistry extends Register<Race> {
+    public static final RaceRegistry INSTANCE = RaceRegistry.create("npcdbc", "DBC Addon");
+
     protected RaceRegistry(String namespace) {
         super("race", namespace);
     }
@@ -75,5 +78,10 @@ public class RaceRegistry extends Register<Race> {
     @SideOnly(Side.CLIENT)
     public IRaceRenderer getRenderer(Race race) {
         return getRenderer(race.display.rendererKey);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void registerClient(){
+        INSTANCE.registerRenderer("npcdbc:bio_android", new BioAndroidRaceRenderer());
     }
 }

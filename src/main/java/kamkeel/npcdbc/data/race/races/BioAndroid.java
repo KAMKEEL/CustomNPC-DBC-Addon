@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.data.race.registry;
+package kamkeel.npcdbc.data.race.races;
 
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.race.Race;
@@ -8,27 +8,24 @@ import kamkeel.npcdbc.data.race.builder.RaceBuilder;
 import kamkeel.npcdbc.data.race.display.ColorSlot;
 import kamkeel.npcdbc.data.race.progression.FormTree;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import kamkeel.npcdbc.client.race.BioAndroidRaceRenderer;
+import kamkeel.npcdbc.data.race.registry.RaceRegistry;
 
-public class DBCAddonRaces {
-    public static final RaceRegistry RACES = RaceRegistry.create("npcdbc", "DBC Addon");
+public class BioAndroid {
 
     private static final String BIO_ANDROID_NS = "npcdbc:bio_android";
 
     public static final Form SEMI_PERFECT = FormBuilder.create(1)
-        .menuName("\u00a7eSemi-Perfect")
+        .menuName("§eSemi-Perfect")
         .strengthMulti(2.0f).dexMulti(1.8f).willMulti(1.5f)
         .build();
 
     public static final Form PERFECT = FormBuilder.create(2)
-        .menuName("\u00a76Perfect")
+        .menuName("§6Perfect")
         .strengthMulti(4.0f).dexMulti(3.5f).willMulti(3.0f)
         .build();
 
     public static final Form MAX = FormBuilder.create(3)
-        .menuName("\u00a7cMax")
+        .menuName("§cMax")
         .strengthMulti(8.0f).dexMulti(7.0f).willMulti(6.0f)
         .build();
 
@@ -36,7 +33,7 @@ public class DBCAddonRaces {
         .branch(SEMI_PERFECT).child(PERFECT).child(MAX)
         .build();
 
-    public static final Race BIO_ANDROID = RACES.register(RaceBuilder.create(6, "bio_android", "Bio-Android", BIO_ANDROID_NS)
+    public static final Race RACE = RaceRegistry.INSTANCE.register(RaceBuilder.create(6, "bio_android", "Bio-Android", BIO_ANDROID_NS)
         .formTree(BIO_ANDROID_FORMS)
         .skill()
             .maxLevel(3)
@@ -57,13 +54,4 @@ public class DBCAddonRaces {
             .defaultColor(ColorSlot.BODY_C3, 0x909CC4)
             .and()
     );
-
-    public static void register() {
-        RACES.register();
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static void registerClient(){
-        RACES.registerRenderer("npcdbc:bio_android", new BioAndroidRaceRenderer());
-    }
 }
