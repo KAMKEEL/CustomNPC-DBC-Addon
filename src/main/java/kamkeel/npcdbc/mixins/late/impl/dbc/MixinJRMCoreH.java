@@ -60,7 +60,6 @@ import static JinRyuu.JRMCore.JRMCoreH.DBC;
 import static JinRyuu.JRMCore.JRMCoreH.DBCSkillNames;
 import static JinRyuu.JRMCore.JRMCoreH.DBCSkillsIDs;
 import static JinRyuu.JRMCore.JRMCoreH.KaiKFBal;
-import static JinRyuu.JRMCore.JRMCoreH.NC;
 import static JinRyuu.JRMCore.JRMCoreH.PlyrAttrbts;
 import static JinRyuu.JRMCore.JRMCoreH.Races;
 import static JinRyuu.JRMCore.JRMCoreH.SklLvl;
@@ -221,7 +220,7 @@ public abstract class MixinJRMCoreH {
         if (dbcData == null)
             return;
 
-        Form form = (Form) FormController.getInstance().get(dbcData.addonFormID);
+        Form form = FormController.getInstance().getFromKey(dbcData.currentFormKey);
         if (form == null)
             return;
 

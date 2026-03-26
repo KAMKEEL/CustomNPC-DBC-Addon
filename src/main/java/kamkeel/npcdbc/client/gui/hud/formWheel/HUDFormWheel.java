@@ -567,9 +567,9 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
         inv.mainInventory[inv.currentItem] = null; //Removes held item
 
         boolean changeForm = hoveredSlot != -1, isGoD = false, isKaioken = false, isUI = false;
-        int oldForm = data.addonFormID;
+        String oldForm = data.currentFormKey;
         byte oldState = data.State, oldState2 = data.State2;
-        data.addonFormID = -1; // Removes addon forms
+        data.currentFormKey = null; // Removes addon forms
         data.State = 0; // Removes DBC state
         data.State2 = 0; // Removes DBC state 2
 
@@ -578,7 +578,7 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
             int id = wheelData.formID;
 
             if (!wheelData.isDBC)
-                data.addonFormID = wheelSlot[hoveredSlot].data.formID;
+                data.currentFormKey = wheelSlot[hoveredSlot].data.formKey;
             else if (id < 20)
                 data.State = (byte) id;
             else if (isKaioken = id >= Kaioken && id <= Kaioken6) {
@@ -637,7 +637,7 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
         glPopMatrix();
 
 
-        data.addonFormID = oldForm;
+        data.currentFormKey = oldForm;
         data.State = oldState;
         data.State2 = oldState2;
         if (isKaioken)

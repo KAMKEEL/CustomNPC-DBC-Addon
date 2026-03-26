@@ -103,7 +103,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS = "", DNSHair = "", MajinAbsorptionData = "", Fusion = "";
 
     // Custom Form / Custom Aura
-    public int addonFormID = -1, auraID = -1, outlineID = -1;
+    public String currentFormKey = null;
+    public int auraID = -1, outlineID = -1;
     public float addonFormLevel = 0, addonCurrentHeat = 0;
 
     // Custom Race
@@ -225,7 +226,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         comp.setString("jrmcFuzion", Fusion);
         // DBC Addon
         comp.setInteger("addonRaceID", addonRaceID);
-        comp.setInteger("addonFormID", addonFormID);
+        comp.setString("addonFormID", currentFormKey != null ? currentFormKey : "");
         comp.setInteger("auraID", auraID);
         comp.setInteger("outlineID", outlineID);
 
@@ -297,10 +298,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             c.setInteger("addonRaceID", addonRaceID);
         addonRaceID = c.getInteger("addonRaceID");
 
-        if (!c.hasKey("addonFormID"))
-            c.setInteger("addonFormID", addonFormID);
-        addonFormID = c.getInteger("addonFormID");
 
+        currentFormKey = c.getString("currentFormKey");
         addonFormLevel = c.getFloat("addonFormLevel");
         addonCurrentHeat = c.getFloat("addonCurrentHeat");
 
@@ -410,11 +409,11 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         Form currentForm = formData.getCurrentForm();
-        addonFormID = currentForm != null ? currentForm.id : -1;
+        currentFormKey = currentForm != null ? currentForm.getKeyString() : null;
         addonFormLevel = formData.getCurrentLevel();
         auraID = formData.currentAura;
         addonRaceID = formData.currentRace;
-        nbt.setInteger("addonFormID", addonFormID);
+        nbt.setString("currentFormKey", currentFormKey != null ? currentFormKey : "");
         nbt.setFloat("addonFormLevel", addonFormLevel);
         nbt.setInteger("addonRaceID", addonRaceID);
         nbt.setInteger("auraID", auraID);
@@ -432,8 +431,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         // Save the DBC Addon tags to PlayerPersisted before loading it to fields
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
-        Form currentAddonForm = formData.getCurrentForm();
-        dbc.setInteger("addonFormID", currentAddonForm != null ? currentAddonForm.id : -1);
+        String formKey = formData.getCurrentFormKey();
+        dbc.setString("currentFormKey", formKey != null ? formKey : "");
         dbc.setInteger("auraID", formData.currentAura);
         dbc.setFloat("addonFormLevel", formData.getCurrentLevel());
         dbc.setInteger("addonRaceID", formData.currentRace);
@@ -943,7 +942,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public Form getForm() {
-        Form form = (Form) FormController.getInstance().get(addonFormID);
+        Form form = FormController.getInstance().getFromKey(currentFormKey);
         if (form != null) {
             Form fusionForm = (Form) FormController.getInstance().get(form.stackable.fusionID);
             if (fusionForm != null && stats.isFused())
@@ -1149,8 +1148,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     @Override
-    public int getFormID() {
-        return addonFormID;
+    public String getFormID() {
+        return currentFormKey;
     }
 
     @Override

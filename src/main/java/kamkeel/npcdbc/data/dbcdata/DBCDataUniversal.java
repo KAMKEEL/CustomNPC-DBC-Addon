@@ -77,8 +77,8 @@ public class DBCDataUniversal {
             if (dbcData == null)//(dbcData.Release <= 0 || dbcData.Ki <= 0)
                 return null;
 
-            int form = dbcData.addonFormID;
-            if (form == -1)
+            String formKey = dbcData.currentFormKey;
+            if (formKey == null)
                 return null;
 
 
