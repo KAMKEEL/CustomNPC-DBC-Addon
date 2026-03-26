@@ -20,32 +20,39 @@ public class BioAndroid {
     }
 
     public static final Form SEMI_PERFECT = FormBuilder.create(FormKey.of(BIO_ANDROID_NS, "semi_perfect"))
-        .menuName("§eSemi-Perfect")
+        .menuName("Semi-Perfect")
         .strengthMulti(2.0f).dexMulti(1.8f).willMulti(1.5f)
         .build();
 
     public static final Form PERFECT = FormBuilder.create(FormKey.of(BIO_ANDROID_NS, "perfect"))
-        .menuName("§6Perfect")
+        .menuName("Perfect")
         .strengthMulti(4.0f).dexMulti(3.5f).willMulti(3.0f)
         .build();
 
     public static final Form MAX = FormBuilder.create(FormKey.of(BIO_ANDROID_NS, "max"))
-        .menuName("§cMax")
+        .menuName("Max")
+        .strengthMulti(8.0f).dexMulti(7.0f).willMulti(6.0f)
+        .build();
+    
+    public static final Form GOD = FormBuilder.create(FormKey.of(BIO_ANDROID_NS, "god"))
+        .menuName("God")
         .strengthMulti(8.0f).dexMulti(7.0f).willMulti(6.0f)
         .build();
 
     public static final FormTree BIO_ANDROID_FORMS = FormTreeBuilder.create(BIO_ANDROID_NS)
         .branch(SEMI_PERFECT).child(PERFECT).child(MAX)
+        .branch(GOD)                                                        
         .build();
 
     public static final Race RACE = RaceRegistry.INSTANCE.register(RaceBuilder.create(6, "bio_android", "Bio-Android", BIO_ANDROID_NS)
         .formTree(BIO_ANDROID_FORMS)
-        .skill()
-            .maxLevel(3)
+        .racialSkill()
+            .maxLevel(4)
             .displayName("Evolution")
             .level(1, SEMI_PERFECT, 100, 10)
             .level(2, PERFECT, 200, 20)
             .level(3, MAX, 300, 30)
+            .level(4, GOD, 300, 30)
             .and()
         .display()
             .renderer("npcdbc:bio_android")

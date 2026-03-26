@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.data.race.progression;
 
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import noppes.npcs.LogWriter;
 
@@ -13,22 +14,13 @@ import java.util.Map;
 public class RaceSkill {
     public static final class LevelEntry {
         private final int level;
-        private final int formId;
+        private final Form form;
         private final int tpCost;
         private final int mindCost;
 
-        public LevelEntry(int level, int formId, int tpCost, int mindCost) {
-            if (level < 1 || level > 10)
-                throw new IllegalArgumentException("Level " + level + " out of range [1..10]");
-            if (formId < 0)
-                throw new IllegalArgumentException("Form ID must be non-negative, got " + formId);
-            if (tpCost < 0)
-                throw new IllegalArgumentException("TP cost must be non-negative, got " + tpCost);
-            if (mindCost < 0)
-                throw new IllegalArgumentException("Mind cost must be non-negative, got " + mindCost);
-
+        public LevelEntry(int level, Form form, int tpCost, int mindCost) {
             this.level = level;
-            this.formId = formId;
+            this.form = form;
             this.tpCost = tpCost;
             this.mindCost = mindCost;
         }
@@ -37,8 +29,12 @@ public class RaceSkill {
             return level;
         }
 
+        public Form form() {
+            return form;
+        }
+
         public int formId() {
-            return formId;
+            return form.id;
         }
 
         public int tpCost() {
@@ -77,10 +73,6 @@ public class RaceSkill {
         return maxLevel;
     }
 
-    /**
-     * Returns the display name for this racial skill shown in the GUI.
-     * Defaults to "SuperForm" to match vanilla Saiyan convention.
-     */
     public String getDisplayName() {
         return displayName;
     }
@@ -151,10 +143,6 @@ public class RaceSkill {
         return Collections.unmodifiableMap(toggles);
     }
 
-    public void addLevelEntry(int level, int formId, int tpCost, int mindCost) {
-        addLevelEntry(new LevelEntry(level, formId, tpCost, mindCost));
-    }
-
     public LevelEntry getEntry(int level) {
         return levelEntries.get(level);
     }
@@ -186,27 +174,20 @@ public class RaceSkill {
         }
         return total;
     }
-
-    public List<Integer> getFormIdsAtLevel(int level) {
-        LevelEntry entry = levelEntries.get(level);
-        if (entry == null)
-            return Collections.emptyList();
-        return Collections.singletonList(entry.formId());
-    }
-
-    public List<Integer> getUnlockedFormIds(int currentLevel) {
-        List<Integer> result = new ArrayList<Integer>();
+    
+    public List<Form> getUnlockedForms(int currentLevel) {
+        List<Form> result = new ArrayList<>();
         for (LevelEntry entry : levelEntries.values()) {
             if (entry.level() <= currentLevel)
-                result.add(entry.formId());
+                result.add(entry.form());
         }
         return Collections.unmodifiableList(result);
     }
 
-    public List<Integer> getAllFormIds() {
-        List<Integer> result = new ArrayList<Integer>();
+    public List<Form> getAllForms() {
+        List<Form> result = new ArrayList<>();
         for (LevelEntry entry : levelEntries.values()) {
-            result.add(entry.formId());
+            result.add(entry.form());
         }
         return Collections.unmodifiableList(result);
     }
@@ -218,4 +199,101 @@ public class RaceSkill {
     public boolean hasFormBindings() {
         return !levelEntries.isEmpty();
     }
+
+    public int getBranchUnlockLevel(FormTree.Branch branch) {
+        Form unlockAnchor = branch.getUnlockAnchor();
+        if (unlockAnchor != null) {
+            for (LevelEntry entry : levelEntries.values()) {
+                if (entry.form() == unlockAnchor) {
+                    return entry.level();
+                }
+            }
+        }
+        return 0;
+    }
+
+    // ─── Branch-aware progression queries ────────────────────────────────
+    // These operate on pure definition data (FormTree + skill level) and do
+    // not depend on runtime player state. DBCDataRace delegates here.
+
+    /**
+     * Returns branches whose {@link FormTree.Branch#getUnlockLevel()} is at most
+     * {@code skillLevel}. Branch unlock is determined at build time from the
+     * lowest skill-level binding for any form in the branch — it is NOT inferred
+     * from "any unlocked form happens to be in the branch."
+     */
+    public List<FormTree.Branch> getUnlockedBranches(FormTree tree, int skillLevel) {
+        if (tree == null)
+            return Collections.emptyList();
+
+        List<FormTree.Branch> result = new ArrayList<>();
+        for (FormTree.Branch branch : tree.getBranches()) {
+            if (branch.getUnlockLevel() <= skillLevel)
+                result.add(branch);
+        }
+        return result;
+    }
+
+    /**
+     * Resolves the active branch for the given selection index, falling back to
+     * the first unlocked branch if the stored index is invalid or locked.
+     */
+    public FormTree.Branch resolveActiveBranch(FormTree tree, int skillLevel, int selectedBranchIndex) {
+        if (tree == null)
+            return null;
+
+        List<FormTree.Branch> unlocked = getUnlockedBranches(tree, skillLevel);
+        if (unlocked.isEmpty())
+            return null;
+
+        if (selectedBranchIndex >= 0) {
+            FormTree.Branch stored = tree.getBranch(selectedBranchIndex);
+            if (stored != null && unlocked.contains(stored))
+                return stored;
+        }
+
+        return unlocked.get(0);
+    }
+    
+
+    /**
+     * Returns the global index of the next unlocked branch after the current one,
+     * wrapping around. Returns {@code -1} if there is only one unlocked branch.
+     */
+    public int getNextUnlockedBranchIndex(FormTree tree, int skillLevel, int selectedBranchIndex) {
+        if (tree == null)
+            return -1;
+
+        List<FormTree.Branch> allBranches = tree.getBranches();
+        List<FormTree.Branch> unlocked = getUnlockedBranches(tree, skillLevel);
+        if (unlocked.size() <= 1)
+            return -1;
+
+        FormTree.Branch current = resolveActiveBranch(tree, skillLevel, selectedBranchIndex);
+        int currentIdx = current != null ? allBranches.indexOf(current) : -1;
+        int total = allBranches.size();
+
+        for (int offset = 1; offset <= total; offset++) {
+            int candidateIdx = (currentIdx + offset) % total;
+            FormTree.Branch candidate = allBranches.get(candidateIdx);
+            if (unlocked.contains(candidate))
+                return candidateIdx;
+        }
+        return -1;
+    }
+
+    /**
+     * Returns the first unlocked form in the branch at {@code branchIndex}.
+     */
+    public Form getFirstUnlockedFormInBranch(FormTree tree, int skillLevel, int branchIndex) {
+        if (tree == null)
+            return null;
+
+        FormTree.Branch branch = tree.getBranch(branchIndex);
+        if (branch == null)
+            return null;
+
+        return branch.getFirstUnlockedForm(getUnlockedForms(skillLevel));
+    }
+ 
 }

@@ -22,12 +22,13 @@ public class FormTreeBuilder {
     }
 
     public BranchBuilder branch(Form rootForm) {
-        return branch(rootForm.name, rootForm);
+        return branch(rootForm.menuName, rootForm);
     }
 
     public BranchBuilder branch(String name, Form rootForm) {
         Branch branch = new Branch(name);
         branch.addForm(rootForm);
+        branch.setUnlockAnchor(rootForm);
         formTree.addBranch(branch);
         return new BranchBuilder(this, branch);
     }
@@ -60,6 +61,11 @@ public class FormTreeBuilder {
 
         public BranchBuilder child(Form form) {
             branch.addForm(form);
+            return this;
+        }
+
+        public BranchBuilder unlocksAt(Form form) {
+            branch.setUnlockAnchor(form);
             return this;
         }
 

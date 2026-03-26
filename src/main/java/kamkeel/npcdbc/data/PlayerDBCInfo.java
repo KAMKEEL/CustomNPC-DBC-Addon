@@ -48,8 +48,9 @@ public class PlayerDBCInfo {
     public HashSet<Integer> unlockedAuras = new HashSet<Integer>();
 
     public int currentRace = -1;
-    public RacialSkillContainer racialSkill = null;
-    
+    /** Addon-side branch cursor for multi-branch custom race FormTrees. 0 = first branch (default). */
+    public int selectedBranchIndex = 0;
+
     public HashSet<Integer> unlockedForms = new HashSet<Integer>();
     public HashMap<Integer, Float> formLevels = new HashMap<Integer, Float>();
     public HashMap<Integer, Integer> formTimers = new HashMap<>();
@@ -414,8 +415,8 @@ public class PlayerDBCInfo {
         configuredFormColors.clear();
 
         currentRace = -1;
-        racialSkill = null;
-        
+        selectedBranchIndex = 0;
+
         DBCEffectController.getInstance().clearDBCEffects(parent.player);
         BonusController.getInstance().clearBonuses(parent.player);
 
@@ -452,7 +453,8 @@ public class PlayerDBCInfo {
         dbcCompound.setTag("UnlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
         
         dbcCompound.setInteger("CurrentRace", currentRace);
-        
+        dbcCompound.setInteger("SelectedBranchIndex", selectedBranchIndex);
+
         saveBonuses(dbcCompound);
 
         dbcCompound.setTag("OverlayManager", overlayManager.writeToNBT());
@@ -479,7 +481,8 @@ public class PlayerDBCInfo {
         unlockedAuras = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedAuras", 10));
 
         currentRace =  dbcCompound.getInteger("CurrentRace");
-        
+        selectedBranchIndex = dbcCompound.hasKey("SelectedBranchIndex") ? dbcCompound.getInteger("SelectedBranchIndex") : 0;
+
         if (dbcCompound.hasKey("ConfigurableFormColors"))
             configuredFormColors = NBTHelper.javaIntegerObjectMap(
                 dbcCompound.getTagList("ConfigurableFormColors", Constants.NBT.TAG_COMPOUND),

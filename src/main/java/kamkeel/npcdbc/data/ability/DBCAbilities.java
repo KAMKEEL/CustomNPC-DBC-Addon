@@ -11,7 +11,7 @@ import kamkeel.npcdbc.data.ability.effect.DBCHealAbility;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.ability.conditions.ConditionRace;
 import kamkeel.npcdbc.data.race.Race;
-import kamkeel.npcdbc.data.race.registry.DBCAddonRaces;
+import kamkeel.npcdbc.data.race.races.BioAndroid;
 import kamkeel.npcs.controllers.data.ability.conditions.ConditionHPThreshold;
 import kamkeel.npcs.controllers.data.ability.conditions.ConditionThreshold;
 import kamkeel.npcs.controllers.data.ability.data.effect.AbilityCustomEffect;
@@ -69,7 +69,7 @@ public class DBCAbilities {
 
     // Effect Abilities
     public static final Ability NAMEK_REGEN = ABILITIES.register("namek_regen", () -> withRace(DBCHealAbility.NAMEKIAN.get(), DBCRace.NAMEKIAN));
-    public static final Ability BIO_ANDROID_REGEN = ABILITIES.register("bio_android_regen", () -> withCustomRace(DBCHealAbility.BIO_ANDROID.get(), DBCAddonRaces.BIO_ANDROID));
+    public static final Ability BIO_ANDROID_REGEN = ABILITIES.register("bio_android_regen", () -> withCustomRace(DBCHealAbility.BIO_ANDROID.get(), BioAndroid.RACE));
 
     private static Ability withSkill(Ability ability, DBCSkills skill) {
         ability.setPlayerRequirement(player -> DBCData.get(player).hasSkill(skill.getId()));

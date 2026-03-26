@@ -825,7 +825,7 @@ public abstract class MixinJRMCoreH {
                                 if (nameUnlockID.equals("Racial")) {
                                     nameFullUnlock = nbt.getString("jrmcSSltX");
                                     id = SklLvlX(1, nameFullUnlock);
-                                    int maxLevel = JGRaceHelper.getMaxRacialSkillLevel(DBC(), NC(), (byte) race);
+                                    int maxLevel = JGRaceHelper.getMaxRacialSkillLevel(nbt);
                                     if (levelID > maxLevel) {
                                         levelID = maxLevel;
                                     }
