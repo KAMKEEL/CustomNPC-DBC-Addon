@@ -289,7 +289,7 @@ public final class RaceSelectorHelper {
     }
 
     private static String allowedPowerTypes(Race race) {
-        return race.display.getRaceAllow();
+        return race.display.getAllowedPowerTypes();
     }
 
     private static int genderCount(Race race) {
