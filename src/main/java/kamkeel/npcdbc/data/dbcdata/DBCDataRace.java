@@ -2,19 +2,26 @@ package kamkeel.npcdbc.data.dbcdata;
 
 import kamkeel.npcdbc.controllers.RaceController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.race.Race;
+import kamkeel.npcdbc.data.race.progression.FormTree;
+import kamkeel.npcdbc.data.race.progression.FormTree.Branch;
 import kamkeel.npcdbc.data.race.progression.RaceSkill;
 
-import java.util.HashSet;
+import JinRyuu.JRMCore.JRMCoreH;
+
+import java.util.Collections;
 import java.util.List;
 
 public class DBCDataRace {
 
-    private final DBCData data;
+    public final DBCData data;
 
     public DBCDataRace(DBCData data) {
         this.data = data;
     }
+
+    // ─── Core runtime state ──────────────────────────────────────────────
 
     public boolean isCustomRace() {
         return data.addonRaceID > -1 && RaceController.getInstance().has(data.addonRaceID);
@@ -28,36 +35,56 @@ public class DBCDataRace {
         return data.addonRaceID;
     }
 
-    public void setRaceID(int raceID) {
-        this.data.addonRaceID = raceID;
-        if (isCustomRace())
-            data.racialSkill = RacialSkillContainer.fromRace(data, raceID);
-        else
-            data.racialSkill = null;
+    public void assignRace(int raceID, PlayerDBCInfo info) {
+        if (raceID != -1 && !RaceController.getInstance().has(raceID))
+            return;
+
+        info.currentRace = raceID;
+        info.selectedBranchIndex = 0;
+        data.addonRaceID = raceID;
 
         data.saveNBTData(true);
     }
-
-    public RacialSkillContainer getRacialSkill() {
-        return data.racialSkill;
 
     public int getRacialSkillLevel() {
         if (!isCustomRace())
             return 0;
         if (data.RacialSkills == null || data.RacialSkills.isEmpty() || data.RacialSkills.contains("pty"))
             return 0;
-        return getRawRacialSkillLevel();
+        return JRMCoreH.SklLvlX(data.Powertype, data.RacialSkills);
     }
 
-    public int getRawRacialSkillLevel() {
-        if (!isCustomRace())
-            return 0;
-        if (data.RacialSkills == null || data.RacialSkills.isEmpty() || data.RacialSkills.contains("pty") || data.RacialSkills.length() < 3)
-            return 0;
-        try {
-            return Integer.parseInt(data.RacialSkills.substring(2));
-        } catch (NumberFormatException e) {
-            return 0;
-        }
+    // ─── Form queries ────────────────────────────────────────────────────
+
+    public List<Form> getUnlockedForms() {
+        Race race = getRace();
+        if (race == null)
+            return Collections.emptyList();
+
+        return race.skill.getUnlockedForms(getRacialSkillLevel());
     }
+
+    public boolean hasForm(String formKey) {
+        if (formKey == null || !isCustomRace())
+            return false;
+
+        for (Form form : getUnlockedForms()) {
+            if (form != null && form.hasKey() && form.getKeyString().equals(formKey))
+                return true;
+        }
+        return false;
+    }
+
+    public Form getForm(String formKey) {
+        if (formKey == null)
+            return null;
+
+        for (Form form : getUnlockedForms()) {
+            if (form != null && form.hasKey() && form.getKeyString().equals(formKey))
+                return form;
+        }
+        return null;
+    }
+    
+    
 }

@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.data.race.progression;
 
-import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormRace;
 
@@ -19,9 +18,29 @@ public class FormTree {
     public static class Branch {
         private final String name;
         private final List<Form> forms = new ArrayList<>();
+        private Form unlockAnchor;
+
+        /**
+         * The minimum racial skill level required to unlock this branch.
+         * Resolved at build time from skill-level → form bindings.
+         * <p>
+         * A value of {@code 0} means the branch is always available (default for
+         * backward compatibility with branches that have no explicit skill bindings).
+         * A value of {@code -1} means it was never resolved (should not happen after
+         * a well-formed build).
+         */
+        private int unlockLevel = 0;
 
         public Branch(String name) {
-            this.name = name;
+            this.name = name != null ? name : "";
+        }
+
+        public int getUnlockLevel() {
+            return unlockLevel;
+        }
+
+        public void setUnlockLevel(int unlockLevel) {
+            this.unlockLevel = unlockLevel;
         }
 
         public String getName() {
@@ -30,6 +49,16 @@ public class FormTree {
 
         public void addForm(Form form) {
             forms.add(form);
+            if (unlockAnchor == null)
+                unlockAnchor = form;
+        }
+
+        public Form getUnlockAnchor() {
+            return unlockAnchor;
+        }
+
+        public void setUnlockAnchor(Form unlockAnchor) {
+            this.unlockAnchor = unlockAnchor;
         }
 
         public List<Form> getForms() {
@@ -78,6 +107,14 @@ public class FormTree {
             int idx = forms.indexOf(form);
             if (idx <= 0) return null;
             return forms.get(idx - 1);
+        }
+
+        public Form getFirstUnlockedForm(List<Form> unlockedForms) {
+            for (Form f : forms) {
+                if (unlockedForms.contains(f))
+                    return f;
+            }
+            return null;
         }
     }
 

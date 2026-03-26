@@ -21,6 +21,7 @@ import kamkeel.npcdbc.network.packets.player.aura.DBCSetAura;
 import kamkeel.npcdbc.network.packets.player.form.DBCRequestForm;
 import kamkeel.npcdbc.network.packets.player.form.DBCRequestFormWheel;
 import kamkeel.npcdbc.network.packets.player.form.DBCSaveFormWheel;
+import kamkeel.npcdbc.network.packets.player.form.DBCSelectFormBranch;
 import kamkeel.npcdbc.network.packets.player.form.DBCSelectForm;
 import kamkeel.npcdbc.network.packets.player.outline.DBCRequestOutline;
 import kamkeel.npcdbc.network.packets.player.skill.CustomSkillPacket;
@@ -104,6 +105,7 @@ public class DBCPacketHandler {
         PLAYER_PACKETS.registerPacket(new KiAttackColorSyncPacket());
         PLAYER_PACKETS.registerPacket(new DBCSetAllowFlight());
         PLAYER_PACKETS.registerPacket(new DBCRaceSelect());
+        PLAYER_PACKETS.registerPacket(new DBCSelectFormBranch());
     }
 
     private void registerGetPackets() {

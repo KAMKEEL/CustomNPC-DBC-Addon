@@ -58,13 +58,10 @@ public class RaceBuilder {
         this.formTree = tree;
     }
 
-    public SkillBuilder skill() {
+    public SkillBuilder racialSkill() {
         return new SkillBuilder(this);
     }
-
-    public SkillBuilder racialSkill() {
-        return skill();
-    }
+    
 
     public DisplayBuilder display() {
         return new DisplayBuilder(this);
@@ -82,6 +79,13 @@ public class RaceBuilder {
     public Race build() {
         if (skill == null)
             throw new IllegalStateException("Race '" + name + "' is missing a racial skill.");
+
+        if (formTree != null) {
+            for (FormTree.Branch branch : formTree.getBranches()) {
+                branch.setUnlockLevel(skill.getBranchUnlockLevel(branch));
+            }
+        }
+
         return new Race(id, name, menuName, registry, display, stats, skill, formTree);
     }
 

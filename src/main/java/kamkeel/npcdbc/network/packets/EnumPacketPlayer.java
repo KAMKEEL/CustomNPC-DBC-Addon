@@ -28,5 +28,6 @@ public enum EnumPacketPlayer {
     AbilityToggle,
     KiAttackColorSync,
     AllowFlight,
-    RaceSelect
+    RaceSelect,
+    FormBranchSelect
 }

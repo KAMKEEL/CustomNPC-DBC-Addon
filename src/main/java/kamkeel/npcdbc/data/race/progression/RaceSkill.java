@@ -199,4 +199,101 @@ public class RaceSkill {
     public boolean hasFormBindings() {
         return !levelEntries.isEmpty();
     }
+
+    public int getBranchUnlockLevel(FormTree.Branch branch) {
+        Form unlockAnchor = branch.getUnlockAnchor();
+        if (unlockAnchor != null) {
+            for (LevelEntry entry : levelEntries.values()) {
+                if (entry.form() == unlockAnchor) {
+                    return entry.level();
+                }
+            }
+        }
+        return 0;
+    }
+
+    // ─── Branch-aware progression queries ────────────────────────────────
+    // These operate on pure definition data (FormTree + skill level) and do
+    // not depend on runtime player state. DBCDataRace delegates here.
+
+    /**
+     * Returns branches whose {@link FormTree.Branch#getUnlockLevel()} is at most
+     * {@code skillLevel}. Branch unlock is determined at build time from the
+     * lowest skill-level binding for any form in the branch — it is NOT inferred
+     * from "any unlocked form happens to be in the branch."
+     */
+    public List<FormTree.Branch> getUnlockedBranches(FormTree tree, int skillLevel) {
+        if (tree == null)
+            return Collections.emptyList();
+
+        List<FormTree.Branch> result = new ArrayList<>();
+        for (FormTree.Branch branch : tree.getBranches()) {
+            if (branch.getUnlockLevel() <= skillLevel)
+                result.add(branch);
+        }
+        return result;
+    }
+
+    /**
+     * Resolves the active branch for the given selection index, falling back to
+     * the first unlocked branch if the stored index is invalid or locked.
+     */
+    public FormTree.Branch resolveActiveBranch(FormTree tree, int skillLevel, int selectedBranchIndex) {
+        if (tree == null)
+            return null;
+
+        List<FormTree.Branch> unlocked = getUnlockedBranches(tree, skillLevel);
+        if (unlocked.isEmpty())
+            return null;
+
+        if (selectedBranchIndex >= 0) {
+            FormTree.Branch stored = tree.getBranch(selectedBranchIndex);
+            if (stored != null && unlocked.contains(stored))
+                return stored;
+        }
+
+        return unlocked.get(0);
+    }
+    
+
+    /**
+     * Returns the global index of the next unlocked branch after the current one,
+     * wrapping around. Returns {@code -1} if there is only one unlocked branch.
+     */
+    public int getNextUnlockedBranchIndex(FormTree tree, int skillLevel, int selectedBranchIndex) {
+        if (tree == null)
+            return -1;
+
+        List<FormTree.Branch> allBranches = tree.getBranches();
+        List<FormTree.Branch> unlocked = getUnlockedBranches(tree, skillLevel);
+        if (unlocked.size() <= 1)
+            return -1;
+
+        FormTree.Branch current = resolveActiveBranch(tree, skillLevel, selectedBranchIndex);
+        int currentIdx = current != null ? allBranches.indexOf(current) : -1;
+        int total = allBranches.size();
+
+        for (int offset = 1; offset <= total; offset++) {
+            int candidateIdx = (currentIdx + offset) % total;
+            FormTree.Branch candidate = allBranches.get(candidateIdx);
+            if (unlocked.contains(candidate))
+                return candidateIdx;
+        }
+        return -1;
+    }
+
+    /**
+     * Returns the first unlocked form in the branch at {@code branchIndex}.
+     */
+    public Form getFirstUnlockedFormInBranch(FormTree tree, int skillLevel, int branchIndex) {
+        if (tree == null)
+            return null;
+
+        FormTree.Branch branch = tree.getBranch(branchIndex);
+        if (branch == null)
+            return null;
+
+        return branch.getFirstUnlockedForm(getUnlockedForms(skillLevel));
+    }
+ 
 }
