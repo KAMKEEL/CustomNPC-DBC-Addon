@@ -7,28 +7,8 @@ import kamkeel.npcdbc.data.race.display.DisplayLayer;
 /**
  * Standalone fluent builder for a {@link DisplayComponent}.
  * <p>
- * Build components separately and add them to a race via
- * {@link RaceDisplayBuilder#addComponent(DisplayComponent)}.
+ * Build components separately and add them to a race
  *
- * <pre>{@code
- * public static final DisplayComponent BODY = DisplayComponentBuilder.create("body", "Body")
- *     .layer(RaceDisplay.LAYER_BODY_CM, "Body Color Main")
- *         .defaultColor(0x568D32)
- *         .addColorPreset(0x568D32)
- *         .addColorPreset(0xFFFFFF)
- *         .and()
- *     .layer(RaceDisplay.LAYER_BODY_C1, "Body Color 1")
- *         .defaultColor(0xB7C913)
- *         .and()
- *     .presetCount(2)
- *     .normalizePresets()
- *     .build();
- *
- * // then in the race:
- * .display()
- *     .addComponent(BODY)
- *     .and()
- * }</pre>
  */
 public class DisplayComponentBuilder {
 
@@ -97,7 +77,7 @@ public class DisplayComponentBuilder {
     // LayerBuilder
     // ══════════════════════════════════════════════════════════════════════════
 
-    public class LayerBuilder {
+    public static class LayerBuilder {
 
         private final DisplayComponentBuilder componentParent;
         final DisplayLayer layer;
@@ -152,7 +132,7 @@ public class DisplayComponentBuilder {
     // SubComponentBuilder
     // ══════════════════════════════════════════════════════════════════════════
 
-    public class SubComponentBuilder {
+    public static class SubComponentBuilder {
 
         private final DisplayComponentBuilder componentParent;
         private final DisplayComponent subComponent;
@@ -179,11 +159,7 @@ public class DisplayComponentBuilder {
         }
     }
 
-    // ══════════════════════════════════════════════════════════════════════════
-    // SubComponentLayerBuilder
-    // ══════════════════════════════════════════════════════════════════════════
-
-    public class SubComponentLayerBuilder extends LayerBuilder {
+    public static class SubComponentLayerBuilder extends LayerBuilder {
 
         private final SubComponentBuilder subParent;
 
@@ -199,6 +175,6 @@ public class DisplayComponentBuilder {
         @Override public SubComponentLayerBuilder defaultColor(int c)        { layer.setDefaultColor(c);    return this; }
         @Override public SubComponentLayerBuilder addColorPreset(int c)      { layer.addColorPreset(c);     return this; }
 
-        public SubComponentBuilder and() { return subParent; }
+        public SubComponentBuilder andSub() { return subParent; }
     }
 }
