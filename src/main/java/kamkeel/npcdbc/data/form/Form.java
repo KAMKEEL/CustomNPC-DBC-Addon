@@ -235,7 +235,14 @@ public class Form implements IForm {
     }
 
     public boolean raceEligible(EntityPlayer player) {
-        return raceEligible(DBCData.get(player).Race);
+        DBCData data = DBCData.get(player);
+        if (data == null)
+            return false;
+
+        if (data.addonRace != null && data.addonRace.isCustomRace())
+            return raceEligible(data.addonRace.getRaceID());
+
+        return raceEligible(data.Race);
     }
 
     @Override
