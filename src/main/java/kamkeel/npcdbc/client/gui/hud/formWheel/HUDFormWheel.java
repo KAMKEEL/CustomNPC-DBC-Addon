@@ -403,17 +403,21 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
                 FormWheelSegment slot = wheelSlot[hoveredSlot];
                 Form form = slot.form;
                 if (mouseScrolled > 0) {
-                    if (form != null && form.hasParent() && dbcInfo.hasFormUnlocked(form.parentID))
-                        newForm = form.parentID;
-                    else if (slot.data.isDBC) {
+                    if (form != null && form.hasParent()) {
+                        Form parentForm = (Form) form.getParent();
+                        if (parentForm != null && dbcInfo.hasFormUnlocked(parentForm.getKeyString()))
+                            newForm = parentForm.id;
+                    } else if (slot.data.isDBC) {
                         newForm = DBCForm.getParent(dbcData.Race, slot.data.formID, dbcData);
                         if (!dbcData.isDBCFormUnlocked(newForm))
                             newForm = -1;
                     }
                 } else {
-                    if (form != null && form.hasChild() && dbcInfo.hasFormUnlocked(form.childID))
-                        newForm = form.childID;
-                    else if (slot.data.isDBC) {
+                    if (form != null && form.hasChild()) {
+                        Form childForm = (Form) form.getChild();
+                        if (childForm != null && dbcInfo.hasFormUnlocked(childForm.getKeyString()))
+                            newForm = childForm.id;
+                    } else if (slot.data.isDBC) {
                         newForm = DBCForm.getChild(dbcData.Race, slot.data.formID, dbcData);
                         if (!dbcData.isDBCFormUnlocked(newForm))
                             newForm = -1;

@@ -197,7 +197,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                 }
 
 
-                double masteryMulti = viewingForm.mastery.calculateMulti("attribute", dbcInfo.getFormLevel(viewingForm.id));
+                double masteryMulti = viewingForm.mastery.calculateMulti("attribute", dbcInfo.getFormLevel(viewingForm.getKeyString()));
 
                 int stats = guiTop + 18 + 48;
                 String label = "§f" + StatCollector.translateToLocal("npcdbc.inventory.strength") + ":";
@@ -215,9 +215,9 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                 fontRendererObj.drawString(label, guiLeft + 143, stats += 12, CustomNpcResourceListener.DefaultTextColor, true);
                 fontRendererObj.drawString(info, guiLeft + 200, stats, CustomNpcResourceListener.DefaultTextColor, true);
 
-                if (this.dbcInfo != null && this.dbcInfo.formLevels.containsKey(viewingForm.id)) {
+                if (this.dbcInfo != null && this.dbcInfo.formLevels.containsKey(viewingForm.getKeyString())) {
                     label = "§f" + StatCollector.translateToLocal("npcdbc.inventory.mastery") + ":";
-                    double masteryValue = this.dbcInfo.formLevels.get(viewingForm.id);
+                    double masteryValue = this.dbcInfo.formLevels.get(viewingForm.getKeyString());
                     String roundedMastery = String.format("%.2f", masteryValue);
                     info = "§a" + roundedMastery + " §7/ §a" + viewingForm.mastery.maxLevel;
                     fontRendererObj.drawString(label, guiLeft + 143, stats += 12, CustomNpcResourceListener.DefaultTextColor, true);
@@ -232,7 +232,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                 if (viewingForm.mastery.hasDodge()) {
                     label = "§f" + StatCollector.translateToLocal("npcdbc.inventory.dodge") + ":";
                     double dodgeChance = viewingForm.mastery.getDodgeChance();
-                    double dodgeMultiplier = viewingForm.mastery.calculateMulti("dodge", dbcInfo.getFormLevel(viewingForm.id));
+                    double dodgeMultiplier = viewingForm.mastery.calculateMulti("dodge", dbcInfo.getFormLevel(viewingForm.getKeyString()));
                     double result = dodgeChance * dodgeMultiplier;
 
                     String resultString = String.format("%.1f", result);

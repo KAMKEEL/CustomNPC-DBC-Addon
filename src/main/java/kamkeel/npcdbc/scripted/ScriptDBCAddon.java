@@ -720,14 +720,15 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
             throw new CustomNPCsException("No form found!");
 
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
-        int formID = form.getID();
-        return formData.hasFormUnlocked(formID);
+        return formData.hasFormUnlocked(form.getKeyString());
     }
 
     @Override
     public boolean hasCustomForm(int formID) {
+        Form form = (Form) FormController.getInstance().get(formID);
+        if (form == null) return false;
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
-        return formData.hasFormUnlocked(formID);
+        return formData.hasFormUnlocked(form.getKeyString());
     }
 
     @Override
@@ -735,7 +736,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         PlayerDBCInfo dbcInfo = PlayerDataUtil.getDBCInfo(player);
         ArrayList<IForm> unlockedForms = new ArrayList<>();
         for (IForm form : FormController.getInstance().getForms()) {
-            if (dbcInfo.hasFormUnlocked(form.getID())) {
+            if (dbcInfo.hasFormUnlocked(((Form) form).getKeyString())) {
                 unlockedForms.add(form);
             }
         }
@@ -936,9 +937,11 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setCustomMastery(int formID, float value, boolean ignoreUnlockCheck) {
+        Form form = (Form) FormController.getInstance().get(formID);
+        if (form == null) return;
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
-        if (ignoreUnlockCheck || formData.hasFormUnlocked(formID)) {
-            formData.setFormLevel(formID, value);
+        if (ignoreUnlockCheck || formData.hasFormUnlocked(form.getKeyString())) {
+            formData.setFormLevel(form.getKeyString(), value);
             formData.updateClient();
         }
     }
@@ -960,9 +963,11 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void addCustomMastery(int formID, float value, boolean ignoreUnlockCheck) {
+        Form form = (Form) FormController.getInstance().get(formID);
+        if (form == null) return;
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
-        if (ignoreUnlockCheck || formData.hasFormUnlocked(formID)) {
-            formData.addFormLevel(formID, value);
+        if (ignoreUnlockCheck || formData.hasFormUnlocked(form.getKeyString())) {
+            formData.addFormLevel(form.getKeyString(), value);
             formData.updateClient();
         }
     }
@@ -984,12 +989,10 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public float getCustomMastery(int formID, boolean checkFusion) {
+        Form form = (Form) FormController.getInstance().get(formID);
+        if (form == null) return 0f;
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
-        float level = 0;
-
-        level = formData.getFormLevel(formID, checkFusion);
-
-        return level;
+        return formData.getFormLevel(form.getKeyString(), checkFusion);
     }
 
     @Override
@@ -999,9 +1002,11 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void removeCustomMastery(int formID) {
+        Form form = (Form) FormController.getInstance().get(formID);
+        if (form == null) return;
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
-        if (formData.hasFormUnlocked(formID)) {
-            formData.removeFormMastery(formID);
+        if (formData.hasFormUnlocked(form.getKeyString())) {
+            formData.removeFormMastery(form.getKeyString());
             formData.updateClient();
         }
     }

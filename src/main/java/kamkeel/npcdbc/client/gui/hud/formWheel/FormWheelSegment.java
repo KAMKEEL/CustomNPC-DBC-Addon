@@ -123,7 +123,7 @@ class FormWheelSegment extends WheelSegment {
                 if (!parent.dbcForms.containsKey(data.formID))
                     removeForm();
             } else {
-                if (!parent.dbcInfo.hasFormUnlocked(data.formID))
+                if (!parent.dbcInfo.hasFormUnlocked(data.formKey))
                     removeForm();
             }
             if (icon != null) {

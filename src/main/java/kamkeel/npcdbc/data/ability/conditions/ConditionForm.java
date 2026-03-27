@@ -24,7 +24,8 @@ import noppes.npcs.entity.EntityNPCInterface;
 import java.util.List;
 
 public class ConditionForm extends AbilityCondition {
-    private int formID = -1;
+    private String formKey = null;
+    private int dbcFormID = -1;
     private EnumDBCRaces race = EnumDBCRaces.HUMAN;
     private boolean formActive = true;
     private boolean formUnlocked = true;
@@ -38,10 +39,10 @@ public class ConditionForm extends AbilityCondition {
 
     @Override
     public boolean checkEntity(EntityLivingBase entity) {
-        if (isDBC && entity instanceof EntityNPCInterface) return false;
-        if (!isFormValid(getFormID())) return false;
+        if (!isFormValid()) return false;
 
         if (entity instanceof EntityNPCInterface) {
+            if (isDBC) return false;
             EntityNPCInterface npc = (EntityNPCInterface) entity;
 
             DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
@@ -50,7 +51,7 @@ public class ConditionForm extends AbilityCondition {
             Form npcForm = display.getForm();
             if (npcForm == null) return false;
 
-            return npcForm.getID() == getFormID();
+            return formKey.equals(npcForm.getKeyString());
         }
 
         if (entity instanceof EntityPlayer) {
@@ -61,12 +62,12 @@ public class ConditionForm extends AbilityCondition {
             boolean isTransformed;
 
             if (isDBC) {
-                hasFormUnlocked = !needsFormUnlocked() || data.isDBCFormUnlocked(getFormID());
-                isTransformed = !isFormActive() || (data.State == getFormID() && data.Race == getRace().ordinal());
+                hasFormUnlocked = !needsFormUnlocked() || data.isDBCFormUnlocked(dbcFormID);
+                isTransformed = !isFormActive() || (data.State == dbcFormID && data.Race == getRace().ordinal());
             } else {
                 PlayerDBCInfo info = data.getDBCInfo();
-                hasFormUnlocked = !needsFormUnlocked() || info.unlockedForms.contains(getFormID());
-                isTransformed = !isFormActive() || info.isInForm(getFormID());
+                hasFormUnlocked = !needsFormUnlocked() || info.hasFormUnlocked(formKey);
+                isTransformed = !isFormActive() || info.isInForm(formKey);
             }
 
             return isTransformed && hasFormUnlocked;
@@ -78,7 +79,7 @@ public class ConditionForm extends AbilityCondition {
     @SideOnly(Side.CLIENT)
     @Override
     public void getConditionDefinitions(List<FieldDef> defs) {
-        defs.add(DBCAbilityFieldProvider.formSubGui("condition.form_id", this::getFormID, this::setFormID));
+        defs.add(DBCAbilityFieldProvider.formSubGui("condition.form_id", this::getFormKey, this::setFormKey));
 
         defs.add(FieldDef.boolField("condition.transformed", this::isFormActive, this::setFormActive));
 
@@ -96,30 +97,27 @@ public class ConditionForm extends AbilityCondition {
     public String getConditionSummary() {
         String filterLabel = StatCollector.translateToLocal(getFilter().toString());
         String formName = "None";
-        if (formID > 0) {
-            if (!isDBC) {
-                IForm form = FormController.getInstance().get(formID);
-                formName = form != null ? form.getName() : "ID:" + formID;
-            } else {
-                formName = "DBC Form " + formID;
-            }
+        if (isDBC && dbcFormID > 0) {
+            formName = "DBC Form " + dbcFormID;
+        } else if (!isDBC && formKey != null) {
+            IForm form = FormController.getInstance().getFromKey(formKey);
+            formName = form != null ? form.getName() : "Key:" + formKey;
         }
         return "[" + filterLabel + "] Form: " + formName;
     }
 
-    private boolean isFormValid(int formID) {
-        if (formID <= 0) return false;
-
+    private boolean isFormValid() {
         if (isDBC) {
-            return DBCForm.getFormsMap(getRace().ordinal()).get(formID) != null;
+            return dbcFormID > 0 && DBCForm.getFormsMap(getRace().ordinal()).get(dbcFormID) != null;
         } else {
-            return FormController.getInstance().has(formID);
+            return formKey != null && FormController.getInstance().getFromKey(formKey) != null;
         }
     }
 
     @Override
     public void writeTypeNBT(NBTTagCompound nbt) {
-        nbt.setInteger("formID", formID);
+        nbt.setString("formKey", formKey != null ? formKey : "");
+        nbt.setInteger("dbcFormID", dbcFormID);
         nbt.setInteger("race", race.ordinal());
         nbt.setBoolean("transformed", formActive);
         nbt.setBoolean("formUnlocked", formUnlocked);
@@ -128,29 +126,48 @@ public class ConditionForm extends AbilityCondition {
 
     @Override
     public void readTypeNBT(NBTTagCompound nbt) {
-        formID = nbt.getInteger("formID");
+        isDBC = nbt.getBoolean("isDBC");
+        if (nbt.hasKey("formKey")) {
+            String k = nbt.getString("formKey");
+            formKey = k.isEmpty() ? null : k;
+        } else if (!isDBC && nbt.hasKey("formID")) {
+            int legacyId = nbt.getInteger("formID");
+            if (legacyId > 0) {
+                Form f = (Form) FormController.getInstance().get(legacyId);
+                formKey = f != null ? f.getKeyString() : null;
+            }
+        }
+        dbcFormID = nbt.hasKey("dbcFormID") ? nbt.getInteger("dbcFormID")
+                  : (isDBC && nbt.hasKey("formID") ? nbt.getInteger("formID") : -1);
         race = EnumDBCRaces.fromOrdinal(nbt.getInteger("race"));
         formActive = nbt.getBoolean("transformed");
         formUnlocked = nbt.getBoolean("formUnlocked");
-        isDBC = nbt.getBoolean("isDBC");
     }
 
     @Override
     public boolean isConfigured() {
-        return formID >= 0;
+        return isDBC ? dbcFormID >= 0 : formKey != null;
     }
 
-    public int getFormID() {
-        return formID;
+    public String getFormKey() {
+        return formKey;
     }
 
-    public void setFormID(int formID) {
-        if (formID < 0) {
-            this.formID = -1;
+    public void setFormKey(String key) {
+        if (key == null || key.isEmpty()) {
+            this.formKey = null;
             return;
         }
-        if (!isFormValid(formID)) return;
-        this.formID = formID;
+        if (FormController.getInstance().getFromKey(key) == null) return;
+        this.formKey = key;
+    }
+
+    public int getDbcFormID() {
+        return dbcFormID;
+    }
+
+    public void setDbcFormID(int id) {
+        this.dbcFormID = id < 0 ? -1 : id;
     }
 
     public EnumDBCRaces getRace() {

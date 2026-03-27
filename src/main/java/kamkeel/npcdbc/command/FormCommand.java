@@ -56,7 +56,7 @@ public class FormCommand extends CommandKamkeelBase {
 
         for (PlayerData playerdata : data) {
             PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(playerdata);
-            if (!info.hasFormUnlocked(form.id)) {
+            if (!info.hasFormUnlocked(form.getKeyString())) {
                 if (form.raceEligible(playerdata.player)) {
                     info.addForm(form);
                     info.updateClient();
@@ -96,7 +96,7 @@ public class FormCommand extends CommandKamkeelBase {
 
         for (PlayerData playerdata : data) {
             PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(playerdata);
-            if (!info.hasFormUnlocked(form.id)) {
+            if (!info.hasFormUnlocked(form.getKeyString())) {
                 if (form.raceEligible(playerdata.player)) {
                     info.addForm(form);
                     info.updateClient();
@@ -144,7 +144,7 @@ public class FormCommand extends CommandKamkeelBase {
                 Form currentSelected = info.getSelectedForm();
                 if (currentSelected != null && currentSelected.id == form.id)
                     info.clearSelectedForm();
-                if (info.isInForm(form.id)) {
+                if (info.isInForm(form.getKeyString())) {
                     TransformController.handleFormDescend(playerdata.player, TransformController.FULL_DESCEND);
                     info.clearCurrentForm();
                 }
@@ -184,7 +184,7 @@ public class FormCommand extends CommandKamkeelBase {
                 Form currentSelected = info.getSelectedForm();
                 if (currentSelected != null && currentSelected.id == form.id)
                     info.clearSelectedForm();
-                if (info.isInForm(form.id)) {
+                if (info.isInForm(form.getKeyString())) {
                     TransformController.handleFormDescend(playerdata.player, TransformController.FULL_DESCEND);
                     info.clearCurrentForm();
                 }
@@ -239,8 +239,8 @@ public class FormCommand extends CommandKamkeelBase {
             if (playerDBCInfo.unlockedForms.isEmpty()) {
                 sendResult(sender, String.format("No Forms found for Player '\u00A7b%s\u00A77'", playerdata.playername));
             } else {
-                for (int formID : playerDBCInfo.unlockedForms) {
-                    IForm form = FormController.getInstance().get(formID);
+                for (String formKey : playerDBCInfo.unlockedForms) {
+                    IForm form = FormController.getInstance().getFromKey(formKey);
                     if (form != null) {
                         sendResult(sender, String.format("%s", form.getName()));
                     }

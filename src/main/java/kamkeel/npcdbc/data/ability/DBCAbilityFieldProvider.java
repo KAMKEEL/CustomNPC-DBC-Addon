@@ -352,26 +352,24 @@ public class DBCAbilityFieldProvider implements IAbilityFieldProvider {
     }
 
     public static FieldDef formSubGui(String label,
-                                      Supplier<Integer> idGetter, Consumer<Integer> idSetter) {
-        return FieldDef.subGuiField(label, () -> {
-                    SubGuiSelectForm gui = new SubGuiSelectForm(-1, false, false);
-                    return gui;
-                }, gui -> {
+                                      Supplier<String> keyGetter, Consumer<String> keySetter) {
+        return FieldDef.subGuiField(label, () -> new SubGuiSelectForm(-1, false, false),
+                gui -> {
                     SubGuiSelectForm sel = (SubGuiSelectForm) gui;
-                    idSetter.accept(sel.selectedFormID);
+                    if (sel.isDBC) return;
+                    keySetter.accept(sel.selectedFormKey);
                 })
             .buttonLabel(() -> {
-                int id = idGetter.get();
-                if (id >= 0) {
+                String key = keyGetter.get();
+                if (key != null && !key.isEmpty()) {
                     Form form = FormController.Instance != null
-                        ? (Form) FormController.Instance.get(id) : null;
+                        ? FormController.Instance.getFromKey(key) : null;
                     String formName = form != null ? form.getName() : "";
-                    return formName != null && !formName.isEmpty()
-                        ? "(ID: " + id + ") " + formName : "ID: " + id;
+                    return !formName.isEmpty() ? formName : "Key: " + key;
                 }
                 return "gui.none";
             })
-            .clearable(() -> idSetter.accept(-1));
+            .clearable(() -> keySetter.accept(null));
     }
 
     public static FieldDef skillSubGui(String label,

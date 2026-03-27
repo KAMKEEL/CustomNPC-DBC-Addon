@@ -49,14 +49,14 @@ public class PlayerDBCInfo {
     public HashSet<Integer> unlockedAuras = new HashSet<Integer>();
 
     public int currentRace = -1;
-
+    
     /** Addon-side branch cursor for multi-branch custom race FormTrees. 0 = first branch (default). */
     private int selectedFormBranch = 0;
 
-    public HashSet<Integer> unlockedForms = new HashSet<Integer>();
-    public HashMap<Integer, Float> formLevels = new HashMap<Integer, Float>();
-    public HashMap<Integer, Integer> formTimers = new HashMap<>();
-    public HashMap<Integer, FormDisplay.BodyColor> configuredFormColors = new HashMap<>();
+    public HashSet<String> unlockedForms = new HashSet<>();
+    public HashMap<String, Float> formLevels = new HashMap<>();
+    public HashMap<String, Integer> formTimers = new HashMap<>();
+    public HashMap<String, FormDisplay.BodyColor> configuredFormColors = new HashMap<>();
     public FormWheelData[] formWheel = new FormWheelData[6];
 
     public OverlayManager overlayManager = new OverlayManager();
@@ -73,9 +73,10 @@ public class PlayerDBCInfo {
         if (form == null)
             return;
 
-        unlockedForms.add(form.id);
-        if (!formLevels.containsKey(form.id))
-            formLevels.put(form.id, 0f);
+        String key = form.getKeyString();
+        unlockedForms.add(key);
+        if (!formLevels.containsKey(key))
+            formLevels.put(key, 0f);
     }
 
     public void addFormWheel(int wheelSlot, FormWheelData data) {
@@ -84,30 +85,32 @@ public class PlayerDBCInfo {
         formWheel[wheelSlot].readFromNBT(data.writeToNBT(new NBTTagCompound()));
     }
 
-    public boolean hasFormUnlocked(int id) {
-        return unlockedForms.contains(id);
+    // ── unlockedForms ──────────────────────────────────────────────
+
+    public boolean hasFormUnlocked(String key) {
+        return unlockedForms.contains(key) || hasRacialForm(key);
     }
 
     public boolean removeForm(Form form) {
         return removeForm(form, ConfigDBCGeneral.FORM_MASTERIES_CLEAR_ON_REMOVE);
     }
 
-    public boolean removeForm(int id) {
-        return removeForm(id, ConfigDBCGeneral.FORM_MASTERIES_CLEAR_ON_REMOVE);
+    public boolean removeForm(String key) {
+        return removeForm(key, ConfigDBCGeneral.FORM_MASTERIES_CLEAR_ON_REMOVE);
     }
 
     public boolean removeForm(Form form, boolean removesMastery) {
         if (form == null)
             return false;
-        if (removesMastery)
-            formLevels.remove(form.id);
-        return unlockedForms.remove(form.id);
+        return removeForm(form.getKeyString(), removesMastery);
     }
 
-    public boolean removeForm(int id, boolean removesMastery) {
+    public boolean removeForm(String key, boolean removesMastery) {
+        if (key == null || key.isEmpty())
+            return false;
         if (removesMastery)
-            formLevels.remove(id);
-        return unlockedForms.remove(id);
+            formLevels.remove(key);
+        return unlockedForms.remove(key);
     }
 
     public void removeFormWheel(int wheelSlot) {
@@ -115,10 +118,10 @@ public class PlayerDBCInfo {
             formWheel[wheelSlot].reset();
     }
 
-    public Form getForm(int id) {
-        if (unlockedForms.contains(id))
-            return (Form) FormController.getInstance().get(id);
-
+    public Form getForm(String key) {
+        if (key == null || key.isEmpty()) return null;
+        if (unlockedForms.contains(key))
+            return FormController.getInstance().getFromKey(key);
         return null;
     }
 
@@ -129,10 +132,11 @@ public class PlayerDBCInfo {
     public boolean hasForm(Form form) {
         if (form == null)
             return false;
-        if (hasRacialForm(form.getKeyString()))
+        String key = form.getKeyString();
+        if (hasRacialForm(key))
             return true;
 
-        return unlockedForms.contains(form.id);
+        return unlockedForms.contains(key);
     }
 
     public boolean isInCustomForm() {
@@ -154,11 +158,11 @@ public class PlayerDBCInfo {
         return getFormColorCode(f) + f.getName();
     }
 
-    public boolean isInForm(String formName) {
+    public boolean isInForm(String key) {
         Form form = getCurrentForm();
         if (form == null)
             return false;
-        return form.getName().equals(formName);
+        return form.getKeyString().equals(key);
     }
 
     public boolean isInForm(int formID) {
@@ -193,15 +197,16 @@ public class PlayerDBCInfo {
         currentFormKey = null;
     }
 
-    public Form getUnlockedForm(int id) {
-        if (unlockedForms.contains(id))
-            return (Form) FormController.Instance.get(id);
+    public Form getUnlockedForm(String key) {
+        if (key == null || key.isEmpty()) return null;
+        if (unlockedForms.contains(key))
+            return FormController.Instance.getFromKey(key);
         return null;
     }
 
     public Form getSelectedForm() {
         if (selectedFormKey == null) return null;
-
+        
         Form f = FormController.Instance.getFromKey(selectedFormKey);
         if (f != null) return f;
         return null;
@@ -241,26 +246,25 @@ public class PlayerDBCInfo {
         for (FormWheelData formWheelData : formWheel) formWheelData.reset();
     }
 
-
+    
     public void setSelectedFormBranch(int selectedFormBranch) {
         this.selectedFormBranch = selectedFormBranch;
     }
-
+    
     public int getSelectedFormBranch() {
         return selectedFormBranch;
     }
 
-    /// /////////////////////////////////////////////
-    /// /////////////////////////////////////////////
-    // Form mastery stuff
+    // ── formLevels ───────────────────────────────────────────────
+
     public void updateCurrentFormMastery(String gainType) {
         Form current = getCurrentForm();
         if (current != null)
-            updateFormMastery(current.id, gainType);
+            updateFormMastery(current.getKeyString(), gainType);
     }
 
-    public void updateFormMastery(int formID, String gainType) {
-        Form f = FormController.getInstance().customForms.get(formID);
+    public void updateFormMastery(String key, String gainType) {
+        Form f = FormController.getInstance().getFromKey(key);
         if (f == null || !isInCustomForm() || parent.player == null)
             return;
 
@@ -269,59 +273,56 @@ public class PlayerDBCInfo {
             return;
 
         FormMastery fm = (FormMastery) f.getMastery();
-        if (!formLevels.containsKey(f.id))
-            formLevels.put(f.id, 0f);
+        if (!formLevels.containsKey(key))
+            formLevels.put(key, 0f);
 
-        float playerLevel = formLevels.get(f.id);
+        float playerLevel = formLevels.get(key);
         float fullGain = fm.calculateFullGain(gainType, playerLevel, data.MND);
 
-        playerLevel = ValueUtil.clamp(playerLevel + fullGain, 0, fm.maxLevel); //updated level
-        formLevels.replace(f.id, playerLevel);
+        playerLevel = ValueUtil.clamp(playerLevel + fullGain, 0, fm.maxLevel);
+        formLevels.replace(key, playerLevel);
         updateClient();
     }
-
-    public void addFormLevel(int formID, float amount) {
-        Form form = FormController.getInstance().customForms.get(formID);
+    
+    public void addFormLevel(String key, float amount) {
+        Form form = FormController.getInstance().getFromKey(key);
         if (form != null) {
-            float current = formLevels.get(formID);
+            float current = formLevels.getOrDefault(key, 0f);
             float updated = ValueUtil.clamp(current + amount, 0, ((FormMastery) form.getMastery()).maxLevel);
-            formLevels.put(formID, updated);
+            formLevels.put(key, updated);
             updateClient();
         }
     }
 
-    public void setFormLevel(int formID, float amount) {
-        this.setFormLevel(formID, amount, true);
+    public void setFormLevel(String key, float amount) {
+        setFormLevel(key, amount, true);
     }
 
-    public void setFormLevel(int formID, float amount, boolean updateClient) {
-        Form form = FormController.getInstance().customForms.get(formID);
+    public void setFormLevel(String key, float amount, boolean updateClient) {
+        Form form = FormController.getInstance().getFromKey(key);
         if (form != null) {
             float updated = ValueUtil.clamp(amount, 0, ((FormMastery) form.getMastery()).maxLevel);
-            formLevels.put(formID, updated);
+            formLevels.put(key, updated);
             if (updateClient)
                 updateClient();
         }
     }
 
-    public void removeFormMastery(int formID) {
-        Form form = FormController.getInstance().customForms.get(formID);
-        if (form != null) {
-            formLevels.remove(formID);
-            updateClient();
-        }
+    public void removeFormMastery(String key) {
+        if (key == null || key.isEmpty()) return;
+        formLevels.remove(key);
+        updateClient();
     }
 
-    public float getFormLevel(int formID) {
-        return getFormLevel(formID, true);
+    public float getFormLevel(String key) {
+        return getFormLevel(key, true);
     }
 
-    public float getFormLevel(int formID, boolean checkFusion) {
-        if (formID == -1)
+    public float getFormLevel(String key, boolean checkFusion) {
+        if (key == null || key.isEmpty())
             return 0f;
 
-
-        float mastery = formLevels.getOrDefault(formID, 0f);
+        float mastery = formLevels.getOrDefault(key, 0f);
         if (!checkFusion || parent.player == null)
             return mastery;
 
@@ -329,8 +330,7 @@ public class PlayerDBCInfo {
         if (isFused(compound)) {
             EntityPlayer fusedPlayer = getSpectatorEntity(compound);
             if (fusedPlayer != null) {
-                float otherPlayerMastery = PlayerDataUtil.getDBCInfo(fusedPlayer).formLevels.getOrDefault(formID, 0f);
-
+                float otherPlayerMastery = PlayerDataUtil.getDBCInfo(fusedPlayer).formLevels.getOrDefault(key, 0f);
                 mastery = mastery + otherPlayerMastery;
             }
         }
@@ -338,46 +338,47 @@ public class PlayerDBCInfo {
         return mastery;
     }
 
+    public float getFormLevel(Form form) {
+        if (form == null) return 0f;
+        return getFormLevel(form.getKeyString(), true);
+    }
+
     public float getCurrentLevel() {
         Form current = getCurrentForm();
-        return current != null ? getFormLevel(current.id) : 0f;
+        return current != null ? getFormLevel(current.getKeyString()) : 0f;
     }
 
-    /// /////////////////////////////////////////////
-    /// /////////////////////////////////////////////
-    // Form timer stuff
-    public void addTimer(int formid, int timeInTicks) {
-        if (!formTimers.containsKey(formid))
-            formTimers.put(formid, timeInTicks);
+    // ── formTimers ───────────────────────────────────────────────
 
-        formTimers.replace(formid, timeInTicks);
+    public void addTimer(String key, int timeInTicks) {
+        if (!formTimers.containsKey(key))
+            formTimers.put(key, timeInTicks);
 
+        formTimers.replace(key, timeInTicks);
     }
 
-    public void decrementTimer(int formid) {
-        if (formTimers.containsKey(formid)) {
-            int currentTime = formTimers.get(formid);
+    public void decrementTimer(String key) {
+        if (formTimers.containsKey(key)) {
+            int currentTime = formTimers.get(key);
             if (currentTime > 0)
-                formTimers.replace(formid, currentTime - 1);
+                formTimers.replace(key, currentTime - 1);
             else if (currentTime == 0) {
                 TransformController.handleFormDescend(parent.player, 0);
-                formTimers.remove(formid);
+                formTimers.remove(key);
             }
         }
     }
 
-    public int getTimer(int formid) {
-        if (formTimers.containsKey(formid))
-            return formTimers.get(formid);
+    public int getTimer(String key) {
+        if (formTimers.containsKey(key))
+            return formTimers.get(key);
         return -1;
-
     }
 
-    public boolean hasTimer(int formid) {
-        if (formTimers.containsKey(formid))
-            return formTimers.get(formid) > -1;
+    public boolean hasTimer(String key) {
+        if (formTimers.containsKey(key))
+            return formTimers.get(key) > -1;
         return false;
-
     }
 
     /// ////////////////////////////////////////
@@ -492,14 +493,14 @@ public class PlayerDBCInfo {
         dbcCompound.setString("SelectedFormKey", selectedFormKey != null? selectedFormKey : "");
         dbcCompound.setInteger("SelectedDBCForm", selectedDBCForm);
         dbcCompound.setInteger("LastFormBeforeStack", lastFormBeforeStack);
-        dbcCompound.setTag("UnlockedForms", NBTTags.nbtIntegerSet(unlockedForms));
-        dbcCompound.setTag("FormMastery", NBTTags.nbtIntegerFloatMap(formLevels));
-        dbcCompound.setTag("FormTimers", NBTTags.nbtIntegerIntegerMap(formTimers));
+        dbcCompound.setTag("UnlockedForms", NBTHelper.nbtStringSet(unlockedForms));
+        dbcCompound.setTag("FormMastery", NBTHelper.nbtStringFloatMap(formLevels));
+        dbcCompound.setTag("FormTimers", NBTHelper.nbtStringIntMap(formTimers));
         dbcCompound.setTag("ConfigurableFormColors",
-            NBTHelper.nbtIntegerObjectMap(
+            NBTHelper.nbtStringObjectMap(
                 configuredFormColors,
                 bodyColor -> bodyColor.writeToNBT(new NBTTagCompound()),
-                (ignored, colors) -> !colors.isEmpty()
+                (key, colors) -> !colors.isEmpty()
             ));
 
         for (int i = 0; i < formWheel.length; i++)
@@ -509,7 +510,7 @@ public class PlayerDBCInfo {
         dbcCompound.setInteger("CurrentAura", currentAura);
         dbcCompound.setInteger("SelectedAura", selectedAura);
         dbcCompound.setTag("UnlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
-
+        
         dbcCompound.setInteger("CurrentRace", currentRace);
         dbcCompound.setInteger("SelectedBranchIndex", selectedFormBranch);
 
@@ -549,12 +550,61 @@ public class PlayerDBCInfo {
             }
             dbcCompound.removeTag("SelectedForm");
         }
-
+        
         selectedDBCForm = dbcCompound.hasKey("SelectedDBCForm") ? dbcCompound.getInteger("SelectedDBCForm") : -1;
         lastFormBeforeStack = dbcCompound.hasKey("LastFormBeforeStack") ? dbcCompound.getInteger("LastFormBeforeStack") : -1;
-        unlockedForms = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedForms", 10));
-        formLevels = NBTTags.getIntegerFloatMap(dbcCompound.getTagList("FormMastery", 10));
-        formTimers = NBTTags.getIntegerIntegerMap(dbcCompound.getTagList("FormTimers", 10));
+
+        // UnlockedForms migration: TAG_STRING list = new format, TAG_COMPOUND list = legacy int format
+        NBTTagList unlockedList = dbcCompound.getTagList("UnlockedForms", 10);
+        if (unlockedList.tagCount() > 0) {
+            // Legacy int format (TAG_COMPOUND via nbtIntegerSet)
+            HashSet<Integer> legacySet = NBTTags.getIntegerSet(unlockedList);
+            unlockedForms = new HashSet<>();
+            for (int id : legacySet) {
+                Form f = (Form) FormController.getInstance().get(id);
+                if (f != null)
+                    unlockedForms.add(f.getKeyString());
+            }
+        } else {
+            NBTTagList stringList = dbcCompound.getTagList("UnlockedForms", Constants.NBT.TAG_STRING);
+            if (stringList.tagCount() > 0) {
+                unlockedForms = NBTHelper.getStringSet(stringList);
+            } else {
+                unlockedForms = new HashSet<>();
+            }
+        }
+
+        // FormMastery migration: check first compound for "key" vs "id"
+        NBTTagList masteryList = dbcCompound.getTagList("FormMastery", Constants.NBT.TAG_COMPOUND);
+        if (masteryList.tagCount() > 0 && masteryList.getCompoundTagAt(0).hasKey("key")) {
+            formLevels = NBTHelper.getStringFloatMap(masteryList);
+        } else if (masteryList.tagCount() > 0) {
+            HashMap<Integer, Float> legacyLevels = NBTTags.getIntegerFloatMap(masteryList);
+            formLevels = new HashMap<>();
+            for (Map.Entry<Integer, Float> entry : legacyLevels.entrySet()) {
+                Form f = (Form) FormController.getInstance().get(entry.getKey());
+                if (f != null)
+                    formLevels.put(f.getKeyString(), entry.getValue());
+            }
+        } else {
+            formLevels = new HashMap<>();
+        }
+
+        // FormTimers migration
+        NBTTagList timerList = dbcCompound.getTagList("FormTimers", Constants.NBT.TAG_COMPOUND);
+        if (timerList.tagCount() > 0 && timerList.getCompoundTagAt(0).hasKey("key")) {
+            formTimers = NBTHelper.getStringIntMap(timerList);
+        } else if (timerList.tagCount() > 0) {
+            HashMap<Integer, Integer> legacyTimers = NBTTags.getIntegerIntegerMap(timerList);
+            formTimers = new HashMap<>();
+            for (Map.Entry<Integer, Integer> entry : legacyTimers.entrySet()) {
+                Form f = (Form) FormController.getInstance().get(entry.getKey());
+                if (f != null)
+                    formTimers.put(f.getKeyString(), entry.getValue());
+            }
+        } else {
+            formTimers = new HashMap<>();
+        }
 
         for (int i = 0; i < formWheel.length; i++)
             formWheel[i].readFromNBT(dbcCompound.getCompoundTag("FormWheel" + i));
@@ -567,18 +617,40 @@ public class PlayerDBCInfo {
         currentRace =  dbcCompound.getInteger("CurrentRace");
         selectedFormBranch = dbcCompound.hasKey("SelectedBranchIndex") ? dbcCompound.getInteger("SelectedBranchIndex") : 0;
 
-        if (dbcCompound.hasKey("ConfigurableFormColors"))
-            configuredFormColors = NBTHelper.javaIntegerObjectMap(
-                dbcCompound.getTagList("ConfigurableFormColors", Constants.NBT.TAG_COMPOUND),
-
-                (colorCompound) -> {
-                    FormDisplay.BodyColor color = new FormDisplay.BodyColor();
-                    color.readFromNBT(colorCompound);
-                    return color;
-                },
-
-                (slot, color) -> FormController.getInstance().has(slot) && !color.isEmpty()
-            );
+        // ConfigurableFormColors migration
+        if (dbcCompound.hasKey("ConfigurableFormColors")) {
+            NBTTagList colorList = dbcCompound.getTagList("ConfigurableFormColors", Constants.NBT.TAG_COMPOUND);
+            if (colorList.tagCount() > 0 && colorList.getCompoundTagAt(0).hasKey("key")) {
+                configuredFormColors = NBTHelper.getStringObjectMap(
+                    colorList,
+                    (colorCompound) -> {
+                        FormDisplay.BodyColor color = new FormDisplay.BodyColor();
+                        color.readFromNBT(colorCompound);
+                        return color;
+                    },
+                    (key, color) -> {
+                        Form f = FormController.getInstance().getFromKey(key);
+                        return f != null && !color.isEmpty();
+                    }
+                );
+            } else {
+                HashMap<Integer, FormDisplay.BodyColor> legacyColors = NBTHelper.javaIntegerObjectMap(
+                    colorList,
+                    (colorCompound) -> {
+                        FormDisplay.BodyColor color = new FormDisplay.BodyColor();
+                        color.readFromNBT(colorCompound);
+                        return color;
+                    },
+                    (slot, color) -> FormController.getInstance().has(slot) && !color.isEmpty()
+                );
+                configuredFormColors = new HashMap<>();
+                for (Map.Entry<Integer, FormDisplay.BodyColor> entry : legacyColors.entrySet()) {
+                    Form f = (Form) FormController.getInstance().get(entry.getKey());
+                    if (f != null)
+                        configuredFormColors.put(f.getKeyString(), entry.getValue());
+                }
+            }
+        }
 
         loadBonuses(dbcCompound);
 
@@ -643,12 +715,14 @@ public class PlayerDBCInfo {
         if (otherForm == null)
             return;
 
-        float currentFormMastery = formLevels.getOrDefault(form.id, 0.0f);
-        float otherFormMastery = formLevels.getOrDefault(otherForm.id, 0.0f);
+        String key = form.getKeyString();
+        String otherKey = otherForm.getKeyString();
+        float currentFormMastery = formLevels.getOrDefault(key, 0.0f);
+        float otherFormMastery = formLevels.getOrDefault(otherKey, 0.0f);
 
         float highest = Math.max(currentFormMastery, otherFormMastery);
-        setFormLevel(form.id, highest, false);
-        setFormLevel(otherForm.id, highest, false);
+        setFormLevel(key, highest, false);
+        setFormLevel(otherKey, highest, false);
     }
 
     private void handleDBCLinking(DBCData data, Form form, int dbcForm) {
@@ -658,11 +732,11 @@ public class PlayerDBCInfo {
             return;
 
         double currentDBCFormLevel = data.stats.getDBCMastery(jrmcFormID);
-        float currentCustomMastery = formLevels.getOrDefault(form.id, 0.0f);
+        float currentCustomMastery = formLevels.getOrDefault(form.getKeyString(), 0.0f);
 
         double highest = Math.max(currentCustomMastery, currentDBCFormLevel);
         data.stats.setDBCMastery(jrmcFormID, highest);
-        setFormLevel(form.id, (float) highest, false);
+        setFormLevel(form.getKeyString(), (float) highest, false);
     }
 
 
@@ -721,10 +795,11 @@ public class PlayerDBCInfo {
     }
 
     public void setFormColorConfig(Form form, FormDisplay.BodyColor colors) {
+        String key = form.getKeyString();
         if (colors.isEmpty())
-            configuredFormColors.remove(form.id);
+            configuredFormColors.remove(key);
         else
-            configuredFormColors.put(form.id, colors);
+            configuredFormColors.put(key, colors);
     }
 
     ////////////////////////////////////////////////
