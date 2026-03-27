@@ -91,6 +91,12 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     private String SDDir = CustomNpcPlusDBC.ID + ":textures/sd/";
     @Unique
     private String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
+    @Unique
+    private boolean npcdbc$customRaceBodyHandled;
+    @Unique
+    private boolean npcdbc$customRaceBodySuppressed;
+    @Unique
+    private int npcdbc$customRaceOriginalRace;
 
     @Shadow
     private static float r;
@@ -120,6 +126,20 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 b = tint.getBlueF() * kk / 15.0F;
             }
         }
+    }
+
+    @Inject(method = "renderEquippedItemsJBRA", at = @At("HEAD"))
+    private void npcdbc$resetCustomRaceBodyHandled(AbstractClientPlayer player, float partialTicks, CallbackInfo ci) {
+        npcdbc$customRaceBodyHandled = false;
+        npcdbc$customRaceBodySuppressed = false;
+        npcdbc$customRaceOriginalRace = DBCRace.HUMAN;
+    }
+
+    @Inject(method = "renderEquippedItemsJBRA", at = @At("RETURN"))
+    private void npcdbc$clearCustomRaceBodyHandled(AbstractClientPlayer player, float partialTicks, CallbackInfo ci) {
+        npcdbc$customRaceBodyHandled = false;
+        npcdbc$customRaceBodySuppressed = false;
+        npcdbc$customRaceOriginalRace = DBCRace.HUMAN;
     }
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
@@ -341,12 +361,10 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     // Dispatch custom race rendering. Fires after DBC local vars (race, bodyCM, etc.)
     // are initialised but before DBC's own body/hair rendering runs.
-    // If the addon race has a registered client renderer that returns true, the
-    // rest of renderEquippedItemsJBRA is skipped (glPopMatrix balances the push).
     @Inject(method = "renderEquippedItemsJBRA",
-        at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.AFTER),
-        cancellable = true)
+        at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.AFTER))
     private void dispatchCustomRaceRenderer(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci,
+                                            @Local(name = "race") LocalIntRef race,
                                             @Local(name = "bodycm") LocalIntRef bodyCM,
                                             @Local(name = "bodyc1") LocalIntRef bodyC1,
                                             @Local(name = "bodyc2") LocalIntRef bodyC2,
@@ -397,8 +415,39 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         ctx.eyeC2 = eyec2.get();
 
         if (renderer.render(ctx)) {
+            npcdbc$customRaceOriginalRace = race.get();
+            race.set(addonRace.id > DBCRace.MAJIN ? addonRace.id : DBCRace.BIO_ANDROID);
+            npcdbc$customRaceBodyHandled = true;
+            npcdbc$customRaceBodySuppressed = true;
+            GL11.glPushMatrix();
+            GL11.glTranslatef(0.0F, 100000.0F, 0.0F);
+        }
+    }
+
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "CONSTANT", args = "stringValue=textures/misc/m.png"))
+    private void npcdbc$restoreCustomRaceBodyBeforeMajinMark(AbstractClientPlayer player, float partialTicks, CallbackInfo ci, @Local(name = "race") LocalIntRef race) {
+        if (npcdbc$customRaceBodySuppressed) {
+            race.set(npcdbc$customRaceOriginalRace);
             GL11.glPopMatrix();
-            ci.cancel();
+            npcdbc$customRaceBodySuppressed = false;
+        }
+    }
+
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "CONSTANT", args = "stringValue=wshell"))
+    private void npcdbc$restoreCustomRaceBodyBeforeWeights(AbstractClientPlayer player, float partialTicks, CallbackInfo ci, @Local(name = "race") LocalIntRef race) {
+        if (npcdbc$customRaceBodySuppressed) {
+            race.set(npcdbc$customRaceOriginalRace);
+            GL11.glPopMatrix();
+            npcdbc$customRaceBodySuppressed = false;
+        }
+    }
+
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA19:Z", shift = At.Shift.BEFORE))
+    private void npcdbc$restoreCustomRaceBodyBeforeBruises(AbstractClientPlayer player, float partialTicks, CallbackInfo ci, @Local(name = "race") LocalIntRef race) {
+        if (npcdbc$customRaceBodySuppressed) {
+            race.set(npcdbc$customRaceOriginalRace);
+            GL11.glPopMatrix();
+            npcdbc$customRaceBodySuppressed = false;
         }
     }
 
