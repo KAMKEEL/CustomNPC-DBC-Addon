@@ -1,7 +1,6 @@
 package kamkeel.npcdbc.data.race.progression;
 
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.data.form.FormRace;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -165,15 +164,6 @@ public class FormTree {
             form.childID = (i + 1 < forms.size()) ? forms.get(i + 1).id : -1;
             form.parentKey = (i > 0 && forms.get(i - 1).key != null) ? forms.get(i - 1).key.toString() : null;
             form.childKey = (i + 1 < forms.size() && forms.get(i + 1).key != null) ? forms.get(i + 1).key.toString() : null;
-        }
-    }
-
-    public void register(FormRace race) {
-        for (Branch branch : branches) {
-            for (Form form : branch.forms) {
-             //   form.race = race;
-             //   FormController.getInstance().registerBuiltIn(form);
-            }
         }
     }
 

@@ -11,6 +11,7 @@ import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -33,7 +34,7 @@ public class Form implements IForm {
     public String menuName = "§aNEW";
     public int timer = -1;
 
-    public FormRace race = FormRace.ALL;
+    private int race = DBCRace.ALL;
     public FormMastery mastery = new FormMastery(this);
     public FormDisplay display = new FormDisplay(this);
     public FormStackable stackable = new FormStackable(this);
@@ -114,7 +115,7 @@ public class Form implements IForm {
 
         tagUUIDs = TagController.readTagUUIDs(compound, "TagUUIDs");
 
-        race = FormRace.fromNBT(compound.getInteger("race"));
+        race = compound.getInteger("race");
         if (compound.hasKey("FormKey")) {
             key = new FormKey(compound.getString("FormKey"));
             builtIn = true;
@@ -155,7 +156,7 @@ public class Form implements IForm {
 
         TagController.writeTagUUIDs(compound, "TagUUIDs", tagUUIDs);
 
-        compound.setInteger("race", race.toNBT());
+        compound.setInteger("race", race);
         if (key != null)
             compound.setString("FormKey", key.toString());
         mastery.writeToNBT(compound);
@@ -221,28 +222,25 @@ public class Form implements IForm {
 
     // internal usage
     public int race() {
-        if (race.getRaceId() == DBCRace.ALL_SAIYANS)
-            return 1;
-        return race.getRaceId();
+        return race == DBCRace.ALL_SAIYANS ? 1 : race;
     }
 
     @Override
     public int getRace() {
-        return race.getRaceId();
+        return race;
     }
 
     @Override
-    public void setRace(int raceId) {
-        race = FormRace.of(raceId);
-    }
-
-    public void setRace(FormRace formRace) {
-        race = formRace;
+    public void setRace(int race) {
+        this.race = race;
     }
 
     @Override
     public boolean raceEligible(int race) {
-        return this.race.isEligible(race);
+        if (this.race == DBCRace.ALL_SAIYANS)
+            return DBCRace.isSaiyan(race);
+
+        return this.race == DBCRace.ALL || this.race == race;
     }
 
     @Override
@@ -255,10 +253,13 @@ public class Form implements IForm {
         if (data == null)
             return false;
 
-        if (data.addonRace != null && data.addonRace.isCustomRace())
-            return raceEligible(data.addonRace.getRaceID());
+        int race = data.Race;
 
-        return raceEligible(data.Race);
+        Race customRace = data.addonRace.getRace();
+        if (customRace != null)
+            race = customRace.id;
+
+        return raceEligible(race);
     }
 
     @Override
