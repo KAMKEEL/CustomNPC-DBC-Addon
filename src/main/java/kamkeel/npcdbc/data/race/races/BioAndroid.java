@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data.race.races;
 
 import kamkeel.npcdbc.api.Color;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormKey;
 import kamkeel.npcdbc.data.race.Race;
@@ -113,7 +114,7 @@ public class BioAndroid {
     // Race
     // ════════════════════════════════════════════════════════════════
 
-    public static final Race RACE = RaceBuilder.create(6, "bio_android", "Bio-Android", BIO_ANDROID_NS)
+    public static final Race RACE = RaceBuilder.create(DBCRace.BIO_ANDROID, "bio_android", "Bio-Android", BIO_ANDROID_NS)
         .formTree(BIO_ANDROID_FORMS)
         .racialSkill()
             .maxLevel(4)
