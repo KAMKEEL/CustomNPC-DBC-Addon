@@ -555,7 +555,7 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
         model.renderBody(0.0625F);
 
         // Eyes
-        renderEyes(ctx, "imperfect/face/eye_base.png", "imperfect/face/eye_left.png", "imperfect/face/eye_right.png");
+        renderEyes(ctx, "imperfect/face/eye_base.png", "imperfect/face/eyebrow.png", "imperfect/face/eye_left.png", "imperfect/face/eye_right.png");
     }
 
     private void renderSemiPerfect(RaceRenderContext ctx) {
@@ -592,8 +592,8 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
         model.renderBody(0.0625F);
 
         // Eyes
-        renderEyes(ctx, "semiperfect/face/eye_base.png", "semiperfect/face/eye_left.png", "semiperfect/face/eye_right.png");
-        renderFacialFeatures(ctx, "semiperfect/face/nose.png", 0xFFFFFF, "semiperfect/face/mouth.png", 0xFFE0FA);
+        renderEyes(ctx, "semiperfect/face/eye_base.png", "semiperfect/face/eyebrow.png", "semiperfect/face/eye_left.png", "semiperfect/face/eye_right.png");
+        renderFacialFeatures(ctx, "semiperfect/face/nose.png", ctx.bodyC1, "semiperfect/face/mouth.png", 0xd7a4bb);
     }
 
     private void renderPerfect(RaceRenderContext ctx) {
@@ -624,7 +624,7 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
         model.renderBody(0.0625F);
 
         // Eyes
-        renderEyes(ctx, "perfect/face/eye_base.png", "perfect/face/eye_left.png", "perfect/face/eye_right.png");
+        renderEyes(ctx, "perfect/face/eye_base.png", "perfect/face/eyebrow.png", "perfect/face/eye_left.png", "perfect/face/eye_right.png");
         renderFacialFeatures(ctx, "perfect/face/nose.png", ctx.bodyC1, "perfect/face/mouth.png", ctx.bodyC1);
     }
 
@@ -666,13 +666,13 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
         model.renderBody(0.0625F);
 
         // Eyes
-        renderEyes(ctx, "max/face/eye_base.png", "max/face/eye_left.png", "max/face/eye_right.png");
+        renderEyes(ctx, "max/face/eye_base.png", "max/face/eyebrow.png", "max/face/eye_left.png", "max/face/eye_right.png");
         renderFacialFeatures(ctx, "max/face/nose.png", 0xFFFFFF, "max/face/mouth.png", 0xFFE0FA);
     }
 
     // ── Eye rendering ──
 
-    private void renderEyes(RaceRenderContext ctx, String baseTexture, String leftTexture, String rightTexture) {
+    private void renderEyes(RaceRenderContext ctx, String baseTexture, String eyebrowTexture, String leftTexture, String rightTexture) {
         ModelBipedDBC model = ctx.model;
 
         boolean semiPerfect = ctx.state == 2;
@@ -681,11 +681,17 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
         ctx.bindTexture(new ResourceLocation(textureDir() + baseTexture));
         model.renderHairs(0.0625F, "EYEBASE");
 
-        RenderPlayerJBRA.glColor3f(semiPerfect ? 0xDFEEEE : ctx.eyeC1);
+        if (!eyebrowTexture.isEmpty()) {
+            RenderPlayerJBRA.glColor3f(ctx.bodyC1);
+            ctx.bindTexture(new ResourceLocation(textureDir() + eyebrowTexture));
+            model.renderHairs(0.0625F, "EYEBROW");
+        }
+
+        RenderPlayerJBRA.glColor3f(semiPerfect ? 0xafddff : ctx.eyeC1);
         ctx.bindTexture(new ResourceLocation(textureDir() + leftTexture));
         model.renderHairs(0.0625F, "EYELEFT");
 
-        RenderPlayerJBRA.glColor3f(semiPerfect ? 0xDFEEEE : ctx.eyeC2);
+        RenderPlayerJBRA.glColor3f(semiPerfect ? 0xafddff : ctx.eyeC2);
         ctx.bindTexture(new ResourceLocation(textureDir() + rightTexture));
         model.renderHairs(0.0625F, "EYERIGHT");
     }

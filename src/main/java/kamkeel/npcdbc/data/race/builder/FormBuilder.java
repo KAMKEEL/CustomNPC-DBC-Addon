@@ -197,6 +197,11 @@ public class FormBuilder {
             return this;
         }
 
+        public DisplayBuilder customizable(boolean value) {
+            display.isCustomizable = value;
+            return this;
+        }
+
         public FormBuilder and() {
             return parent;
         }
