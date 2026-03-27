@@ -30,6 +30,15 @@ public final class VanillaCreatorBridge {
         byte raceValue = (byte) (session.isCustomRace()
             ? session.getVanillaRaceIndex()
             : JRMCoreGuiScreen.RaceSlcted);
+        
+        String currentRaceKey = null;
+        if (session.isCustomRace()) {
+            Race customRace = session.getSelectedCustomRace();
+            if (customRace != null) currentRaceKey = customRace.getName();
+            JRMCoreGuiScreen.RaceSlcted = 0;
+        }
+        DBCPacketHandler.Instance.sendToServer(new DBCRaceSelect(currentRaceKey));
+        
         JRMCoreH.Char((byte) 0, raceValue);
         pushPreviewDns();
         syncLocalPreviewCache();

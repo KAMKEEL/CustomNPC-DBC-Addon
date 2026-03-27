@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.gui.dbc.creator;
 
 import JinRyuu.JRMCore.*;
+import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.race.helper.RaceSelectorHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -104,13 +105,15 @@ public final class PowerTypePage extends CreatorPage {
         int row = startRow;
         int pwr = session.powerType;
         int cls = session.classType;
+        Race customRace = session.getSelectedCustomRace();
+        int attributeStartRace = customRace != null ? customRace.id : statRace;
 
-        int STR = JRMCoreH.attributeStart(pwr, 0, statRace, cls);
-        int DEX = JRMCoreH.attributeStart(pwr, 1, statRace, cls);
-        int CON = JRMCoreH.attributeStart(pwr, 2, statRace, cls);
-        int WIL = JRMCoreH.attributeStart(pwr, 3, statRace, cls);
-        int MND = JRMCoreH.attributeStart(pwr, 4, statRace, cls);
-        int SPI = JRMCoreH.attributeStart(pwr, 5, statRace, cls);
+        int STR = JRMCoreH.attributeStart(pwr, 0, attributeStartRace, cls);
+        int DEX = JRMCoreH.attributeStart(pwr, 1, attributeStartRace, cls);
+        int CON = JRMCoreH.attributeStart(pwr, 2, attributeStartRace, cls);
+        int WIL = JRMCoreH.attributeStart(pwr, 3, attributeStartRace, cls);
+        int MND = JRMCoreH.attributeStart(pwr, 4, attributeStartRace, cls);
+        int SPI = JRMCoreH.attributeStart(pwr, 5, attributeStartRace, cls);
 
         if (pwr == 1 || pwr == 2) {
             String[] attrNames = {"STR", "DEX", "CON", "WIL", "MND", "SPI"};

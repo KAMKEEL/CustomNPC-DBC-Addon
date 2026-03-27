@@ -13,6 +13,7 @@ import kamkeel.npcdbc.data.race.builder.RaceBuilder;
 import kamkeel.npcdbc.data.race.display.DisplayComponent;
 import kamkeel.npcdbc.data.race.display.RaceDisplay;
 import kamkeel.npcdbc.data.race.progression.FormTree;
+import kamkeel.npcdbc.data.race.stats.RaceAttributeConfig;
 
 import static kamkeel.npcdbc.AddonRegistries.FORMS;
 import static kamkeel.npcdbc.AddonRegistries.RACES;
@@ -127,7 +128,7 @@ public class BioAndroid {
             .and()
         .stats()
             .allClasses()
-                .startAttr().str(15).dex(10).con(10).will(15).mnd(5).spi(5).and()
+                .startAttr().str(15).dex(10).con(10).will(15).mnd(67).spi(5).and()
                 .statMulti()
                     .melee(2.5).defense(4.0).body(20.0).stamina(3.5)
                     .energyPower(5.2).energyPool(40.0).maxSkills(0.15)
@@ -149,6 +150,26 @@ public class BioAndroid {
                 .and()
             .and()
         .and()
+        .attributeConfig()
+            .base()
+                .multi(1, 1, 1, 1,1, 1)
+                .flat(0, 0, 0, 0, 0, 0)
+                .and()
+            .mystic()
+                .values()
+                    .multi(1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f)
+                    .flat(0, 0, 0, 0, 0, 0)
+                    .and()
+                .formula(RaceAttributeConfig.MysticFormula.ATTRIBUTE_MULTI_PLUS_SKILL)
+                .attrBonusPerSkillLevel(0.06f)
+                .and()
+            .stackables()
+                .baseAttrBonusPerSkillLevel(0.06f)
+                .godAttrMultiRace(1.0f)
+                .uiAttrMultiRace(1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f)
+                .legendaryAppliesInBase(true)
+                .and()
+            .and()
         .display()
             .renderer("npcdbc:bio_android")
             .hairType("X")

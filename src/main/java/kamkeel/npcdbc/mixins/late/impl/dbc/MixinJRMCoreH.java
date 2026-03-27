@@ -29,6 +29,9 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormKaiokenStackableData;
 import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.data.npc.DBCStats;
+import kamkeel.npcdbc.data.race.Race;
+import kamkeel.npcdbc.data.race.stats.RaceAttributeConfig;
+import kamkeel.npcdbc.data.race.stats.RaceStatCalculator;
 import kamkeel.npcdbc.mixins.late.INPCStats;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
@@ -221,10 +224,47 @@ public abstract class MixinJRMCoreH {
             return;
 
         Form form = FormController.getInstance().getFromKey(dbcData.currentFormKey);
-        if (form == null)
+
+        PlayerDBCInfo raceInfo = PlayerDataUtil.getDBCInfo(player);
+        Race customRace = raceInfo != null && raceInfo.isCustomRace() ? raceInfo.getRace() : null;
+        RaceAttributeConfig raceConfig = customRace != null ? customRace.attributeConfig : null;
+
+        if (form == null && raceConfig == null)
             return;
 
-        int skillX = powerType == 1 ? JRMCoreH.SklLvlX(1, SklX) : 0;
+        // Custom Race without Form
+        if (form == null) {
+            int result = RaceStatCalculator.computePlayerAttribute(
+                raceConfig, player, currAttributes, attribute, st, st2,
+                SklX, currRelease, arcRel, legendOn, majinOn, kaiokenOn, mysticOn,
+                uiOn, GoDOn, powerType, Skls, isFused
+            );
+
+            if (!DBCUtils.noBonusEffects && !DBCUtils.calculatingKiDrain && !DBCUtils.calculatingCost) {
+                int baseAttribute = attribute >= 0 && attribute < currAttributes.length ? currAttributes[attribute] : 0;
+                result = dbcData.bonus.calculateTotals().applyAll(attribute, baseAttribute, result);
+            }
+
+            if (!JRMCoreConfig.OverAtrLimit) {
+                result = result > JRMCoreH.checkLimit() ? JRMCoreH.checkLimit() : result;
+            }
+
+            result = (int) ((double) result > Double.MAX_VALUE ? Double.MAX_VALUE : (double) result);
+
+            if (!DBCUtils.calculatingKiDrain && (attribute == 0 || attribute == 1 || attribute == 3)) {
+                if (dbcData.isForm(DBCForm.Divine)) {
+                    if (ConfigDBCEffects.canDivineBeApplied(race, getCurrentFormName(race, st, st2, false, mysticOn, uiOn, GoDOn))) {
+                        double preKaioken = RaceStatCalculator.preKaiokenResult;
+                        result = (int) (result + ((uiOn ? result : preKaioken) * (ConfigDBCEffects.getDivineMulti() - 1)));
+                    }
+                }
+            }
+
+            info.setReturnValue(result);
+            return;
+        }
+
+        int skillX = powerType == 1 ? JRMCoreH.SklLvlX(1, SklX) - 1 : 0;
         int mysticLvl = powerType == 1 ? JRMCoreH.SklLvl(10, 1, Skls) : 0;
         int result = 0;
 
@@ -236,34 +276,42 @@ public abstract class MixinJRMCoreH {
 
         float absorptionMulti = 1;
 
-        if (!form.stackable.vanillaStackable) {
-            oldValue = replaceOldMulti(race, attribute);
-        }
+        if (raceConfig != null) {
+            result = RaceStatCalculator.computeInnerAttribute(
+                raceConfig, player, currAttributes, attribute, state, skillX,
+                false, mysticLvl, isFused, false, powerType, false
+            );
+        } else {
+            if (!form.stackable.vanillaStackable) {
+                oldValue = replaceOldMulti(race, attribute);
+            }
 
-        switch (race) {
-            case 0:
-                result = JRMCoreH.getAttributeHuman(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false);
-                break;
-            case 1:
-                result = JRMCoreH.getAttributeSaiyan(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false);
-                break;
-            case 2:
-                result = JRMCoreH.getAttributeHalfSaiyan(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false);
-                break;
-            case 3:
-                result = JRMCoreH.getAttributeNamekian(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false);
-                break;
-            case 4:
-                result = JRMCoreH.getAttributeArcosian(player, currAttributes, attribute, state, currRelease, 0, skillX, false, mysticLvl, isFused, false, powerType, false);
-                break;
-            case 5:
-                result = JRMCoreH.getAttributeMajin(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false, "");
-                break;
-            default:
-                result = currAttributes[attribute];
-        }
-        if (!form.stackable.vanillaStackable && oldValue > 0) {
-            resetOldMulti(race, attribute, oldValue);
+            switch (race) {
+                case 0:
+                    result = JRMCoreH.getAttributeHuman(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false);
+                    break;
+                case 1:
+                    result = JRMCoreH.getAttributeSaiyan(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false);
+                    break;
+                case 2:
+                    result = JRMCoreH.getAttributeHalfSaiyan(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false);
+                    break;
+                case 3:
+                    result = JRMCoreH.getAttributeNamekian(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false);
+                    break;
+                case 4:
+                    result = JRMCoreH.getAttributeArcosian(player, currAttributes, attribute, state, currRelease, 0, skillX, false, mysticLvl, isFused, false, powerType, false);
+                    break;
+                case 5:
+                    result = JRMCoreH.getAttributeMajin(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false, "");
+                    break;
+                default:
+                    result = currAttributes[attribute];
+            }
+
+            if (!form.stackable.vanillaStackable && oldValue > 0) {
+                resetOldMulti(race, attribute, oldValue);
+            }
         }
 
 
@@ -343,6 +391,12 @@ public abstract class MixinJRMCoreH {
         } else {
             result = ValueUtil.clamp(result, 1, Integer.MAX_VALUE);
         }
+
+        if (!JRMCoreConfig.OverAtrLimit) {
+            result = result > JRMCoreH.checkLimit() ? JRMCoreH.checkLimit() : result;
+        }
+
+        result = (int) ((double) result > Double.MAX_VALUE ? Double.MAX_VALUE : (double) result);
 
         info.setReturnValue(result);
     }

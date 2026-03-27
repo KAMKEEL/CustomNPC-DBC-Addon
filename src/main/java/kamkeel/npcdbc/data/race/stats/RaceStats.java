@@ -19,6 +19,12 @@ public class RaceStats {
 
     public ClassStats get(EnumDBCClasses raceClass) {
         return classes.get(raceClass);
+    } 
+    
+    public ClassStats get(int raceClass) {
+        EnumDBCClasses dbcClass = EnumDBCClasses.fromOrdinal(raceClass);
+        if (dbcClass == null) return null;
+        return classes.get(dbcClass);
     }
 
     public ClassStats getOrDefault(EnumDBCClasses raceClass) {
