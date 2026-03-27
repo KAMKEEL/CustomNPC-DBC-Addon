@@ -65,14 +65,12 @@ public class Form implements IForm {
 
     public HashSet<UUID> tagUUIDs = new HashSet<>();
 
-    public boolean builtIn = false;
 
     public Form() {
     }
 
     public Form(FormKey key) {
         this.key = key;
-        this.builtIn = true;
         this.name = key.name;
     }
 
@@ -116,10 +114,7 @@ public class Form implements IForm {
         tagUUIDs = TagController.readTagUUIDs(compound, "TagUUIDs");
 
         race = compound.getInteger("race");
-        if (compound.hasKey("FormKey")) {
-            key = new FormKey(compound.getString("FormKey"));
-            builtIn = true;
-        }
+
         mastery.readFromNBT(compound);
         display.readFromNBT(compound);
         stackable.readFromNBT(compound);
@@ -157,8 +152,6 @@ public class Form implements IForm {
         TagController.writeTagUUIDs(compound, "TagUUIDs", tagUUIDs);
 
         compound.setInteger("race", race);
-        if (key != null)
-            compound.setString("FormKey", key.toString());
         mastery.writeToNBT(compound);
         display.writeToNBT(compound);
         stackable.writeToNBT(compound);
@@ -197,19 +190,24 @@ public class Form implements IForm {
     public void setName(String name) {
         if (name == null || name.trim().isEmpty())
             return;
-        if (!builtIn && FormController.Instance != null) {
-            Form existing = FormController.Instance.getFormFromName(name);
-            if (existing != null && existing.id != this.id)
-                return;
-        }
+
+        FormKey key = FormKey.custom(name);
+        Form existing = FormController.Instance.getFromKey(key.toString());
+        if (existing != null && existing.id != this.id)
+            return;
+
         this.name = name;
-        if (!builtIn)
-            key = FormKey.custom(name);
+        this.key = key;
     }
 
     @Override
     public String getMenuName() {
         return menuName;
+    }
+
+    @Override
+    public String getKey() {
+        return key.toString();
     }
 
     @Override

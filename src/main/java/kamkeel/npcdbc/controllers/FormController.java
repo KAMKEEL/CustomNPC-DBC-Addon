@@ -201,7 +201,7 @@ public class FormController implements IFormHandler {
     }
 
     public IForm saveForm(IForm customForm) {
-        if (isBuiltInForm(customForm.getID()))
+        if (isBuiltInForm(customForm.getKey()))
             return customForm;
 
         if (customForm.getID() < 0) {
@@ -287,7 +287,7 @@ public class FormController implements IFormHandler {
     }
 
     public void delete(int id) {
-        if (!this.customForms.containsKey(id) || isBuiltInForm(id))
+        if (!this.customForms.containsKey(id))
             return;
 
         Form foundForm = this.customForms.remove(id);
@@ -352,9 +352,9 @@ public class FormController implements IFormHandler {
         builtInForms.put(key, builtIn);
     }
 
-    public boolean isBuiltInForm(int id) {
-        Form form = customForms.get(id);
-        return form != null && form.builtIn;
+    public boolean isBuiltInForm(String key) {
+        Form form = builtInForms.get(key);
+        return form != null;
     }
 
     public boolean hasBuiltIn(String key) {
@@ -419,7 +419,6 @@ public class FormController implements IFormHandler {
         NBTTagCompound nbt = new NBTTagCompound();
         NBTTagList formList = new NBTTagList();
         for (Integer key : customForms.keySet()) {
-            if (isBuiltInForm(key)) continue;
             Form customForm = customForms.get(key);
             if (!customForm.getName().isEmpty()) {
                 NBTTagCompound formCompound = new NBTTagCompound();

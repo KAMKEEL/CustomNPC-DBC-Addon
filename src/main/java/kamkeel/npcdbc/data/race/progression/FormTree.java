@@ -152,11 +152,7 @@ public class FormTree {
         for (int i = 0; i < forms.size(); i++) {
             Form form = forms.get(i);
             form.id = getScopedId(form.id);
-            if (form.key != null)
-                form.name = form.key.name;
-            else
-                form.name = "builtin_" + form.id;
-            form.builtIn = true;
+            form.name = form.key.name;
         }
         for (int i = 0; i < forms.size(); i++) {
             Form form = forms.get(i);
