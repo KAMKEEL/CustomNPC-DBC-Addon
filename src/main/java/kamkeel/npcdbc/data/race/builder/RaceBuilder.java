@@ -2,7 +2,6 @@ package kamkeel.npcdbc.data.race.builder;
 
 import kamkeel.npcdbc.AddonRegistries;
 import kamkeel.npcdbc.api.Color;
-import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.client.race.RaceRenderContext;
 import kamkeel.npcdbc.constants.enums.EnumDBCAttributes;
 import kamkeel.npcdbc.constants.enums.EnumDBCClasses;
@@ -14,9 +13,6 @@ import kamkeel.npcdbc.data.race.progression.FormTree;
 import kamkeel.npcdbc.data.race.progression.RaceSkill;
 import kamkeel.npcdbc.data.race.stats.ClassStats;
 import kamkeel.npcdbc.data.race.stats.RaceStats;
-import kamkeel.npcs.controllers.data.ability.Ability;
-import kamkeel.npcs.util.Register;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
@@ -68,8 +64,8 @@ public class RaceBuilder {
         return new DisplayBuilder(this);
     }
 
-    public ClassStatsBuilder forClass(EnumDBCClasses raceClass) {
-        return new ClassStatsBuilder(this, raceClass);
+    public StatsBuilder stats() {
+        return new StatsBuilder(this);
     }
 
     public Race build() {
@@ -158,52 +154,292 @@ public class RaceBuilder {
         }
     }
 
-    public static class ClassStatsBuilder {
+    // ══════════════════════════════════════════════════════════
+    // StatsBuilder — top-level race stats authoring
+    // ══════════════════════════════════════════════════════════
+
+    /**
+     * Fluent builder for {@link RaceStats}.
+     *
+     * <p>Usage pattern:</p>
+     * <pre>{@code
+     * .stats()
+     *     .allClasses()
+     *         .startAttr().str(15).dex(10).con(10).will(15).mnd(5).spi(5).and()
+     *         .statMulti().melee(2.5).defense(4.0).body(20.0)...and()
+     *     .forClass(MARTIAL_ARTIST)
+     *         .statBonus().melee(30).energyPower(20).flySpeed(10).and()
+     *     .forClass(SPIRITUALIST)
+     *         .statBonus().melee(20).defense(10).body(-10)...and()
+     *     .forClass(WARRIOR)
+     *         .statBonus().melee(40).defense(-10).body(10)...and()
+     *     .and()
+     * }</pre>
+     *
+     * <p>Each {@code forClass()} block inherits from the {@code allClasses()} base and
+     * overrides only the values it explicitly sets. If no {@code allClasses()} block is
+     * declared, {@link ClassStats#defaults()} is used as the base.</p>
+     */
+    public static class StatsBuilder {
         private final RaceBuilder parent;
+
+        // Base applied to every class before per-class overrides
+        private Map<EnumDBCAttributes, Integer>  baseInitialAttr   = null;
+        private Map<EnumDBCAttributes, Double>   baseAttrMulti     = null;
+        private Map<EnumDBCStats, Double>        baseStatBonus     = null;
+        private Map<EnumDBCStats, Double>        baseStatMulti     = null;
+
+        // Committed per-class overrides
+        private final Map<EnumDBCClasses, Map<EnumDBCAttributes, Integer>>  classInitialAttr  = new EnumMap<>(EnumDBCClasses.class);
+        private final Map<EnumDBCClasses, Map<EnumDBCAttributes, Double>>   classAttrMulti    = new EnumMap<>(EnumDBCClasses.class);
+        private final Map<EnumDBCClasses, Map<EnumDBCStats, Double>>        classStatBonus    = new EnumMap<>(EnumDBCClasses.class);
+        private final Map<EnumDBCClasses, Map<EnumDBCStats, Double>>        classStatMulti    = new EnumMap<>(EnumDBCClasses.class);
+
+        StatsBuilder(RaceBuilder parent) { this.parent = parent; }
+
+        /** Begin an override block that applies to all three classes as a shared base. */
+        public ClassOverrideBuilder allClasses() {
+            return new ClassOverrideBuilder(this, null);
+        }
+
+        /** Begin an override block for a specific DBC class. */
+        public ClassOverrideBuilder forClass(EnumDBCClasses raceClass) {
+            return new ClassOverrideBuilder(this, raceClass);
+        }
+
+        /** Commit all class stats and return to {@link RaceBuilder}. */
+        public RaceBuilder and() {
+            for (EnumDBCClasses cls : EnumDBCClasses.values()) {
+                Map<EnumDBCAttributes, Integer> initAttr  = mergeInt(baseInitialAttr, classInitialAttr.get(cls),  ClassStats.DEFAULT_INITIAL_ATTRIBUTES);
+                Map<EnumDBCAttributes, Double>  attrMulti = mergeDbl(baseAttrMulti,   classAttrMulti.get(cls),    ClassStats.DEFAULT_ATTRIBUTE_MULTIPLIERS);
+                Map<EnumDBCStats, Double>        statBonus = mergeDbl(baseStatBonus,   classStatBonus.get(cls),    ClassStats.DEFAULT_STAT_BONUSES);
+                Map<EnumDBCStats, Double>        statMulti = mergeDbl(baseStatMulti,   classStatMulti.get(cls),    ClassStats.DEFAULT_STAT_ATTRIBUTE_MULTIPLIERS);
+                parent.stats.set(cls, new ClassStats(initAttr, attrMulti, statBonus, statMulti));
+            }
+            return parent;
+        }
+
+        // ── Internal helpers ─────────────────────────────────────────────────────
+
+        private static <K extends Enum<K>> Map<K, Integer> mergeInt(
+                Map<K, Integer> base, Map<K, Integer> override, Map<K, Integer> fallback) {
+            Map<K, Integer> result = new EnumMap<>(base != null ? base : fallback);
+            if (override != null) result.putAll(override);
+            return result;
+        }
+
+        private static <K extends Enum<K>, V> Map<K, V> mergeDbl(
+                Map<K, V> base, Map<K, V> override, Map<K, V> fallback) {
+            Map<K, V> result = new EnumMap<>(base != null ? base : fallback);
+            if (override != null) result.putAll(override);
+            return result;
+        }
+
+        // ── Commit helpers called by ClassOverrideBuilder ────────────────────────
+
+        void commitBase(Map<EnumDBCAttributes, Integer> ia, Map<EnumDBCAttributes, Double> am,
+                        Map<EnumDBCStats, Double> sb, Map<EnumDBCStats, Double> sm) {
+            if (ia != null) baseInitialAttr = ia;
+            if (am != null) baseAttrMulti   = am;
+            if (sb != null) baseStatBonus   = sb;
+            if (sm != null) baseStatMulti   = sm;
+        }
+
+        void commitClass(EnumDBCClasses cls,
+                         Map<EnumDBCAttributes, Integer> ia, Map<EnumDBCAttributes, Double> am,
+                         Map<EnumDBCStats, Double> sb, Map<EnumDBCStats, Double> sm) {
+            if (ia != null) classInitialAttr.put(cls, ia);
+            if (am != null) classAttrMulti  .put(cls, am);
+            if (sb != null) classStatBonus  .put(cls, sb);
+            if (sm != null) classStatMulti  .put(cls, sm);
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // ClassOverrideBuilder — per-class (or all-classes) scope
+    // ══════════════════════════════════════════════════════════
+
+    /**
+     * Scope for overriding individual stat groups for a single class or all classes.
+     * {@code raceClass == null} means "apply to all classes as base".
+     */
+    public static class ClassOverrideBuilder {
+        private final StatsBuilder parent;
+        /** null = allClasses base */
         private final EnumDBCClasses raceClass;
 
-        private final Map<EnumDBCAttributes, Integer> initialAttributes = new EnumMap<>(ClassStats.DEFAULT_INITIAL_ATTRIBUTES);
-        private final Map<EnumDBCAttributes, Double> attributeMultipliers = new EnumMap<>(ClassStats.DEFAULT_ATTRIBUTE_MULTIPLIERS);
-        private final Map<EnumDBCStats, Double> statBonuses = new EnumMap<>(ClassStats.DEFAULT_STAT_BONUSES);
-        private final Map<EnumDBCStats, Double> statAttributeMultipliers = new EnumMap<>(ClassStats.DEFAULT_STAT_ATTRIBUTE_MULTIPLIERS);
+        private Map<EnumDBCAttributes, Integer> initialAttr  = null;
+        private Map<EnumDBCAttributes, Double>  attrMulti    = null;
+        private Map<EnumDBCStats, Double>       statBonus    = null;
+        private Map<EnumDBCStats, Double>       statMulti    = null;
 
-        ClassStatsBuilder(RaceBuilder parent, EnumDBCClasses raceClass) {
-            this.parent = parent;
+        ClassOverrideBuilder(StatsBuilder parent, EnumDBCClasses raceClass) {
+            this.parent    = parent;
             this.raceClass = raceClass;
         }
 
-        public ClassStatsBuilder initialAttribute(EnumDBCAttributes attr, int value) {
-            initialAttributes.put(attr, value);
-            return this;
+        // ── Sub-builder entry points ─────────────────────────────────────────────
+
+        /** Configure starting attribute values (STR, DEX, CON, WILL, MND, SPI). */
+        public StartAttrBuilder startAttr() {
+            return new StartAttrBuilder(this);
         }
 
-        public ClassStatsBuilder attributeMultiplier(EnumDBCAttributes attr, double value) {
-            attributeMultipliers.put(attr, value);
-            return this;
+        /** Configure per-attribute multipliers. */
+        public AttrMultiBuilder attrMulti() {
+            return new AttrMultiBuilder(this);
         }
 
-        public ClassStatsBuilder statBonus(EnumDBCStats stat, double value) {
-            statBonuses.put(stat, value);
-            return this;
+        /** Configure flat stat bonuses (Melee, Defense, Body, …). */
+        public StatBonusBuilder statBonus() {
+            return new StatBonusBuilder(this);
         }
 
-        public ClassStatsBuilder statAttributeMultiplier(EnumDBCStats stat, double value) {
-            statAttributeMultipliers.put(stat, value);
-            return this;
+        /** Configure stat multipliers derived from attributes. */
+        public StatMultiBuilder statMulti() {
+            return new StatMultiBuilder(this);
         }
 
-        public ClassStatsBuilder forClass(EnumDBCClasses next) {
-            and();
-            return new ClassStatsBuilder(parent, next);
+        // ── Cross-class helpers ──────────────────────────────────────────────────
+
+        /** Commit this block and start a new all-classes base block. */
+        public ClassOverrideBuilder allClasses() {
+            commit();
+            return new ClassOverrideBuilder(parent, null);
         }
 
-        public RaceBuilder and() {
-            parent.stats.set(raceClass, new ClassStats(
-                initialAttributes,
-                attributeMultipliers,
-                statBonuses,
-                statAttributeMultipliers
-            ));
+        /** Commit this block and start a new per-class block. */
+        public ClassOverrideBuilder forClass(EnumDBCClasses next) {
+            commit();
+            return new ClassOverrideBuilder(parent, next);
+        }
+
+        /** Commit this block and return to {@link StatsBuilder}. */
+        public StatsBuilder and() {
+            commit();
+            return parent;
+        }
+
+        // ── Internal ─────────────────────────────────────────────────────────────
+
+        private void commit() {
+            if (raceClass == null) {
+                parent.commitBase(initialAttr, attrMulti, statBonus, statMulti);
+            } else {
+                parent.commitClass(raceClass, initialAttr, attrMulti, statBonus, statMulti);
+            }
+        }
+
+        void setInitialAttr(Map<EnumDBCAttributes, Integer> map) { this.initialAttr = map; }
+        void setAttrMulti  (Map<EnumDBCAttributes, Double>  map) { this.attrMulti   = map; }
+        void setStatBonus  (Map<EnumDBCStats, Double>       map) { this.statBonus    = map; }
+        void setStatMulti  (Map<EnumDBCStats, Double>       map) { this.statMulti    = map; }
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // StartAttrBuilder — starting attribute values
+    // ══════════════════════════════════════════════════════════
+
+    public static class StartAttrBuilder {
+        private final ClassOverrideBuilder parent;
+        private final Map<EnumDBCAttributes, Integer> map = new EnumMap<>(ClassStats.DEFAULT_INITIAL_ATTRIBUTES);
+
+        StartAttrBuilder(ClassOverrideBuilder parent) { this.parent = parent; }
+
+        public StartAttrBuilder str (int v) { map.put(EnumDBCAttributes.STR,  v); return this; }
+        public StartAttrBuilder dex (int v) { map.put(EnumDBCAttributes.DEX,  v); return this; }
+        public StartAttrBuilder con (int v) { map.put(EnumDBCAttributes.CON,  v); return this; }
+        public StartAttrBuilder will(int v) { map.put(EnumDBCAttributes.WILL, v); return this; }
+        public StartAttrBuilder mnd (int v) { map.put(EnumDBCAttributes.MND,  v); return this; }
+        public StartAttrBuilder spi (int v) { map.put(EnumDBCAttributes.SPI,  v); return this; }
+        public StartAttrBuilder set (EnumDBCAttributes attr, int v) { map.put(attr, v); return this; }
+
+        public ClassOverrideBuilder and() {
+            parent.setInitialAttr(map);
+            return parent;
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // AttrMultiBuilder — attribute multipliers
+    // ══════════════════════════════════════════════════════════
+
+    public static class AttrMultiBuilder {
+        private final ClassOverrideBuilder parent;
+        private final Map<EnumDBCAttributes, Double> map = new EnumMap<>(ClassStats.DEFAULT_ATTRIBUTE_MULTIPLIERS);
+
+        AttrMultiBuilder(ClassOverrideBuilder parent) { this.parent = parent; }
+
+        public AttrMultiBuilder str (double v) { map.put(EnumDBCAttributes.STR,  v); return this; }
+        public AttrMultiBuilder dex (double v) { map.put(EnumDBCAttributes.DEX,  v); return this; }
+        public AttrMultiBuilder con (double v) { map.put(EnumDBCAttributes.CON,  v); return this; }
+        public AttrMultiBuilder will(double v) { map.put(EnumDBCAttributes.WILL, v); return this; }
+        public AttrMultiBuilder mnd (double v) { map.put(EnumDBCAttributes.MND,  v); return this; }
+        public AttrMultiBuilder spi (double v) { map.put(EnumDBCAttributes.SPI,  v); return this; }
+        public AttrMultiBuilder set (EnumDBCAttributes attr, double v) { map.put(attr, v); return this; }
+
+        public ClassOverrideBuilder and() {
+            parent.setAttrMulti(map);
+            return parent;
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // StatBonusBuilder — flat stat bonuses
+    // ══════════════════════════════════════════════════════════
+
+    public static class StatBonusBuilder {
+        private final ClassOverrideBuilder parent;
+        private final Map<EnumDBCStats, Double> map = new EnumMap<>(ClassStats.DEFAULT_STAT_BONUSES);
+
+        StatBonusBuilder(ClassOverrideBuilder parent) { this.parent = parent; }
+
+        public StatBonusBuilder melee       (double v) { map.put(EnumDBCStats.MELEE,             v); return this; }
+        public StatBonusBuilder defense     (double v) { map.put(EnumDBCStats.DEFENSE,           v); return this; }
+        public StatBonusBuilder body        (double v) { map.put(EnumDBCStats.BODY,              v); return this; }
+        public StatBonusBuilder stamina     (double v) { map.put(EnumDBCStats.STAMINA,           v); return this; }
+        public StatBonusBuilder energyPower (double v) { map.put(EnumDBCStats.ENERGY_POWER,      v); return this; }
+        public StatBonusBuilder energyPool  (double v) { map.put(EnumDBCStats.ENERGY_POOL,       v); return this; }
+        public StatBonusBuilder maxSkills   (double v) { map.put(EnumDBCStats.MAX_SKILLS,        v); return this; }
+        public StatBonusBuilder speed       (double v) { map.put(EnumDBCStats.SPEED,             v); return this; }
+        public StatBonusBuilder regenBody   (double v) { map.put(EnumDBCStats.REGEN_RATE_BODY,   v); return this; }
+        public StatBonusBuilder regenStamina(double v) { map.put(EnumDBCStats.REGEN_RATE_STAMINA,v); return this; }
+        public StatBonusBuilder regenEnergy (double v) { map.put(EnumDBCStats.REGEN_RATE_ENERGY, v); return this; }
+        public StatBonusBuilder flySpeed    (double v) { map.put(EnumDBCStats.FLY_SPEED,         v); return this; }
+        public StatBonusBuilder set(EnumDBCStats stat, double v) { map.put(stat, v); return this; }
+
+        public ClassOverrideBuilder and() {
+            parent.setStatBonus(map);
+            return parent;
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // StatMultiBuilder — stat multipliers from attributes
+    // ══════════════════════════════════════════════════════════
+
+    public static class StatMultiBuilder {
+        private final ClassOverrideBuilder parent;
+        private final Map<EnumDBCStats, Double> map = new EnumMap<>(ClassStats.DEFAULT_STAT_ATTRIBUTE_MULTIPLIERS);
+
+        StatMultiBuilder(ClassOverrideBuilder parent) { this.parent = parent; }
+
+        public StatMultiBuilder melee       (double v) { map.put(EnumDBCStats.MELEE,             v); return this; }
+        public StatMultiBuilder defense     (double v) { map.put(EnumDBCStats.DEFENSE,           v); return this; }
+        public StatMultiBuilder body        (double v) { map.put(EnumDBCStats.BODY,              v); return this; }
+        public StatMultiBuilder stamina     (double v) { map.put(EnumDBCStats.STAMINA,           v); return this; }
+        public StatMultiBuilder energyPower (double v) { map.put(EnumDBCStats.ENERGY_POWER,      v); return this; }
+        public StatMultiBuilder energyPool  (double v) { map.put(EnumDBCStats.ENERGY_POOL,       v); return this; }
+        public StatMultiBuilder maxSkills   (double v) { map.put(EnumDBCStats.MAX_SKILLS,        v); return this; }
+        public StatMultiBuilder speed       (double v) { map.put(EnumDBCStats.SPEED,             v); return this; }
+        public StatMultiBuilder regenBody   (double v) { map.put(EnumDBCStats.REGEN_RATE_BODY,   v); return this; }
+        public StatMultiBuilder regenStamina(double v) { map.put(EnumDBCStats.REGEN_RATE_STAMINA,v); return this; }
+        public StatMultiBuilder regenEnergy (double v) { map.put(EnumDBCStats.REGEN_RATE_ENERGY, v); return this; }
+        public StatMultiBuilder flySpeed    (double v) { map.put(EnumDBCStats.FLY_SPEED,         v); return this; }
+        public StatMultiBuilder set(EnumDBCStats stat, double v) { map.put(stat, v); return this; }
+
+        public ClassOverrideBuilder and() {
+            parent.setStatMulti(map);
             return parent;
         }
     }
