@@ -21,7 +21,7 @@ public final class CreatorSession {
 
     // ── Race ──
     public int raceIndex;
-    public int addonRaceId;
+    public String currentRaceKey;
     public int stateSelected;
 
     // ── Appearance ──
@@ -69,7 +69,7 @@ public final class CreatorSession {
 
     // ── Snapshot (captured on open for cancel/reset) ──
     private int snapRaceIndex;
-    private int snapAddonRaceId;
+    private String snapCurrentRaceKey;
     private int snapStateSelected;
     private int snapGender;
     private int snapYears;
@@ -141,13 +141,16 @@ public final class CreatorSession {
         s.preMajinHairColor = s.hairColor;
         s.hasPreMajinHair = !JRMCoreH.isRaceMajin(s.getVanillaRaceIndex());
         // Seed race from vanilla; then check addon override
-        s.addonRaceId = -1;
+        s.currentRaceKey = null;
         DBCData clientData = DBCData.getClient();
-        if (clientData != null && clientData.addonRaceID > 0) {
-            int customIndex = RaceController.Instance.getIndex(clientData.addonRaceID);
-            if (customIndex >= 0) {
-                s.raceIndex = RaceSelectorHelper.VANILLA_RACE_COUNT + customIndex;
-                s.addonRaceId = clientData.addonRaceID;
+        if (clientData != null && clientData.currentRaceKey != null && !clientData.currentRaceKey.isEmpty()) {
+            Race race = RaceController.Instance.getByName(clientData.currentRaceKey);
+            if (race != null) {
+                int customIndex = RaceController.Instance.getIndex(race.getName());
+                if (customIndex >= 0) {
+                    s.raceIndex = RaceSelectorHelper.VANILLA_RACE_COUNT + customIndex;
+                    s.currentRaceKey = clientData.currentRaceKey;
+                }
             }
         }
 
@@ -158,7 +161,7 @@ public final class CreatorSession {
     /** Captures current working values as the snapshot for cancel/reset. */
     private void captureSnapshot() {
         snapRaceIndex = raceIndex;
-        snapAddonRaceId = addonRaceId;
+        snapCurrentRaceKey = currentRaceKey;
         snapStateSelected = stateSelected;
         snapGender = gender;
         snapYears = years;
@@ -191,7 +194,7 @@ public final class CreatorSession {
     /** Restores all working values to their initial snapshot state. */
     public void resetToSnapshot() {
         raceIndex = snapRaceIndex;
-        addonRaceId = snapAddonRaceId;
+        currentRaceKey = snapCurrentRaceKey;
         stateSelected = snapStateSelected;
         gender = snapGender;
         years = snapYears;

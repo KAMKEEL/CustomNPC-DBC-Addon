@@ -17,6 +17,7 @@ import kamkeel.npcdbc.constants.*;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
+import kamkeel.npcdbc.controllers.RaceController;
 import kamkeel.npcdbc.controllers.SkillController;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.IAuraData;
@@ -108,7 +109,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public float addonFormLevel = 0, addonCurrentHeat = 0;
 
     // Custom Race
-    public int addonRaceID = -1;
+    public String currentRaceKey = null;
 
     /** Sets addon heat and writes directly to NBT so DBC picks it up immediately. */
     public void setAddonHeat(float heat) {
@@ -225,7 +226,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         comp.setString("jrmcMajinAbsorptionData", MajinAbsorptionData);
         comp.setString("jrmcFuzion", Fusion);
         // DBC Addon
-        comp.setInteger("addonRaceID", addonRaceID);
+        comp.setString("currentRaceKey", currentRaceKey != null ? currentRaceKey : "");
         comp.setString("currentFormKey", currentFormKey != null ? currentFormKey : "");
         comp.setInteger("auraID", auraID);
         comp.setInteger("outlineID", outlineID);
@@ -294,9 +295,14 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         isFlying = c.getBoolean("DBCisFlying");
 
         // DBC Addon
-        if (!c.hasKey("addonRaceID"))
-            c.setInteger("addonRaceID", addonRaceID);
-        addonRaceID = c.getInteger("addonRaceID");
+        if (c.hasKey("currentRaceKey", 8)) {
+            String key = c.getString("currentRaceKey");
+            currentRaceKey = key.isEmpty() ? null : key;
+        } else if (c.hasKey("addonRaceID")) {
+            int legacyId = c.getInteger("addonRaceID");
+            Race legacyRace = legacyId > -1 ? RaceController.getInstance().get(legacyId) : null;
+            currentRaceKey = legacyRace != null ? legacyRace.getName() : null;
+        }
 
 
         currentFormKey = c.getString("currentFormKey");
@@ -412,10 +418,10 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         currentFormKey = currentForm != null ? currentForm.getKeyString() : null;
         addonFormLevel = formData.getCurrentLevel();
         auraID = formData.currentAura;
-        addonRaceID = formData.currentRace;
+        currentRaceKey = formData.getCurrentRace() != null ? formData.getCurrentRace().getName() : null;
         nbt.setString("currentFormKey", currentFormKey != null ? currentFormKey : "");
         nbt.setFloat("addonFormLevel", addonFormLevel);
-        nbt.setInteger("addonRaceID", addonRaceID);
+        nbt.setString("currentRaceKey", currentRaceKey != null ? currentRaceKey : "");
         nbt.setInteger("auraID", auraID);
         nbt.setInteger("outlineID", outlineID);
 
@@ -435,7 +441,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         dbc.setString("currentFormKey", formKey != null ? formKey : "");
         dbc.setInteger("auraID", formData.currentAura);
         dbc.setFloat("addonFormLevel", formData.getCurrentLevel());
-        dbc.setInteger("addonRaceID", formData.currentRace);
+        dbc.setString("currentRaceKey", formData.getCurrentRace() != null ? formData.getCurrentRace().getName() : "");
         loadFromNBT(dbc);
         if (syncALL)
             syncTracking();

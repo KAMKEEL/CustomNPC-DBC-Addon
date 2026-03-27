@@ -410,9 +410,9 @@ public final class AppearancePage extends CreatorPage {
                 session.raceIndex = next;
                 if (RaceSelectorHelper.isCustomRaceIndex(next)) {
                     Race race = RaceSelectorHelper.getCustomRaceByIndex(next);
-                    session.addonRaceId = race != null ? race.id : -1;
+                    session.currentRaceKey = race != null ? race.getName() : null;
                 } else {
-                    session.addonRaceId = -1;
+                    session.currentRaceKey = null;
                 }
                 session.applyRaceChange(previousRaceIndex);
                 syncAndRefreshRace();

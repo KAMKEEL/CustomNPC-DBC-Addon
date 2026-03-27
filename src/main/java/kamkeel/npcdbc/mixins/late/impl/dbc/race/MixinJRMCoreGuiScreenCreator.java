@@ -250,10 +250,13 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
         if (player == null) return;
 
-        int raceID = DBCData.getClient().addonRaceID;
-        if (raceID <= 0) return;
+        String raceKey = DBCData.getClient().currentRaceKey;
+        if (raceKey == null || raceKey.isEmpty()) return;
 
-        int customIndex = RaceController.Instance.getIndex(raceID);
+        Race addonRace = RaceController.getInstance().getByName(raceKey);
+        if (addonRace == null) return;
+
+        int customIndex = RaceController.Instance.getIndex(addonRace.getName());
         if (customIndex >= 0) {
             RaceSlcted = RaceSelectorHelper.VANILLA_RACE_COUNT + customIndex;
             RaceSelectorHelper.setPreviewRaceIndex(RaceSlcted);
@@ -291,16 +294,16 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
     private void npcdbc$interceptCreatorFinalize(GuiButton button, CallbackInfo ci) {
         if (button.id != 13 || ConfigDBCClient.EnhancedGui) return;
 
-        int addonRaceId = -1;
+        String currentRaceKey = null;
         if (RaceSelectorHelper.isCustomRaceIndex(RaceSlcted)) {
             Race customRace = RaceSelectorHelper.getCustomRaceByIndex(RaceSlcted);
             if (customRace != null) {
-                addonRaceId = customRace.id;
+                currentRaceKey = customRace.getName();
             }
             RaceSlcted = 0;
         }
 
-        DBCPacketHandler.Instance.sendToServer(new DBCRaceSelect(addonRaceId));
+        DBCPacketHandler.Instance.sendToServer(new DBCRaceSelect(currentRaceKey));
         RaceSelectorHelper.clearPreviewRace();
         RaceSelectorHelper.setPreviewActive(false);
     }

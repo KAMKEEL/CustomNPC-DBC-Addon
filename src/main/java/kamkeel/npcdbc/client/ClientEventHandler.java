@@ -102,7 +102,7 @@ public class ClientEventHandler {
 
         DBCData dbcData = DBCData.getClient();
 
-        int effectiveRace = formData.isCustomRace() ? formData.currentRace : dbcData.Race;
+        int effectiveRace = formData.isCustomRace() ? formData.getCurrentRace().id : dbcData.Race;
         if (!form.raceEligible(effectiveRace))
             return false;
 
@@ -187,7 +187,7 @@ public class ClientEventHandler {
                         form = formData.getSelectedForm();
                         if (form != null) {
 
-                            int effectiveRace = formData.isCustomRace() ? formData.currentRace : dbcData.Race;
+                            int effectiveRace = formData.isCustomRace() ? formData.getCurrentRace().id : dbcData.Race;
                             if (!form.raceEligible(effectiveRace)) {
                                 Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.raceIneligible"));
                                 return;

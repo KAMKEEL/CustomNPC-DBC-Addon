@@ -1,12 +1,8 @@
 package kamkeel.npcdbc.data.dbcdata;
 
 import kamkeel.npcdbc.controllers.RaceController;
-import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.race.Race;
-import kamkeel.npcdbc.data.race.progression.FormTree;
-import kamkeel.npcdbc.data.race.progression.FormTree.Branch;
-import kamkeel.npcdbc.data.race.progression.RaceSkill;
 
 import JinRyuu.JRMCore.JRMCoreH;
 
@@ -24,15 +20,16 @@ public class DBCDataRace {
     // ─── Core runtime state ──────────────────────────────────────────────
 
     public boolean isCustomRace() {
-        return data.addonRaceID > -1 && RaceController.getInstance().has(data.addonRaceID);
+        return data.currentRaceKey != null && RaceController.getInstance().hasName(data.currentRaceKey);
     }
 
     public Race getRace() {
-        return RaceController.getInstance().get(data.addonRaceID);
+        return RaceController.getInstance().getByName(data.currentRaceKey);
     }
 
     public int getRaceID() {
-        return data.addonRaceID;
+        Race r = getRace();
+        return r != null ? r.id : -1;
     }
 
     public int getRacialSkillLevel() {

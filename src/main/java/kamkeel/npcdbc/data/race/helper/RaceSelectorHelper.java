@@ -22,7 +22,7 @@ public final class RaceSelectorHelper {
     public static final int VANILLA_RACE_COUNT = 6;
 
     private static boolean dirty = true;
-    private static int previewCustomRaceId = -1;
+    private static String previewCustomRaceKey = null;
     private static boolean previewActive = false;
 
     private static String[] expandedRaces;
@@ -45,13 +45,13 @@ public final class RaceSelectorHelper {
 
     public static void setPreviewRaceIndex(int raceIndex) {
         Race race = getCustomRaceByIndex(raceIndex);
-        previewCustomRaceId = race != null ? race.id : -1;
+        previewCustomRaceKey = race != null ? race.getName() : null;
     }
 
     public static void setPreviewActive(boolean active) {
         previewActive = active;
         if (!active) {
-            previewCustomRaceId = -1;
+            previewCustomRaceKey = null;
         }
     }
 
@@ -60,18 +60,15 @@ public final class RaceSelectorHelper {
     }
 
     public static void clearPreviewRace() {
-        previewCustomRaceId = -1;
+        previewCustomRaceKey = null;
     }
-
-    public static int getPreviewCustomRaceId() {
-        return previewCustomRaceId;
-    }
+    
 
     public static Race getPreviewCustomRace() {
-        if (previewCustomRaceId <= 0) {
+        if (previewCustomRaceKey == null) {
             return null;
         }
-        return RaceController.Instance.get(previewCustomRaceId);
+        return RaceController.Instance.getByName(previewCustomRaceKey);
     }
 
     private static void rebuildIfDirty() {

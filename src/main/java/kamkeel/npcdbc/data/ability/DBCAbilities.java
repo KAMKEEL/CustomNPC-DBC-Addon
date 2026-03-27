@@ -6,7 +6,6 @@ import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.DBCSkills;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.constants.enums.EnumDBCRaces;
-import kamkeel.npcdbc.data.ability.effect.DBCEffectAbility;
 import kamkeel.npcdbc.data.ability.effect.DBCHealAbility;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.ability.conditions.ConditionRace;
@@ -82,7 +81,7 @@ public class DBCAbilities {
     }
 
     private static Ability withCustomRace(Ability ability, Race race) {
-        ability.setPlayerRequirement(player -> DBCData.get(player).addonRaceID == race.id);
+        ability.setPlayerRequirement(player -> race.getName().equals(DBCData.get(player).currentRaceKey));
         return ability;
     }
 

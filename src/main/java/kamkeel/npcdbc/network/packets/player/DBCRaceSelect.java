@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.RaceController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.PacketChannel;
@@ -13,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.LogWriter;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Client -> Server packet sent during character creator finalize
@@ -20,18 +22,18 @@ import java.io.IOException;
  * <p>
  * The vanilla DBC finalize has already been clamped to Human (race 0)
  * by the mixin, so DBC sees a valid vanilla race. This packet carries
- * the real custom race ID so the server can persist it in addon data.
+ * the real custom race key so the server can persist it in addon data.
  * <p>
- * A raceID of -1 means the player selected a vanilla race and any
+ * An empty raceKey means the player selected a vanilla race and any
  * existing addon race should be cleared.
  */
 public final class DBCRaceSelect extends AbstractPacket {
 
-    private int raceID;
+    private String raceKey;
 
-    /** Parameterized constructor — used client-side when sending. */
-    public DBCRaceSelect(int raceID) {
-        this.raceID = raceID;
+    /** String-key constructor — preferred for new callers. */
+    public DBCRaceSelect(String raceKey) {
+        this.raceKey = raceKey;
     }
 
     /** No-arg constructor — required for packet registration. */
@@ -50,25 +52,37 @@ public final class DBCRaceSelect extends AbstractPacket {
 
     @Override
     public void sendData(ByteBuf out) throws IOException {
-        out.writeInt(this.raceID);
+        String toSend = raceKey != null ? raceKey : "";
+        byte[] bytes = toSend.getBytes(StandardCharsets.UTF_8);
+        out.writeInt(bytes.length);
+        out.writeBytes(bytes);
     }
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        raceID = in.readInt();
+        int len = in.readInt();
+        byte[] bytes = new byte[len];
+        in.readBytes(bytes);
+        raceKey = new String(bytes, StandardCharsets.UTF_8);
+        if (raceKey.isEmpty()) raceKey = null;
 
-        // Validate: either -1 (clear) or a registered custom race
-        if (raceID != -1 && !RaceController.getInstance().has(raceID)) {
+        // Validate: either null (clear) or a registered custom race name
+        if (raceKey != null && !RaceController.getInstance().hasName(raceKey)) {
             LogWriter.error("[NPCDBC] Player " + player.getCommandSenderName()
-                    + " sent invalid addon race ID: " + raceID);
+                    + " sent invalid addon race key: " + raceKey);
             return;
         }
 
         PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
         DBCData data = DBCData.get(player);
-        info.currentRace = raceID;
+        Race race = raceKey != null ? RaceController.getInstance().getByName(raceKey) : null;
+        if (race != null) {
+            info.setCurrentRace(race);
+        } else {
+            info.clearCurrentRace();
+        }
         info.setSelectedFormBranch(0);
-        data.addonRaceID = raceID;
+        data.currentRaceKey = raceKey;
         info.updateClient();
     }
 }

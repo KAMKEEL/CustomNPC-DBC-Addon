@@ -13,6 +13,7 @@ import kamkeel.npcdbc.data.race.display.RaceDisplay;
 import kamkeel.npcdbc.data.race.progression.FormTree;
 
 import static kamkeel.npcdbc.AddonRegistries.FORMS;
+import static kamkeel.npcdbc.AddonRegistries.RACES;
 
 public class BioAndroid {
 
@@ -128,5 +129,5 @@ public class BioAndroid {
             .addComponent(BASE_FACE)
             .addComponent(BASE_BODY)
             .and()
-        .build();
+        .build(RACES);
 }

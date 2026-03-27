@@ -13,7 +13,7 @@ import java.util.Map;
 public class RaceController {
     public static RaceController Instance = new RaceController();
 
-    private final Map<Integer, Race> races = new HashMap<>();
+    private final Map<String, Race> races = new HashMap<>();
     private final List<Race> raceOrder = new ArrayList<>();
 
     public RaceController() {
@@ -39,19 +39,18 @@ public class RaceController {
 
     /**
      * Register a race explicitly.
-     * ID must be unique and explicitly set in the Race object.
-     * Order of registration defines GUI index (starting at 6).
+     * Name must be unique. Order of registration defines GUI index (starting at 6).
      */
     public void register(Race race) {
         if (race == null) {
             LogWriter.error("Attempted to register a null race.");
             return;
         }
-        if (races.containsKey(race.id)) {
-            LogWriter.error("Race with ID " + race.id + " is already registered. Skipping: " + race.getName());
+        if (races.containsKey(race.getName())) {
+            LogWriter.error("Race with name '" + race.getName() + "' is already registered. Skipping.");
             return;
         }
-        races.put(race.id, race);
+        races.put(race.getName(), race);
         raceOrder.add(race);
         RaceSelectorHelper.markDirty();
         LogWriter.info("Registered race: " + race.getName() + " (ID: " + race.id + ") at GUI index: " + (5 + raceOrder.size()));
@@ -72,6 +71,14 @@ public class RaceController {
      * Get the GUI index of a race (0-based from the start of custom races).
      * Add 6 to get the absolute GUI index.
      */
+    public int getIndex(String name) {
+        for (int i = 0; i < raceOrder.size(); i++)
+            if (raceOrder.get(i).getName().equalsIgnoreCase(name))
+                return i;
+        return -1;
+    }
+
+    /** Legacy: get GUI index by int ID. Linear scan — only used for legacy migration paths. */
     public int getIndex(int raceID) {
         for (int i = 0; i < raceOrder.size(); i++)
             if (raceOrder.get(i).id == raceID)
@@ -79,23 +86,25 @@ public class RaceController {
         return -1;
     }
 
-    public Race get(int id) {
-        return races.get(id);
+    public Race getByName(String name) {
+        return races.get(name);
     }
 
-    public Race getByName(String name) {
-        for (Race race : races.values())
-            if (race.getName().equalsIgnoreCase(name))
+    /** Legacy: look up by int ID. Linear scan — only used for NBT legacy migration. */
+    public Race get(int id) {
+        for (Race race : raceOrder)
+            if (race.id == id)
                 return race;
         return null;
     }
 
-    public boolean has(int id) {
-        return races.containsKey(id);
+    public boolean hasName(String name) {
+        return races.containsKey(name);
     }
 
-    public boolean hasName(String name) {
-        return getByName(name) != null;
+    /** Legacy: check by int ID. Linear scan — only used for legacy migration paths. */
+    public boolean has(int id) {
+        return get(id) != null;
     }
 
     public Collection<Race> getRaces() {
@@ -106,8 +115,9 @@ public class RaceController {
         return raceOrder;
     }
 
+    /** Legacy: check if an int ID maps to a custom race. Linear scan. */
     public boolean isCustomRace(int raceID) {
-        return races.containsKey(raceID);
+        return get(raceID) != null;
     }
 
     public int getCustomRaceCount() {

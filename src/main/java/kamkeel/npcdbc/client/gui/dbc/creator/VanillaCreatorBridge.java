@@ -134,22 +134,20 @@ public final class VanillaCreatorBridge {
         clientData.DNSHair = IJRMCoreGuiScreenAccessor.npcdbc$getDnsH();
         clientData.skinType = (byte) JRMCoreGuiScreen.SkinTypeSlcted;
         clientData.renderingHairColor = session.hairColor;
-        clientData.addonRaceID = session.addonRaceId;
+        clientData.currentRaceKey = session.currentRaceKey;
     }
 
     public void commit() {
         session.syncToVanillaStatics();
 
-        int addonRaceId = -1;
+        String currentRaceKey = null;
         if (session.isCustomRace()) {
             Race customRace = session.getSelectedCustomRace();
-            if (customRace != null) {
-                addonRaceId = customRace.id;
-            }
+            if (customRace != null) currentRaceKey = customRace.getName();
             JRMCoreGuiScreen.RaceSlcted = 0;
         }
 
-        DBCPacketHandler.Instance.sendToServer(new DBCRaceSelect(addonRaceId));
+        DBCPacketHandler.Instance.sendToServer(new DBCRaceSelect(currentRaceKey));
 
         JRMCoreGuiScreen.setdns();
         JRMCoreH.jrmcDataFC(0, IJRMCoreGuiScreenAccessor.npcdbc$getDns());

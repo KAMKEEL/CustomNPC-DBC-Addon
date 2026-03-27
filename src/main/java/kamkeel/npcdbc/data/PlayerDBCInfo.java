@@ -48,7 +48,7 @@ public class PlayerDBCInfo {
     public int selectedAura = -1;
     public HashSet<Integer> unlockedAuras = new HashSet<Integer>();
 
-    public int currentRace = -1;
+    private String currentRaceKey = null;
     
     /** Addon-side branch cursor for multi-branch custom race FormTrees. 0 = first branch (default). */
     private int selectedFormBranch = 0;
@@ -473,7 +473,7 @@ public class PlayerDBCInfo {
 
         configuredFormColors.clear();
 
-        currentRace = -1;
+        currentRaceKey = null;
         selectedFormBranch = 0;
 
         DBCEffectController.getInstance().clearDBCEffects(parent.player);
@@ -511,7 +511,7 @@ public class PlayerDBCInfo {
         dbcCompound.setInteger("SelectedAura", selectedAura);
         dbcCompound.setTag("UnlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
         
-        dbcCompound.setInteger("CurrentRace", currentRace);
+        dbcCompound.setString("CurrentRace", currentRaceKey != null ? currentRaceKey : "");
         dbcCompound.setInteger("SelectedBranchIndex", selectedFormBranch);
 
         saveBonuses(dbcCompound);
@@ -614,7 +614,20 @@ public class PlayerDBCInfo {
         selectedAura = dbcCompound.getInteger("SelectedAura");
         unlockedAuras = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedAuras", 10));
 
-        currentRace =  dbcCompound.getInteger("CurrentRace");
+        // CurrentRace migration: String = new format, Integer = legacy int format
+        if (dbcCompound.hasKey("CurrentRace", 8)) {
+            // NBT type 8 = TAG_String — new format
+            currentRaceKey = dbcCompound.getString("CurrentRace");
+            if (currentRaceKey.isEmpty()) currentRaceKey = null;
+        } else if (dbcCompound.hasKey("CurrentRace")) {
+            // Legacy int format
+            int legacyId = dbcCompound.getInteger("CurrentRace");
+            if (legacyId > -1) {
+                Race legacyRace = RaceController.getInstance().get(legacyId);
+                if (legacyRace != null)
+                    currentRaceKey = legacyRace.getName();
+            }
+        }
         selectedFormBranch = dbcCompound.hasKey("SelectedBranchIndex") ? dbcCompound.getInteger("SelectedBranchIndex") : 0;
 
         // ConfigurableFormColors migration
@@ -806,11 +819,32 @@ public class PlayerDBCInfo {
     ////////////////////////////////////////////////
     // RACE
     public boolean isCustomRace() {
-        return currentRace > -1 && RaceController.getInstance().has(currentRace);
+        return currentRaceKey != null && getCurrentRace() != null;
+    }
+
+    public Race getCurrentRace() {
+        if (currentRaceKey == null) return null;
+        return RaceController.getInstance().getByName(currentRaceKey);
     }
 
     public Race getRace() {
-        return RaceController.getInstance().get(currentRace);
+        return getCurrentRace();
+    }
+
+    public String getCurrentRaceKey() {
+        return currentRaceKey;
+    }
+
+    public void setCurrentRace(Race race) {
+        currentRaceKey = race != null ? race.getName() : null;
+    }
+
+    public void setCurrentRace(String key) {
+        currentRaceKey = key;
+    }
+
+    public void clearCurrentRace() {
+        currentRaceKey = null;
     }
 
     public boolean hasRacialForm(String formKey) {
