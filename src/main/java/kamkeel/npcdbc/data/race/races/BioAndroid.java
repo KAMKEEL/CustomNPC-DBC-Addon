@@ -2,6 +2,7 @@ package kamkeel.npcdbc.data.race.races;
 
 import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.constants.enums.EnumDBCClasses;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormKey;
 import kamkeel.npcdbc.data.race.Race;
@@ -124,6 +125,30 @@ public class BioAndroid {
             .level(3, MAX, 300, 30)
             .level(4, GOD, 300, 30)
             .and()
+        .stats()
+            .allClasses()
+                .startAttr().str(15).dex(10).con(10).will(15).mnd(5).spi(5).and()
+                .statMulti()
+                    .melee(2.5).defense(4.0).body(20.0).stamina(3.5)
+                    .energyPower(5.2).energyPool(40.0).maxSkills(0.15)
+                    .speed(1.0).regenBody(1.0).regenStamina(1.0).regenEnergy(1.0).flySpeed(1.0)
+                .and()
+            .forClass(EnumDBCClasses.MARTIAL_ARTIST)
+                .statBonus().melee(30).energyPower(20).flySpeed(10).and()
+            .forClass(EnumDBCClasses.SPIRITUALIST)
+                .statBonus()
+                    .melee(20).defense(10).body(-10).stamina(-10)
+                    .energyPower(30).energyPool(10).speed(10)
+                    .regenBody(-10).regenStamina(-10).regenEnergy(10).flySpeed(20)
+                .and()
+            .forClass(EnumDBCClasses.WARRIOR)
+                .statBonus()
+                    .melee(40).defense(-10).body(10).stamina(10)
+                    .energyPower(10).energyPool(-10).speed(-10)
+                    .regenBody(10).regenStamina(10).regenEnergy(-10)
+                .and()
+            .and()
+        .and()
         .display()
             .renderer("npcdbc:bio_android")
             .hairType("X")
