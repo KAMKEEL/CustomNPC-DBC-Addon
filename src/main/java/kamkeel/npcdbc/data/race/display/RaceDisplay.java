@@ -1,10 +1,12 @@
 package kamkeel.npcdbc.data.race.display;
 
 import kamkeel.npcdbc.api.Color;
+import kamkeel.npcdbc.data.race.serial.DataCompound;
+import kamkeel.npcdbc.data.race.serial.DataSerializable;
 
 import java.util.*;
 
-public class RaceDisplay {
+public class RaceDisplay implements DataSerializable {
 
     // ── Built-in component IDs ─────────────────────────────────────────────────
     public static final String COMPONENT_BODY = "body";
@@ -437,5 +439,37 @@ public class RaceDisplay {
         }
 
         return new int[]{genericEye, leftEye, rightEye};
+    }
+
+    @Override
+    public DataCompound serialize(DataCompound data) {
+        data.comment("Display config. Components keyed by component id.");
+        data.putInt("genderCount", genderCount);
+        data.putString("hairType", hairType);
+        data.putString("allowedPowerTypes", allowedPowerTypes);
+        data.putInt("customSkinMode", customSkinMode);
+        data.putString("raceAllow", raceAllow);
+        data.putIntArray("skinLimits", skinLimits);
+        for (Map.Entry<String, DisplayComponent> entry : components.entrySet())
+            data.put(entry.getKey(), entry.getValue());
+        return data;
+    }
+
+    @Override
+    public void deserialize(DataCompound data) {
+        if (data.has("genderCount"))      setGenderCount(data.getInt("genderCount", genderCount));
+        if (data.has("hairType"))         setHairType(data.getString("hairType", hairType));
+        if (data.has("allowedPowerTypes")) setAllowedPowerTypes(data.getString("allowedPowerTypes", allowedPowerTypes));
+        if (data.has("customSkinMode"))   setCustomSkinMode(data.getInt("customSkinMode", customSkinMode));
+        if (data.has("raceAllow"))        setRaceAllow(data.getString("raceAllow", raceAllow));
+        if (data.has("skinLimits")) {
+            int[] limits = data.getIntArray("skinLimits", skinLimits);
+            if (limits.length == 6) {
+                setSkinLimits(limits[0], limits[1], limits[2], limits[3], limits[4], limits[5]);
+            }
+        }
+        for (Map.Entry<String, DisplayComponent> entry : components.entrySet())
+            data.deserialize(entry.getKey(), entry.getValue());
+        syncCreatorMetadata();
     }
 }

@@ -1,6 +1,8 @@
 package kamkeel.npcdbc.data.race.display;
 
 import kamkeel.npcdbc.api.Color;
+import kamkeel.npcdbc.data.race.serial.DataCompound;
+import kamkeel.npcdbc.data.race.serial.DataSerializable;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -16,7 +18,7 @@ import java.util.Map;
  * <p>
  * Layers within a component are ordered by insertion (LinkedHashMap).
  */
-public class DisplayComponent {
+public class DisplayComponent implements DataSerializable {
 
     /** Unique identifier for this component. Always lower-case. */
     public final String id;
@@ -166,5 +168,24 @@ public class DisplayComponent {
         if (own != null) return own;
         if (subComponent != null) return subComponent.getLayer(key);
         return null;
+    }
+
+    @Override
+    public DataCompound serialize(DataCompound data) {
+        if (hasPresetCount()) data.putInt("presetCount", presetCount);
+        for (Map.Entry<String, DisplayLayer> entry : layers.entrySet())
+            data.put(entry.getKey(), entry.getValue());
+        if (subComponent != null)
+            data.put(subComponent.id, subComponent);
+        return data;
+    }
+
+    @Override
+    public void deserialize(DataCompound data) {
+        if (data.has("presetCount")) setPresetCount(data.getInt("presetCount", -1));
+        for (Map.Entry<String, DisplayLayer> entry : layers.entrySet())
+            data.deserialize(entry.getKey(), entry.getValue());
+        if (subComponent != null)
+            data.deserialize(subComponent.id, subComponent);
     }
 }

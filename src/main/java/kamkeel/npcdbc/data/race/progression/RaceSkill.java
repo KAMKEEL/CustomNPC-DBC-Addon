@@ -1,22 +1,24 @@
 package kamkeel.npcdbc.data.race.progression;
 
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.race.serial.DataCompound;
+import kamkeel.npcdbc.data.race.serial.DataSerializable;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import noppes.npcs.LogWriter;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.HashMap;
 import java.util.Map;
 
-public class RaceSkill {
-    public static final class LevelEntry {
+public class RaceSkill implements DataSerializable {
+    public static final class LevelEntry implements DataSerializable {
         private final int level;
         private final Form form;
-        private final int tpCost;
-        private final int mindCost;
+        private int tpCost;
+        private int mindCost;
 
         public LevelEntry(int level, Form form, int tpCost, int mindCost) {
             this.level = level;
@@ -25,24 +27,31 @@ public class RaceSkill {
             this.mindCost = mindCost;
         }
 
-        public int level() {
-            return level;
+        public int level()    { return level; }
+        public Form form()    { return form; }
+        public int formId()   { return form.id; }
+        public int tpCost()   { return tpCost; }
+        public int mindCost() { return mindCost; }
+
+        @Override
+        public DataCompound serialize(DataCompound data) {
+            if (form != null && form.key != null)
+                data.putString("formKey", form.key.toString());
+            data.putInt("tpCost", tpCost);
+            data.putInt("mindCost", mindCost);
+            return data;
         }
 
-        public Form form() {
-            return form;
-        }
-
-        public int formId() {
-            return form.id;
-        }
-
-        public int tpCost() {
-            return tpCost;
-        }
-
-        public int mindCost() {
-            return mindCost;
+        @Override
+        public void deserialize(DataCompound data) {
+            if (data.has("formKey")) {
+                String existingKey = form != null && form.key != null ? form.key.toString() : null;
+                String fileKey = data.getString("formKey", null);
+                if (fileKey != null && !fileKey.equals(existingKey))
+                    LogWriter.info("[RaceConfig] Level " + level + " formKey '" + fileKey + "' does not match '" + existingKey + "' — skipping.");
+            }
+            tpCost   = data.getInt("tpCost",   tpCost);
+            mindCost = data.getInt("mindCost",  mindCost);
         }
     }
 
@@ -295,5 +304,23 @@ public class RaceSkill {
 
         return branch.getFirstUnlockedForm(getUnlockedForms(skillLevel));
     }
- 
+
+    @Override
+    public DataCompound serialize(DataCompound data) {
+        data.comment("Racial skill config. Level keys are integer skill level numbers.");
+        data.putInt("maxLevel", maxLevel);
+        data.putString("displayName", displayName);
+        data.putString("description", description);
+        for (Map.Entry<Integer, LevelEntry> entry : levelEntries.entrySet())
+            data.put(String.valueOf(entry.getKey()), entry.getValue());
+        return data;
+    }
+
+    @Override
+    public void deserialize(DataCompound data) {
+        setDisplayName(data.getString("displayName", displayName));
+        setDescription(data.getString("description", description));
+        for (Map.Entry<Integer, LevelEntry> entry : levelEntries.entrySet())
+            data.put(String.valueOf(entry.getKey()), entry.getValue());
+    }
 }

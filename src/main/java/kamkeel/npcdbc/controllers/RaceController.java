@@ -2,6 +2,7 @@ package kamkeel.npcdbc.controllers;
 
 import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.race.helper.RaceSelectorHelper;
+import kamkeel.npcdbc.data.race.serial.ConfigManager;
 import noppes.npcs.LogWriter;
 
 import java.util.ArrayList;
@@ -15,18 +16,29 @@ public class RaceController {
 
     private final Map<String, Race> races = new HashMap<>();
     private final List<Race> raceOrder = new ArrayList<>();
+    private final ConfigManager<Race> configManager = new ConfigManager<>("races", Race::getName);
 
     public RaceController() {
         Instance = this;
     }
 
     public void load() {
-        races.clear();
-        raceOrder.clear();
-        RaceSelectorHelper.markDirty();
         LogWriter.info("Loading custom races...");
         registerAddonRaces();
+        loadConfigs();
         LogWriter.info("Done loading custom races. Registered " + races.size() + " race(s).");
+    }
+
+    /**
+     * Load (or generate) server-side config files for all registered races.
+     * Must be called after the world save directory is available (FMLServerAboutToStartEvent).
+     */
+    public void loadConfigs() {
+        LogWriter.info("Loading race configs...");
+        for (Race race : raceOrder) {
+            configManager.loadOrCreate(race);
+        }
+        LogWriter.info("Done loading race configs.");
     }
 
     /**

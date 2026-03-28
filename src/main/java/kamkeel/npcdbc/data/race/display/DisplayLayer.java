@@ -2,6 +2,8 @@ package kamkeel.npcdbc.data.race.display;
 
 import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.client.race.RaceRenderContext;
+import kamkeel.npcdbc.data.race.serial.DataCompound;
+import kamkeel.npcdbc.data.race.serial.DataSerializable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +22,7 @@ import java.util.function.Function;
  *   <li><b>colorPresets</b> — optional list of pre-defined colors the player can pick.</li>
  * </ul>
  */
-public class DisplayLayer {
+public class DisplayLayer implements DataSerializable {
 
     /** Unique identifier for this layer. Always lower-case. */
     public final String id;
@@ -90,6 +92,10 @@ public class DisplayLayer {
 
     public List<String> getTextureVariants() {
         return Collections.unmodifiableList(textureVariants);
+    }
+
+    public void clearTextureVariants() {
+        textureVariants.clear();
     }
 
     // ── Texture override ───────────────────────────────────────────────────────
@@ -173,6 +179,10 @@ public class DisplayLayer {
         }
     }
 
+    public void clearColorPresets() {
+        colorPresets.clear();
+    }
+
     // ── Default color ──────────────────────────────────────────────────────────
 
     /**
@@ -222,5 +232,44 @@ public class DisplayLayer {
         if (fixedColor) return getDefaultColor();
         if (colorFunction != null && colorFunction.apply(ctx) != null) return colorFunction.apply(ctx).color;
         return getDefaultColor();
+    }
+
+    @Override
+    public DataCompound serialize(DataCompound data) {
+        data.comment("Colors as hex RRGGBB strings.");
+        if (!textureVariants.isEmpty()) {
+            data.putStringList("textureVariants", new ArrayList<String>(textureVariants));
+        }
+        if (textureOverride != null) {
+            data.putString("textureOverride", textureOverride);
+        }
+        data.putString("defaultColor", String.format("%06X", getDefaultColor()));
+
+        if (!colorPresets.isEmpty()) {
+            List<String> presets = new ArrayList<String>();
+            for (Color c : colorPresets) presets.add(String.format("%06X", c.color));
+            data.putStringList("colorPresets", presets);
+        }
+        return data;
+    }
+
+    @Override
+    public void deserialize(DataCompound data) {
+        if (data.has("textureVariants")) {
+            clearTextureVariants();
+            for (String tv : data.getStringList("textureVariants")) addTextureVariant(tv);
+        }
+        if (data.has("textureOverride")) {
+            setTextureOverride(data.getString("textureOverride", null));
+        }
+        if (data.has("defaultColor")) {
+            try { setDefaultColor(Integer.parseInt(data.getString("defaultColor", "FFFFFF"), 16)); } catch (NumberFormatException ignored) {}
+        }
+        if (data.has("colorPresets")) {
+            clearColorPresets();
+            for (String cp : data.getStringList("colorPresets")) {
+                try { addColorPreset(Integer.parseInt(cp, 16)); } catch (NumberFormatException ignored) {}
+            }
+        }
     }
 }

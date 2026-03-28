@@ -1,11 +1,10 @@
 package kamkeel.npcdbc.data.race.stats;
 
 import kamkeel.npcdbc.constants.enums.EnumDBCAttributes;
+import kamkeel.npcdbc.data.race.serial.DataCompound;
+import kamkeel.npcdbc.data.race.serial.DataSerializable;
 
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Per-race attribute calculation config that replaces the race-indexed arrays
@@ -28,7 +27,7 @@ import java.util.Map;
  *   <li>{@code lgndb(race, 0)} → {@link #legendaryAppliesInBase}</li>
  * </ul>
  */
-public class RaceAttributeConfig {
+public class RaceAttributeConfig implements DataSerializable {
 
     public enum MysticFormula {
         ATTRIBUTE_MULTI_PLUS_SKILL,
@@ -47,13 +46,13 @@ public class RaceAttributeConfig {
      *   <li>flat  → 0</li>
      * </ul>
      */
-    public static final class FormAttributeBonus {
+    public static class FormAttributeBonus {
 
         /** Per-attribute percentage multiplier. Missing keys default to 1.0f. */
-        public final Map<EnumDBCAttributes, Float> multi;
+        public Map<EnumDBCAttributes, Float> multi;
 
         /** Per-attribute flat bonus. Missing keys default to 0. */
-        public final Map<EnumDBCAttributes, Integer> flat;
+        public Map<EnumDBCAttributes, Integer> flat;
 
         public FormAttributeBonus(
                 Map<EnumDBCAttributes, Float>   multi,
@@ -63,8 +62,8 @@ public class RaceAttributeConfig {
             EnumMap<EnumDBCAttributes, Integer> f = new EnumMap<>(EnumDBCAttributes.class);
             m.putAll(multi);
             f.putAll(flat);
-            this.multi = Collections.unmodifiableMap(m);
-            this.flat  = Collections.unmodifiableMap(f);
+            this.multi = m;
+            this.flat  = f;
         }
 
         /** Returns the percentage multiplier for {@code attr}, defaulting to 1.0f. */
@@ -118,7 +117,7 @@ public class RaceAttributeConfig {
      * Mirrors {@code TransXStBnP[0]} / {@code TransXStBnF[0]} for the corresponding
      * vanilla race.
      */
-    public final FormAttributeBonus base;
+    public FormAttributeBonus base;
 
     // ── Inner race getter: mystic form state ──────────────────────────────────
 
@@ -127,7 +126,7 @@ public class RaceAttributeConfig {
      * Used when {@link #mysticDamMulti} == -1.
      * Mirrors {@code TransXStBnP[mysticState]} / {@code TransXStBnF[mysticState]}.
      */
-    public final FormAttributeBonus mystic;
+    public FormAttributeBonus mystic;
 
     /**
      * Mystic damage multiplier override.
@@ -135,14 +134,14 @@ public class RaceAttributeConfig {
      * Any other value is used as the secondary multiplier for mystic.
      * Mirrors {@code MysticDamMulti[race]}.
      */
-    public final float mysticDamMulti;
+    public float mysticDamMulti;
 
     /**
      * Chooses which DBC mystic formula family is used when {@link #mysticDamMulti} == -1.
      * Human/Namekian/Majin use ATTRIBUTE_MULTI_PLUS_SKILL.
      * Saiyan/Half-Saiyan/Arcosian use PERCENT_MULTI_TIMES_SKILL.
      */
-    public final MysticFormula mysticFormula;
+    public MysticFormula mysticFormula;
 
     // ── Racial skill attribute bonus ──────────────────────────────────────────
 
@@ -151,13 +150,13 @@ public class RaceAttributeConfig {
      * Applied as: {@code secondaryMulti = 1.0 + attrBonusPerSkillLevel * skillLevel}
      * Mirrors {@code AttibuteBonusPerRacialSkill[race][0]}.
      */
-    public final float attrBonusPerSkillLevel;
+    public float attrBonusPerSkillLevel;
 
     /**
      * Attribute bonus per racial skill level when Mystic is active.
      * Mirrors {@code AttibuteBonusPerRacialSkill[race][trans[race].length]} (last entry).
      */
-    public final float mysticAttrBonusPerSkillLevel;
+    public float mysticAttrBonusPerSkillLevel;
 
     // ── Outer getPlayerAttribute: GoD ─────────────────────────────────────────
 
@@ -166,7 +165,7 @@ public class RaceAttributeConfig {
      * Applied as: {@code result *= CONFIG_GOD_ATTRIBUTE_MULTI * godAttrMultiRace}
      * Mirrors {@code CONFIG_GOD_ATTRIBUTE_MULTI_RACE[race]}.
      */
-    public final float godAttrMultiRace;
+    public float godAttrMultiRace;
 
     // ── Outer getPlayerAttribute: Ultra Instinct ──────────────────────────────
 
@@ -176,7 +175,7 @@ public class RaceAttributeConfig {
      * Applied as: {@code result *= CONFIG_UI_ATTRIBUTE_MULTI[uiLevel] * 0.01 * uiAttrMultiRace[uiLevel]}
      * Mirrors {@code CONFIG_UI_ATTRIBUTE_MULTI_RACE[uiLevel][race]}.
      */
-    public final List<Float> uiAttrMultiRace;
+    public List<Float> uiAttrMultiRace;
 
     // ── Outer getPlayerAttribute: Legendary ───────────────────────────────────
 
@@ -184,7 +183,7 @@ public class RaceAttributeConfig {
      * Whether the Legendary status bonus applies when this race is in base form.
      * Mirrors {@code lgndb(race, 0)}.
      */
-    public final boolean legendaryAppliesInBase;
+    public boolean legendaryAppliesInBase;
 
     // ── Constructor ───────────────────────────────────────────────────────────
 
@@ -206,7 +205,7 @@ public class RaceAttributeConfig {
         this.attrBonusPerSkillLevel       = attrBonusPerSkillLevel;
         this.mysticAttrBonusPerSkillLevel = mysticAttrBonusPerSkillLevel;
         this.godAttrMultiRace             = godAttrMultiRace;
-        this.uiAttrMultiRace              = Collections.unmodifiableList(uiAttrMultiRace);
+        this.uiAttrMultiRace              = new ArrayList<Float>(uiAttrMultiRace);
         this.legendaryAppliesInBase       = legendaryAppliesInBase;
     }
 
@@ -258,5 +257,42 @@ public class RaceAttributeConfig {
         if (uiLevel < 0 || uiLevel >= uiAttrMultiRace.size()) return 1.0f;
         Float v = uiAttrMultiRace.get(uiLevel);
         return v != null ? v : 1.0f;
+    }
+
+    @Override
+    public DataCompound serialize(DataCompound data) {
+        data.comment("Attribute calculation config. baseMulti/baseFlat/mysticMulti/mysticFlat keys: STR DEX CON WILL MND SPI.");
+        data.putEnumFloatMap("baseMulti", base.multi);
+        data.putEnumIntMap("baseFlat", base.flat);
+        data.putEnumFloatMap("mysticMulti", mystic.multi);
+        data.putEnumIntMap("mysticFlat", mystic.flat);
+        data.putFloat("mysticDamMulti", mysticDamMulti);
+        data.putString("mysticFormula", mysticFormula.name());
+        data.putFloat("attrBonusPerSkillLevel", attrBonusPerSkillLevel);
+        data.putFloat("mysticAttrBonusPerSkillLevel", mysticAttrBonusPerSkillLevel);
+        data.putFloat("godAttrMultiRace", godAttrMultiRace);
+        data.putFloatList("uiAttrMultiRace", new ArrayList<Float>(uiAttrMultiRace));
+        data.putBoolean("legendaryAppliesInBase", legendaryAppliesInBase);
+        return data;
+    }
+
+    @Override
+    public void deserialize(DataCompound data) {
+        data.getEnumFloatMap("baseMulti",   base.multi,   EnumDBCAttributes.class);
+        data.getEnumIntMap("baseFlat",      base.flat,    EnumDBCAttributes.class);
+        data.getEnumFloatMap("mysticMulti", mystic.multi, EnumDBCAttributes.class);
+        data.getEnumIntMap("mysticFlat",    mystic.flat,  EnumDBCAttributes.class);
+
+        mysticDamMulti               = data.getFloat("mysticDamMulti", mysticDamMulti);
+        mysticAttrBonusPerSkillLevel = data.getFloat("mysticAttrBonusPerSkillLevel", mysticAttrBonusPerSkillLevel);
+        attrBonusPerSkillLevel       = data.getFloat("attrBonusPerSkillLevel", attrBonusPerSkillLevel);
+        godAttrMultiRace             = data.getFloat("godAttrMultiRace", godAttrMultiRace);
+        legendaryAppliesInBase       = data.getBoolean("legendaryAppliesInBase", legendaryAppliesInBase);
+
+        String formula = data.getString("mysticFormula", mysticFormula.name());
+        try { mysticFormula = MysticFormula.valueOf(formula); } catch (IllegalArgumentException ignored) {}
+
+        List<Float> ui = data.getFloatList("uiAttrMultiRace");
+        if (!ui.isEmpty()) uiAttrMultiRace = ui;
     }
 }

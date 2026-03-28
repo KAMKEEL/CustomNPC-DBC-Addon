@@ -125,7 +125,7 @@ public final class DataCompound {
     }
 
     
-    public DataCompound putChild(String key, DataCompound child) {
+    public DataCompound put(String key, DataCompound child) {
         if (yaml != null) {
             yaml.put(key, child.yaml != null ? child.yaml : new LinkedHashMap<String, Object>());
         }
@@ -134,7 +134,7 @@ public final class DataCompound {
     }
 
     
-    public DataCompound getChild(String key) {
+    public DataCompound get(String key) {
         Map<String, Object> y = null;
         if (yaml != null && yaml.containsKey(key)) {
             Object val = yaml.get(key);
@@ -384,13 +384,13 @@ public final class DataCompound {
         for (Map.Entry<String, String> e : map.entrySet()) {
             child.putString(e.getKey(), e.getValue());
         }
-        putChild(key, child);
+        put(key, child);
         return this;
     }
 
     public Map<String, String> getStringMap(String key) {
         if (!has(key)) return new LinkedHashMap<>();
-        DataCompound child = getChild(key);
+        DataCompound child = get(key);
         Map<String, String> result = new LinkedHashMap<>();
         for (String k : child.getKeys()) {
             result.put(k, child.getString(k, ""));
@@ -403,13 +403,13 @@ public final class DataCompound {
         for (Map.Entry<String, Integer> e : map.entrySet()) {
             child.putInt(e.getKey(), e.getValue());
         }
-        putChild(key, child);
+        put(key, child);
         return this;
     }
 
     public Map<String, Integer> getIntMap(String key) {
         if (!has(key)) return new LinkedHashMap<>();
-        DataCompound child = getChild(key);
+        DataCompound child = get(key);
         Map<String, Integer> result = new LinkedHashMap<>();
         for (String k : child.getKeys()) {
             result.put(k, child.getInt(k, 0));
@@ -423,13 +423,13 @@ public final class DataCompound {
             if (yaml != null && child.yaml != null) child.yaml.put(e.getKey(), e.getValue());
             child.nbt.setTag(e.getKey(), new NBTTagString(String.valueOf(e.getValue())));
         }
-        putChild(key, child);
+        put(key, child);
         return this;
     }
     
     public Map<String, Double> getDoubleMap(String key) {
         if (!has(key)) return new LinkedHashMap<>();
-        DataCompound child = getChild(key);
+        DataCompound child = get(key);
         Map<String, Double> result = new LinkedHashMap<>();
         for (String k : child.getKeys()) {
             if (child.yaml != null && child.yaml.containsKey(k)) {
@@ -451,13 +451,13 @@ public final class DataCompound {
             if (yaml != null && child.yaml != null) child.yaml.put(e.getKey(), e.getValue());
             child.nbt.setTag(e.getKey(), new NBTTagString(String.valueOf(e.getValue())));
         }
-        putChild(key, child);
+        put(key, child);
         return this;
     }
 
     public Map<String, Float> getFloatMap(String key) {
         if (!has(key)) return new LinkedHashMap<>();
-        DataCompound child = getChild(key);
+        DataCompound child = get(key);
         Map<String, Float> result = new LinkedHashMap<>();
         for (String k : child.getKeys()) {
             if (child.yaml != null && child.yaml.containsKey(k)) {
@@ -472,4 +472,64 @@ public final class DataCompound {
         }
         return result;
     }
+
+    // ── Enum-keyed map helpers ─────────────────────────────────────────────
+
+    public <K extends Enum<K>> DataCompound putEnumIntMap(String key, Map<K, Integer> map) {
+        Map<String, Integer> strMap = new LinkedHashMap<String, Integer>();
+        for (Map.Entry<K, Integer> e : map.entrySet()) strMap.put(e.getKey().name(), e.getValue());
+        return putIntMap(key, strMap);
+    }
+
+    public <K extends Enum<K>> DataCompound putEnumDoubleMap(String key, Map<K, Double> map) {
+        Map<String, Double> strMap = new LinkedHashMap<String, Double>();
+        for (Map.Entry<K, Double> e : map.entrySet()) strMap.put(e.getKey().name(), e.getValue());
+        return putDoubleMap(key, strMap);
+    }
+
+    public <K extends Enum<K>> DataCompound putEnumFloatMap(String key, Map<K, Float> map) {
+        Map<String, Float> strMap = new LinkedHashMap<String, Float>();
+        for (Map.Entry<K, Float> e : map.entrySet()) strMap.put(e.getKey().name(), e.getValue());
+        return putFloatMap(key, strMap);
+    }
+
+    public <K extends Enum<K>> void getEnumIntMap(String key, Map<K, Integer> target, Class<K> enumClass) {
+        Map<String, Integer> raw = getIntMap(key);
+        for (Map.Entry<String, Integer> e : raw.entrySet()) {
+            try { target.put(Enum.valueOf(enumClass, e.getKey()), e.getValue()); } catch (IllegalArgumentException ignored) {}
+        }
+    }
+
+    public <K extends Enum<K>> void getEnumDoubleMap(String key, Map<K, Double> target, Class<K> enumClass) {
+        Map<String, Double> raw = getDoubleMap(key);
+        for (Map.Entry<String, Double> e : raw.entrySet()) {
+            try { target.put(Enum.valueOf(enumClass, e.getKey()), e.getValue()); } catch (IllegalArgumentException ignored) {}
+        }
+    }
+
+    public <K extends Enum<K>> void getEnumFloatMap(String key, Map<K, Float> target, Class<K> enumClass) {
+        Map<String, Float> raw = getFloatMap(key);
+        for (Map.Entry<String, Float> e : raw.entrySet()) {
+            try { target.put(Enum.valueOf(enumClass, e.getKey()), e.getValue()); } catch (IllegalArgumentException ignored) {}
+        }
+    }
+
+    // ── Serializable child helper ──────────────────────────────────────────
+
+    public DataCompound put(String key, DataSerializable child) {
+        return put(key, child.serialize(this.child()));
+    }
+
+    public void deserialize(String key, DataSerializable target) {
+        target.deserialize(get(key));
+    }
+
+    public <K extends Enum<K>> DataCompound put(K key, DataSerializable child) {
+        return put(key.name(), child);
+    }
+
+    public <K extends Enum<K>> void deserialize(K key, DataSerializable target) {
+        deserialize(key.name(), target);
+    }
+    
 }

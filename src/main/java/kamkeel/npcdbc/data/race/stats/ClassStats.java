@@ -2,11 +2,13 @@ package kamkeel.npcdbc.data.race.stats;
 
 import kamkeel.npcdbc.constants.enums.EnumDBCAttributes;
 import kamkeel.npcdbc.constants.enums.EnumDBCStats;
+import kamkeel.npcdbc.data.race.serial.DataCompound;
+import kamkeel.npcdbc.data.race.serial.DataSerializable;
 
 import java.util.EnumMap;
 import java.util.Map;
 
-public class ClassStats {
+public class ClassStats implements DataSerializable {
 
     // ── Defaults ──────────────────────────────────────────────────────────────
 
@@ -142,5 +144,23 @@ public class ClassStats {
 
     public Map<EnumDBCStats, Double> getStatAttributeMultipliers() {
         return statAttributeMultipliers;
+    }
+
+    @Override
+    public DataCompound serialize(DataCompound data) {
+        data.comment("initialAttributes keys: STR DEX CON WILL MND SPI. attributeMultipliers/statBonuses/statAttributeMultipliers use same key pattern.");
+        data.putEnumIntMap("initialAttributes", initialAttributes);
+        data.putEnumDoubleMap("attributeMultipliers", attributeMultipliers);
+        data.putEnumDoubleMap("statBonuses", statBonuses);
+        data.putEnumDoubleMap("statAttributeMultipliers", statAttributeMultipliers);
+        return data;
+    }
+
+    @Override
+    public void deserialize(DataCompound data) {
+        data.getEnumIntMap("initialAttributes", initialAttributes, EnumDBCAttributes.class);
+        data.getEnumDoubleMap("attributeMultipliers", attributeMultipliers, EnumDBCAttributes.class);
+        data.getEnumDoubleMap("statBonuses", statBonuses, EnumDBCStats.class);
+        data.getEnumDoubleMap("statAttributeMultipliers", statAttributeMultipliers, EnumDBCStats.class);
     }
 }
