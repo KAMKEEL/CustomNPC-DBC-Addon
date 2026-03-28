@@ -8,6 +8,7 @@ import kamkeel.npcdbc.api.client.overlay.IOverlay;
 import kamkeel.npcdbc.api.client.overlay.IOverlayChain;
 import kamkeel.npcdbc.api.form.IFormDisplay;
 import kamkeel.npcdbc.api.outline.IOutline;
+import kamkeel.npcdbc.constants.BodyLayer;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.OutlineController;
@@ -15,7 +16,6 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.overlay.Overlay;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
-import kamkeel.npcdbc.data.race.display.RaceDisplay;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 import noppes.npcs.scripted.CustomNPCsException;
@@ -430,13 +430,13 @@ public class FormDisplay implements IFormDisplay {
     public static class BodyColor {
         private final Map<String, Integer> colors = new HashMap<>();
 
-        public static final String EYES = RaceDisplay.LAYER_EYE;
-        public static final String HAIR = RaceDisplay.LAYER_HAIR;
-        public static final String FUR = RaceDisplay.LAYER_FUR;
-        public static final String BODY_CM = RaceDisplay.LAYER_BODY_CM;
-        public static final String BODY_C1 = RaceDisplay.LAYER_BODY_C1;
-        public static final String BODY_C2 = RaceDisplay.LAYER_BODY_C2;
-        public static final String BODY_C3 = RaceDisplay.LAYER_BODY_C3;
+        public static final String EYES = BodyLayer.EYES;
+        public static final String HAIR = BodyLayer.HAIR;
+        public static final String FUR = BodyLayer.FUR;
+        public static final String BODY_CM = BodyLayer.BODY_CM;
+        public static final String BODY_C1 = BodyLayer.BODY_C1;
+        public static final String BODY_C2 = BodyLayer.BODY_C2;
+        public static final String BODY_C3 = BodyLayer.BODY_C3;
 
         public boolean hasColor(String slotId) {
             Integer val = colors.get(slotId.toLowerCase());
