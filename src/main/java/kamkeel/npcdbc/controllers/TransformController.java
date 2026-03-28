@@ -53,7 +53,7 @@ public class TransformController {
     public static void Ascend(Form form) {
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
         Form currentForm = DBCData.getForm(player);
-        if (cantTransform || (rage > 0 && transformed) || currentForm != null && currentForm.getKeyString() == form.getKeyString())
+        if (cantTransform || (rage > 0 && transformed) || currentForm != null && currentForm.getKey().equals(form.getKey()))
             return;
         dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
         if (dbcData == null || JRMCoreH.curRelease <= 0 || JRMCoreH.curEnergy <= 0)
