@@ -452,36 +452,16 @@ public class FormDisplay implements IFormDisplay {
         }
 
         public void clearColor(String slotId) {
-            colors.put(slotId.toLowerCase(), -1);
+            colors.remove(slotId.toLowerCase());
         }
 
-        public int bodyCM(){
-            return colors.get(BODY_CM);
-        }
-
-        public int bodyC1(){
-            return colors.get(BODY_C1);
-        }
-
-        public int bodyC2(){
-            return colors.get(BODY_C2);
-        }
-
-        public int bodyC3(){
-            return colors.get(BODY_C3);
-        }
-
-        public int eyeColor(){
-            return colors.get(EYES);
-        }
-
-        public int hairColor(){
-            return colors.get(HAIR);
-        }
-
-        public int furColor(){
-            return colors.get(FUR);
-        }
+        public int bodyCM()   { return getColor(BODY_CM); }
+        public int bodyC1()   { return getColor(BODY_C1); }
+        public int bodyC2()   { return getColor(BODY_C2); }
+        public int bodyC3()   { return getColor(BODY_C3); }
+        public int eyeColor() { return getColor(EYES); }
+        public int hairColor(){ return getColor(HAIR); }
+        public int furColor() { return getColor(FUR); }
 
         public static boolean canBeCustomized(String type, int race, Form form) {
             String hairType = form.display.hairType;
@@ -504,7 +484,7 @@ public class FormDisplay implements IFormDisplay {
         }
 
         public boolean isEmpty() {
-            return colors.values().stream().allMatch(v -> v == -1);
+            return colors.isEmpty() || colors.values().stream().allMatch(v -> v == -1);
         }
 
         public void readFromNBT(NBTTagCompound compound) {
