@@ -609,6 +609,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public HashMap<Integer, String> getUnlockedDBCFormsMap() {
+        if (addonRace.isCustomRace()) return new LinkedHashMap<>();
+
         HashMap<Integer, String> dbcForms = new LinkedHashMap<>();
         int race = Race;
         int racialSkill = JRMCoreH.SklLvlX(1, RacialSkills) - 1;
