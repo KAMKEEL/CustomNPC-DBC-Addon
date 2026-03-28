@@ -89,6 +89,8 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
         mixins.add("dbc.MixinJRMCorePacHanS");
         mixins.add("dbc.race.MixinJRMCorePacHanSRace");
         mixins.add("dbc.race.MixinJRMCoreHDBCRace");
+        mixins.add("dbc.MixinJRMCoreHRaceStats");
+        mixins.add("dbc.race.MixinComJrmcaRace");
 
         mixins.add("dbc.MixinItemSenzu");
 

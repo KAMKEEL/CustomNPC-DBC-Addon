@@ -12,12 +12,43 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = JRMCorePacHanS.class, remap = false)
 public class MixinJRMCorePacHanSRace {
+
+    @Unique
+    private Race npcdbc$cachedCreationRace;
+
+    @Inject(method = "handleChar", at = @At("HEAD"), remap = false)
+    private void npcdbc$cacheCreationRace(byte b, int b2, EntityPlayer p, CallbackInfo ci) {
+        npcdbc$cachedCreationRace = null;
+
+        if (p == null || p.worldObj == null || p.worldObj.isRemote) {
+            return;
+        }
+
+        DBCData data = DBCData.get(p);
+        if (data == null || data.currentRaceKey == null || data.currentRaceKey.isEmpty()) {
+            return;
+        }
+
+        npcdbc$cachedCreationRace = data.addonRace.getRace();
+    }
+
+    @Redirect(
+        method = "handleChar",
+        at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;attributeStart(IIII)I"),
+        remap = false
+    )
+    private int npcdbc$passCustomRaceIdToAttributeStart(int powerType, int attribute, int race, int classID) {
+        int effectiveRace = npcdbc$cachedCreationRace != null ? npcdbc$cachedCreationRace.id : race;
+        return JRMCoreH.attributeStart(powerType, attribute, effectiveRace, classID);
+    }
 
     /**
      * Replaces vanilla racial skill TP-cost and max-level handling for active custom races

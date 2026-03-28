@@ -12,10 +12,14 @@ import kamkeel.npcdbc.data.race.display.*;
 import kamkeel.npcdbc.data.race.progression.FormTree;
 import kamkeel.npcdbc.data.race.progression.RaceSkill;
 import kamkeel.npcdbc.data.race.stats.ClassStats;
+import kamkeel.npcdbc.data.race.stats.RaceAttributeConfig;
 import kamkeel.npcdbc.data.race.stats.RaceStats;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -28,6 +32,7 @@ public class RaceBuilder {
     private RaceStats stats = new RaceStats();
     private RaceDisplay display = new RaceDisplay();
     private FormTree formTree = null;
+    private RaceAttributeConfig attributeConfig;
 
     private final String namespace;
 
@@ -68,6 +73,14 @@ public class RaceBuilder {
         return new StatsBuilder(this);
     }
 
+    public AttributeConfigBuilder attributeConfig() {
+        return new AttributeConfigBuilder(this);
+    }
+
+    void setAttributeConfig(RaceAttributeConfig config) {
+        this.attributeConfig = config;
+    }
+
     public Race build() {
         return build(null);
     }
@@ -82,7 +95,8 @@ public class RaceBuilder {
             }
         }
 
-        Race race = new Race(id, name, menuName,display, stats, skill, formTree);
+        Race race = new Race(id, name, menuName, display, stats, skill, formTree,
+            attributeConfig != null ? attributeConfig : RaceAttributeConfig.defaults());
         if(registry != null)
             registry.register(race);
 
@@ -342,7 +356,7 @@ public class RaceBuilder {
 
     public static class StartAttrBuilder {
         private final ClassOverrideBuilder parent;
-        private final Map<EnumDBCAttributes, Integer> map = new EnumMap<>(ClassStats.DEFAULT_INITIAL_ATTRIBUTES);
+        private final Map<EnumDBCAttributes, Integer> map = new EnumMap<>(EnumDBCAttributes.class);
 
         StartAttrBuilder(ClassOverrideBuilder parent) { this.parent = parent; }
 
@@ -366,7 +380,7 @@ public class RaceBuilder {
 
     public static class AttrMultiBuilder {
         private final ClassOverrideBuilder parent;
-        private final Map<EnumDBCAttributes, Double> map = new EnumMap<>(ClassStats.DEFAULT_ATTRIBUTE_MULTIPLIERS);
+        private final Map<EnumDBCAttributes, Double> map = new EnumMap<>(EnumDBCAttributes.class);
 
         AttrMultiBuilder(ClassOverrideBuilder parent) { this.parent = parent; }
 
@@ -390,7 +404,7 @@ public class RaceBuilder {
 
     public static class StatBonusBuilder {
         private final ClassOverrideBuilder parent;
-        private final Map<EnumDBCStats, Double> map = new EnumMap<>(ClassStats.DEFAULT_STAT_BONUSES);
+        private final Map<EnumDBCStats, Double> map = new EnumMap<>(EnumDBCStats.class);
 
         StatBonusBuilder(ClassOverrideBuilder parent) { this.parent = parent; }
 
@@ -420,7 +434,7 @@ public class RaceBuilder {
 
     public static class StatMultiBuilder {
         private final ClassOverrideBuilder parent;
-        private final Map<EnumDBCStats, Double> map = new EnumMap<>(ClassStats.DEFAULT_STAT_ATTRIBUTE_MULTIPLIERS);
+        private final Map<EnumDBCStats, Double> map = new EnumMap<>(EnumDBCStats.class);
 
         StatMultiBuilder(ClassOverrideBuilder parent) { this.parent = parent; }
 
@@ -440,6 +454,303 @@ public class RaceBuilder {
 
         public ClassOverrideBuilder and() {
             parent.setStatMulti(map);
+            return parent;
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // AttributeConfigBuilder — per-race attribute calculation configs
+    // ══════════════════════════════════════════════════════════
+
+    /**
+     * Fluent builder for {@link RaceAttributeConfig}.
+     *
+     * <p>Uses nested scopes so race authors can group related settings the same way
+     * they already do in {@link StatsBuilder}: base-form values, mystic values, and
+     * outer getPlayerAttribute stackables/global toggles.</p>
+     */
+    public static class AttributeConfigBuilder {
+        private final RaceBuilder parent;
+
+        private final Map<EnumDBCAttributes, Float> baseMulti = defaultMultiMap();
+        private final Map<EnumDBCAttributes, Integer> baseFlat = defaultFlatMap();
+        private final Map<EnumDBCAttributes, Float> mysticMulti = defaultMultiMap();
+        private final Map<EnumDBCAttributes, Integer> mysticFlat = defaultFlatMap();
+        private float mysticDamMulti = -1.0f;
+        private RaceAttributeConfig.MysticFormula mysticFormula = RaceAttributeConfig.MysticFormula.ATTRIBUTE_MULTI_PLUS_SKILL;
+        private float attrBonusPerSkillLevel = 0.0f;
+        private float mysticAttrBonusPerSkillLevel = 0.0f;
+        private float godAttrMultiRace = 1.0f;
+        private List<Float> uiAttrMultiRaceList = Arrays.asList(1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+        private boolean legendaryAppliesInBase = true;
+
+        AttributeConfigBuilder(RaceBuilder parent) { this.parent = parent; }
+
+        private static Map<EnumDBCAttributes, Float> defaultMultiMap() {
+            Map<EnumDBCAttributes, Float> map = new EnumMap<>(EnumDBCAttributes.class);
+            for (EnumDBCAttributes attr : EnumDBCAttributes.values()) {
+                map.put(attr, attr == EnumDBCAttributes.MND ? 0.0f : 1.0f);
+            }
+            return map;
+        }
+
+        private static Map<EnumDBCAttributes, Integer> defaultFlatMap() {
+            Map<EnumDBCAttributes, Integer> map = new EnumMap<>(EnumDBCAttributes.class);
+            for (EnumDBCAttributes attr : EnumDBCAttributes.values()) {
+                map.put(attr, 0);
+            }
+            return map;
+        }
+
+        /** Open a scope for base-form attribute multipliers and flat bonuses. */
+        public AttributeValueBuilder base() {
+            return new AttributeValueBuilder(this, baseMulti, baseFlat);
+        }
+
+        /** Open a scope for mystic (Potential Unleashed) attribute values, formula, and damage multiplier. */
+        public MysticConfigBuilder mystic() {
+            return new MysticConfigBuilder(this);
+        }
+
+        /** Open a scope for cross-state stackable modifiers (skill-level bonuses, GoD, UI, Legendary). */
+        public StackableConfigBuilder stackables() {
+            return new StackableConfigBuilder(this);
+        }
+
+        /** Commit the attribute config and return to {@link RaceBuilder}. */
+        public RaceBuilder and() {
+            parent.setAttributeConfig(new RaceAttributeConfig(
+                new RaceAttributeConfig.FormAttributeBonus(baseMulti, baseFlat),
+                new RaceAttributeConfig.FormAttributeBonus(mysticMulti, mysticFlat),
+                mysticDamMulti,
+                mysticFormula,
+                attrBonusPerSkillLevel,
+                mysticAttrBonusPerSkillLevel,
+                godAttrMultiRace,
+                uiAttrMultiRaceList,
+                legendaryAppliesInBase
+            ));
+            return parent;
+        }
+    }
+
+    /**
+     * Sets per-attribute percentage multipliers and flat bonuses for a form state
+     * (base or mystic). Which state this targets depends on the parent scope.
+     *
+     * <p>Defaults: multi 1.0 for all attributes (except MND which defaults to 0.0),
+     * flat 0 for all. Only values you set are overridden.</p>
+     */
+    public static class AttributeValueBuilder {
+        private final AttributeConfigBuilder parent;
+        private final Map<EnumDBCAttributes, Float> multiMap;
+        private final Map<EnumDBCAttributes, Integer> flatMap;
+
+        AttributeValueBuilder(AttributeConfigBuilder parent, Map<EnumDBCAttributes, Float> multiMap, Map<EnumDBCAttributes, Integer> flatMap) {
+            this.parent = parent;
+            this.multiMap = multiMap;
+            this.flatMap = flatMap;
+        }
+
+        /**
+         * Set all six attribute multipliers at once (order: STR, DEX, CON, WIL, MND, SPI).
+         * A value of 1.0 means no change; 0.0 disables the attribute's contribution.
+         */
+        public AttributeValueBuilder multi(float str, float dex, float con, float wil, float mnd, float spi) {
+            multiMap.put(EnumDBCAttributes.STR, str);
+            multiMap.put(EnumDBCAttributes.DEX, dex);
+            multiMap.put(EnumDBCAttributes.CON, con);
+            multiMap.put(EnumDBCAttributes.WILL, wil);
+            multiMap.put(EnumDBCAttributes.MND, mnd);
+            multiMap.put(EnumDBCAttributes.SPI, spi);
+            return this;
+        }
+
+        /** Set the multiplier for a single attribute. */
+        public AttributeValueBuilder multi(EnumDBCAttributes attr, float value) {
+            multiMap.put(attr, value);
+            return this;
+        }
+
+        /** Set all six flat attribute bonuses at once (order: STR, DEX, CON, WIL, MND, SPI). Added after multipliers. */
+        public AttributeValueBuilder flat(int str, int dex, int con, int wil, int mnd, int spi) {
+            flatMap.put(EnumDBCAttributes.STR, str);
+            flatMap.put(EnumDBCAttributes.DEX, dex);
+            flatMap.put(EnumDBCAttributes.CON, con);
+            flatMap.put(EnumDBCAttributes.WILL, wil);
+            flatMap.put(EnumDBCAttributes.MND, mnd);
+            flatMap.put(EnumDBCAttributes.SPI, spi);
+            return this;
+        }
+
+        /** Set the flat bonus for a single attribute. */
+        public AttributeValueBuilder flat(EnumDBCAttributes attr, int value) {
+            flatMap.put(attr, value);
+            return this;
+        }
+
+        /** Commit these attribute values and return to {@link AttributeConfigBuilder}. */
+        public AttributeConfigBuilder and() {
+            return parent;
+        }
+    }
+
+    /**
+     * Configures how the race behaves when Mystic (Potential Unleashed) is active:
+     * attribute overrides, damage multiplier, formula selection, and per-skill-level scaling.
+     */
+    public static class MysticConfigBuilder {
+        private final AttributeConfigBuilder parent;
+
+        MysticConfigBuilder(AttributeConfigBuilder parent) {
+            this.parent = parent;
+        }
+
+        /** Open a scope for mystic-state attribute multipliers and flat bonuses. */
+        public MysticValueBuilder values() {
+            return new MysticValueBuilder(this, parent.mysticMulti, parent.mysticFlat);
+        }
+
+        /**
+         * Set an explicit mystic damage multiplier. Overrides the per-attribute mystic values
+         * for damage calculation. Pass {@code -1.0f} (or call {@link #useStateValues()}) to
+         * use the per-attribute mystic multipliers instead.
+         */
+        public MysticConfigBuilder damMulti(float multi) {
+            parent.mysticDamMulti = multi;
+            return this;
+        }
+
+        /** Reset mystic damage multiplier to -1.0 (use per-attribute mystic values instead of a flat override). This is the default. */
+        public MysticConfigBuilder useStateValues() {
+            parent.mysticDamMulti = -1.0f;
+            return this;
+        }
+
+        /**
+         * Select which DBC formula family to use for mystic attribute calculation.
+         * {@code ATTRIBUTE_MULTI_PLUS_SKILL} (default, used by Human/Namekian/Majin) or
+         * {@code PERCENT_MULTI_TIMES_SKILL} (used by Saiyan/Half-Saiyan/Arcosian).
+         */
+        public MysticConfigBuilder formula(RaceAttributeConfig.MysticFormula formula) {
+            parent.mysticFormula = formula;
+            return this;
+        }
+
+        /** Bonus applied per racial skill level while mystic is active: {@code multi = 1.0 + bonus * skillLevel}. */
+        public MysticConfigBuilder attrBonusPerSkillLevel(float bonus) {
+            parent.mysticAttrBonusPerSkillLevel = bonus;
+            return this;
+        }
+
+        /** Commit mystic config and return to {@link AttributeConfigBuilder}. */
+        public AttributeConfigBuilder and() {
+            return parent;
+        }
+    }
+
+    /**
+     * Sets per-attribute multipliers and flat bonuses for the mystic (Potential Unleashed) form state.
+     * Same API as {@link AttributeValueBuilder} but writes to the mystic attribute maps.
+     */
+    public static class MysticValueBuilder {
+        private final MysticConfigBuilder parent;
+        private final Map<EnumDBCAttributes, Float> multiMap;
+        private final Map<EnumDBCAttributes, Integer> flatMap;
+
+        MysticValueBuilder(MysticConfigBuilder parent, Map<EnumDBCAttributes, Float> multiMap, Map<EnumDBCAttributes, Integer> flatMap) {
+            this.parent = parent;
+            this.multiMap = multiMap;
+            this.flatMap = flatMap;
+        }
+
+        /** Set all six mystic attribute multipliers at once (order: STR, DEX, CON, WIL, MND, SPI). */
+        public MysticValueBuilder multi(float str, float dex, float con, float wil, float mnd, float spi) {
+            multiMap.put(EnumDBCAttributes.STR, str);
+            multiMap.put(EnumDBCAttributes.DEX, dex);
+            multiMap.put(EnumDBCAttributes.CON, con);
+            multiMap.put(EnumDBCAttributes.WILL, wil);
+            multiMap.put(EnumDBCAttributes.MND, mnd);
+            multiMap.put(EnumDBCAttributes.SPI, spi);
+            return this;
+        }
+
+        /** Set the mystic multiplier for a single attribute. */
+        public MysticValueBuilder multi(EnumDBCAttributes attr, float value) {
+            multiMap.put(attr, value);
+            return this;
+        }
+
+        /** Set all six mystic flat bonuses at once (order: STR, DEX, CON, WIL, MND, SPI). */
+        public MysticValueBuilder flat(int str, int dex, int con, int wil, int mnd, int spi) {
+            flatMap.put(EnumDBCAttributes.STR, str);
+            flatMap.put(EnumDBCAttributes.DEX, dex);
+            flatMap.put(EnumDBCAttributes.CON, con);
+            flatMap.put(EnumDBCAttributes.WILL, wil);
+            flatMap.put(EnumDBCAttributes.MND, mnd);
+            flatMap.put(EnumDBCAttributes.SPI, spi);
+            return this;
+        }
+
+        /** Set the mystic flat bonus for a single attribute. */
+        public MysticValueBuilder flat(EnumDBCAttributes attr, int value) {
+            flatMap.put(attr, value);
+            return this;
+        }
+
+        /** Commit mystic values and return to {@link MysticConfigBuilder}. */
+        public MysticConfigBuilder and() {
+            return parent;
+        }
+    }
+
+    /**
+     * Configures global/stackable attribute modifiers that apply outside the inner
+     * per-form-state calculation: racial skill level bonuses for base form, God of Destruction
+     * multiplier, Ultra Instinct per-level multipliers, and Legendary base-form eligibility.
+     */
+    public static class StackableConfigBuilder {
+        private final AttributeConfigBuilder parent;
+
+        StackableConfigBuilder(AttributeConfigBuilder parent) {
+            this.parent = parent;
+        }
+
+        /** Bonus applied per racial skill level in base form: {@code multi = 1.0 + bonus * skillLevel}. Default 0.0. */
+        public StackableConfigBuilder baseAttrBonusPerSkillLevel(float bonus) {
+            parent.attrBonusPerSkillLevel = bonus;
+            return this;
+        }
+
+        /** Race-specific God of Destruction attribute multiplier. Stacks with the global GoD config. Default 1.0. */
+        public StackableConfigBuilder godAttrMultiRace(float multi) {
+            parent.godAttrMultiRace = multi;
+            return this;
+        }
+
+        /**
+         * Per-UI-level Ultra Instinct attribute multipliers for this race (varargs, one per UI level).
+         * Each entry stacks with the global UI config. Default: all 1.0.
+         */
+        public StackableConfigBuilder uiAttrMultiRace(Float... multis) {
+            parent.uiAttrMultiRaceList = new ArrayList<>(Arrays.asList(multis));
+            return this;
+        }
+
+        /** List variant of {@link #uiAttrMultiRace(Float...)}. */
+        public StackableConfigBuilder uiAttrMultiRace(List<Float> multis) {
+            parent.uiAttrMultiRaceList = new ArrayList<>(multis);
+            return this;
+        }
+
+        /** Whether Legendary status bonus applies when this race is in base form. Default {@code true}. */
+        public StackableConfigBuilder legendaryAppliesInBase(boolean applies) {
+            parent.legendaryAppliesInBase = applies;
+            return this;
+        }
+
+        /** Commit stackable config and return to {@link AttributeConfigBuilder}. */
+        public AttributeConfigBuilder and() {
             return parent;
         }
     }
