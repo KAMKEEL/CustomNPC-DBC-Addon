@@ -855,8 +855,12 @@ public class RaceBuilder {
             DisplayLayer layer = component.findLayer(layerId);
             if (layer == null) return this;
 
-            if (override) layer.setTextureOverride(texture);
-            else layer.addTextureVariant(texture);
+            if (override) {
+                layer.setDefaultTexture(texture);
+                layer.setFixedTexture(true);
+            } else {
+                layer.addTextureVariant(texture);
+            }
             return this;
         }
 
