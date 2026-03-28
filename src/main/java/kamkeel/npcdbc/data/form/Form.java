@@ -433,8 +433,8 @@ public class Form implements IForm {
 
     @Override
     public boolean isChildOf(IForm parent) {
-        while (parent.getChildID() != -1) {
-            if (parent.getID() == id || parent.getChildID() == id)
+        while (parent.getChildKey() != null) {
+            if (parent.getKey() == getKey() || parent.getChildKey() == getKey())
                 return true;
             parent = parent.getChild();
         }
@@ -450,6 +450,11 @@ public class Form implements IForm {
     public int getChildID() {
         Form child = (Form) getChild();
         return child != null ? child.id : -1;
+    }
+
+    @Override
+    public String getChildKey() {
+        return childKey;
     }
 
     @Override
@@ -484,6 +489,11 @@ public class Form implements IForm {
     @Override
     public boolean hasTimer() {
         return timer > 0;
+    }
+
+    @Override
+    public String getParentKey() {
+        return childKey;
     }
 
     @Override

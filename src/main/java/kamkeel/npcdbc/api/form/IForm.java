@@ -94,6 +94,8 @@ public interface IForm {
      */
     void setID(int newID);
 
+    String getChildKey();
+
     /**
      * @return ID of form next in chain of transformation to this i.e SSJ2 Red is child of SSJ Red
      */
@@ -130,6 +132,8 @@ public interface IForm {
      * removes the child of this form
      */
     void removeChildForm();
+
+    String getParentKey();
 
     /**
      * @return ID of form's parent i.e SSJ Red is parent of SSJ2 Red
