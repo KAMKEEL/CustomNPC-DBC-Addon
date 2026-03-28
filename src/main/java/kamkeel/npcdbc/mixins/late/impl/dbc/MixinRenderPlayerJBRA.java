@@ -399,20 +399,9 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             + (par1AbstractClientPlayer.posZ - par1AbstractClientPlayer.lastTickPosZ) * par2
             - RenderManager.renderPosZ;
 
-        RaceRenderContext ctx = new RaceRenderContext(
-            par1AbstractClientPlayer, renderX, renderY, renderZ,
-            par1AbstractClientPlayer.rotationYaw, par2,
-            (RenderPlayerJBRA) (Object) this, this.modelMain,
-            data, addonRace
-        );
-        ctx.bodyCM = bodyCM.get();
-        ctx.bodyC1 = bodyC1.get();
-        ctx.bodyC2 = bodyC2.get();
-        ctx.bodyC3 = bodyC3.get();
-        ctx.skinType = skintype.get();
-        ctx.state = data.State;
-        ctx.eyeC1 = eyec1.get();
-        ctx.eyeC2 = eyec2.get();
+        RaceRenderContext ctx = RaceRenderContext.from(data);
+        ctx.setRenderVars(renderX, renderY, renderZ, par1AbstractClientPlayer.rotationYaw, par2);
+        
 
         if (renderer.render(ctx)) {
             npcdbc$customRaceOriginalRace = race.get();
@@ -455,7 +444,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     private void renderOverlays(AbstractClientPlayer pl, float par2, CallbackInfo ci, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "eyes") LocalIntRef eyes, @Local(name = "gen") LocalIntRef gender) {
         //renderOverlays(DBCData.get(pl));
         OverlayContext ctx = OverlayContext.from(DBCData.get(pl));
-        ctx.model = modelMain;
+        ctx.modelBiped = modelMain;
         ModelDBC.renderOverlays(ctx);
 
     }
@@ -564,8 +553,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Unique
     private void renderOverlays(DBCData data) {
         OverlayContext ctx = OverlayContext.from(data);
-        ctx.form = data.getForm();
-        ctx.model = modelMain;
+        ctx.modelBiped = modelMain;
 
         List<OverlayChain> chains = new ArrayList<>();//ModelDBC.applyOverlayChains(data.getOverlayChains(), ctx);
 
@@ -864,19 +852,8 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         if (renderer == null) return;
 
         DBCData data = DBCData.get(par1EntityPlayer);
-        RaceRenderContext ctx = new RaceRenderContext(
-            par1EntityPlayer, 0, 0, 0, 0, 0,
-            (RenderPlayerJBRA) (Object) this, this.modelMain,
-            data, addonRace
-        );
-        ctx.bodyCM = bodyCM.get();
-        ctx.bodyC1 = bodyC1.get();
-        ctx.bodyC2 = bodyC2.get();
-        ctx.bodyC3 = bodyC3.get();
-        ctx.skinType = skintype.get();
-        ctx.state = data.State;
-        ctx.eyeC1 = data.getColor("left_eye");
-        ctx.eyeC2 = data.getColor("right_eye");
+        RaceRenderContext ctx = RaceRenderContext.from(data);
+        
         ctx.isFirstPersonArm = true;
         ctx.armAnimationId = id.get();
 

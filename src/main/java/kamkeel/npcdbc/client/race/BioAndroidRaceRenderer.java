@@ -64,7 +64,7 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
 
         ensurePartsInitialized(ctx.model);
 
-        int state = ctx.state;
+        int state = ctx.dbcState();
         switch (state) {
             case 1:
                 renderPerfect(ctx);
@@ -89,7 +89,7 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
 
         ensurePartsInitialized(ctx.model);
 
-        int state = ctx.state;
+        int state = ctx.dbcState();
         ModelBipedDBC model = ctx.model;
         int id = ctx.armAnimationId;
 
@@ -416,11 +416,11 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
         bioheadRoot.rotationPointX = model.bipedHead.rotationPointX;
         bioheadRoot.rotationPointY = model.bipedHead.rotationPointY;
 
-        biohead1I.isHidden = ctx.state != 0;
-        biohead2I.isHidden = ctx.state != 0;
+        biohead1I.isHidden = ctx.dbcState() != 0;
+        biohead2I.isHidden = ctx.dbcState() != 0;
 
-        biohead1.isHidden = ctx.state == 0;
-        biohead2.isHidden = ctx.state == 0;
+        biohead1.isHidden = ctx.dbcState() == 0;
+        biohead2.isHidden = ctx.dbcState() == 0;
 
         bioheadRoot.render(f);
 
@@ -521,34 +521,34 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
         ModelBipedDBC model = ctx.model;
 
         // Head crest
-        bindAndColor(ctx, "imperfect/bio_imperfect_crest.png", ctx.bodyCM);
+        bindAndColor(ctx, "imperfect/bio_imperfect_crest.png", ctx.bodyCM());
         renderHeadCrestWithHeadTransform(ctx);
 
         // Tail
         bindAndColor(ctx, "imperfect/bio_imperfect_stinger.png", 0xFFFFFF);
         renderTailStaticWithBodyTransform(ctx, bioTailRoot);
 
-        bindAndColor(ctx, "imperfect/bio_imperfect_tail_0.png", ctx.bodyCM);
+        bindAndColor(ctx, "imperfect/bio_imperfect_tail_0.png", ctx.bodyCM());
         renderTailWithBodyTransform(ctx, bioTailRoot, true);
 
         bindAndColor(ctx, "imperfect/bio_imperfect_tail_1.png", 0xFFFFFF);
         renderTailWithBodyTransform(ctx, bioTailRoot, true);
 
         // Wings
-        bindAndColor(ctx, "imperfect/bio_imperfect_wings.png", ctx.bodyCM);
+        bindAndColor(ctx, "imperfect/bio_imperfect_wings.png", ctx.bodyCM());
         renderWingsWithBodyTransform(ctx);
 
         // Body layers
-        bindAndColor(ctx, "imperfect/bio_imperfect_0.png", ctx.bodyCM);
+        bindAndColor(ctx, "imperfect/bio_imperfect_0.png", ctx.bodyCM());
         model.renderBody(0.0625F);
 
-        bindAndColor(ctx, "imperfect/bio_imperfect_1.png", ctx.bodyC1);
+        bindAndColor(ctx, "imperfect/bio_imperfect_1.png", ctx.bodyC1());
         model.renderBody(0.0625F);
 
-        bindAndColor(ctx, "imperfect/bio_imperfect_2.png", ctx.bodyC2);
+        bindAndColor(ctx, "imperfect/bio_imperfect_2.png", ctx.bodyC2());
         model.renderBody(0.0625F);
 
-        bindAndColor(ctx, "imperfect/bio_imperfect_3.png", ctx.bodyC3);
+        bindAndColor(ctx, "imperfect/bio_imperfect_3.png", ctx.bodyC3());
         model.renderBody(0.0625F);
 
         bindAndColor(ctx, "imperfect/bio_imperfect_4.png", 0xFFFFFF);
@@ -562,30 +562,30 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
         ModelBipedDBC model = ctx.model;
 
         // Head crest
-        bindAndColor(ctx, "semiperfect/bio_semiperfect_crest.png", ctx.bodyCM);
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_crest.png", ctx.bodyCM());
         renderHeadCrestWithHeadTransform(ctx);
 
         // Tail
         bindAndColor(ctx, "semiperfect/bio_semiperfect_stinger.png", 0xFFFFFF);
         renderTailStaticWithBodyTransform(ctx, bioTailRoot);
 
-        bindAndColor(ctx, "semiperfect/bio_semiperfect_tail_0.png", ctx.bodyC2);
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_tail_0.png", ctx.bodyC2());
         renderTailWithBodyTransform(ctx, bioTailRoot, true);
 
         bindAndColor(ctx, "semiperfect/bio_semiperfect_tail_1.png", 0xFFFFFF);
         renderTailWithBodyTransform(ctx, bioTailRoot, true);
 
         // Body layers
-        bindAndColor(ctx, "semiperfect/bio_semiperfect_0.png", ctx.bodyCM);
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_0.png", ctx.bodyCM());
         model.renderBody(0.0625F);
 
-        bindAndColor(ctx, "semiperfect/bio_semiperfect_1.png", ctx.bodyC1);
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_1.png", ctx.bodyC1());
         model.renderBody(0.0625F);
 
-        bindAndColor(ctx, "semiperfect/bio_semiperfect_2.png", ctx.bodyC2);
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_2.png", ctx.bodyC2());
         model.renderBody(0.0625F);
 
-        bindAndColor(ctx, "semiperfect/bio_semiperfect_3.png", ctx.bodyC3);
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_3.png", ctx.bodyC3());
         model.renderBody(0.0625F);
 
         bindAndColor(ctx, "semiperfect/bio_semiperfect_4.png", 0xFFFFFF);
@@ -593,31 +593,31 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
 
         // Eyes
         renderEyes(ctx, "semiperfect/face/eye_base.png", "semiperfect/face/eyebrow.png", "semiperfect/face/eye_left.png", "semiperfect/face/eye_right.png");
-        renderFacialFeatures(ctx, "semiperfect/face/nose.png", ctx.bodyC1, "semiperfect/face/mouth.png", 0xd7a4bb);
+        renderFacialFeatures(ctx, "semiperfect/face/nose.png", ctx.bodyC1(), "semiperfect/face/mouth.png", 0xd7a4bb);
     }
 
     private void renderPerfect(RaceRenderContext ctx) {
         ModelBipedDBC model = ctx.model;
 
         // Body layers
-        bindAndColor(ctx, "perfect/bio_perfect_0.png", ctx.bodyCM);
+        bindAndColor(ctx, "perfect/bio_perfect_0.png", ctx.bodyCM());
         model.renderBody(0.0625F);
 
         // Head crest
-        bindAndColor(ctx, "perfect/bio_perfect_crest.png", ctx.bodyCM);
+        bindAndColor(ctx, "perfect/bio_perfect_crest.png", ctx.bodyCM());
         renderHeadCrestWithHeadTransform(ctx);
 
         // Wings
         bindAndColor(ctx, "perfect/bio_perfect_wings.png", 0xFFFFFF);
         renderWingsWithBodyTransform(ctx);
 
-        bindAndColor(ctx, "perfect/bio_perfect_1.png", ctx.bodyC1);
+        bindAndColor(ctx, "perfect/bio_perfect_1.png", ctx.bodyC1());
         model.renderBody(0.0625F);
 
-        bindAndColor(ctx, "perfect/bio_perfect_2.png", ctx.bodyC2);
+        bindAndColor(ctx, "perfect/bio_perfect_2.png", ctx.bodyC2());
         model.renderBody(0.0625F);
 
-        bindAndColor(ctx, "perfect/bio_perfect_3.png", ctx.bodyC3);
+        bindAndColor(ctx, "perfect/bio_perfect_3.png", ctx.bodyC3());
         model.renderBody(0.0625F);
 
         bindAndColor(ctx, "perfect/bio_perfect_4.png", 0xFFFFFF);
@@ -625,41 +625,41 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
 
         // Eyes
         renderEyes(ctx, "perfect/face/eye_base.png", "perfect/face/eyebrow.png", "perfect/face/eye_left.png", "perfect/face/eye_right.png");
-        renderFacialFeatures(ctx, "perfect/face/nose.png", ctx.bodyC1, "perfect/face/mouth.png", ctx.bodyC1);
+        renderFacialFeatures(ctx, "perfect/face/nose.png", ctx.bodyC1(), "perfect/face/mouth.png", ctx.bodyC1());
     }
 
     private void renderMax(RaceRenderContext ctx) {
         ModelBipedDBC model = ctx.model;
 
         // Base body
-        bindAndColor(ctx, "max/bio_max_0.png", ctx.bodyCM);
+        bindAndColor(ctx, "max/bio_max_0.png", ctx.bodyCM());
         model.renderBody(0.0625F);
 
         // Head crest
-        bindAndColor(ctx, "max/bio_max_crest.png", ctx.bodyCM);
+        bindAndColor(ctx, "max/bio_max_crest.png", ctx.bodyCM());
         renderHeadCrestWithHeadTransform(ctx);
 
         // Tail
         bindAndColor(ctx, "max/bio_max_stinger.png", 0xFFFFFF);
         renderTailStaticWithBodyTransform(ctx, bioTailMaxRoot);
 
-        bindAndColor(ctx, "max/bio_max_tail_0.png", ctx.bodyCM);
+        bindAndColor(ctx, "max/bio_max_tail_0.png", ctx.bodyCM());
         renderTailWithBodyTransform(ctx, bioTailMaxRoot, true);
 
-        bindAndColor(ctx, "max/bio_max_tail_1.png", ctx.bodyC1);
+        bindAndColor(ctx, "max/bio_max_tail_1.png", ctx.bodyC1());
         renderTailWithBodyTransform(ctx, bioTailMaxRoot, true);
 
         // Wings
         bindAndColor(ctx, "max/bio_max_wings.png", 0xFFFFFF);
         renderWingsWithBodyTransform(ctx);
 
-        bindAndColor(ctx, "max/bio_max_1.png", ctx.bodyC1);
+        bindAndColor(ctx, "max/bio_max_1.png", ctx.bodyC1());
         model.renderBody(0.0625F);
 
-        bindAndColor(ctx, "max/bio_max_2.png", ctx.bodyC2);
+        bindAndColor(ctx, "max/bio_max_2.png", ctx.bodyC2());
         model.renderBody(0.0625F);
 
-        bindAndColor(ctx, "max/bio_max_3.png", ctx.bodyC3);
+        bindAndColor(ctx, "max/bio_max_3.png", ctx.bodyC3());
         model.renderBody(0.0625F);
 
         bindAndColor(ctx, "max/bio_max_4.png", 0xFFFFFF);
@@ -675,23 +675,23 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
     private void renderEyes(RaceRenderContext ctx, String baseTexture, String eyebrowTexture, String leftTexture, String rightTexture) {
         ModelBipedDBC model = ctx.model;
 
-        boolean semiPerfect = ctx.state == 2;
+        boolean semiPerfect = ctx.dbcState() == 2;
 
         whiteColor();
         ctx.bindTexture(new ResourceLocation(textureDir() + baseTexture));
         model.renderHairs(0.0625F, "EYEBASE");
 
         if (!eyebrowTexture.isEmpty()) {
-            RenderPlayerJBRA.glColor3f(ctx.bodyC1);
+            RenderPlayerJBRA.glColor3f(ctx.bodyC1());
             ctx.bindTexture(new ResourceLocation(textureDir() + eyebrowTexture));
             model.renderHairs(0.0625F, "EYEBROW");
         }
 
-        RenderPlayerJBRA.glColor3f(semiPerfect ? 0xafddff : ctx.eyeC1);
+        RenderPlayerJBRA.glColor3f(semiPerfect ? 0xafddff : ctx.eyeC1());
         ctx.bindTexture(new ResourceLocation(textureDir() + leftTexture));
         model.renderHairs(0.0625F, "EYELEFT");
 
-        RenderPlayerJBRA.glColor3f(semiPerfect ? 0xafddff : ctx.eyeC2);
+        RenderPlayerJBRA.glColor3f(semiPerfect ? 0xafddff : ctx.eyeC2());
         ctx.bindTexture(new ResourceLocation(textureDir() + rightTexture));
         model.renderHairs(0.0625F, "EYERIGHT");
     }
@@ -711,16 +711,16 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
     // ── First-person arm rendering ──
 
     private void renderArmBase(RaceRenderContext ctx, ModelBipedDBC model, int id) {
-        bindAndColor(ctx, "imperfect/bio_imperfect_0.png", ctx.bodyCM);
+        bindAndColor(ctx, "imperfect/bio_imperfect_0.png", ctx.bodyCM());
         renderArmPiece(model, id, ctx.entity instanceof EntityPlayer ? (EntityPlayer) ctx.entity : null);
 
-        bindAndColor(ctx, "imperfect/bio_imperfect_1.png", ctx.bodyC1);
+        bindAndColor(ctx, "imperfect/bio_imperfect_1.png", ctx.bodyC1());
         renderArmPiece(model, id, ctx.entity instanceof EntityPlayer ? (EntityPlayer) ctx.entity : null);
 
-        bindAndColor(ctx, "imperfect/bio_imperfect_2.png", ctx.bodyC2);
+        bindAndColor(ctx, "imperfect/bio_imperfect_2.png", ctx.bodyC2());
         renderArmPiece(model, id, ctx.entity instanceof EntityPlayer ? (EntityPlayer) ctx.entity : null);
 
-        bindAndColor(ctx, "imperfect/bio_imperfect_3.png", ctx.bodyC3);
+        bindAndColor(ctx, "imperfect/bio_imperfect_3.png", ctx.bodyC3());
         renderArmPiece(model, id, ctx.entity instanceof EntityPlayer ? (EntityPlayer) ctx.entity : null);
 
         bindAndColor(ctx, "imperfect/bio_imperfect_4.png", 0xFFFFFF);
@@ -730,16 +730,16 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
     private void renderArmSemiPerfect(RaceRenderContext ctx, ModelBipedDBC model, int id) {
         EntityPlayer player = ctx.entity instanceof EntityPlayer ? (EntityPlayer) ctx.entity : null;
 
-        bindAndColor(ctx, "semiperfect/bio_semiperfect_0.png", ctx.bodyCM);
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_0.png", ctx.bodyCM());
         renderArmPiece(model, id, player);
 
-        bindAndColor(ctx, "semiperfect/bio_semiperfect_1.png", ctx.bodyC1);
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_1.png", ctx.bodyC1());
         renderArmPiece(model, id, player);
 
-        bindAndColor(ctx, "semiperfect/bio_semiperfect_2.png", ctx.bodyC2);
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_2.png", ctx.bodyC2());
         renderArmPiece(model, id, player);
 
-        bindAndColor(ctx, "semiperfect/bio_semiperfect_3.png", ctx.bodyC3);
+        bindAndColor(ctx, "semiperfect/bio_semiperfect_3.png", ctx.bodyC3());
         renderArmPiece(model, id, player);
 
         bindAndColor(ctx, "semiperfect/bio_semiperfect_4.png", 0xFFFFFF);
@@ -749,16 +749,16 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
     private void renderArmPerfect(RaceRenderContext ctx, ModelBipedDBC model, int id) {
         EntityPlayer player = ctx.entity instanceof EntityPlayer ? (EntityPlayer) ctx.entity : null;
 
-        bindAndColor(ctx, "perfect/bio_perfect_0.png", ctx.bodyCM);
+        bindAndColor(ctx, "perfect/bio_perfect_0.png", ctx.bodyCM());
         renderArmPiece(model, id, player);
 
-        bindAndColor(ctx, "perfect/bio_perfect_1.png", ctx.bodyC1);
+        bindAndColor(ctx, "perfect/bio_perfect_1.png", ctx.bodyC1());
         renderArmPiece(model, id, player);
 
-        bindAndColor(ctx, "perfect/bio_perfect_2.png", ctx.bodyC2);
+        bindAndColor(ctx, "perfect/bio_perfect_2.png", ctx.bodyC2());
         renderArmPiece(model, id, player);
 
-        bindAndColor(ctx, "perfect/bio_perfect_3.png", ctx.bodyC3);
+        bindAndColor(ctx, "perfect/bio_perfect_3.png", ctx.bodyC3());
         renderArmPiece(model, id, player);
 
         bindAndColor(ctx, "perfect/bio_perfect_4.png", 0xFFFFFF);
@@ -768,16 +768,16 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
     private void renderArmMax(RaceRenderContext ctx, ModelBipedDBC model, int id) {
         EntityPlayer player = ctx.entity instanceof EntityPlayer ? (EntityPlayer) ctx.entity : null;
 
-        bindAndColor(ctx, "max/bio_max_0.png", ctx.bodyCM);
+        bindAndColor(ctx, "max/bio_max_0.png", ctx.bodyCM());
         renderArmPiece(model, id, player);
 
-        bindAndColor(ctx, "max/bio_max_1.png", ctx.bodyC1);
+        bindAndColor(ctx, "max/bio_max_1.png", ctx.bodyC1());
         renderArmPiece(model, id, player);
 
-        bindAndColor(ctx, "max/bio_max_2.png", ctx.bodyC2);
+        bindAndColor(ctx, "max/bio_max_2.png", ctx.bodyC2());
         renderArmPiece(model, id, player);
 
-        bindAndColor(ctx, "max/bio_max_3.png", ctx.bodyC3);
+        bindAndColor(ctx, "max/bio_max_3.png", ctx.bodyC3());
         renderArmPiece(model, id, player);
 
         bindAndColor(ctx, "max/bio_max_4.png", 0xFFFFFF);

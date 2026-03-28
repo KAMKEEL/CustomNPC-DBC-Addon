@@ -1,62 +1,18 @@
 package kamkeel.npcdbc.client.race;
 
-import JinRyuu.JBRA.ModelBipedDBC;
-import JinRyuu.JBRA.RenderPlayerJBRA;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.data.race.Race;
+import kamkeel.npcdbc.client.DBCRenderContext;
+import kamkeel.npcdbc.constants.BodyLayer;
 import kamkeel.npcdbc.data.race.display.DisplayComponent;
 import kamkeel.npcdbc.data.race.display.DisplayLayer;
 import kamkeel.npcdbc.data.race.display.RaceDisplay;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
 @SideOnly(Side.CLIENT)
-public class RaceRenderContext {
-
-    public final Entity entity;
-    public final double x;
-    public final double y;
-    public final double z;
-    public final float yaw;
-    public final float partialTicks;
-
-    public final RenderPlayerJBRA renderer;
-    public final ModelBipedDBC model;
-    public final DBCData dbcData;
-    public final Race race;
-
-    public int bodyCM;
-    public int bodyC1;
-    public int bodyC2;
-    public int bodyC3;
-    public int eyeC1;
-    public int eyeC2;
-
-    public int skinType;
-    public int state;
-    public int bodyType;
-    public boolean isFirstPersonArm;
-    public int armAnimationId = -1;
-
-    public RaceRenderContext(Entity entity, double x, double y, double z,
-                             float yaw, float partialTicks,
-                             RenderPlayerJBRA renderer, ModelBipedDBC model,
-                             DBCData dbcData, Race race) {
-        this.entity = entity;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.yaw = yaw;
-        this.partialTicks = partialTicks;
-        this.renderer = renderer;
-        this.model = model;
-        this.dbcData = dbcData;
-        this.race = race;
-    }
-
+public class RaceRenderContext extends DBCRenderContext {
+    
     // ── Component access ───────────────────────────────────────────────────────
 
     /**
@@ -93,13 +49,13 @@ public class RaceRenderContext {
      */
     public int getRawColor(String layerId) {
         switch (layerId.toLowerCase()) {
-            case RaceDisplay.LAYER_BODY_CM: return bodyCM;
-            case RaceDisplay.LAYER_BODY_C1: return bodyC1;
-            case RaceDisplay.LAYER_BODY_C2: return bodyC2;
-            case RaceDisplay.LAYER_BODY_C3: return bodyC3;
-            case RaceDisplay.LAYER_EYE:
-            case RaceDisplay.LAYER_LEFT_EYE: return eyeC1;
-            case RaceDisplay.LAYER_RIGHT_EYE: return eyeC2;
+            case BodyLayer.BODY_CM: return bodyCM();
+            case BodyLayer.BODY_C1: return bodyC1();
+            case BodyLayer.BODY_C2: return bodyC2();
+            case BodyLayer.BODY_C3: return bodyC3();
+            case BodyLayer.EYES:
+            case BodyLayer.EYE_LEFT: return eyeC1();
+            case BodyLayer.EYE_RIGHT: return eyeC2();
             default: return 0;
         }
     }

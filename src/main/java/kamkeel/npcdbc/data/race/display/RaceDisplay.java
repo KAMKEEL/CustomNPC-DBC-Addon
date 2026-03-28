@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data.race.display;
 
 import kamkeel.npcdbc.api.Color;
+import kamkeel.npcdbc.constants.BodyLayer;
 import kamkeel.npcdbc.data.race.serial.DataCompound;
 import kamkeel.npcdbc.data.race.serial.DataSerializable;
 
@@ -14,24 +15,9 @@ public class RaceDisplay implements DataSerializable {
     public static final String COMPONENT_EYES = "eyes";
     public static final String COMPONENT_HAIR = "hair";
 
-    // ── Built-in layer IDs ─────────────────────────────────────────────────────
-    public static final String LAYER_BODY_CM = "bodycm";
-    public static final String LAYER_BODY_C1 = "bodyc1";
-    public static final String LAYER_BODY_C2 = "bodyc2";
-    public static final String LAYER_BODY_C3 = "bodyc3";
-    public static final String LAYER_EYE = "eye";
-    public static final String LAYER_EYEBROWS = "eyebrows";
-    public static final String LAYER_EYEBASE = "eyebase";
-    public static final String LAYER_LEFT_EYE = "lefteye";
-    public static final String LAYER_RIGHT_EYE = "righteye";
-    public static final String LAYER_NOSE = "nose";
-    public static final String LAYER_MOUTH = "mouth";
-    public static final String LAYER_HAIR = "hair";
-    public static final String LAYER_FUR = "fur";
-
     /** Canonical body layer order for DBC metadata. */
     private static final String[] BODY_LAYER_ORDER = {
-        LAYER_BODY_CM, LAYER_BODY_C1, LAYER_BODY_C2, LAYER_BODY_C3
+        BodyLayer.BODY_CM, BodyLayer.BODY_C1, BodyLayer.BODY_C2, BodyLayer.BODY_C3
     };
 
     // ── Components ─────────────────────────────────────────────────────────────
@@ -102,27 +88,27 @@ public class RaceDisplay implements DataSerializable {
     public RaceDisplay() {
         // Built-in body component: bodycm always present
         DisplayComponent bodyComponent = new DisplayComponent(COMPONENT_BODY, "Body");
-        bodyComponent.addLayer(new DisplayLayer(LAYER_BODY_CM, "Body Main"));
+        bodyComponent.addLayer(new DisplayLayer(BodyLayer.BODY_CM, "Body Main"));
         addComponent(bodyComponent);
 
         // Built-in eyes sub-component
         DisplayComponent eyesComponent = new DisplayComponent(COMPONENT_EYES, "Eyes");
-        eyesComponent.addLayer(new DisplayLayer(LAYER_LEFT_EYE, "Left Eye"));
-        eyesComponent.addLayer(new DisplayLayer(LAYER_RIGHT_EYE, "Right Eye"));
-        eyesComponent.addLayer(new DisplayLayer(LAYER_EYE, "Eyes"));
+        eyesComponent.addLayer(new DisplayLayer(BodyLayer.EYE_LEFT, "Left Eye"));
+        eyesComponent.addLayer(new DisplayLayer(BodyLayer.EYE_RIGHT, "Right Eye"));
+        eyesComponent.addLayer(new DisplayLayer(BodyLayer.EYES, "Eyes"));
 
         // Built-in face component; eyes is its sub-component
         DisplayComponent faceComponent = new DisplayComponent(COMPONENT_FACE, "Face");
-        faceComponent.addLayer(new DisplayLayer(LAYER_EYEBASE, "Eye Base"));
-        faceComponent.addLayer(new DisplayLayer(LAYER_EYEBROWS, "Eyebrows"));
+        faceComponent.addLayer(new DisplayLayer(BodyLayer.EYEBASE, "Eye Base"));
+        faceComponent.addLayer(new DisplayLayer(BodyLayer.EYEBROWS, "Eyebrows"));
         faceComponent.setSubComponent(eyesComponent);
-        faceComponent.addLayer(new DisplayLayer(LAYER_NOSE, "Nose"));
-        faceComponent.addLayer(new DisplayLayer(LAYER_MOUTH, "Mouth"));
+        faceComponent.addLayer(new DisplayLayer(BodyLayer.NOSE, "Nose"));
+        faceComponent.addLayer(new DisplayLayer(BodyLayer.MOUTH, "Mouth"));
         addComponent(faceComponent);
 
         // Built-in hair component: hair always present, visibility defined by renderer
         DisplayComponent hairComponent = new DisplayComponent(COMPONENT_HAIR, "Hair");
-        hairComponent.addLayer(new DisplayLayer(LAYER_HAIR, "Hair"));
+        hairComponent.addLayer(new DisplayLayer(BodyLayer.HAIR, "Hair"));
         addComponent(hairComponent);
     }
 
@@ -262,7 +248,7 @@ public class RaceDisplay implements DataSerializable {
                 if (bodyComponent.hasLayer(id)) ids.add(id);
             }
         }
-        if (ids.isEmpty()) ids.add(LAYER_BODY_CM);
+        if (ids.isEmpty()) ids.add(BodyLayer.BODY_CM);
         return ids;
     }
 
@@ -277,8 +263,10 @@ public class RaceDisplay implements DataSerializable {
         DisplayComponent eyesComponent = faceComponent.getSubComponent();
         if (eyesComponent == null) return 0;
 
-        boolean hasLeft = eyesComponent.hasLayer(LAYER_LEFT_EYE)  || eyesComponent.hasLayer(LAYER_EYE);
-        boolean hasRight = eyesComponent.hasLayer(LAYER_RIGHT_EYE) || eyesComponent.hasLayer(LAYER_EYE);
+        boolean hasLeft = eyesComponent.hasLayer(BodyLayer.EYE_LEFT)  || eyesComponent.hasLayer(
+                BodyLayer.EYES);
+        boolean hasRight = eyesComponent.hasLayer(BodyLayer.EYE_RIGHT) || eyesComponent.hasLayer(
+                BodyLayer.EYES);
         return (hasLeft ? 1 : 0) + (hasRight ? 1 : 0);
     }
 
@@ -299,7 +287,7 @@ public class RaceDisplay implements DataSerializable {
      * or -1 if the player can choose freely.
      */
     public int getFixedHairColor() {
-        DisplayLayer hairLayer = getLayer(LAYER_HAIR);
+        DisplayLayer hairLayer = getLayer(BodyLayer.HAIR);
         if (hairLayer != null && hairLayer.isFixedColor()) {
             return hairLayer.getDefaultColor();
         }
@@ -429,9 +417,9 @@ public class RaceDisplay implements DataSerializable {
         int rightEye = 0;
 
         if (eyesComponent != null) {
-            DisplayLayer eyeLayer = eyesComponent.getLayer(LAYER_EYE);
-            DisplayLayer leftLayer = eyesComponent.getLayer(LAYER_LEFT_EYE);
-            DisplayLayer rightLayer = eyesComponent.getLayer(LAYER_RIGHT_EYE);
+            DisplayLayer eyeLayer = eyesComponent.getLayer(BodyLayer.EYES);
+            DisplayLayer leftLayer = eyesComponent.getLayer(BodyLayer.EYE_LEFT);
+            DisplayLayer rightLayer = eyesComponent.getLayer(BodyLayer.EYE_RIGHT);
 
             if (eyeLayer  != null) genericEye = eyeLayer.getDefaultColor();
             leftEye = (leftLayer  != null && leftLayer.hasDefaultColor())  ? leftLayer.getDefaultColor()  : genericEye;

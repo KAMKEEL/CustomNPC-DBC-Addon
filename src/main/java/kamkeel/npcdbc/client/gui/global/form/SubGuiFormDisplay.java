@@ -5,13 +5,13 @@ import kamkeel.npcdbc.client.gui.component.SubGuiFormFaceParts;
 import kamkeel.npcdbc.client.gui.component.SubGuiOverlays;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectAura;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.constants.BodyLayer;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
-import kamkeel.npcdbc.data.race.display.RaceDisplay;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
@@ -443,7 +443,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         }
         // Eye Color Clear
         if (button.id == 1107) {
-            display.bodyColors.setColor(RaceDisplay.LAYER_EYE, -1);
+            display.bodyColors.setColor(BodyLayer.EYES, -1);
             updateButtons();
         }
         //Berserk
@@ -458,7 +458,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         }
         // Body Clear
         if (button.id == 1108) {
-            display.bodyColors.setColor(RaceDisplay.LAYER_BODY_CM, -1);
+            display.bodyColors.setColor(BodyLayer.BODY_CM, -1);
             updateButtons();
         }
         //Has Eyebrows
@@ -472,7 +472,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         }
         // Body C1 Clear
         if (button.id == 1109) {
-            display.bodyColors.setColor(RaceDisplay.LAYER_BODY_CM, -1);
+            display.bodyColors.setColor(BodyLayer.BODY_CM, -1);
             updateButtons();
         }
         // Body C2
@@ -482,7 +482,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         }
         // Body C2 Clear
         if (button.id == 1110) {
-            display.bodyColors.setColor(RaceDisplay.LAYER_BODY_C2, -1);
+            display.bodyColors.setColor(BodyLayer.BODY_C2, -1);
             updateButtons();
         }
         // Body C3
@@ -492,7 +492,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         }
         // Body C3 Clear
         if (button.id == 1111) {
-            display.bodyColors.setColor(RaceDisplay.LAYER_BODY_C3, -1);
+            display.bodyColors.setColor(BodyLayer.BODY_C3, -1);
             updateButtons();
         }
         // Fur Color
@@ -502,7 +502,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         }
         // Fur Color Clear
         if (button.id == 1112) {
-            display.bodyColors.setColor(RaceDisplay.LAYER_FUR, -1);
+            display.bodyColors.setColor(BodyLayer.FUR, -1);
             updateButtons();
         }
         // Majin Hair
@@ -583,7 +583,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         }
         // Hair Color Clear
         if (button.id == 1104) {
-            display.bodyColors.setColor(RaceDisplay.LAYER_HAIR, -1);
+            display.bodyColors.setColor(BodyLayer.HAIR, -1);
             updateButtons();
         }
         //Hair Type
@@ -628,19 +628,19 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             if (lastColorClicked == 0) {
                 display.auraColor = color;
             } else if (lastColorClicked == 1) {
-                display.bodyColors.setColor(RaceDisplay.LAYER_EYE, -1);
+                display.bodyColors.setColor(BodyLayer.EYES, -1);
             } else if (lastColorClicked == 2) {
-                display.bodyColors.setColor(RaceDisplay.LAYER_BODY_CM, -1);
+                display.bodyColors.setColor(BodyLayer.BODY_CM, -1);
             } else if (lastColorClicked == 3) {
-                display.bodyColors.setColor(RaceDisplay.LAYER_BODY_C1, -1);
+                display.bodyColors.setColor(BodyLayer.BODY_C1, -1);
             } else if (lastColorClicked == 4) {
-                display.bodyColors.setColor(RaceDisplay.LAYER_BODY_C2, -1);
+                display.bodyColors.setColor(BodyLayer.BODY_C2, -1);
             } else if (lastColorClicked == 5) {
-                display.bodyColors.setColor(RaceDisplay.LAYER_BODY_C3, -1);
+                display.bodyColors.setColor(BodyLayer.BODY_C3, -1);
             } else if (lastColorClicked == 6) {
-                display.bodyColors.setColor(RaceDisplay.LAYER_FUR, -1);
+                display.bodyColors.setColor(BodyLayer.FUR, -1);
             } else if (lastColorClicked == 7) {
-                display.bodyColors.setColor(RaceDisplay.LAYER_HAIR, -1);
+                display.bodyColors.setColor(BodyLayer.HAIR, -1);
             } else if (lastColorClicked == 8) {
                 display.kiBarColor = color;
             }

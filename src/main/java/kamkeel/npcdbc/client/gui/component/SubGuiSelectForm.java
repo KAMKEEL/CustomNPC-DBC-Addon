@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.gui.component;
 
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.form.DBCRequestForm;
 import net.minecraft.client.gui.GuiButton;
@@ -37,13 +38,13 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
     public boolean useMenuName, showDBCForms;
 
     public HashMap<Integer, String> dbcForms = new HashMap<>();
+    private final ArrayList<Form> racialForms = new ArrayList<>();
     private ArrayList<Integer> stateIDs = new ArrayList<>();
 
     public DBCData dbcData;
 
 
     public SubGuiSelectForm(int buttonID, boolean playerFormsOnly, boolean useMenuName) {
-        this.selectionChild = selectionChild;
         this.buttonID = buttonID;
         this.closeOnEsc = true;
         this.drawDefaultBackground = true;
@@ -60,7 +61,8 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
         super.initGui();
         guiTop += 10;
         if (showDBCForms)
-            addButton(new GuiNpcButton(3, guiLeft + 183, guiTop + 57, 79, 20, new String[]{"DBC", "display.custom"}, page));
+            addButton(new GuiNpcButton(3, guiLeft + 183, guiTop + 57, 79, 20,
+                    new String[]{isCustomRaceDBCPage() ? "Race" : "DBC", "display.custom"}, page));
 
         if (scrollForms == null) {
             scrollForms = new GuiCustomScroll(this, 0, 0);
@@ -73,9 +75,14 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
         if (page == 0) {
             scrollForms.setList(getSearchList());
         } else if (dbcData != null) {
+            if (isCustomRaceDBCPage()) {
+                populateCustomRaceForms();
+                scrollForms.setUnsortedList(getSearchList());
+            } else {
             dbcForms = dbcData.getUnlockedDBCFormsMap();
             stateIDs = new ArrayList<>(dbcForms.keySet());
             scrollForms.setUnsortedList(getSearchList());
+            }
         }
 
         addTextField(new GuiNpcTextField(55, this, fontRendererObj, guiLeft + 4, guiTop + 192, 177, 20, search));
@@ -96,6 +103,25 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
         return this;
     }
 
+    private boolean isCustomRaceDBCPage() {
+        return showDBCForms && dbcData != null && dbcData.addonRace != null && dbcData.addonRace.isCustomRace();
+    }
+
+    private void populateCustomRaceForms() {
+        racialForms.clear();
+        dbcForms.clear();
+        stateIDs.clear();
+
+        if (dbcData == null || dbcData.addonRace == null)
+            return;
+
+        for (Form form : dbcData.addonRace.getUnlockedForms()) {
+            if (form == null)
+                continue;
+            racialForms.add(form);
+        }
+    }
+
     @Override
     public void actionPerformed(GuiButton button) {
         GuiNpcButton bttn = (GuiNpcButton) button;
@@ -106,11 +132,21 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
             if (page == 0) {
                 selectedFormID = data.get(selected);
                 selectedFormKey = selected;
+                isDBC = false;
             } else {
-                selectedFormID = stateIDs.get(scrollForms.selected).byteValue();
-                selectedFormKey = null;
+                if (isCustomRaceDBCPage()) {
+                    Form selectedForm = scrollForms.selected >= 0 && scrollForms.selected < racialForms.size()
+                            ? racialForms.get(scrollForms.selected)
+                            : null;
+                    selectedFormID = selectedForm != null ? selectedForm.id : -1;
+                    selectedFormKey = selectedForm != null ? selectedForm.getKeyString() : null;
+                    isDBC = false;
+                } else {
+                    selectedFormID = stateIDs.get(scrollForms.selected).byteValue();
+                    selectedFormKey = null;
+                    isDBC = true;
+                }
             }
-            isDBC = page == 1;
             this.close();
         }
         if (id == 1) {
@@ -173,14 +209,34 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
 
     private List<String> getSearchList() {
         if (search.isEmpty()) {
-            return new ArrayList<String>(page == 0 ? this.data.keySet() : dbcForms.values());
+            if (page == 0)
+                return new ArrayList<>(this.data.keySet());
+            if (isCustomRaceDBCPage())
+                return getCustomRaceFormLabels();
+            return new ArrayList<>(dbcForms.values());
         }
-        List<String> list = new ArrayList<String>();
-        for (String name : page == 0 ? this.data.keySet() : dbcForms.values()) {
+        List<String> list = new ArrayList<>();
+        List<String> source = page == 0 ? new ArrayList<>(this.data.keySet())
+                : isCustomRaceDBCPage() ? getCustomRaceFormLabels()
+                : new ArrayList<>(dbcForms.values());
+        for (String name : source) {
             if (name.toLowerCase().contains(search))
                 list.add(name);
         }
         return list;
+    }
+
+    private List<String> getCustomRaceFormLabels() {
+        List<String> labels = new ArrayList<>(racialForms.size());
+        for (Form form : racialForms) {
+            if (form == null)
+                continue;
+            String display = useMenuName ? form.getMenuName() : form.getName();
+            if (display == null || display.isEmpty())
+                display = form.getKeyString();
+            labels.add(display);
+        }
+        return labels;
     }
 
 }

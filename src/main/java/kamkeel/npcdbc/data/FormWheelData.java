@@ -8,7 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public class FormWheelData {
     public int slot = -1, formID = -1; //formID now only used for DBC forms
     public boolean isDBC;
-    public String formKey = ""; // All customs are now migrated fully to formKey 
+    public String formKey; // All customs are now migrated fully to formKey 
 
     public FormWheelData() {
     }
@@ -22,7 +22,7 @@ public class FormWheelData {
         wheel.setInteger("slot", slot);
         wheel.setInteger("formID", formID);
         wheel.setBoolean("isDBC", isDBC);
-        if (!isDBC && !formKey.isEmpty())
+        if (!isDBC && formKey != null) 
             wheel.setString("formKey", formKey);
 
         compound.setTag("FormWheel" + slot, wheel);
@@ -36,19 +36,16 @@ public class FormWheelData {
             formKey = compound.getString("formKey");
         } else if (!isDBC && formID != -1) { //Migrate old formID to formKey
             Form form = (Form) FormController.Instance.get(formID);
-            if (form != null)
-                formKey = form.key != null ? form.key.toString() : FormKey.custom(form.name).toString();
-            else
-                formKey = "";
+            formKey = form != null ? form.getKey() : null;
             formID = -1;
         } else {
-            formKey = "";
+            formKey = null;
         }
     }
 
     public void reset() {
         formID = -1;
         isDBC = false;
-        formKey = "";
+        formKey = null;
     }
 }
