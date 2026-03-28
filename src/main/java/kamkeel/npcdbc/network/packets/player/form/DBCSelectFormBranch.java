@@ -54,11 +54,11 @@ public final class DBCSelectFormBranch extends AbstractPacket {
         if (raceData != null && raceData.isCustomRace()) {
             Race race = raceData.getRace();
             Form firstForm = race.skill.getFirstUnlockedFormInBranch(race.formTree, raceData.getRacialSkillLevel(),branchIndex);
-            if (firstForm != null) {
+            if (firstForm != null) 
                 info.setSelectedForm(firstForm);
-                info.updateClient();
-            }
+            
         }
+        info.updateClient();
 
     }
 }

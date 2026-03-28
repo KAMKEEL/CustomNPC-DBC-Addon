@@ -69,10 +69,11 @@ public class MixinJRMCorePacHanSRace {
             return;
 
         DBCData data = DBCData.get(p);
-        if (data == null || !data.addonRace.isCustomRace())
+        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(p);
+        if (data == null || !info.isCustomRace())
             return;
 
-        Race race = data.addonRace.getRace();
+        Race race = info.getRace();
         if (race == null || race.skill == null)
             return;
 
@@ -109,17 +110,17 @@ public class MixinJRMCorePacHanSRace {
         // SklLvlX returns 1-based (1 + raw TRn suffix), but TRn storage is 0-based.
         // Convert back: rawNextLevel = nextLevel - 1.
         int rawNextLevel = nextLevel - 1;
-        String upgradedSkill = currentSkill.substring(0, 2) + (rawNextLevel >= 10 ? 9 : rawNextLevel);
-        data.getRawCompound().setString("jrmcSSltX", upgradedSkill);
-        data.getRawCompound().setInteger("jrmcTpint", data.TP - tpCost);
-        data.loadFromNBT(data.getRawCompound());
+        String upgradedSkill = currentSkill.substring(0, 2) + nextLevel;
+        data.getRawCompound().setString("jrmcSSltX", data.RacialSkills = upgradedSkill);
+        data.getRawCompound().setInteger("jrmcTpint", data.TP = data.TP - tpCost);
 
-        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(p);
-        if (info != null && info.isCustomRace()) {
+        int newBranchIndex = race.skill.getBranchIndexForLevel(race.formTree, nextLevel);
+        if (newBranchIndex >= 0 && newBranchIndex != info.getSelectedFormBranch()) {
+            info.setSelectedFormBranch(newBranchIndex);
+            info.setSelectedForm(race.skill.getFirstUnlockedFormInBranch(race.formTree, nextLevel, newBranchIndex));
             info.updateClient();
         }
-
-        data.saveNBTData(true);
+        
         ci.cancel();
     }
 

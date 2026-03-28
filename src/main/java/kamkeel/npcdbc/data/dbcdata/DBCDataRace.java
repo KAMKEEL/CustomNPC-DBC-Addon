@@ -37,7 +37,7 @@ public class DBCDataRace {
             return 0;
         if (data.RacialSkills == null || data.RacialSkills.isEmpty() || data.RacialSkills.contains("pty"))
             return 0;
-        return JRMCoreH.SklLvlX(data.Powertype, data.RacialSkills);
+        return JRMCoreH.SklLvlX(data.Powertype, data.RacialSkills) - 1; //-1 is important
     }
 
     // ─── Form queries ────────────────────────────────────────────────────

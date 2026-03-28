@@ -275,7 +275,7 @@ public class RaceSkill implements DataSerializable {
 
         List<FormTree.Branch> allBranches = tree.getBranches();
         List<FormTree.Branch> unlocked = getUnlockedBranches(tree, skillLevel);
-        if (unlocked.size() <= 1)
+        if (unlocked.size() < 1)
             return -1;
 
         FormTree.Branch current = resolveActiveBranch(tree, skillLevel, selectedBranchIndex);
@@ -303,6 +303,18 @@ public class RaceSkill implements DataSerializable {
             return null;
 
         return branch.getFirstUnlockedForm(getUnlockedForms(skillLevel));
+    }
+
+    public int getBranchIndexForLevel(FormTree tree, int skillLevel) {
+        if (tree == null)
+            return -1;
+
+        for (int i = 0; i < tree.getBranches().size(); i++) {
+            FormTree.Branch branch = tree.getBranch(i);
+            if (branch != null && branch.getUnlockLevel() == skillLevel)
+                return i;
+        }
+        return -1;
     }
 
     @Override
