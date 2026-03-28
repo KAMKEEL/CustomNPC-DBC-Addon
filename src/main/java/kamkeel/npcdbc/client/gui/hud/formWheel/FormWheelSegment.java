@@ -45,9 +45,9 @@ class FormWheelSegment extends WheelSegment {
     }
 
     public void setForm(Form form, boolean updateServer) {
+        data.formKey = form.getKey();
         data.formID = form.id;
         data.isDBC = false;
-        data.formKey = form.key != null ? form.key.toString() : "";
         this.form = form;
         if (updateServer)
             DBCPacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data));
@@ -55,9 +55,9 @@ class FormWheelSegment extends WheelSegment {
     }
 
     public void setForm(int formID, boolean isDBC, boolean updateServer) {
+        data.formKey = null;
         data.formID = formID;
         data.isDBC = isDBC;
-        data.formKey = "";
         form = !isDBC ? (Form) FormController.getInstance().get(formID) : null;
         if (updateServer)
             DBCPacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data));
@@ -66,7 +66,7 @@ class FormWheelSegment extends WheelSegment {
 
     public void setForm(FormWheelData data, boolean updateServer) {
         this.data = data;
-        if (!data.isDBC && !data.formKey.isEmpty())
+        if (!data.isDBC && data.formKey != null)
             form = FormController.getInstance().getFromKey(data.formKey);
         else if (!data.isDBC)
             form = (Form) FormController.getInstance().get(data.formID);
@@ -91,7 +91,7 @@ class FormWheelSegment extends WheelSegment {
 
     @Override
     protected void drawWheelItem(FontRenderer fontRenderer) {
-        if (data.formID != -1) {
+        if (data.formKey != null) {
             if (index == 1 || index == 5) {
                 glTranslatef(0, 10, 0);
             } else if (index == 2 || index == 4) {

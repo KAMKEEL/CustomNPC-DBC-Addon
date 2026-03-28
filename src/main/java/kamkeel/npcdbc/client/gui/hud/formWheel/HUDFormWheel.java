@@ -265,15 +265,21 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
                 selectSlot(slotID);
                 timeClosedSubGui = Minecraft.getSystemTime();
 
-                if (form != null && selectForm.selectedFormID == form.id)
+                if (!selectForm.isDBC && form != null && selectForm.selectedFormKey != null
+                        && selectForm.selectedFormKey.equals(form.getKeyString()))
+                    return;
+
+                if (selectForm.isDBC && form != null && selectForm.selectedFormID == form.id)
                     return;
 
                 if (!selectForm.isDBC) {
-                    Form selected = (Form) FormController.getInstance().get(selectForm.selectedFormID);
+                    Form selected = selectForm.selectedFormKey != null && !selectForm.selectedFormKey.isEmpty()
+                            ? FormController.getInstance().getFromKey(selectForm.selectedFormKey)
+                            : (Form) FormController.getInstance().get(selectForm.selectedFormID);
                     if (selected != null)
                         slot.setForm(selected, true);
                     else
-                        slot.setForm(selectForm.selectedFormID, false, true);
+                        slot.setForm(-1, false, true);
                 } else {
                     slot.setForm(selectForm.selectedFormID, true, true);
                 }
@@ -399,42 +405,39 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
             int mouseScrolled = Mouse.getDWheel();
 
             if (mouseScrolled != 0 && hoveredSlot != -1) {
-                int newForm = -1;
+                String newForm = null;
+                int newDBCForm = -1;
                 FormWheelSegment slot = wheelSlot[hoveredSlot];
                 Form form = slot.form;
                 if (mouseScrolled > 0) {
                     if (form != null && form.hasParent()) {
                         Form parentForm = (Form) form.getParent();
                         if (parentForm != null && dbcInfo.hasFormUnlocked(parentForm.getKeyString()))
-                            newForm = parentForm.id;
+                            newForm = parentForm.getKey();
                     } else if (slot.data.isDBC) {
-                        newForm = DBCForm.getParent(dbcData.Race, slot.data.formID, dbcData);
-                        if (!dbcData.isDBCFormUnlocked(newForm))
-                            newForm = -1;
+                        newDBCForm = DBCForm.getParent(dbcData.Race, slot.data.formID, dbcData);
+                        if (!dbcData.isDBCFormUnlocked(newDBCForm))
+                            newDBCForm = -1;
                     }
                 } else {
                     if (form != null && form.hasChild()) {
                         Form childForm = (Form) form.getChild();
                         if (childForm != null && dbcInfo.hasFormUnlocked(childForm.getKeyString()))
-                            newForm = childForm.id;
+                            newForm = childForm.getKey();
                     } else if (slot.data.isDBC) {
-                        newForm = DBCForm.getChild(dbcData.Race, slot.data.formID, dbcData);
-                        if (!dbcData.isDBCFormUnlocked(newForm))
-                            newForm = -1;
+                        newDBCForm = DBCForm.getChild(dbcData.Race, slot.data.formID, dbcData);
+                        if (!dbcData.isDBCFormUnlocked(newDBCForm))
+                            newDBCForm = -1;
                     }
                 }
 
-                if (newForm != -1) {
-                    if (!slot.data.isDBC) {
-                        Form next = (Form) FormController.getInstance().get(newForm);
-                        if (next != null)
-                            slot.setForm(next, true);
-                        else
-                            slot.setForm(newForm, false, true);
-                    } else {
-                        slot.setForm(newForm, true, true);
-                    }
-                }
+                if (newForm != null) {
+                    Form next = FormController.getInstance().getFromKey(newForm);
+                    if (next != null)
+                        slot.setForm(next, true);
+                } else if (newDBCForm != -1)
+                    slot.setForm(newDBCForm, true, true);
+                
             }
         }
         if (isClosing && guiAnimationScale >= 0) {
