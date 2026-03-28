@@ -244,6 +244,7 @@ public class DisplayLayer implements DataSerializable {
             data.putString("textureOverride", textureOverride);
         }
         data.putString("defaultColor", String.format("%06X", getDefaultColor()));
+        data.putBoolean("fixedColor", fixedColor);
 
         if (!colorPresets.isEmpty()) {
             List<String> presets = new ArrayList<String>();
@@ -265,6 +266,11 @@ public class DisplayLayer implements DataSerializable {
         if (data.has("defaultColor")) {
             try { setDefaultColor(Integer.parseInt(data.getString("defaultColor", "FFFFFF"), 16)); } catch (NumberFormatException ignored) {}
         }
+
+        if (data.has("fixedColor")) {
+            setFixedColor(data.getBoolean("fixedColor", false));
+        }
+
         if (data.has("colorPresets")) {
             clearColorPresets();
             for (String cp : data.getStringList("colorPresets")) {
