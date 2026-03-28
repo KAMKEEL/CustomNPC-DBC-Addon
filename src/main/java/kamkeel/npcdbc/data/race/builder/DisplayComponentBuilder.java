@@ -97,14 +97,29 @@ public class DisplayComponentBuilder {
         }
 
         public LayerBuilder texture(String texturePath, boolean override) {
-            if (override) layer.setTextureOverride(texturePath);
-            else layer.addTextureVariant(texturePath);
+            if (override) {
+                layer.setDefaultTexture(texturePath);
+                layer.setFixedTexture(true);
+            } else {
+                layer.addTextureVariant(texturePath);
+            }
             return this;
         }
 
         public LayerBuilder texture(String texturePath) {
             return texture(texturePath, false);
         }
+
+        public LayerBuilder texture(Function<RaceRenderContext, String> textureFunction) {
+            layer.setTextureFunction(textureFunction);
+            return this;
+        }
+
+        public LayerBuilder defaultTexture(String texturePath) {
+            layer.setDefaultTexture(texturePath);
+            return this;
+        }
+
 
         public LayerBuilder color(int color, boolean override) {
             layer.setFixedColor(override);
@@ -186,14 +201,28 @@ public class DisplayComponentBuilder {
 
         @Override
         public SubComponentLayerBuilder texture(String p, boolean o) {
-            if (o) layer.setTextureOverride(p);
-            else layer.addTextureVariant(p);
+            if (o) {
+                layer.setDefaultTexture(p);
+                layer.setFixedTexture(true);
+            } else {
+                layer.addTextureVariant(p);
+            }
             return this;
         }
 
         @Override
         public SubComponentLayerBuilder texture(String p) {
             return texture(p, false);
+        }
+
+        public SubComponentLayerBuilder texture(Function<RaceRenderContext, String> function) {
+            layer.setTextureFunction(function);
+            return this;
+        }
+
+        public SubComponentLayerBuilder defaultTexture(String p) {
+            layer.setDefaultTexture(p);
+            return this;
         }
 
         @Override

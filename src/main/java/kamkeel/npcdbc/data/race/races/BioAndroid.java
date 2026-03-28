@@ -48,6 +48,18 @@ public class BioAndroid {
         .and()
         .build(FORMS);
 
+    public static final Form SUPER_PERFECT = FormBuilder.create(FormKey.of(BIO_ANDROID_NS, "super_perfect"))
+        .menuName("Super Perfect")
+        .strengthMulti(4.0f).dexMulti(3.5f).willMulti(3.0f)
+        .display()
+        .color(RaceDisplay.LAYER_BODY_C1, 0xd5dbd9)
+        .color(RaceDisplay.LAYER_BODY_C2, 0xd7c827)
+        .color(RaceDisplay.LAYER_BODY_C3, 0x6c2f7c)
+        .auraColor(0xFEDA00)
+        .customizable(true)
+        .and()
+        .build(FORMS);
+
     public static final Form MAX = FormBuilder.create(FormKey.of(BIO_ANDROID_NS, "max"))
         .menuName("Max")
         .strengthMulti(8.0f).dexMulti(7.0f).willMulti(6.0f)
@@ -62,6 +74,15 @@ public class BioAndroid {
 
     public static final Form GOD = FormBuilder.create(FormKey.of(BIO_ANDROID_NS, "god"))
         .menuName("God")
+        .display()
+        .color(RaceDisplay.LAYER_LEFT_EYE, 0xE40426)
+        .color(RaceDisplay.LAYER_RIGHT_EYE, 0xE40426)
+        .color(RaceDisplay.LAYER_BODY_CM, 0xb50125)
+        .color(RaceDisplay.LAYER_BODY_C1, 0xd5dbd9)
+        .color(RaceDisplay.LAYER_BODY_C2, 0xd7c827)
+        .color(RaceDisplay.LAYER_BODY_C3, 0x6c2f7c)
+        .customizable(true)
+        .and()
         .strengthMulti(8.0f).dexMulti(7.0f).willMulti(6.0f)
         .build(FORMS);
 
@@ -70,7 +91,8 @@ public class BioAndroid {
     // ════════════════════════════════════════════════════════════════
 
     public static final FormTree BIO_ANDROID_FORMS = FormTreeBuilder.create(BIO_ANDROID_NS)
-        .branch(SEMI_PERFECT).child(PERFECT).child(MAX)
+        .branch(SEMI_PERFECT).child(PERFECT).child(SUPER_PERFECT)
+        .branch(MAX)
         .branch(GOD)
         .build();
 
@@ -175,12 +197,14 @@ public class BioAndroid {
     public static final Race RACE = RaceBuilder.create(DBCRace.BIO_ANDROID, "bio_android", "Bio-Android", BIO_ANDROID_NS)
         .formTree(BIO_ANDROID_FORMS)
         .racialSkill()
-            .maxLevel(4)
+            .maxLevel(5)
             .displayName("Evolution")
+            .description("Like a soon to be broken man once said, you're either perfect, or you're not me.")
             .level(1, SEMI_PERFECT, 100, 10)
             .level(2, PERFECT, 200, 20)
-            .level(3, MAX, 300, 30)
-            .level(4, GOD, 300, 30)
+            .level(3, SUPER_PERFECT, 300, 30)
+            .level(4, MAX, 300, 30)
+            .level(5, GOD, 400, 30)
             .and()
         .stats()
             .allClasses()

@@ -17,8 +17,8 @@ import java.util.function.Function;
  * "bodyc1"). It holds:
  * <ul>
  *   <li><b>textureVariants</b> — ordered list of texture paths the player can cycle through.</li>
- *   <li><b>textureOverride</b> — optional fixed texture path, ignoring player choice.</li>
- *   <li><b>colorOverride</b> — optional fixed color, ignoring player choice.</li>
+ *   <li><b>fixedTexture</b> — if true, default texture path is used, ignoring player choice.</li>
+ *   <li><b>fixedColor</b> — if true, default color is used, ignoring player choice.</li>
  *   <li><b>colorPresets</b> — optional list of pre-defined colors the player can pick.</li>
  * </ul>
  */
@@ -34,10 +34,18 @@ public class DisplayLayer implements DataSerializable {
     private final List<String> textureVariants = new ArrayList<>();
 
     /**
-     * Optional texture override. When set, this texture is always used
-     * regardless of the player's variant selection.
+     * Default texture for this layer. Used when no texture has been set.
+     * falls back to white texture.
      */
-    private String textureOverride = null;
+    private String defaultTexture = "jinryuumodscore:cc/hum.png";
+
+    private Function<RaceRenderContext, String> textureFunction = null;
+
+    /**
+     * When true, default texture is always applied to this
+     * layer regardless of the variant.
+     */
+    private boolean fixedTexture = false;
 
     /**
      * When true, default color is always applied to this
@@ -100,32 +108,59 @@ public class DisplayLayer implements DataSerializable {
 
     // ── Texture override ───────────────────────────────────────────────────────
 
+    public boolean isFixedTexture() {
+        return fixedTexture;
+    }
+
+    public DisplayLayer setFixedTexture(boolean fixedTexture) {
+        this.fixedTexture = fixedTexture;
+        return this;
+    }
+
+    // ── Default texture ────────────────────────────────────────────────────────
+
     /**
      * Sets a fixed texture override. When present, this texture is always used
      * regardless of the player's variant index.
      *
      * @return {@code this} for chaining
      */
-    public DisplayLayer setTextureOverride(String texturePath) {
-        this.textureOverride = texturePath;
+    public DisplayLayer setDefaultTexture(String texturePath) {
+        this.defaultTexture = texturePath;
         return this;
     }
 
     /** Returns the texture override path, or {@code null} if none is set. */
-    public String getTextureOverride() {
-        return textureOverride;
+    public String getDefaultTexture() {
+        return defaultTexture;
     }
 
     public boolean hasTextureOverride() {
-        return textureOverride != null;
+        return defaultTexture != null;
+    }
+
+    // ── Texture function ────────────────────────────────────────────────────────
+
+    public DisplayLayer setTextureFunction(Function<RaceRenderContext, String> textureFunction) {
+        this.textureFunction = textureFunction;
+        return this;
+    }
+
+    public Function<RaceRenderContext, String> getTextureFunction() {
+        return textureFunction;
+    }
+
+    public boolean hasTextureFunction() {
+        return textureFunction != null;
     }
 
     /**
      * Resolves the effective texture path for the given variant index.
-     * Returns the override if set, otherwise the variant at the given index.
+     * Returns the default texture if fixedTexture is true, otherwise the variant at the given index.
      */
-    public String resolveTexture(int variantIndex) {
-        if (textureOverride != null) return textureOverride;
+    public String resolveTexture(RaceRenderContext ctx, int variantIndex) {
+        if (fixedTexture) return getDefaultTexture();
+        if (hasTextureFunction()) return textureFunction.apply(ctx);
         return getTextureVariant(variantIndex);
     }
 
@@ -240,10 +275,11 @@ public class DisplayLayer implements DataSerializable {
         if (!textureVariants.isEmpty()) {
             data.putStringList("textureVariants", new ArrayList<String>(textureVariants));
         }
-        if (textureOverride != null) {
-            data.putString("textureOverride", textureOverride);
-        }
+
+        data.putString("defaultTexture", defaultTexture);
+        data.putBoolean("fixedTexture", fixedTexture);
         data.putString("defaultColor", String.format("%06X", getDefaultColor()));
+        data.putBoolean("fixedColor", fixedColor);
 
         if (!colorPresets.isEmpty()) {
             List<String> presets = new ArrayList<String>();
@@ -259,12 +295,21 @@ public class DisplayLayer implements DataSerializable {
             clearTextureVariants();
             for (String tv : data.getStringList("textureVariants")) addTextureVariant(tv);
         }
-        if (data.has("textureOverride")) {
-            setTextureOverride(data.getString("textureOverride", null));
+
+        if (data.has("defaultTexture")) {
+            setDefaultTexture(data.getString("defaultTexture", "jinryuumodscore:cc/hum.png"));
         }
         if (data.has("defaultColor")) {
             try { setDefaultColor(Integer.parseInt(data.getString("defaultColor", "FFFFFF"), 16)); } catch (NumberFormatException ignored) {}
         }
+
+        if (data.has("fixedTexture")) {
+            setFixedTexture(data.getBoolean("fixedTexture", false));
+        }
+        if (data.has("fixedColor")) {
+            setFixedColor(data.getBoolean("fixedColor", false));
+        }
+
         if (data.has("colorPresets")) {
             clearColorPresets();
             for (String cp : data.getStringList("colorPresets")) {

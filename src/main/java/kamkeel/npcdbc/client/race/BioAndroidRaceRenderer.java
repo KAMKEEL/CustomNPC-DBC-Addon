@@ -216,15 +216,15 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
         bioheadRoot.setRotationPoint(0, 0, 0);
 
         biohead1 = new ModelRenderer(model, 0, 0);
-        biohead1.addBox(-2.5F, -14, -3.5F, 3, 7, 7);
+        biohead1.addBox(-4F, -14, -3.5F, 3, 7, 7);
         biohead1.setRotationPoint(0, 0, 0);
-        setRotation(biohead1, 0, 0, -0.2094395F);
+        setRotation(biohead1, 0, 0, 0);
 
         biohead2 = new ModelRenderer(model, 0, 0);
         biohead2.mirror = true;
-        biohead2.addBox(-0.5F, -14, -3.5F, 3, 7, 7);
+        biohead2.addBox(1F, -14, -3.5F, 3, 7, 7);
         biohead2.setRotationPoint(0, 0, 0);
-        setRotation(biohead2, 0, 0, 0.2094395F);
+        setRotation(biohead2, 0, 0, 0);
 
         biohead1I = new ModelRenderer(model, 0, 0);
         biohead1I.addBox(-2.5F, -14, -3.5F, 3, 6, 5);
