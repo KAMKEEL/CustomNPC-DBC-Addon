@@ -114,11 +114,11 @@ public class BioAndroid {
         .and()
         .layer(NOSE)
             .texture("imperfect/face/nose.png")
-            .color(ctx -> new Color(ctx.bodyC2))
+            .color(ctx -> new Color(ctx.bodyC2()))
         .and()
             .layer(MOUTH)
             .texture("imperfect/face/mouth.png")
-            .color(ctx -> new Color(ctx.bodyC2))
+            .color(ctx -> new Color(ctx.bodyC2()))
         .and()
         .build();
 

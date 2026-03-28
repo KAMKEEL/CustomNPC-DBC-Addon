@@ -402,14 +402,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         RaceRenderContext ctx = RaceRenderContext.from(data);
         ctx.setRenderVars(renderX, renderY, renderZ, par1AbstractClientPlayer.rotationYaw, par2);
         
-        ctx.bodyCM = bodyCM.get();
-        ctx.bodyC1 = bodyC1.get();
-        ctx.bodyC2 = bodyC2.get();
-        ctx.bodyC3 = bodyC3.get();
-        ctx.skinType = skintype.get();
-        ctx.state = data.State;
-        ctx.eyeC1 = eyec1.get();
-        ctx.eyeC2 = eyec2.get();
 
         if (renderer.render(ctx)) {
             npcdbc$customRaceOriginalRace = race.get();
@@ -861,14 +853,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
         DBCData data = DBCData.get(par1EntityPlayer);
         RaceRenderContext ctx = RaceRenderContext.from(data);
-        ctx.bodyCM = bodyCM.get();
-        ctx.bodyC1 = bodyC1.get();
-        ctx.bodyC2 = bodyC2.get();
-        ctx.bodyC3 = bodyC3.get();
-        ctx.skinType = skintype.get();
-        ctx.state = data.State;
-        ctx.eyeC1 = data.getColor("left_eye");
-        ctx.eyeC2 = data.getColor("right_eye");
+        
         ctx.isFirstPersonArm = true;
         ctx.armAnimationId = id.get();
 

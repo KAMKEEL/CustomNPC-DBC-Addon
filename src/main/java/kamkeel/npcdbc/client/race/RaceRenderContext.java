@@ -13,20 +13,6 @@ import net.minecraft.util.ResourceLocation;
 @SideOnly(Side.CLIENT)
 public class RaceRenderContext extends DBCRenderContext {
     
-    public int bodyCM;
-    public int bodyC1;
-    public int bodyC2;
-    public int bodyC3;
-    public int eyeC1;
-    public int eyeC2;
-
-    public int skinType;
-    public int state;
-    public int bodyType;
-    public boolean isFirstPersonArm;
-    public int armAnimationId = -1;
-
-
     // ── Component access ───────────────────────────────────────────────────────
 
     /**
@@ -63,13 +49,13 @@ public class RaceRenderContext extends DBCRenderContext {
      */
     public int getRawColor(String layerId) {
         switch (layerId.toLowerCase()) {
-            case BodyLayer.BODY_CM: return bodyCM;
-            case BodyLayer.BODY_C1: return bodyC1;
-            case BodyLayer.BODY_C2: return bodyC2;
-            case BodyLayer.BODY_C3: return bodyC3;
+            case BodyLayer.BODY_CM: return bodyCM();
+            case BodyLayer.BODY_C1: return bodyC1();
+            case BodyLayer.BODY_C2: return bodyC2();
+            case BodyLayer.BODY_C3: return bodyC3();
             case BodyLayer.EYES:
-            case BodyLayer.EYE_LEFT: return eyeC1;
-            case BodyLayer.EYE_RIGHT: return eyeC2;
+            case BodyLayer.EYE_LEFT: return eyeC1();
+            case BodyLayer.EYE_RIGHT: return eyeC2();
             default: return 0;
         }
     }

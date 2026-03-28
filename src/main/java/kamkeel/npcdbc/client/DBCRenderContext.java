@@ -25,6 +25,8 @@ import noppes.npcs.scripted.NpcAPI;
 
 import java.util.List;
 
+import static kamkeel.npcdbc.constants.BodyLayer.*;
+
 public class DBCRenderContext {
     public Entity entity; 
     
@@ -33,7 +35,6 @@ public class DBCRenderContext {
     public ModelBipedBody modelBiped;
     public ModelBipedDBC model;
     public RenderPlayerJBRA renderer;
-
 
     public boolean isNPC;
     public EntityCustomNpc npc;
@@ -45,6 +46,9 @@ public class DBCRenderContext {
     public double renderZ;
     public float renderYaw;
     public float partialTicks;
+
+    public boolean isFirstPersonArm;
+    public int armAnimationId = -1;
 
     public Form form;
     public Race race;
@@ -225,7 +229,7 @@ public class DBCRenderContext {
             return index;
         }
 
-        return isNPC ? display.arcoState : dbcForm();
+        return isNPC ? display.arcoState : dbcState();
     }
 
     public int furType() {
@@ -274,9 +278,6 @@ public class DBCRenderContext {
         return false;
     }
 
-    public int color(String type) {
-        return isNPC ? display.getColor(type) : dbcData.getColor(type);
-    }
 
     public void glColor(Color color) {
         if (isNPC)
@@ -295,7 +296,7 @@ public class DBCRenderContext {
         return form;
     }
 
-    public int dbcForm() {
+    public int dbcState() {
         return isNPC ? -1 : dbcData.State;
     }
 
@@ -303,5 +304,41 @@ public class DBCRenderContext {
         if (race == null)
             race = PlayerDataUtil.getRace(isNPC ? npc : player);
         return race;
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // Colors
+    // ══════════════════════════════════════════════════════════════════════════
+
+    public int color(String type) {
+        return isNPC ? display.getColor(type) : dbcData.getColor(type);
+    }
+
+    public int bodyCM() {
+        return color(BODY_CM);
+    }
+
+    public int bodyC1() {
+        return color(BODY_C1);
+    }
+
+    public int bodyC2() {
+        return color(BODY_C2);
+    }
+
+    public int bodyC3() {
+        return color(BODY_C3);
+    }
+
+    public int bodyC4() {
+        return color(BODY_C4);
+    }
+
+    public int eyeC1() {
+        return color(EYE_LEFT);
+    }
+
+    public int eyeC2() {
+        return color(EYE_RIGHT);
     }
 }
