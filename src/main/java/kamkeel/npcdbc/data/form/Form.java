@@ -561,4 +561,13 @@ public class Form implements IForm {
     public IForm save() {
         return FormController.Instance.saveForm(this);
     }
+    
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if(o instanceof Form){
+            Form form = (Form) o;
+            if(this.getKey().equals(form.getKey())) return true;    
+        }
+        return false;
+    }
 }
