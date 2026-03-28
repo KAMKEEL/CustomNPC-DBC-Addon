@@ -808,8 +808,8 @@ public class RaceBuilder {
             DisplayLayer layer = component.findLayer(layerId);
             if (layer == null) return this;
 
-            if (override) layer.setColorOverride(color);
-            else layer.setDefaultColor(color);
+            layer.setFixedColor(override);
+            layer.setDefaultColor(color);
             return this;
         }
 

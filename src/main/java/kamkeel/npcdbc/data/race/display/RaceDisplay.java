@@ -298,8 +298,8 @@ public class RaceDisplay {
      */
     public int getFixedHairColor() {
         DisplayLayer hairLayer = getLayer(LAYER_HAIR);
-        if (hairLayer != null && hairLayer.hasColorOverride()) {
-            return hairLayer.getColorOverride().color;
+        if (hairLayer != null && hairLayer.isFixedColor()) {
+            return hairLayer.getDefaultColor();
         }
         return -1;
     }

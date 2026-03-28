@@ -107,8 +107,8 @@ public class DisplayComponentBuilder {
         }
 
         public LayerBuilder color(int color, boolean override) {
-            if (override) layer.setColorOverride(color);
-            else layer.setDefaultColor(color);
+            layer.setFixedColor(override);
+            layer.setDefaultColor(color);
             return this;
         }
 
@@ -198,15 +198,15 @@ public class DisplayComponentBuilder {
 
         @Override
         public SubComponentLayerBuilder color(int c, boolean o) {
-            if (o) layer.setColorOverride(c);
-            else layer.setDefaultColor(c);
+            layer.setFixedColor(o);
+            layer.setDefaultColor(c);
             return this;
         }
 
         @Override
         public SubComponentLayerBuilder color(Color c, boolean o) {
-            if (o) layer.setColorOverride(c);
-            else layer.setDefaultColor(c);
+            layer.setFixedColor(o);
+            layer.setDefaultColor(c);
             return this;
         }
 

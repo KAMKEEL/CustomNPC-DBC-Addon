@@ -38,10 +38,10 @@ public class DisplayLayer {
     private String textureOverride = null;
 
     /**
-     * Optional color override. When set, this color is always applied
-     * to this layer regardless of the player's color choice.
+     * When true, default color is always applied to this
+     * layer regardless of the player's color choice.
      */
-    private Color colorOverride = null;
+    private boolean fixedColor = false;
 
     /**
      * Pre-defined colors the player can pick from. Empty means no presets —
@@ -125,29 +125,13 @@ public class DisplayLayer {
 
     // ── Color override ─────────────────────────────────────────────────────────
 
-    /**
-     * Sets a fixed color override for this layer. When present, the player
-     * cannot change this layer's color.
-     *
-     * @return {@code this} for chaining
-     */
-    public DisplayLayer setColorOverride(Color color) {
-        this.colorOverride = color;
+    public DisplayLayer setFixedColor(boolean fixedColor) {
+        this.fixedColor = fixedColor;
         return this;
     }
 
-    /** Convenience overload accepting a raw ARGB int. */
-    public DisplayLayer setColorOverride(int color) {
-        return setColorOverride(new Color(color));
-    }
-
-    /** Returns the color override, or {@code null} if none is set. */
-    public Color getColorOverride() {
-        return colorOverride;
-    }
-
-    public boolean hasColorOverride() {
-        return colorOverride != null;
+    public boolean isFixedColor() {
+        return this.fixedColor;
     }
 
     // ── Color presets ──────────────────────────────────────────────────────────
@@ -235,7 +219,7 @@ public class DisplayLayer {
      * then default, then 0.
      */
     public int resolveColor(RaceRenderContext ctx) {
-        if (colorOverride != null) return getColorOverride().color;
+        if (fixedColor) return getDefaultColor();
         if (colorFunction != null && colorFunction.apply(ctx) != null) return colorFunction.apply(ctx).color;
         return getDefaultColor();
     }
