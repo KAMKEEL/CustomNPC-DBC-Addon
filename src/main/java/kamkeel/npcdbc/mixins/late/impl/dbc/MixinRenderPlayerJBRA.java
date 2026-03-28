@@ -400,6 +400,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             - RenderManager.renderPosZ;
 
         RaceRenderContext ctx = RaceRenderContext.from(data);
+        ctx.model = this.modelMain;
         ctx.setRenderVars(renderX, renderY, renderZ, par1AbstractClientPlayer.rotationYaw, par2);
         
 
@@ -854,6 +855,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         DBCData data = DBCData.get(par1EntityPlayer);
         RaceRenderContext ctx = RaceRenderContext.from(data);
         
+        ctx.model = this.modelMain;
         ctx.isFirstPersonArm = true;
         ctx.armAnimationId = id.get();
 
