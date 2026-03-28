@@ -52,13 +52,13 @@ public class ClientEventHandler {
             return;
         if (event.phase == TickEvent.Phase.START) {
             Minecraft mc = Minecraft.getMinecraft();
+            boolean ascendPressed = JRMCoreKeyHandler.KiAscend.getIsKeyPressed();
             if (mc.currentScreen == null) {
-                if (JRMCoreKeyHandler.KiAscend.getIsKeyPressed()) {
+                if (ascendPressed) 
                     performAscend();
-                } else {
-                    TransformController.decrementRage();
-                }
             }
+            if(!ascendPressed)
+                TransformController.decrementRage();
         }
     }
 
