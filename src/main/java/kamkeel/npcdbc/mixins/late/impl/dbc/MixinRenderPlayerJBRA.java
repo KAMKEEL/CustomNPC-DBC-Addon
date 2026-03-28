@@ -399,12 +399,9 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             + (par1AbstractClientPlayer.posZ - par1AbstractClientPlayer.lastTickPosZ) * par2
             - RenderManager.renderPosZ;
 
-        RaceRenderContext ctx = new RaceRenderContext(
-            par1AbstractClientPlayer, renderX, renderY, renderZ,
-            par1AbstractClientPlayer.rotationYaw, par2,
-            (RenderPlayerJBRA) (Object) this, this.modelMain,
-            data, addonRace
-        );
+        RaceRenderContext ctx = RaceRenderContext.from(data);
+        ctx.setRenderVars(renderX, renderY, renderZ, par1AbstractClientPlayer.rotationYaw, par2);
+        
         ctx.bodyCM = bodyCM.get();
         ctx.bodyC1 = bodyC1.get();
         ctx.bodyC2 = bodyC2.get();
@@ -455,7 +452,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     private void renderOverlays(AbstractClientPlayer pl, float par2, CallbackInfo ci, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "eyes") LocalIntRef eyes, @Local(name = "gen") LocalIntRef gender) {
         //renderOverlays(DBCData.get(pl));
         OverlayContext ctx = OverlayContext.from(DBCData.get(pl));
-        ctx.model = modelMain;
+        ctx.modelBiped = modelMain;
         ModelDBC.renderOverlays(ctx);
 
     }
@@ -564,8 +561,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Unique
     private void renderOverlays(DBCData data) {
         OverlayContext ctx = OverlayContext.from(data);
-        ctx.form = data.getForm();
-        ctx.model = modelMain;
+        ctx.modelBiped = modelMain;
 
         List<OverlayChain> chains = new ArrayList<>();//ModelDBC.applyOverlayChains(data.getOverlayChains(), ctx);
 
@@ -864,11 +860,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         if (renderer == null) return;
 
         DBCData data = DBCData.get(par1EntityPlayer);
-        RaceRenderContext ctx = new RaceRenderContext(
-            par1EntityPlayer, 0, 0, 0, 0, 0,
-            (RenderPlayerJBRA) (Object) this, this.modelMain,
-            data, addonRace
-        );
+        RaceRenderContext ctx = RaceRenderContext.from(data);
         ctx.bodyCM = bodyCM.get();
         ctx.bodyC1 = bodyC1.get();
         ctx.bodyC2 = bodyC2.get();

@@ -12,6 +12,7 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.npc.DBCStats;
+import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCStats;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
@@ -109,6 +110,15 @@ public class PlayerDataUtil {
             return DBCData.get((EntityPlayer) entity).getForm();
         else if (entity instanceof EntityNPCInterface)
             return ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay().getForm();
+
+        return null;
+    }
+
+    public static Race getRace(Entity entity) {
+        if (entity instanceof EntityPlayer)
+            return getDBCInfo((EntityPlayer) entity).getRace();
+        else if (entity instanceof EntityNPCInterface)
+            return null;//((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay().getRace();
 
         return null;
     }

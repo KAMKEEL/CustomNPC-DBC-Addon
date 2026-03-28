@@ -51,7 +51,7 @@ public final class OverlayModelRenderer {
             GL11.glPushMatrix();
             GL11.glScalef(scaleXZ, 0.5F + 0.5F / a, scaleXZ);
             GL11.glTranslatef(0.0F, translateY, 0.0F);
-            ctx.model.bipedHead.render(SCALE);
+            ctx.modelBiped.bipedHead.render(SCALE);
             GL11.glPopMatrix();
         }
         GL11.glPopMatrix();
@@ -102,14 +102,14 @@ public final class OverlayModelRenderer {
 
             if (ctx.female()) {
                 if (right)
-                    ctx.model.Brightarm.render(SCALE);
+                    ctx.modelBiped.Brightarm.render(SCALE);
                 else
-                    ctx.model.Bleftarm.render(SCALE);
+                    ctx.modelBiped.Bleftarm.render(SCALE);
             } else {
                 if (right)
-                    ctx.model.bipedRightArm.render(SCALE);
+                    ctx.modelBiped.bipedRightArm.render(SCALE);
                 else
-                    ctx.model.bipedLeftArm.render(SCALE);
+                    ctx.modelBiped.bipedLeftArm.render(SCALE);
             }
 
             GL11.glPopMatrix();
@@ -129,7 +129,7 @@ public final class OverlayModelRenderer {
             float scaleX = ctx.inverseAge() * (ctx.female() ? 0.85F : 1.0F);
             float scaleZ = ctx.inverseAge() * (ctx.female() ? 0.775F : 1.0F);
             float translateX = ctx.female() ? right ? -0.015F : 0.015F : 0;
-            float translateY = ctx.female() ? ctx.model.isSneak ? 0 : -0.015F : 0;
+            float translateY = ctx.female() ? ctx.modelBiped.isSneak ? 0 : -0.015F : 0;
 
             GL11.glPushMatrix();
             GL11.glScalef(scaleX, ctx.inverseAge(), scaleZ);
@@ -137,14 +137,14 @@ public final class OverlayModelRenderer {
 
             if (ctx.female()) {
                 if (right)
-                    ctx.model.rightleg.render(SCALE);
+                    ctx.modelBiped.rightleg.render(SCALE);
                 else
-                    ctx.model.leftleg.render(SCALE);
+                    ctx.modelBiped.leftleg.render(SCALE);
             } else {
                 if (right)
-                    ctx.model.bipedRightLeg.render(SCALE);
+                    ctx.modelBiped.bipedRightLeg.render(SCALE);
                 else
-                    ctx.model.bipedLeftLeg.render(SCALE);
+                    ctx.modelBiped.bipedLeftLeg.render(SCALE);
             }
 
             GL11.glPopMatrix();
@@ -220,12 +220,12 @@ public final class OverlayModelRenderer {
         GL11.glPushMatrix();
         GL11.glScalef(ctx.inverseAge(), ctx.inverseAge(), ctx.inverseAge());
         GL11.glTranslatef(0.0F, (ctx.age() - 1.0F) * 1.5F, 0.0F);
-        ctx.model.bipedBody.render(SCALE);
+        ctx.modelBiped.bipedBody.render(SCALE);
         GL11.glPopMatrix();
     }
 
     private static void renderFemaleBody(OverlayContext ctx) {
-        ModelBipedBody model = ctx.model;
+        ModelBipedBody model = ctx.modelBiped;
 
         float a = ctx.age();
         int g = ctx.gender();

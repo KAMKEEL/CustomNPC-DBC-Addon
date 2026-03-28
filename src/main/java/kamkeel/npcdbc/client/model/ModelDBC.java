@@ -547,12 +547,12 @@ public class ModelDBC extends ModelBase {
          * They take precedence like form colors do.
          * So add them at the very end, unless something else goes on top.
          */
-        if (ctx.form() != null && ctx.form.display.overlays.enabled) {
-            Set<Type> disabledTypes = ctx.form.display.disabledOverlayTypes;
+        if (ctx.form() != null && ctx.form().display.overlays.enabled) {
+            Set<Type> disabledTypes = ctx.form().display.disabledOverlayTypes;
             if (!disabledTypes.isEmpty())
                 ctx.disabledTypes = disabledTypes;
 
-            chains.add(ctx.exceptFor = ctx.form.display.overlays);
+            chains.add(ctx.exceptFor = ctx.form().display.overlays);
         }
 
         return chains;
