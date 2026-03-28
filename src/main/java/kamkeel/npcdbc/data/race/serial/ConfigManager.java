@@ -1,9 +1,6 @@
 package kamkeel.npcdbc.data.race.serial;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import org.yaml.snakeyaml.Yaml;
 import noppes.npcs.CustomNpcs;
 import noppes.npcs.LogWriter;
 
@@ -11,11 +8,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Map;
 import java.util.function.Function;
 
 public class ConfigManager<T extends DataSerializable> {
-
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     private final String subdirectory;
     private final Function<T, String> nameExtractor;
@@ -38,8 +34,9 @@ public class ConfigManager<T extends DataSerializable> {
         FileReader reader = null;
         try {
             reader = new FileReader(file);
-            JsonObject json = new JsonParser().parse(reader).getAsJsonObject();
-            target.deserialize(DataCompound.ofJson(json));
+            Yaml yaml = new Yaml();
+            Map<String, Object> map = yaml.load(reader);
+            target.deserialize(DataCompound.ofYaml(map));
             LogWriter.info("[" + subdirectory + "] Loaded config: " + nameExtractor.apply(target));
         } catch (Exception e) {
             LogWriter.error("[" + subdirectory + "] Failed to load config for " + nameExtractor.apply(target) + " — " + e.getMessage());
@@ -56,7 +53,7 @@ public class ConfigManager<T extends DataSerializable> {
             DataCompound data = DataCompound.create(true);
             target.serialize(data);
             writer = new FileWriter(file);
-            GSON.toJson(data.toJson(), writer);
+            writer.write(data.toYamlString());
             LogWriter.info("[" + subdirectory + "] Exported template config: " + nameExtractor.apply(target));
         } catch (Exception e) {
             LogWriter.error("[" + subdirectory + "] Failed to export template for " + nameExtractor.apply(target) + " — " + e.getMessage());
@@ -66,6 +63,6 @@ public class ConfigManager<T extends DataSerializable> {
     }
 
     private File getConfigFile(T target) {
-        return new File(CustomNpcs.getWorldSaveDirectory(), subdirectory + "/" + nameExtractor.apply(target) + ".json");
+        return new File(CustomNpcs.getWorldSaveDirectory(), subdirectory + "/" + nameExtractor.apply(target) + ".yml");
     }
 }

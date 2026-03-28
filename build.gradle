@@ -61,6 +61,10 @@ tasks.named("generateTypeScriptDefinitions").configure {
 processResources.dependsOn generateTypeScriptDefinitions
 sourcesJar.dependsOn generateTypeScriptDefinitions
 
+dependencies {
+    shadowImplementation('org.yaml:snakeyaml:1.29') { transitive = false }
+}
+
 javadoc {
     options.encoding     = 'UTF-8'
     options.charSet      = 'UTF-8'

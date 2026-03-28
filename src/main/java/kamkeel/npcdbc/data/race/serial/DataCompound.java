@@ -1,106 +1,210 @@
 package kamkeel.npcdbc.data.race.serial;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 
-import com.google.gson.JsonElement;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public final class DataCompound {
 
-    private final JsonObject     json;
+    private final Map<String, Object> yaml;
     private final NBTTagCompound nbt;
 
-    private DataCompound(boolean hasJson) {
-        this.json = hasJson ? new JsonObject() : null;
+    private DataCompound(boolean hasYaml) {
+        this.yaml = hasYaml ? new LinkedHashMap<>() : null;
         this.nbt  = new NBTTagCompound();
     }
 
-    private DataCompound(JsonObject json, NBTTagCompound nbt) {
-        this.json = json;
+    private DataCompound(Map<String, Object> yaml, NBTTagCompound nbt) {
+        this.yaml = yaml;
         this.nbt  = nbt != null ? nbt : new NBTTagCompound();
     }
 
-    public static DataCompound create()              { return new DataCompound(false); }
-    public static DataCompound create(boolean hasJson) { return new DataCompound(hasJson); }
+    public static DataCompound create()                    { return new DataCompound(false); }
+    public static DataCompound create(boolean hasYaml)     { return new DataCompound(hasYaml); }
 
-    public static DataCompound ofJson(JsonObject json) { return new DataCompound(json, new NBTTagCompound()); }
-    public static DataCompound ofNbt(NBTTagCompound nbt) { return new DataCompound(null, nbt); }
-
-    public JsonObject     toJson() { return json; }
-    public NBTTagCompound toNbt()  { return nbt;  }
-    public boolean        hasJson() { return json != null; }
-
-    public DataCompound child() {
-        return new DataCompound(json != null);
+    public static DataCompound ofYaml(Map<String, Object> map) {
+        LinkedHashMap<String, Object> copy = new LinkedHashMap<>();
+        if (map != null) copy.putAll(map);
+        return new DataCompound(copy, new NBTTagCompound());
     }
 
+    public static DataCompound ofNbt(NBTTagCompound nbt) { return new DataCompound(null, nbt); }
+
+    public Map<String, Object> toYaml() { return yaml; }
+    public NBTTagCompound toNbt()       { return nbt;  }
+    public boolean        hasYaml()     { return yaml != null; }
+
+    // ── YAML string serialization ─────────────────────────────────────────────
+
+    public String toYamlString() {
+        if (yaml == null) return "";
+        StringBuilder sb = new StringBuilder();
+        appendYaml(sb, yaml, 0);
+        return sb.toString();
+    }
+
+    
+    private static void appendYaml(StringBuilder sb, Map<String, Object> map, int indent) {
+        String pad = repeat(indent);
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            String key = entry.getKey();
+            Object val = entry.getValue();
+
+            // Blank-line sentinel
+            if (key.startsWith("~")) {
+                sb.append('\n');
+                continue;
+            }
+            // Comment sentinel
+            if (key.startsWith("#")) {
+                sb.append(pad).append("# ").append(val).append('\n');
+                continue;
+            }
+
+            if (val instanceof Map) {
+                sb.append(pad).append(key).append(":\n");
+                appendYaml(sb, (Map<String, Object>) val, indent + 2);
+            } else if (val instanceof List) {
+                sb.append(pad).append(key).append(":\n");
+                appendYamlList(sb, (List<Object>) val, indent + 2);
+            } else if (val instanceof int[]) {
+                int[] arr = (int[]) val;
+                sb.append(pad).append(key).append(":\n");
+                for (int v : arr) {
+                    sb.append(pad).append("  - ").append(v).append('\n');
+                }
+            } else if (val instanceof String) {
+                sb.append(pad).append(key).append(": \"").append(escapeYamlString((String) val)).append("\"\n");
+            } else if (val instanceof Boolean) {
+                sb.append(pad).append(key).append(": ").append(val).append('\n');
+            } else {
+                // Integer, Float, Double, etc.
+                sb.append(pad).append(key).append(": ").append(val).append('\n');
+            }
+        }
+    }
+
+    
+    private static void appendYamlList(StringBuilder sb, List<Object> list, int indent) {
+        String pad = repeat(indent);
+        for (Object item : list) {
+            if (item instanceof Map) {
+                sb.append(pad).append("-\n");
+                appendYaml(sb, (Map<String, Object>) item, indent + 2);
+            } else if (item instanceof String) {
+                sb.append(pad).append("- \"").append(escapeYamlString((String) item)).append("\"\n");
+            } else {
+                sb.append(pad).append("- ").append(item).append('\n');
+            }
+        }
+    }
+
+    private static String escapeYamlString(String s) {
+        return s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n");
+    }
+
+    private static String repeat(int spaces) {
+        if (spaces <= 0) return "";
+        char[] chars = new char[spaces];
+        java.util.Arrays.fill(chars, ' ');
+        return new String(chars);
+    }
+
+    // ── Child / structure ─────────────────────────────────────────────────────
+
+    public DataCompound child() {
+        return new DataCompound(yaml != null);
+    }
+
+    
     public DataCompound putChild(String key, DataCompound child) {
-        if (json != null) json.add(key, child.json != null ? child.json : new JsonObject());
+        if (yaml != null) {
+            yaml.put(key, child.yaml != null ? child.yaml : new LinkedHashMap<String, Object>());
+        }
         nbt.setTag(key, child.nbt);
         return this;
     }
 
+    
     public DataCompound getChild(String key) {
-        JsonObject     j = (json != null && json.has(key) && json.get(key).isJsonObject()) ? json.getAsJsonObject(key) : null;
+        Map<String, Object> y = null;
+        if (yaml != null && yaml.containsKey(key)) {
+            Object val = yaml.get(key);
+            if (val instanceof Map) {
+                y = new LinkedHashMap<>((Map<String, Object>) val);
+            }
+        }
         NBTTagCompound n = nbt.hasKey(key) ? nbt.getCompoundTag(key) : new NBTTagCompound();
-        return new DataCompound(j, n);
+        return new DataCompound(y, n);
     }
 
     public boolean has(String key) {
-        return (json != null && json.has(key)) || nbt.hasKey(key);
+        return (yaml != null && yaml.containsKey(key)) || nbt.hasKey(key);
     }
 
+    // ── Comment / spacing ─────────────────────────────────────────────────────
+
+    private int sentinelCounter = 0;
+
     public DataCompound comment(String text) {
-        if (json != null) json.addProperty("_comment", text);
+        if (yaml != null) {
+            yaml.put("#" + (sentinelCounter++), text);
+        }
         return this;
     }
 
+    public DataCompound spacing() {
+        if (yaml != null) {
+            yaml.put("~" + (sentinelCounter++), "\n");
+        }
+        return this;
+    }
+
+    // ── Put methods ───────────────────────────────────────────────────────────
+
     public DataCompound putString(String key, String value) {
-        if (json != null) json.addProperty(key, value);
+        if (yaml != null) yaml.put(key, value);
         nbt.setString(key, value);
         return this;
     }
 
     public DataCompound putInt(String key, int value) {
-        if (json != null) json.addProperty(key, value);
+        if (yaml != null) yaml.put(key, value);
         nbt.setInteger(key, value);
         return this;
     }
 
     public DataCompound putFloat(String key, float value) {
-        if (json != null) json.addProperty(key, value);
+        if (yaml != null) yaml.put(key, value);
         nbt.setFloat(key, value);
         return this;
     }
 
     public DataCompound putDouble(String key, double value) {
-        if (json != null) json.addProperty(key, value);
+        if (yaml != null) yaml.put(key, value);
         nbt.setDouble(key, value);
         return this;
     }
 
     public DataCompound putBoolean(String key, boolean value) {
-        if (json != null) json.addProperty(key, value);
+        if (yaml != null) yaml.put(key, value);
         nbt.setBoolean(key, value);
         return this;
     }
 
     public DataCompound putIntArray(String key, int[] values) {
-        if (json != null) {
-            JsonArray arr = new JsonArray();
-            for (int v : values) arr.add(new JsonPrimitive(v));
-            json.add(key, arr);
+        if (yaml != null) {
+            List<Integer> list = new ArrayList<>();
+            for (int v : values) list.add(v);
+            yaml.put(key, list);
         }
         nbt.setIntArray(key, values);
         return this;
@@ -108,79 +212,126 @@ public final class DataCompound {
 
     public DataCompound putFloatList(String key, List<Float> values) {
         NBTTagList list = new NBTTagList();
-        JsonArray arr = json != null ? new JsonArray() : null;
+        List<Object> yamlList = yaml != null ? new ArrayList<>() : null;
         for (Float f : values) {
-            if (arr != null) arr.add(new JsonPrimitive(f));
+            if (yamlList != null) yamlList.add(f);
             list.appendTag(new NBTTagString(String.valueOf(f)));
         }
-        if (json != null) json.add(key, arr);
+        if (yaml != null) yaml.put(key, yamlList);
         nbt.setTag(key, list);
         return this;
     }
 
     public DataCompound putStringList(String key, List<String> values) {
         NBTTagList list = new NBTTagList();
-        JsonArray arr = json != null ? new JsonArray() : null;
+        List<Object> yamlList = yaml != null ? new ArrayList<>() : null;
         for (String s : values) {
-            if (arr != null) arr.add(new JsonPrimitive(s));
+            if (yamlList != null) yamlList.add(s);
             list.appendTag(new NBTTagString(s));
         }
-        if (json != null) json.add(key, arr);
+        if (yaml != null) yaml.put(key, yamlList);
         nbt.setTag(key, list);
         return this;
     }
 
+    // ── Get methods ───────────────────────────────────────────────────────────
+
     public String getString(String key, String def) {
-        if (json != null && json.has(key)) return json.get(key).getAsString();
+        if (yaml != null && yaml.containsKey(key)) {
+            Object val = yaml.get(key);
+            if (val instanceof String) return (String) val;
+            if (val != null) return String.valueOf(val);
+        }
         if (nbt.hasKey(key)) return nbt.getString(key);
         return def;
     }
 
     public int getInt(String key, int def) {
-        if (json != null && json.has(key)) return json.get(key).getAsInt();
+        if (yaml != null && yaml.containsKey(key)) {
+            Object val = yaml.get(key);
+            try {
+                if (val instanceof Number) return ((Number) val).intValue();
+                if (val instanceof String) return Integer.parseInt((String) val);
+            } catch (NumberFormatException ignored) {}
+        }
         if (nbt.hasKey(key)) return nbt.getInteger(key);
         return def;
     }
 
     public float getFloat(String key, float def) {
-        if (json != null && json.has(key)) return json.get(key).getAsFloat();
+        if (yaml != null && yaml.containsKey(key)) {
+            Object val = yaml.get(key);
+            try {
+                if (val instanceof Number) return ((Number) val).floatValue();
+                if (val instanceof String) return Float.parseFloat((String) val);
+            } catch (NumberFormatException ignored) {}
+        }
         if (nbt.hasKey(key)) return nbt.getFloat(key);
         return def;
     }
 
     public double getDouble(String key, double def) {
-        if (json != null && json.has(key)) return json.get(key).getAsDouble();
+        if (yaml != null && yaml.containsKey(key)) {
+            Object val = yaml.get(key);
+            try {
+                if (val instanceof Number) return ((Number) val).doubleValue();
+                if (val instanceof String) return Double.parseDouble((String) val);
+            } catch (NumberFormatException ignored) {}
+        }
         if (nbt.hasKey(key)) return nbt.getDouble(key);
         return def;
     }
 
     public boolean getBoolean(String key, boolean def) {
-        if (json != null && json.has(key)) return json.get(key).getAsBoolean();
+        if (yaml != null && yaml.containsKey(key)) {
+            Object val = yaml.get(key);
+            if (val instanceof Boolean) return (Boolean) val;
+            if (val instanceof String) return Boolean.parseBoolean((String) val);
+        }
         if (nbt.hasKey(key)) return nbt.getBoolean(key);
         return def;
     }
 
+    
     public int[] getIntArray(String key, int[] def) {
-        if (json != null && json.has(key) && json.get(key).isJsonArray()) {
-            JsonArray arr = json.getAsJsonArray(key);
-            int[] result = new int[arr.size()];
-            for (int i = 0; i < arr.size(); i++) result[i] = arr.get(i).getAsInt();
-            return result;
+        if (yaml != null && yaml.containsKey(key)) {
+            Object val = yaml.get(key);
+            if (val instanceof int[]) return (int[]) val;
+            if (val instanceof List) {
+                try {
+                    List<Object> list = (List<Object>) val;
+                    int[] result = new int[list.size()];
+                    for (int i = 0; i < list.size(); i++) {
+                        Object item = list.get(i);
+                        if (item instanceof Number) result[i] = ((Number) item).intValue();
+                        else result[i] = Integer.parseInt(String.valueOf(item));
+                    }
+                    return result;
+                } catch (Exception ignored) {}
+            }
         }
         if (nbt.hasKey(key)) return nbt.getIntArray(key);
         return def;
     }
 
+    
     public List<Float> getFloatList(String key) {
-        if (json != null && json.has(key) && json.get(key).isJsonArray()) {
-            List<Float> result = new ArrayList<Float>();
-            for (com.google.gson.JsonElement e : json.getAsJsonArray(key))
-                result.add(e.getAsFloat());
-            return result;
+        if (yaml != null && yaml.containsKey(key)) {
+            Object val = yaml.get(key);
+            if (val instanceof List) {
+                List<Float> result = new ArrayList<>();
+                for (Object item : (List<Object>) val) {
+                    try {
+                        if (item instanceof Number) result.add(((Number) item).floatValue());
+                        else result.add(Float.parseFloat(String.valueOf(item)));
+                    } catch (NumberFormatException ignored) {}
+                }
+                return result;
+            }
         }
         if (nbt.hasKey(key)) {
             NBTTagList list = nbt.getTagList(key, 8);
-            List<Float> result = new ArrayList<Float>();
+            List<Float> result = new ArrayList<>();
             for (int i = 0; i < list.tagCount(); i++) {
                 try { result.add(Float.parseFloat(list.getStringTagAt(i))); } catch (NumberFormatException ignored) {}
             }
@@ -189,16 +340,21 @@ public final class DataCompound {
         return Collections.emptyList();
     }
 
+    
     public List<String> getStringList(String key) {
-        if (json != null && json.has(key) && json.get(key).isJsonArray()) {
-            List<String> result = new ArrayList<String>();
-            for (com.google.gson.JsonElement e : json.getAsJsonArray(key))
-                result.add(e.getAsString());
-            return result;
+        if (yaml != null && yaml.containsKey(key)) {
+            Object val = yaml.get(key);
+            if (val instanceof List) {
+                List<String> result = new ArrayList<>();
+                for (Object item : (List<Object>) val) {
+                    result.add(item != null ? String.valueOf(item) : "");
+                }
+                return result;
+            }
         }
         if (nbt.hasKey(key)) {
             NBTTagList list = nbt.getTagList(key, 8);
-            List<String> result = new ArrayList<String>();
+            List<String> result = new ArrayList<>();
             for (int i = 0; i < list.tagCount(); i++) result.add(list.getStringTagAt(i));
             return result;
         }
@@ -207,16 +363,18 @@ public final class DataCompound {
 
     // ── Keys ───────────────────────────────────────────────────────────────
 
-    @SuppressWarnings("unchecked")
+    
     public Set<String> getKeys() {
-        if (json != null) return json.entrySet().isEmpty() ? Collections.<String>emptySet() : getJsonKeys();
+        if (yaml != null) {
+            Set<String> keys = new LinkedHashSet<>();
+            for (String k : yaml.keySet()) {
+                if (!k.startsWith("#") && !k.startsWith("~")) {
+                    keys.add(k);
+                }
+            }
+            return keys;
+        }
         return (Set<String>) nbt.func_150296_c();
-    }
-
-    private Set<String> getJsonKeys() {
-        Set<String> keys = new java.util.LinkedHashSet<String>();
-        for (Map.Entry<String, JsonElement> e : json.entrySet()) keys.add(e.getKey());
-        return keys;
     }
 
     // ── Map helpers ────────────────────────────────────────────────────────
@@ -231,9 +389,9 @@ public final class DataCompound {
     }
 
     public Map<String, String> getStringMap(String key) {
-        if (!has(key)) return new LinkedHashMap<String, String>();
+        if (!has(key)) return new LinkedHashMap<>();
         DataCompound child = getChild(key);
-        Map<String, String> result = new LinkedHashMap<String, String>();
+        Map<String, String> result = new LinkedHashMap<>();
         for (String k : child.getKeys()) {
             result.put(k, child.getString(k, ""));
         }
@@ -250,9 +408,9 @@ public final class DataCompound {
     }
 
     public Map<String, Integer> getIntMap(String key) {
-        if (!has(key)) return new LinkedHashMap<String, Integer>();
+        if (!has(key)) return new LinkedHashMap<>();
         DataCompound child = getChild(key);
-        Map<String, Integer> result = new LinkedHashMap<String, Integer>();
+        Map<String, Integer> result = new LinkedHashMap<>();
         for (String k : child.getKeys()) {
             result.put(k, child.getInt(k, 0));
         }
@@ -262,23 +420,25 @@ public final class DataCompound {
     public DataCompound putDoubleMap(String key, Map<String, Double> map) {
         DataCompound child = child();
         for (Map.Entry<String, Double> e : map.entrySet()) {
-            // Store as string in NBT for precision, native double in JSON
-            if (json != null) child.json.addProperty(e.getKey(), e.getValue());
+            if (yaml != null && child.yaml != null) child.yaml.put(e.getKey(), e.getValue());
             child.nbt.setTag(e.getKey(), new NBTTagString(String.valueOf(e.getValue())));
         }
         putChild(key, child);
         return this;
     }
-
+    
     public Map<String, Double> getDoubleMap(String key) {
-        if (!has(key)) return new LinkedHashMap<String, Double>();
+        if (!has(key)) return new LinkedHashMap<>();
         DataCompound child = getChild(key);
-        Map<String, Double> result = new LinkedHashMap<String, Double>();
+        Map<String, Double> result = new LinkedHashMap<>();
         for (String k : child.getKeys()) {
-            if (child.json != null && child.json.has(k)) {
-                result.put(k, child.json.get(k).getAsDouble());
+            if (child.yaml != null && child.yaml.containsKey(k)) {
+                Object val = child.yaml.get(k);
+                try {
+                    if (val instanceof Number) result.put(k, ((Number) val).doubleValue());
+                    else result.put(k, Double.parseDouble(String.valueOf(val)));
+                } catch (NumberFormatException ignored) {}
             } else {
-                // NBT stored as string
                 try { result.put(k, Double.parseDouble(child.nbt.getString(k))); } catch (NumberFormatException ignored) {}
             }
         }
@@ -288,7 +448,7 @@ public final class DataCompound {
     public DataCompound putFloatMap(String key, Map<String, Float> map) {
         DataCompound child = child();
         for (Map.Entry<String, Float> e : map.entrySet()) {
-            if (json != null) child.json.addProperty(e.getKey(), e.getValue());
+            if (yaml != null && child.yaml != null) child.yaml.put(e.getKey(), e.getValue());
             child.nbt.setTag(e.getKey(), new NBTTagString(String.valueOf(e.getValue())));
         }
         putChild(key, child);
@@ -296,12 +456,16 @@ public final class DataCompound {
     }
 
     public Map<String, Float> getFloatMap(String key) {
-        if (!has(key)) return new LinkedHashMap<String, Float>();
+        if (!has(key)) return new LinkedHashMap<>();
         DataCompound child = getChild(key);
-        Map<String, Float> result = new LinkedHashMap<String, Float>();
+        Map<String, Float> result = new LinkedHashMap<>();
         for (String k : child.getKeys()) {
-            if (child.json != null && child.json.has(k)) {
-                result.put(k, child.json.get(k).getAsFloat());
+            if (child.yaml != null && child.yaml.containsKey(k)) {
+                Object val = child.yaml.get(k);
+                try {
+                    if (val instanceof Number) result.put(k, ((Number) val).floatValue());
+                    else result.put(k, Float.parseFloat(String.valueOf(val)));
+                } catch (NumberFormatException ignored) {}
             } else {
                 try { result.put(k, Float.parseFloat(child.nbt.getString(k))); } catch (NumberFormatException ignored) {}
             }
