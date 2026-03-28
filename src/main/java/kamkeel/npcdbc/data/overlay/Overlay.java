@@ -55,7 +55,7 @@ public class Overlay implements IOverlay {
 
     public static String matchTexture(OverlayContext ctx, String text) {
         int eyeType = ctx.eyeType();
-        int bodyType = ctx.bodyType();
+        int bodyType = ctx.bodyTypeDBC();
         int furType = ctx.furType();
         int noseType = ctx.nose();
         int mouthType = ctx.mouth();

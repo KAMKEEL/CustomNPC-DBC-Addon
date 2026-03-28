@@ -60,6 +60,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public byte race = 1;
     public boolean useSkin = false;
     public int bodyType = 0;
+    public String bodyTypeString;     // The string set for forms i.e "semi_perfect", "final_form"
     public int bodyCM = 0xffffff, bodyC1 = 0xffffff, bodyC2 = 0xffffff, bodyC3 = 0xffffff;
     public boolean hasArcoMask = false, hasEyebrows = true, hasPupils = false;
     public int furColor = -1;
@@ -143,6 +144,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             dbcDisplay.setInteger("DBCMouthType", mouthType);
             dbcDisplay.setInteger("DBCNoseType", noseType);
             dbcDisplay.setInteger("DBCBodyType", bodyType);
+            dbcDisplay.setString("DBCBodyTypeString", bodyTypeString);
             dbcDisplay.setByte("DBCTailState", tailState);
             dbcDisplay.setInteger("DBCFurType", furType);
 
@@ -207,6 +209,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             mouthType = dbcDisplay.getInteger("DBCMouthType");
             noseType = dbcDisplay.getInteger("DBCNoseType");
             bodyType = dbcDisplay.getInteger("DBCBodyType");
+            bodyTypeString = dbcDisplay.getString("DBCBodyTypeString");
             tailState = dbcDisplay.getByte("DBCTailState");
             furType = dbcDisplay.getInteger("DBCFurType");
 
@@ -413,6 +416,22 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     @Override
     public void setBodyType(int bodyType) {
         this.bodyType = ValueUtil.clamp(bodyType, 0, 2);
+    }
+
+    @Override
+    public String getBodyTypeString() {
+        Form form = getForm();
+        if (form != null) {
+            String type = form.display.getBodyType();
+            if (type != null && !type.isEmpty())
+                return type;
+        }
+        return bodyTypeString;
+    }
+
+    @Override
+    public void setBodyTypeString(String bodyType) {
+        this.bodyTypeString = bodyType;
     }
 
     @Override
