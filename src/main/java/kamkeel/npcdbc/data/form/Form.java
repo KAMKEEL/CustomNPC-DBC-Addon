@@ -434,7 +434,7 @@ public class Form implements IForm {
     @Override
     public boolean isChildOf(IForm parent) {
         while (parent.getChildKey() != null) {
-            if (parent.getKey() == getKey() || parent.getChildKey() == getKey())
+            if (parent.getKey().equals(getKey()) || parent.getChildKey().equals(getKey()))
                 return true;
             parent = parent.getChild();
         }
