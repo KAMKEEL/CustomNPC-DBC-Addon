@@ -264,7 +264,7 @@ public abstract class MixinDBCKiTech {
     private static void Ascend(KeyBinding K, CallbackInfo ci) {
         PlayerDBCInfo dbc = PlayerDataUtil.getClientDBCInfo();
         if (K.getIsKeyPressed()) {
-            if (dbc.hasSelectedForm())
+            if (dbc.hasSelectedForm() || dbc.isCustomRace()) // No vanilla DBC forms for custom races
                 ci.cancel();
 
             Form form = DBCData.getClient().getForm();
