@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static kamkeel.npcdbc.data.race.races.BioAndroid.*;
 @SideOnly(Side.CLIENT)
 public class BioAndroidRaceRenderer implements IRaceRenderer {
 
@@ -64,21 +65,17 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
 
         ensurePartsInitialized(ctx.model);
 
-        int state = ctx.dbcState();
-        switch (state) {
-            case 1:
-                renderPerfect(ctx);
-                break;
-            case 2:
-                renderSemiPerfect(ctx);
-                break;
-            case 3:
-                renderMax(ctx);
-                break;
-            default:
-                renderBase(ctx);
-                break;
-        }
+        String bodyType = ctx.bodyType();
+
+        if (TYPE_SEMI_PERFECT.equals(bodyType))
+            renderSemiPerfect(ctx);
+        else if (TYPE_PERFECT.equals(bodyType))
+            renderPerfect(ctx);
+        else if (MAX.equals(ctx.form()))
+            renderMax(ctx);
+        else
+            renderBase(ctx);
+        
         return true;
     }
 
@@ -89,24 +86,19 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
 
         ensurePartsInitialized(ctx.model);
 
-        int state = ctx.dbcState();
+        String bodyType = ctx.bodyType();
         ModelBipedDBC model = ctx.model;
         int id = ctx.armAnimationId;
 
-        switch (state) {
-            case 1:
-                renderArmPerfect(ctx, model, id);
-                break;
-            case 2:
-                renderArmSemiPerfect(ctx, model, id);
-                break;
-            case 3:
-                renderArmMax(ctx, model, id);
-                break;
-            default:
-                renderArmBase(ctx, model, id);
-                break;
-        }
+        if (TYPE_SEMI_PERFECT.equals(bodyType))
+            renderArmSemiPerfect(ctx, model, id);
+        else if (TYPE_PERFECT.equals(bodyType))
+            renderArmPerfect(ctx, model, id);
+        else if (MAX.equals(ctx.form()))
+            renderArmMax(ctx, model, id);
+        else
+            renderArmBase(ctx, model, id);
+        
         return true;
     }
 
@@ -416,11 +408,12 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
         bioheadRoot.rotationPointX = model.bipedHead.rotationPointX;
         bioheadRoot.rotationPointY = model.bipedHead.rotationPointY;
 
-        biohead1I.isHidden = ctx.dbcState() != 0;
-        biohead2I.isHidden = ctx.dbcState() != 0;
+        boolean baseForm = ctx.form() == null;
+        biohead1I.isHidden = !baseForm;
+        biohead2I.isHidden = !baseForm;
 
-        biohead1.isHidden = ctx.dbcState() == 0;
-        biohead2.isHidden = ctx.dbcState() == 0;
+        biohead1.isHidden = baseForm;
+        biohead2.isHidden = baseForm;
 
         bioheadRoot.render(f);
 
@@ -675,7 +668,7 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
     private void renderEyes(RaceRenderContext ctx, String baseTexture, String eyebrowTexture, String leftTexture, String rightTexture) {
         ModelBipedDBC model = ctx.model;
 
-        boolean semiPerfect = ctx.dbcState() == 2;
+        boolean semiPerfect = ctx.bodyType(TYPE_SEMI_PERFECT);
 
         whiteColor();
         ctx.bindTexture(new ResourceLocation(textureDir() + baseTexture));
