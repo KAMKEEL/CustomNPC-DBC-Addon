@@ -30,12 +30,12 @@ public class BioAndroid {
     // Forms
     // ════════════════════════════════════════════════════════════════
     public static final String TYPE_SEMI_PERFECT ="semi_perfect", TYPE_PERFECT ="perfect";
+    
     public static final Form SEMI_PERFECT = FormBuilder.create(FormKey.of(BIO_ANDROID_NS, "semi_perfect"))
         .menuName("Semi-Perfect")
         .strengthMulti(2.0f).dexMulti(1.8f).willMulti(1.5f)
         .display()
             .bodyType(TYPE_SEMI_PERFECT)
-            .color(BODY_CM, 0x00ffff)
             .and()
         .build(FORMS);
 
@@ -68,11 +68,14 @@ public class BioAndroid {
         .menuName("Max")
         .strengthMulti(8.0f).dexMulti(7.0f).willMulti(6.0f)
         .display()
-            .bodyType(TYPE_PERFECT)
+            .bodyType(TYPE_SEMI_PERFECT)
+            .color(EYE_LEFT, 0xc86637)
+            .color(EYE_RIGHT, 0xc86637)
             .color(BODY_CM, 0xc22023)
             .color(BODY_C1, 0x9abe35)
             .color(BODY_C2, 0xc22023)
             .color(BODY_C3, 0x701b58)
+            .berserk(true)
             .customizable(true)
             .and()
         .build(FORMS);

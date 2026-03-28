@@ -7,6 +7,7 @@ import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBox;
@@ -669,8 +670,9 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
         ModelBipedDBC model = ctx.model;
 
         boolean semiPerfect = ctx.bodyType(TYPE_SEMI_PERFECT);
+        boolean berserk = ctx.berserk();
 
-        whiteColor();
+        new Color(berserk ? ctx.eyeC1() : 0xffffff, 1).glColor();
         ctx.bindTexture(new ResourceLocation(textureDir() + baseTexture));
         model.renderHairs(0.0625F, "EYEBASE");
 
@@ -680,13 +682,15 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
             model.renderHairs(0.0625F, "EYEBROW");
         }
 
-        RenderPlayerJBRA.glColor3f(semiPerfect ? 0xafddff : ctx.eyeC1());
-        ctx.bindTexture(new ResourceLocation(textureDir() + leftTexture));
-        model.renderHairs(0.0625F, "EYELEFT");
+        if (!berserk) {
+            RenderPlayerJBRA.glColor3f(semiPerfect ? 0xafddff : ctx.eyeC1());
+            ctx.bindTexture(new ResourceLocation(textureDir() + leftTexture));
+            model.renderHairs(0.0625F, "EYELEFT");
 
-        RenderPlayerJBRA.glColor3f(semiPerfect ? 0xafddff : ctx.eyeC2());
-        ctx.bindTexture(new ResourceLocation(textureDir() + rightTexture));
-        model.renderHairs(0.0625F, "EYERIGHT");
+            RenderPlayerJBRA.glColor3f(semiPerfect ? 0xafddff : ctx.eyeC2());
+            ctx.bindTexture(new ResourceLocation(textureDir() + rightTexture));
+            model.renderHairs(0.0625F, "EYERIGHT");
+        }
     }
 
     private void renderFacialFeatures(RaceRenderContext ctx, String noseTexture, int noseColor, String mouthTexture, int mouthColor) {
