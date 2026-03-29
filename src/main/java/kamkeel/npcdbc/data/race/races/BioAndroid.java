@@ -34,8 +34,6 @@ public class BioAndroid {
         .strengthMulti(2.0f).dexMulti(1.8f).willMulti(1.5f)
         .display()
             .bodyType(BioAndroidLayers.SEMI_PERFECT)
-            .color(EYE_LEFT, 0xDFEEEE)
-            .color(EYE_RIGHT, 0xDFEEEE)
             .and()
         .build(FORMS);
 
@@ -44,8 +42,6 @@ public class BioAndroid {
         .strengthMulti(4.0f).dexMulti(3.5f).willMulti(3.0f)
         .display()
             .bodyType(BioAndroidLayers.PERFECT)
-            .color(EYE_LEFT, 0x9d0707)
-            .color(EYE_RIGHT, 0x9d0707)
             .color(BODY_C1, 0xd5dbd9)
             .color(BODY_C2, 0xd7c827)
             .color(BODY_C3, 0x6c2f7c)
