@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.client.race.bio;
 
-import JinRyuu.JBRA.ModelBipedDBC;
+import net.minecraft.client.model.ModelBiped;
 import JinRyuu.JBRA.mod_JBRA;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -14,14 +14,16 @@ import org.lwjgl.opengl.GL11;
 @SideOnly(Side.CLIENT)
 public class BioAndroidTailComponent implements IRaceModelComponent {
     private boolean initialized;
-    private ModelBipedDBC cachedModel;
 
     private ModelRenderer bioTailRoot;
     private ModelRenderer btailS1, btailS2, btailS3, btailS4, btailS5, btailS6;
 
     @Override
-    public void initialize(ModelBipedDBC model) {
-        if (initialized && cachedModel == model) return;
+    public void initialize(OverlayContext ctx) {
+        if (initialized)
+            return;
+
+        ModelBiped model = ctx.getComponentModel();
 
         bioTailRoot = new ModelRenderer(model);
         bioTailRoot.addBox(0, 0, 0, 0, 12, 0, 0.02F);
@@ -64,32 +66,29 @@ public class BioAndroidTailComponent implements IRaceModelComponent {
         bioTailRoot.rotationPointY = 10;
         bioTailRoot.rotationPointZ = 2;
 
-        cachedModel = model;
         initialized = true;
     }
 
     @Override
     public void render(OverlayContext ctx, DisplayLayer layer) {
-        ModelBipedDBC model = ctx.model;
         float f = 0.0625F;
         boolean animate = !"tail_static".equals(layer.slotId);
 
         ctx.glColor(ctx.color);
 
         GL11.glPushMatrix();
-        float f6 = ModelBipedDBC.f;
-        GL11.glScalef(1.0F / f6 * (ModelBipedDBC.g <= 1 ? 1.0F : 0.7F), 1.0F / f6, 1.0F / f6 * (ModelBipedDBC.g <= 1 ? 1.0F : 0.7F));
+        float f6 = ctx.age();
+        GL11.glScalef(1.0F / f6 * (ctx.gender() <= 1 ? 1.0F : 0.7F), 1.0F / f6, 1.0F / f6 * (ctx.gender() <= 1 ? 1.0F : 0.7F));
         GL11.glTranslatef(0, (f6 - 1.0F) * 1.5F, 0);
-        transRot(f, model.B1);
-        if (animate) {
-            animateNormalTail(model);
-        }
+        transRot(f, ctx.getBodyRenderer());
+        if (animate) 
+            animateNormalTail(ctx.getAnimationTick());
+        
         bioTailRoot.render(f);
         GL11.glPopMatrix();
     }
 
-    private void animateNormalTail(ModelBipedDBC model) {
-        float rot3 = model.rot3;
+    private void animateNormalTail(float rot3) {
         float r = MathHelper.sin(rot3 * 0.02F) * 0.1F;
         float r2 = MathHelper.cos(rot3 * 0.02F) * 0.1F;
         float r3 = MathHelper.cos(rot3 * 0.14F) * 0.1F;

@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.client.race.bio;
 
-import JinRyuu.JBRA.ModelBipedDBC;
+import net.minecraft.client.model.ModelBiped;
 import JinRyuu.JBRA.mod_JBRA;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -15,14 +15,15 @@ import org.lwjgl.opengl.GL11;
 @SideOnly(Side.CLIENT)
 public class BioAndroidMaxTailComponent implements IRaceModelComponent {
     private boolean initialized;
-    private ModelBipedDBC cachedModel;
 
     private ModelRenderer bioTailMaxRoot;
     private ModelRenderer btailS1M, btailS2M, btailS3M, btailS4M, btailS5M, btailS6M, btailS7M;
 
     @Override
-    public void initialize(ModelBipedDBC model) {
-        if (initialized && cachedModel == model) return;
+    public void initialize(OverlayContext ctx) {
+        if (initialized ) return;
+        
+        ModelBiped model = ctx.getComponentModel();
 
         bioTailMaxRoot = new ModelRenderer(model);
         bioTailMaxRoot.setRotationPoint(0, 5, 2);
@@ -63,32 +64,29 @@ public class BioAndroidMaxTailComponent implements IRaceModelComponent {
         btailS1M.addChild(btailS2M);
         bioTailMaxRoot.addChild(btailS1M);
 
-        cachedModel = model;
         initialized = true;
     }
 
     @Override
     public void render(OverlayContext ctx, DisplayLayer layer) {
-        ModelBipedDBC model = ctx.model;
         float f = 0.0625F;
         boolean animate = !"tail_static".equals(layer.slotId);
 
         ctx.glColor(ctx.color);
 
         GL11.glPushMatrix();
-        float f6 = ModelBipedDBC.f;
-        GL11.glScalef(1.0F / f6 * (ModelBipedDBC.g <= 1 ? 1.0F : 0.7F), 1.0F / f6, 1.0F / f6 * (ModelBipedDBC.g <= 1 ? 1.0F : 0.7F));
+        float f6 = ctx.age();
+        GL11.glScalef(1.0F / f6 * (ctx.gender() <= 1 ? 1.0F : 0.7F), 1.0F / f6, 1.0F / f6 * (ctx.gender() <= 1 ? 1.0F : 0.7F));
         GL11.glTranslatef(0, (f6 - 1.0F) * 1.5F, 0);
-        transRot(f, model.B1);
+        transRot(f, ctx.getBodyRenderer());
         if (animate) {
-            animateMaxTail(model);
+            animateMaxTail(ctx.getAnimationTick());
         }
         bioTailMaxRoot.render(f);
         GL11.glPopMatrix();
     }
 
-    private void animateMaxTail(ModelBipedDBC model) {
-        float rot3 = model.rot3;
+    private void animateMaxTail(float rot3) {
         float r = MathHelper.sin(rot3 * 0.02F) * 0.1F;
         float r2 = MathHelper.cos(rot3 * 0.02F) * 0.1F;
         float r3 = MathHelper.cos(rot3 * 0.14F) * 0.1F;

@@ -4,6 +4,8 @@ import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.ModelBipedBody;
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.model.ModelRenderer;
 import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.client.utils.SimplifiedDBCData;
@@ -102,6 +104,58 @@ public class DBCRenderContext {
         return modelNpc.parent;
     }
 
+    public ModelBiped getComponentModel() {
+        return isNPC ? mpm() : model;
+    }
+
+    public ModelRenderer getBodyRenderer() {
+        if (isNPC)
+            return mpm().bipedBody;
+        return modelBiped.B1;
+    }
+
+    public ModelRenderer getBipedHead() {
+        if (isNPC)
+            return mpm().bipedHead;
+        return modelBiped.bipedHead;
+    }
+
+    public ModelRenderer getBipedBody() {
+        if (isNPC)
+            return mpm().bipedBody;
+        return modelBiped.bipedBody;
+    }
+
+    public ModelRenderer getBipedRightArm() {
+        if (isNPC)
+            return mpm().bipedRightArm;
+        return modelBiped.bipedRightArm;
+    }
+
+    public ModelRenderer getBipedLeftArm() {
+        if (isNPC)
+            return mpm().bipedLeftArm;
+        return modelBiped.bipedLeftArm;
+    }
+
+    public ModelRenderer getBipedRightLeg() {
+        if (isNPC)
+            return mpm().bipedRightLeg;
+        return modelBiped.bipedRightLeg;
+    }
+
+    public ModelRenderer getBipedLeftLeg() {
+        if (isNPC)
+            return mpm().bipedLeftLeg;
+        return modelBiped.bipedLeftLeg;
+    }
+
+    public float getAnimationTick() {
+        if (isNPC)
+            return npc.ticksExisted;
+        return modelBiped.rot3;
+    }
+
     public DBCRenderContext setRenderVars(double renderX, double renderY, double renderZ, float renderYaw,
                                           float partialTicks) {
         this.renderX = renderX;
@@ -153,7 +207,7 @@ public class DBCRenderContext {
     }
 
     public float age() {
-        return ModelBipedDBC.f;
+        return isNPC ? 1 : ModelBipedDBC.f;
     }
 
     public float inverseAge() {
@@ -161,7 +215,7 @@ public class DBCRenderContext {
     }
 
     public int pregnant() {
-        return ModelBipedDBC.p;
+        return isNPC ? 0 : ModelBipedDBC.p;
     }
 
     public String genderDir() {
