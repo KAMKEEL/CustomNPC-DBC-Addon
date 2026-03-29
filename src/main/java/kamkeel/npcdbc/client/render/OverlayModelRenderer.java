@@ -68,6 +68,12 @@ public final class OverlayModelRenderer {
      * ARMS
      * ───────────────────────────── */
     private static void renderArm(OverlayContext ctx, boolean right) {
+        if (ctx.isFirstPersonArm) {
+            if (right && ctx.armRenderer != null)
+                ctx.armRenderer.run();
+            return;
+        }
+
         if (ctx.isNPC) {
             GL11.glPushMatrix();
             if (ctx.npc.currentAnimation == EnumAnimation.DANCING) {
@@ -359,6 +365,9 @@ public final class OverlayModelRenderer {
             ctx.overlay.render(ctx); //Custom Renderer
             return;
         }
+
+        if (ctx.isFirstPersonArm && type == Type.ALL)
+            type = Type.Arms;
 
         RenderFunction fn = MODEL_MAP.get(type);
         if (fn != null)

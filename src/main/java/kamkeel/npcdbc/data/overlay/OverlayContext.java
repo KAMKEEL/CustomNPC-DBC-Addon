@@ -38,6 +38,10 @@ public class OverlayContext extends DBCRenderContext implements IOverlayContext 
         return ctx;
     }
 
+    public boolean isArmType(IOverlay.Type type) {
+        return type == IOverlay.Type.ALL || type == IOverlay.Type.Arms || type == IOverlay.Type.RightArm || type == IOverlay.Type.LeftArm;
+    }
+    
     @Override
     public boolean typeDisabled(IOverlay.Type type) {
         return chain != exceptFor && disabledTypes != null && disabledTypes.contains(type);

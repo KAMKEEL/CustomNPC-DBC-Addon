@@ -49,6 +49,7 @@ public class DBCRenderContext {
 
     public boolean isFirstPersonArm;
     public int armAnimationId = -1;
+    public Runnable armRenderer;
 
     public Form form;
     public Race race;

@@ -593,6 +593,9 @@ public class ModelDBC extends ModelBase {
 
                 Type type = overlay.getType();
 
+                if (ctx.isFirstPersonArm && !ctx.isArmType(type))
+                    continue;
+
                 /* ───────── Texture ───────── */
                 ctx.texture = overlay.getTexture();
 

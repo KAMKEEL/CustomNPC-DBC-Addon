@@ -745,7 +745,9 @@ public class CNPCAnimationHelper {
             // Render form overlays
             if (dbcData != null && modelMain instanceof ModelBipedBody) {
                 OverlayContext ctx = OverlayContext.from(dbcData);
-                ctx.modelBiped = (ModelBipedBody) modelMain;
+                ctx.modelBiped = renderPlayer.modelMain;
+                ctx.model = renderPlayer.modelMain;
+                ctx.isFirstPersonArm = true;
                 ModelDBC.renderOverlays(ctx);
             }
 

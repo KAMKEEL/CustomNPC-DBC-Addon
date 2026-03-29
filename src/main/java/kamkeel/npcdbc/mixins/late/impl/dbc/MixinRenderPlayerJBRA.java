@@ -874,6 +874,27 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         }
     }
 
+    @Inject(method = "renderFirstPersonArm", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA19:Z", ordinal = 1, shift = At.Shift.BEFORE, remap = false), remap = true)
+    private void renderArmOverlays(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "id") LocalIntRef id) {
+        DBCData data = DBCData.get(par1EntityPlayer);
+        OverlayContext ctx = OverlayContext.from(data);
+        ctx.model = modelMain;
+        ctx.modelBiped = modelMain;
+        ctx.isFirstPersonArm = true;
+        ctx.armAnimationId = id.get();
+        int animId = id.get();
+        ctx.armRenderer = () -> {
+            this.modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
+            if (animId == -1) {
+                this.modelMain.RA.render(0.0625F);
+            } else {
+                this.func_aam2(this.modelMain.RA, this.modelMain.LA, animId, true);
+                this.func_aam(this.modelMain.RA, this.modelMain.LA, animId, true);
+            }
+        };
+        ModelDBC.renderOverlays(ctx);
+    }
+
     @Inject(method = "renderFirstPersonArm", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA19:Z", ordinal = 0, shift = At.Shift.BEFORE, remap = false), remap = true)
     private void renderSaiyanArm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "id") LocalIntRef id, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "gen") LocalIntRef gender) {
         Form form = DBCData.getForm(par1EntityPlayer);
