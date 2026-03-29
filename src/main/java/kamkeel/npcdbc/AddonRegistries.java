@@ -5,7 +5,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.race.IOverlayModel;
 import kamkeel.npcdbc.client.race.IRaceRenderer;
 import kamkeel.npcdbc.client.race.bio.BioAndroidCrestModel;
-import kamkeel.npcdbc.client.race.bio.BioAndroidMaxTailModel;
 import kamkeel.npcdbc.client.race.bio.BioAndroidTailModel;
 import kamkeel.npcdbc.client.race.bio.BioAndroidWingsModel;
 import kamkeel.npcdbc.controllers.FormController;
@@ -28,7 +27,6 @@ public class AddonRegistries {
         OverlayModels.register(BioAndroidLayers.CREST_MODEL, new BioAndroidCrestModel());
         OverlayModels.register(BioAndroidLayers.WINGS_MODEL, new BioAndroidWingsModel());
         OverlayModels.register(BioAndroidLayers.TAIL_MODEL, new BioAndroidTailModel());
-        OverlayModels.register(BioAndroidLayers.TAIL_MAX_MODEL, new BioAndroidMaxTailModel());
     }
 
     public static class Races extends Register<Race> {

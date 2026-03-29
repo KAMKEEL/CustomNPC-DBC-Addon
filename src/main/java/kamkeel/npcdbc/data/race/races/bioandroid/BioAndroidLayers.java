@@ -13,8 +13,8 @@ public class BioAndroidLayers {
     public static final String BASE = "base", SEMI_PERFECT = "semi_perfect", PERFECT = "perfect", MAX = "max";
     
     // ── Model components ─────────────────────────────────────────
-    public static final String CREST_MODEL = "npcdbc:bio_crest", WINGS_MODEL = "npcdbc:bio_wings";
-    public static final String TAIL_MODEL = "npcdbc:bio_tail", TAIL_MAX_MODEL = "npcdbc:bio_tail_max";
+    
+    public static final String CREST_MODEL = "npcdbc:bio_crest", WINGS_MODEL = "npcdbc:bio_wings", TAIL_MODEL = "npcdbc:bio_tail";
 
     // ════════════════════════════════════════════════════════════════
     // Display Chains
@@ -236,15 +236,15 @@ public class BioAndroidLayers {
             .texture("max/bio_max_wings.png")
             .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true)
             .and()
-        .add(Type.Custom, "tail_static", "Tail Stinger").modelKey(TAIL_MAX_MODEL)
+        .add(Type.Custom, "tail_static_max", "Tail Stinger").modelKey(TAIL_MODEL)
             .texture("max/bio_max_stinger.png")
             .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true)
             .and()
-        .add(Type.Custom, "tail", "Tail Layer 0").modelKey(TAIL_MAX_MODEL)
+        .add(Type.Custom, "tail_max", "Tail Layer 0").modelKey(TAIL_MODEL)
             .texture("max/bio_max_tail_0.png")
             .colorType(ColorType.BodyCM)
             .and()
-        .add(Type.Custom, "tail_1", "Tail Layer 1").modelKey(TAIL_MAX_MODEL)
+        .add(Type.Custom, "tail_1_max", "Tail Layer 1").modelKey(TAIL_MODEL)
             .texture("max/bio_max_tail_1.png")
             .colorType(ColorType.BodyC1)
             .and();
