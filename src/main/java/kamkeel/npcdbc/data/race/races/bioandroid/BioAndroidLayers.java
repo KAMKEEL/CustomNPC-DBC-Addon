@@ -9,15 +9,15 @@ import static kamkeel.npcdbc.api.client.overlay.IOverlay.*;
 public class BioAndroidLayers {
 
     // ── Body Types ─────────────────────────────────────────
-    
+
     public static final String BASE = "base", SEMI_PERFECT = "semi_perfect", PERFECT = "perfect", MAX = "max";
-    
+
     // ════════════════════════════════════════════════════════════════
     // Display Chains
     // ════════════════════════════════════════════════════════════════
 
     // ── Base (Imperfect) ─────────────────────────────────────────
-    
+
     public static final DisplayChain BASE_FACE = DisplayChain.create(BASE)
         .add(Type.EyeWhite, EYEBASE, "Eye Base")
             .texture("imperfect/face/eye_base.png")
@@ -32,7 +32,7 @@ public class BioAndroidLayers {
             .texture("imperfect/face/eye_right.png")
             .colorType(ColorType.Eye).and();
 
-    
+
     public static final DisplayChain BASE_BODY = DisplayChain.create(BASE)
         .add(Type.ALL, BODY_CM, "Body Main")
             .texture("imperfect/bio_imperfect_0.png")
@@ -94,7 +94,7 @@ public class BioAndroidLayers {
             .texture("semiperfect/face/mouth.png")
             .colorType(ColorType.Custom).defaultColor(0xd7a4bb).fixedColor(true).and();
 
-        
+
     public static final DisplayChain SEMI_PERFECT_BODY = DisplayChain.create(SEMI_PERFECT)
         .add(Type.ALL, BODY_CM, "Body Main")
             .texture("semiperfect/bio_semiperfect_0.png")
@@ -110,7 +110,7 @@ public class BioAndroidLayers {
             .colorType(ColorType.BodyC3).defaultColor(0x909CC4).and()
         .add(Type.ALL, BODY_C4, "Body Layer 4")
             .texture("semiperfect/bio_semiperfect_4.png")
-            .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true).and() 
+            .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true).and()
        // ── Custom geometry - derives IRaceModelComponent ──────────────────────────────────────────────────
         .add(Type.ALL, "crest", "Head Crest")
             .texture("semiperfect/bio_semiperfect_crest.png")
@@ -141,18 +141,18 @@ public class BioAndroidLayers {
             .colorType(ColorType.BodyC1).and()
         .add(Type.LeftEye, EYE_LEFT, "Left Eye")
             .texture("perfect/face/eye_left.png")
-            .colorType(ColorType.Eye).defaultColor(0x9d0707).and()
+            .colorType(ColorType.Eye).defaultColor(0xdb8bdf).and()
         .add(Type.RightEye, EYE_RIGHT, "Right Eye")
             .texture("perfect/face/eye_right.png")
-            .colorType(ColorType.Eye).defaultColor(0x9d0707).and()
+            .colorType(ColorType.Eye).defaultColor(0xdb8bdf).and()
         .add(Type.Face, NOSE, "Nose")
             .texture("perfect/face/nose.png")
             .colorType(ColorType.BodyC1).and()
         .add(Type.Mouth, MOUTH, "Mouth")
             .texture("perfect/face/mouth.png")
             .colorType(ColorType.BodyC1).and();
-        
-        
+
+
     public static final DisplayChain PERFECT_BODY = DisplayChain.create(PERFECT)
         .add(Type.ALL, BODY_CM, "Body Main")
             .texture("perfect/bio_perfect_0.png")
@@ -181,7 +181,7 @@ public class BioAndroidLayers {
     public static final DisplayChainGroup PERFECT_GROUP = DisplayChainGroup.of(PERFECT_BODY, PERFECT_FACE);
 
     // ── Max ──────────────────────────────────────────────────────
-    
+
     public static final DisplayChain MAX_FACE = DisplayChain.create(MAX)
         .add(Type.EyeWhite, EYEBASE, "Eye Base")
             .texture("max/face/eye_base.png")
@@ -201,8 +201,8 @@ public class BioAndroidLayers {
         .add(Type.Mouth, MOUTH, "Mouth")
             .texture("max/face/mouth.png")
             .colorType(ColorType.Custom).defaultColor(0xFFE0FA).fixedColor(true).and();
-    
-    
+
+
     public static final DisplayChain MAX_BODY = DisplayChain.create(MAX)
         .add(Type.ALL, BODY_CM, "Body Main")
             .texture("max/bio_max_0.png")
@@ -241,5 +241,5 @@ public class BioAndroidLayers {
             .componentKey("npcdbc:bio_wings").and();
 
     public static final DisplayChainGroup MAX_GROUP = DisplayChainGroup.of(MAX_BODY, MAX_FACE);
-    
+
 }
