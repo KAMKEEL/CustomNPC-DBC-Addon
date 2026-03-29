@@ -48,7 +48,7 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
 
     private String textureDir() {
         return ConfigDBCClient.EnableHDTextures
-            ? CustomNpcPlusDBC.ID + ":textures/sd/bio_android/"
+            ? CustomNpcPlusDBC.ID + ":textures/hd/bio_android/"
             : CustomNpcPlusDBC.ID + ":textures/sd/bio_android/";
     }
 
