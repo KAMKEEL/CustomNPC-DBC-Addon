@@ -656,8 +656,10 @@ public class ModelDBC extends ModelBase {
                         IRaceModelComponent comp =
                            AddonRegistries.Races.getModelComponent(dl.componentKey);
                         if (comp != null && comp.appliesTo(ctx)) {
-                            comp.initialize(ctx.model);
-                            comp.render(ctx, dl);
+                            if (!ctx.isFirstPersonArm || comp.rendersInFirstPerson(ctx)) {
+                                comp.initialize(ctx.model);
+                                comp.render(ctx, dl);
+                            }
                         }
                         handledByComponent = true;
                     }

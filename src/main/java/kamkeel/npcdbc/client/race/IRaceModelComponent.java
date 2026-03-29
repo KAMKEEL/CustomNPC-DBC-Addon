@@ -16,4 +16,8 @@ public interface IRaceModelComponent {
     default boolean appliesTo(OverlayContext ctx) {
         return true;
     }
+
+    default boolean rendersInFirstPerson(OverlayContext ctx) {
+        return false;
+    }
 }
