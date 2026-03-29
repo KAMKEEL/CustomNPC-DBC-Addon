@@ -9,6 +9,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.data.race.races.bioandroid.BioAndroidLayers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static kamkeel.npcdbc.data.race.races.BioAndroid.*;
 import static kamkeel.npcdbc.data.race.races.BioAndroid.*;
 @SideOnly(Side.CLIENT)
 public class BioAndroidRaceRenderer implements IRaceRenderer {
@@ -68,9 +70,9 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
 
         String bodyType = ctx.bodyType();
 
-        if (TYPE_SEMI_PERFECT.equals(bodyType))
+        if (BioAndroidLayers.SEMI_PERFECT.equals(bodyType))
             renderSemiPerfect(ctx);
-        else if (TYPE_PERFECT.equals(bodyType))
+        else if (BioAndroidLayers.PERFECT.equals(bodyType))
             renderPerfect(ctx);
         else if (MAX.equals(ctx.form()))
             renderMax(ctx);
@@ -91,9 +93,9 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
         ModelBipedDBC model = ctx.model;
         int id = ctx.armAnimationId;
 
-        if (TYPE_SEMI_PERFECT.equals(bodyType))
+        if (BioAndroidLayers.SEMI_PERFECT.equals(bodyType))
             renderArmSemiPerfect(ctx, model, id);
-        else if (TYPE_PERFECT.equals(bodyType))
+        else if (BioAndroidLayers.PERFECT.equals(bodyType))
             renderArmPerfect(ctx, model, id);
         else if (MAX.equals(ctx.form()))
             renderArmMax(ctx, model, id);
@@ -669,7 +671,7 @@ public class BioAndroidRaceRenderer implements IRaceRenderer {
     private void renderEyes(RaceRenderContext ctx, String baseTexture, String eyebrowTexture, String leftTexture, String rightTexture) {
         ModelBipedDBC model = ctx.model;
 
-        boolean semiPerfect = ctx.bodyType(TYPE_SEMI_PERFECT);
+        boolean semiPerfect = ctx.bodyType(BioAndroidLayers.SEMI_PERFECT);
         boolean berserk = ctx.berserk();
 
         new Color(berserk ? ctx.eyeC1() : 0xffffff, 1).glColor();

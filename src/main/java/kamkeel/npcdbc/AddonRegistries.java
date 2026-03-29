@@ -2,8 +2,12 @@ package kamkeel.npcdbc;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import kamkeel.npcdbc.client.race.BioAndroidRaceRenderer;
+import kamkeel.npcdbc.client.race.IRaceModelComponent;
 import kamkeel.npcdbc.client.race.IRaceRenderer;
+import kamkeel.npcdbc.client.race.bio.BioAndroidCrestComponent;
+import kamkeel.npcdbc.client.race.bio.BioAndroidMaxTailComponent;
+import kamkeel.npcdbc.client.race.bio.BioAndroidTailComponent;
+import kamkeel.npcdbc.client.race.bio.BioAndroidWingsComponent;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.RaceController;
 import kamkeel.npcdbc.data.form.Form;
@@ -20,13 +24,19 @@ public class AddonRegistries {
 
     @SideOnly(Side.CLIENT)
     public static void registerClient() {
-        Races.registerRenderer("npcdbc:bio_android", new BioAndroidRaceRenderer());
+        Races.registerModelComponent("npcdbc:bio_tail", new BioAndroidTailComponent());
+        Races.registerModelComponent("npcdbc:bio_tail_max", new BioAndroidMaxTailComponent());
+        Races.registerModelComponent("npcdbc:bio_wings", new BioAndroidWingsComponent());
+        Races.registerModelComponent("npcdbc:bio_crest", new BioAndroidCrestComponent());
     }
 
     public static class Races extends Register<Race> {
 
         @SideOnly(Side.CLIENT)
         private static final Map<String, IRaceRenderer> renderers = new HashMap<>();
+
+        @SideOnly(Side.CLIENT)
+        private static final Map<String, IRaceModelComponent> modelComponents = new HashMap<>();
 
         private Races(String namespace) {
             super("race", namespace);
@@ -60,6 +70,16 @@ public class AddonRegistries {
         @SideOnly(Side.CLIENT)
         public static IRaceRenderer getRenderer(Race race) {
             return getRenderer(race.display.rendererKey);
+        }
+
+        @SideOnly(Side.CLIENT)
+        public static void registerModelComponent(String key, IRaceModelComponent component) {
+            modelComponents.put(key, component);
+        }
+
+        @SideOnly(Side.CLIENT)
+        public static IRaceModelComponent getModelComponent(String key) {
+            return key == null ? null : modelComponents.get(key);
         }
     }
 

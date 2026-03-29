@@ -3,6 +3,7 @@ package kamkeel.npcdbc.client.model;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHJBRA;
+import kamkeel.npcdbc.AddonRegistries;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.client.ColorMode;
@@ -13,6 +14,7 @@ import kamkeel.npcdbc.client.model.part.DBCHorns;
 import kamkeel.npcdbc.client.model.part.DBCLeftArms;
 import kamkeel.npcdbc.client.model.part.DBCRightArms;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
+import kamkeel.npcdbc.client.race.IRaceModelComponent;
 import kamkeel.npcdbc.client.render.OverlayModelRenderer;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -24,9 +26,8 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.npc.KiWeaponData;
-import kamkeel.npcdbc.data.overlay.Overlay;
-import kamkeel.npcdbc.data.overlay.OverlayChain;
-import kamkeel.npcdbc.data.overlay.OverlayContext;
+import kamkeel.npcdbc.data.overlay.*;
+import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
@@ -473,6 +474,21 @@ public class ModelDBC extends ModelBase {
     public static List<OverlayChain> applyOverlayChains(List<OverlayChain> uniqueChains, OverlayContext ctx) {
         ArrayList<OverlayChain> chains = new ArrayList<>();
 
+        // ── Custom race DisplayChain base-skin injection ──────────────────
+        {
+            Race customRace = ctx.customRace();
+            if (customRace != null && customRace.display != null) {
+                String stateKey = (ctx.form() != null && !ctx.form().display.bodyType.isEmpty())
+                    ? ctx.form().display.bodyType
+                    : "base";
+               List<DisplayChain> raceChains = customRace.display.getChains(stateKey);
+                if (raceChains.isEmpty())
+                    raceChains = customRace.display.getBaseChains();
+                chains.addAll(raceChains);
+               // chains.add(raceChains.get(0));
+            }
+        }
+
         /*
             uniqueChains contains all entity-unique overlays.
             Whatever you add before the below addAll gets rendered below them all.
@@ -630,7 +646,22 @@ public class ModelDBC extends ModelBase {
                 GL11.glAlphaFunc(GL11.GL_GREATER, 0.001f);
 
                 ctx.glColor(ctx.color);
-                OverlayModelRenderer.render(type, ctx);
+                boolean handledByComponent = false;
+                if (overlay instanceof DisplayLayer) {
+                   DisplayLayer dl = (DisplayLayer) overlay;
+                    if (dl.componentKey != null) {
+                        IRaceModelComponent comp =
+                           AddonRegistries.Races.getModelComponent(dl.componentKey);
+                        if (comp != null && comp.appliesTo(ctx)) {
+                            comp.initialize(ctx.model);
+                            comp.render(ctx, dl);
+                        }
+                        handledByComponent = true;
+                    }
+                }
+                if (!handledByComponent) {
+                    OverlayModelRenderer.render(type, ctx);
+                }
 
                 /* ───────── Post-Rendering ───────── */
                 if (ctx.isNPC) {

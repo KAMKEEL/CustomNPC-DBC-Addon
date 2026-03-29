@@ -1,0 +1,19 @@
+package kamkeel.npcdbc.client.race;
+
+import JinRyuu.JBRA.ModelBipedDBC;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.data.overlay.DisplayLayer;
+import kamkeel.npcdbc.data.overlay.OverlayContext;
+
+@SideOnly(Side.CLIENT)
+public interface IRaceModelComponent {
+
+    void initialize(ModelBipedDBC model);
+
+    void render(OverlayContext ctx, DisplayLayer layer);
+
+    default boolean appliesTo(OverlayContext ctx) {
+        return true;
+    }
+}

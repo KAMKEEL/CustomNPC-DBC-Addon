@@ -387,7 +387,15 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         if (addonRace == null) return;
 
         IRaceRenderer renderer = AddonRegistries.Races.getRenderer(addonRace);
-        if (renderer == null) return;
+        if (renderer == null) {
+            npcdbc$customRaceOriginalRace = race.get();
+            race.set(addonRace.id > DBCRace.MAJIN ? addonRace.id : DBCRace.BIO_ANDROID);
+            npcdbc$customRaceBodyHandled = true;
+            npcdbc$customRaceBodySuppressed = true;
+            GL11.glPushMatrix();
+            GL11.glTranslatef(0.0F, 100000.0F, 0.0F);
+            return;
+        }
 
         double renderX = par1AbstractClientPlayer.lastTickPosX
             + (par1AbstractClientPlayer.posX - par1AbstractClientPlayer.lastTickPosX) * par2
@@ -402,16 +410,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         RaceRenderContext ctx = RaceRenderContext.from(data);
         ctx.model = this.modelMain;
         ctx.setRenderVars(renderX, renderY, renderZ, par1AbstractClientPlayer.rotationYaw, par2);
-        
-
-        if (renderer.render(ctx)) {
-            npcdbc$customRaceOriginalRace = race.get();
-            race.set(addonRace.id > DBCRace.MAJIN ? addonRace.id : DBCRace.BIO_ANDROID);
-            npcdbc$customRaceBodyHandled = true;
-            npcdbc$customRaceBodySuppressed = true;
-            GL11.glPushMatrix();
-            GL11.glTranslatef(0.0F, 100000.0F, 0.0F);
-        }
     }
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "CONSTANT", args = "stringValue=textures/misc/m.png"))
@@ -445,6 +443,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     private void renderOverlays(AbstractClientPlayer pl, float par2, CallbackInfo ci, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "eyes") LocalIntRef eyes, @Local(name = "gen") LocalIntRef gender) {
         //renderOverlays(DBCData.get(pl));
         OverlayContext ctx = OverlayContext.from(DBCData.get(pl));
+        ctx.model = modelMain;
         ctx.modelBiped = modelMain;
         ModelDBC.renderOverlays(ctx);
 

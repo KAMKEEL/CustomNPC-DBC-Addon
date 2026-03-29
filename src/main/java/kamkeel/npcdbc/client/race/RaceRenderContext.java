@@ -6,12 +6,13 @@ import kamkeel.npcdbc.client.DBCRenderContext;
 import kamkeel.npcdbc.constants.BodyLayer;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
-import kamkeel.npcdbc.data.race.display.DisplayComponent;
-import kamkeel.npcdbc.data.race.display.DisplayLayer;
 import kamkeel.npcdbc.data.race.display.RaceDisplay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.entity.EntityCustomNpc;
+
+import java.util.Collections;
+import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class RaceRenderContext extends DBCRenderContext {
@@ -51,10 +52,11 @@ public class RaceRenderContext extends DBCRenderContext {
      * @param componentId top-level component id (e.g. {@link RaceDisplay#COMPONENT_BODY})
      * @return a view over the component, or an empty no-op view if absent
      */
-    public ComponentColorView getComponent(String componentId) {
+    public ComponentColorView getComponent(String stateKey) {
         RaceDisplay display = race != null ? race.display : null;
-        DisplayComponent component = display != null ? display.getComponent(componentId) : null;
-        return new ComponentColorView(component);
+        List<kamkeel.npcdbc.data.overlay.DisplayChain> foundChains =
+            display != null ? display.getChains(stateKey) : Collections.emptyList();
+        return new ComponentColorView(foundChains);
     }
 
     // ── Color resolution (internal) ───────────────────────────────────────────
@@ -94,75 +96,48 @@ public class RaceRenderContext extends DBCRenderContext {
     // ══════════════════════════════════════════════════════════════════════════
 
     /**
-     * A thin view over a {@link DisplayComponent} that resolves layer colors
+     * A thin view over display chains that resolves layer colors
      * through the active BodyState override chain and the raw DBC fields.
      * <p>
      * Obtain via {@link RaceRenderContext#getComponent(String)}.
      */
     public final class ComponentColorView {
 
-        private final DisplayComponent component;
+        private final List<kamkeel.npcdbc.data.overlay.DisplayChain> chains;
 
-        ComponentColorView(DisplayComponent component) {
-            this.component = component;
+        ComponentColorView(List<kamkeel.npcdbc.data.overlay.DisplayChain> chains) {
+            this.chains = chains != null ? chains : Collections.emptyList();
         }
 
-        /**
-         * Returns the resolved color for the given layer id in this component.
-         * Checks that the layer exists in this component before resolving.
-         * Returns {@code 0} if the component is absent or the layer is not declared.
-         *
-         * @param layerId one of the {@link RaceDisplay} LAYER_* constants
-         */
+        private kamkeel.npcdbc.data.overlay.DisplayLayer findLayer(String slotId) {
+            String key = slotId.toLowerCase();
+            for (kamkeel.npcdbc.data.overlay.DisplayChain chain : chains) {
+                kamkeel.npcdbc.data.overlay.DisplayLayer dl = chain.getLayer(key);
+                if (dl != null) return dl;
+            }
+            return null;
+        }
+
         public int getColor(String layerId) {
-            if (component == null || !component.hasLayer(layerId)) return 0;
+            kamkeel.npcdbc.data.overlay.DisplayLayer layer = findLayer(layerId);
+            if (layer == null) return 0;
             return resolveColor(layerId);
         }
 
-        /**
-         * Returns whether this component declares the given layer id.
-         * Always {@code false} for a missing/null component.
-         */
         public boolean hasLayer(String layerId) {
-            return component != null && component.hasLayer(layerId);
+            return findLayer(layerId) != null;
         }
 
-        /**
-         * Returns the underlying {@link DisplayLayer} for the given id,
-         * or {@code null} if absent.
-         */
-        public DisplayLayer getLayer(String layerId) {
-            return component != null ? component.getLayer(layerId) : null;
+        public kamkeel.npcdbc.data.overlay.DisplayLayer getLayer(String layerId) {
+            return findLayer(layerId);
         }
 
-        /**
-         * Returns a view over the sub-component of this component.
-         * Example: {@code ctx.getComponent("face").getSubComponent().getColor("lefteye")}
-         *
-         * @return a view over the sub-component, or an empty view if none is set
-         */
         public ComponentColorView getSubComponent() {
-            DisplayComponent sub = component != null ? component.getSubComponent() : null;
-            return new ComponentColorView(sub);
+            return new ComponentColorView(Collections.emptyList());
         }
 
-        /**
-         * Returns a view over the sub-component by id.
-         * Checks that the sub-component's id matches before returning it.
-         * Returns an empty view if absent or id does not match.
-         *
-         * @param subComponentId the expected sub-component id
-         */
         public ComponentColorView getSubComponent(String subComponentId) {
-            if (component == null) return new ComponentColorView(null);
-            DisplayComponent sub = component.getSubComponent();
-            if (sub == null || !sub.id.equals(subComponentId.toLowerCase())) {
-                return new ComponentColorView(null);
-            }
-            return new ComponentColorView(sub);
+            return new ComponentColorView(Collections.emptyList());
         }
-
-        /** Returns the underlying {@link DisplayComponent}, or {@code null} if absent. */
-        public DisplayComponent getDisplayComponent() { return component; }
     }
 }

@@ -3,7 +3,6 @@ package kamkeel.npcdbc.data.race.helper;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.controllers.RaceController;
 import kamkeel.npcdbc.data.race.Race;
-import kamkeel.npcdbc.data.race.display.DisplayComponent;
 import kamkeel.npcdbc.data.race.display.RaceDisplay;
 
 import java.util.Arrays;

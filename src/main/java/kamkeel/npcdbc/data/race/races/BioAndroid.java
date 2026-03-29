@@ -1,24 +1,22 @@
 package kamkeel.npcdbc.data.race.races;
 
-import kamkeel.npcdbc.api.Color;
-
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumDBCClasses;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormKey;
 import kamkeel.npcdbc.data.race.Race;
-import kamkeel.npcdbc.data.race.builder.DisplayComponentBuilder;
 import kamkeel.npcdbc.data.race.builder.FormBuilder;
 import kamkeel.npcdbc.data.race.builder.FormTreeBuilder;
 import kamkeel.npcdbc.data.race.builder.RaceBuilder;
-import kamkeel.npcdbc.data.race.display.DisplayComponent;
-import kamkeel.npcdbc.data.race.display.RaceDisplay;
 import kamkeel.npcdbc.data.race.progression.FormTree;
+import kamkeel.npcdbc.data.race.races.bioandroid.BioAndroidLayers;
 import kamkeel.npcdbc.data.race.stats.RaceAttributeConfig;
 
 import static kamkeel.npcdbc.AddonRegistries.FORMS;
 import static kamkeel.npcdbc.AddonRegistries.RACES;
 import static kamkeel.npcdbc.constants.BodyLayer.*;
+import static kamkeel.npcdbc.data.race.races.bioandroid.BioAndroidLayers.*;
+
 public class BioAndroid {
 
     private static final String BIO_ANDROID_NS = "npcdbc:bio_android";
@@ -26,16 +24,18 @@ public class BioAndroid {
     public static void init() {
         // Triggers class loading — static fields below self-register into AddonRegistries.RACES.
     }
+
     // ════════════════════════════════════════════════════════════════
     // Forms
     // ════════════════════════════════════════════════════════════════
-    public static final String TYPE_SEMI_PERFECT ="semi_perfect", TYPE_PERFECT ="perfect";
-    
+
     public static final Form SEMI_PERFECT = FormBuilder.create(FormKey.of(BIO_ANDROID_NS, "semi_perfect"))
         .menuName("Semi-Perfect")
         .strengthMulti(2.0f).dexMulti(1.8f).willMulti(1.5f)
         .display()
-            .bodyType(TYPE_SEMI_PERFECT)
+            .bodyType(BioAndroidLayers.SEMI_PERFECT)
+            .color(EYE_LEFT, 0xDFEEEE)
+            .color(EYE_RIGHT, 0xDFEEEE)
             .and()
         .build(FORMS);
 
@@ -43,7 +43,9 @@ public class BioAndroid {
         .menuName("Perfect")
         .strengthMulti(4.0f).dexMulti(3.5f).willMulti(3.0f)
         .display()
-            .bodyType(TYPE_PERFECT)
+            .bodyType(BioAndroidLayers.PERFECT)
+            .color(EYE_LEFT, 0x9d0707)
+            .color(EYE_RIGHT, 0x9d0707)
             .color(BODY_C1, 0xd5dbd9)
             .color(BODY_C2, 0xd7c827)
             .color(BODY_C3, 0x6c2f7c)
@@ -55,7 +57,7 @@ public class BioAndroid {
         .menuName("Super Perfect")
         .strengthMulti(4.0f).dexMulti(3.5f).willMulti(3.0f)
         .display()
-            .bodyType(TYPE_PERFECT)
+            .bodyType(BioAndroidLayers.PERFECT)
             .color(BODY_C1, 0xd5dbd9)
             .color(BODY_C2, 0xd7c827)
             .color(BODY_C3, 0x6c2f7c)
@@ -68,7 +70,7 @@ public class BioAndroid {
         .menuName("Max")
         .strengthMulti(8.0f).dexMulti(7.0f).willMulti(6.0f)
         .display()
-            .bodyType(TYPE_SEMI_PERFECT)
+            .bodyType(BioAndroidLayers.MAX)
             .color(EYE_LEFT, 0xc86637)
             .color(EYE_RIGHT, 0xc86637)
             .color(BODY_CM, 0xc22023)
@@ -81,10 +83,10 @@ public class BioAndroid {
         .build(FORMS);
 
     public static final Form GOD = FormBuilder.create(FormKey.of(BIO_ANDROID_NS, "god"))
-        .menuName("God")       
+        .menuName("God")
         .strengthMulti(8.0f).dexMulti(7.0f).willMulti(6.0f)
         .display()
-            .bodyType(TYPE_PERFECT)
+            .bodyType(BioAndroidLayers.PERFECT)
             .color(EYE_LEFT, 0xE40426)
             .color(EYE_RIGHT, 0xE40426)
             .color(BODY_CM, 0xb50125)
@@ -103,100 +105,6 @@ public class BioAndroid {
         .branch(SEMI_PERFECT).child(PERFECT).child(SUPER_PERFECT)
         .branch(MAX)
         .branch(GOD)
-        .build();
-
-    // ════════════════════════════════════════════════════════════════
-    // Display
-    // ════════════════════════════════════════════════════════════════
-
-    public static final DisplayComponent BASE_FACE = DisplayComponentBuilder.create(RaceDisplay.COMPONENT_FACE)
-        .layer(EYEBASE)
-            .texture("imperfect/face/eye_base.png")
-            .color(0xFFFFFF, true)
-        .and()
-        .layer(EYE_LEFT)
-            .texture("imperfect/face/eye_left.png")
-        .and()
-        .layer(EYE_RIGHT)
-            .texture("imperfect/face/eye_right.png")
-        .and()
-        .layer(NOSE)
-            .texture("imperfect/face/nose.png")
-            .color(ctx -> new Color(ctx.bodyC2()))
-        .and()
-            .layer(MOUTH)
-            .texture("imperfect/face/mouth.png")
-            .color(ctx -> new Color(ctx.bodyC2()))
-        .and()
-        .build();
-
-    public static final DisplayComponent BASE_BODY = DisplayComponentBuilder.create(RaceDisplay.COMPONENT_BODY)
-        .layer(BODY_CM)
-            .texture("imperfect/bio_imperfect_0.png")
-            .color(0x568D32)
-            .and()
-        .layer(BODY_C1, "Body Layer 1")
-            .texture("imperfect/bio_imperfect_1.png")
-            .color(0xB7C913)
-            .and()
-        .layer(BODY_C2, "Body Layer 2")
-            .texture("imperfect/bio_imperfect_2.png")
-            .color(0xFCB054)
-            .and()
-        .layer(BODY_C3, "Body Layer 3")
-            .texture("imperfect/bio_imperfect_3.png")
-            .color(0x909CC4)
-            .and()
-        .layer(BODY_C4, "Body Layer 4")
-            .texture("imperfect/bio_imperfect_4.png")
-            .color(0xFFFFFF, true)
-            .and()
-        .build();
-
-    public static final DisplayComponent SEMI_PERFECT_FACE = DisplayComponentBuilder.create(RaceDisplay.COMPONENT_FACE)
-        .layer(EYEBASE)
-            .texture("semiperfect/face/eye_base.png")
-            .color(0xFFFFFF, true)
-            .and()
-        .layer(EYE_LEFT)
-            .texture("semiperfect/face/eye_left.png")
-            .color(0xDFEEEE)
-            .and()
-        .layer(EYE_RIGHT)
-            .texture("semiperfect/face/eye_right.png")
-            .color(0xDFEEEE)
-            .and()
-        .layer(NOSE)
-            .texture("semiperfect/face/nose.png")
-            .color(0xFFFFFF, true)
-            .and()
-        .layer(MOUTH)
-            .texture("semiperfect/face/mouth.png")
-            .color(0xFFE0FA, true)
-            .and()
-        .build();
-
-    public static final DisplayComponent SEMI_PERFECT_BODY = DisplayComponentBuilder.create(RaceDisplay.COMPONENT_BODY)
-        .layer(BODY_CM)
-            .texture("semiperfect/bio_semiperfect_0.png")
-            .color(0x568D32)
-            .and()
-        .layer(BODY_C1, "Body Layer 1")
-            .texture("semiperfect/bio_semiperfect_1.png")
-            .color(0xB7C913)
-            .and()
-        .layer(BODY_C2, "Body Layer 2")
-            .texture("semiperfect/bio_semiperfect_2.png")
-            .color(0xFCB054)
-            .and()
-        .layer(BODY_C3, "Body Layer 3")
-            .texture("semiperfect/bio_semiperfect_3.png")
-            .color(0x909CC4)
-            .and()
-        .layer(BODY_C4, "Body Layer 4")
-            .texture("semiperfect/bio_semiperfect_4.png")
-            .color(0xFFFFFF, true)
-            .and()
         .build();
 
     // ════════════════════════════════════════════════════════════════
@@ -241,7 +149,7 @@ public class BioAndroid {
         .and()
         .attributeConfig()
             .base()
-                .multi(1, 1, 1, 1,1, 1)
+                .multi(1, 1, 1, 1, 1, 1)
                 .flat(0, 0, 0, 0, 0, 0)
                 .and()
             .mystic()
@@ -260,10 +168,11 @@ public class BioAndroid {
                 .and()
             .and()
         .display()
-            .renderer("npcdbc:bio_android")
             .hairType("X")
-            .addComponent(BASE_FACE)
-            .addComponent(BASE_BODY)
+            .addChain(BASE_GROUP)
+            .addChain(SEMI_PERFECT_GROUP)
+            .addChain(PERFECT_GROUP)
+            .addChain(MAX_GROUP)
             .and()
         .build(RACES);
 }
