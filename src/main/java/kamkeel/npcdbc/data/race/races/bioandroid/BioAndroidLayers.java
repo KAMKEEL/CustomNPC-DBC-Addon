@@ -27,10 +27,10 @@ public class BioAndroidLayers {
             .colorType(ColorType.BodyC1).and()
         .add(Type.LeftEye, EYE_LEFT, "Left Eye")
             .texture("imperfect/face/eye_left.png")
-            .colorType(ColorType.Eye).and()
+            .colorType(ColorType.Eye).defaultColor(0x0).and()
         .add(Type.RightEye, EYE_RIGHT, "Right Eye")
             .texture("imperfect/face/eye_right.png")
-            .colorType(ColorType.Eye).and();
+            .colorType(ColorType.Eye).defaultColor(0x0).and();
 
     
     public static final DisplayChain BASE_BODY = DisplayChain.create(BASE)
