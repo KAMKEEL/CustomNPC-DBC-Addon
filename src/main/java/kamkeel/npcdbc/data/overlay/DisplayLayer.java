@@ -1,7 +1,6 @@
 package kamkeel.npcdbc.data.overlay;
 
 import kamkeel.npcdbc.api.Color;
-import kamkeel.npcdbc.api.client.overlay.IOverlay;
 import kamkeel.npcdbc.client.race.RaceRenderContext;
 import kamkeel.npcdbc.data.race.serial.DataCompound;
 import kamkeel.npcdbc.data.race.serial.DataSerializable;
@@ -16,9 +15,7 @@ import java.util.function.Function;
 
 public class DisplayLayer extends Overlay implements DataSerializable {
 
-    public String slotId = null;
     public String displayName = null;
-    public String componentKey = null;
     public boolean fixedColor = false;
     public boolean fixedTexture = false;
     private final List<String> textureVariants = new ArrayList<>();
@@ -29,18 +26,8 @@ public class DisplayLayer extends Overlay implements DataSerializable {
 
     // ── Fluent setters (DisplayLayer-specific) ────────────────────────────────
 
-    public DisplayLayer slotId(String slotId) {
-        this.slotId = slotId;
-        return this;
-    }
-
     public DisplayLayer displayName(String displayName) {
         this.displayName = displayName;
-        return this;
-    }
-
-    public DisplayLayer componentKey(String componentKey) {
-        this.componentKey = componentKey;
         return this;
     }
 
@@ -135,6 +122,18 @@ public class DisplayLayer extends Overlay implements DataSerializable {
         return this;
     }
 
+    @Override
+    public DisplayLayer modelKey(String modelKey) {
+        super.modelKey(modelKey);
+        return this;
+    }
+
+    @Override
+    public DisplayLayer key(String key) {
+        super.key(key);
+        return this;
+    }
+
     // ── and() — returns parent DisplayChain ───────────────────────────────────
 
     public DisplayChain and() {
@@ -220,9 +219,7 @@ public class DisplayLayer extends Overlay implements DataSerializable {
     public NBTTagCompound writeToNBT() {
         NBTTagCompound compound = super.writeToNBT();
 
-        if (slotId != null) compound.setString("slotId", slotId);
         if (displayName != null) compound.setString("displayName", displayName);
-        if (componentKey != null) compound.setString("componentKey", componentKey);
         compound.setBoolean("fixedColor", fixedColor);
         compound.setBoolean("fixedTexture", fixedTexture);
 
@@ -247,9 +244,8 @@ public class DisplayLayer extends Overlay implements DataSerializable {
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
 
-        slotId = compound.hasKey("slotId") ? compound.getString("slotId") : null;
+        if (compound.hasKey("slotId")) key = compound.getString("slotId");
         displayName = compound.hasKey("displayName") ? compound.getString("displayName") : null;
-        componentKey = compound.hasKey("componentKey") ? compound.getString("componentKey") : null;
         fixedColor = compound.getBoolean("fixedColor");
         fixedTexture = compound.getBoolean("fixedTexture");
 
@@ -271,9 +267,8 @@ public class DisplayLayer extends Overlay implements DataSerializable {
 
     @Override
     public DataCompound serialize(DataCompound data) {
-        if (slotId != null) data.putString("slotId", slotId);
+        if (key != null) data.putString("key", key);
         if (displayName != null) data.putString("displayName", displayName);
-        if (componentKey != null) data.putString("componentKey", componentKey);
         data.putString("defaultColor", Color.getColor(this.color));
         data.putBoolean("fixedColor", fixedColor);
         data.putBoolean("fixedTexture", fixedTexture);
@@ -294,9 +289,8 @@ public class DisplayLayer extends Overlay implements DataSerializable {
 
     @Override
     public void deserialize(DataCompound data) {
-        if (data.has("slotId")) slotId = data.getString("slotId", null);
+        if (data.has("slotId")) key = data.getString("slotId", null);
         if (data.has("displayName")) displayName = data.getString("displayName", null);
-        if (data.has("componentKey")) componentKey = data.getString("componentKey", null);
 
         if (data.has("defaultColor")) {
             String hex = data.getString("defaultColor", "ffffff");

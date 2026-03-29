@@ -11,6 +11,10 @@ public class BioAndroidLayers {
     // ── Body Types ─────────────────────────────────────────
 
     public static final String BASE = "base", SEMI_PERFECT = "semi_perfect", PERFECT = "perfect", MAX = "max";
+    
+    // ── Model components ─────────────────────────────────────────
+    public static final String CREST_MODEL = "npcdbc:bio_crest", WINGS_MODEL = "npcdbc:bio_wings";
+    public static final String TAIL_MODEL = "npcdbc:bio_tail", TAIL_MAX_MODEL = "npcdbc:bio_tail_max";
 
     // ════════════════════════════════════════════════════════════════
     // Display Chains
@@ -47,28 +51,30 @@ public class BioAndroidLayers {
             .texture("imperfect/bio_imperfect_3.png")
             .colorType(ColorType.BodyC3).defaultColor(0x909CC4).and()
         .add(Type.ALL, BODY_C4, "Body Layer 4")
-            .texture("imperfect/bio_imperfect_4.png")
-            .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true).and()
-       // ── Custom geometry - derives IRaceModelComponent ──────────────────────────────────────────────────
-        .add(Type.ALL, "crest", "Head Crest")
+             .texture("imperfect/bio_imperfect_4.png")
+             .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true).and()
+                                                             
+        // ── Custom geometry - uses IOverlayModel ──────────────────────────────────────────────────
+         .add(Type.Custom, "crest", "Head Crest").modelKey(CREST_MODEL)
             .texture("imperfect/bio_imperfect_crest.png")
-            .colorType(ColorType.BodyCM).componentKey("npcdbc:bio_crest").and()
-        .add(Type.ALL, "tail_static", "Tail Stinger")
-            .texture("imperfect/bio_imperfect_stinger.png")
-            .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true)
-            .componentKey("npcdbc:bio_tail").and()
-        .add(Type.ALL, "tail", "Tail Layer 0")
-            .texture("imperfect/bio_imperfect_tail_0.png")
             .colorType(ColorType.BodyCM)
-            .componentKey("npcdbc:bio_tail").and()
-        .add(Type.ALL, "tail_1", "Tail Layer 1")
-            .texture("imperfect/bio_imperfect_tail_1.png")
-            .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true)
-            .componentKey("npcdbc:bio_tail").slotId("tail").and()
-        .add(Type.ALL, "wings", "Wings")
+            .and()
+        .add(Type.Custom, "wings", "Wings").modelKey(WINGS_MODEL)
             .texture("imperfect/bio_imperfect_wings.png")
             .colorType(ColorType.BodyCM)
-            .componentKey("npcdbc:bio_wings").and();
+            .and()
+        .add(Type.Custom, "tail_static", "Tail Stinger").modelKey(TAIL_MODEL)
+            .texture("imperfect/bio_imperfect_stinger.png")
+            .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true)
+            .and()
+        .add(Type.Custom, "tail", "Tail Layer 0").modelKey(TAIL_MODEL)
+            .texture("imperfect/bio_imperfect_tail_0.png")
+            .colorType(ColorType.BodyCM)
+            .and()
+        .add(Type.Custom, "tail_1", "Tail Layer 1").modelKey(TAIL_MODEL)
+            .texture("imperfect/bio_imperfect_tail_1.png")
+            .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true)
+            .and();
 
     public static final DisplayChainGroup BASE_GROUP = DisplayChainGroup.of(BASE_BODY, BASE_FACE);
 
@@ -109,24 +115,25 @@ public class BioAndroidLayers {
             .texture("semiperfect/bio_semiperfect_3.png")
             .colorType(ColorType.BodyC3).defaultColor(0x909CC4).and()
         .add(Type.ALL, BODY_C4, "Body Layer 4")
-            .texture("semiperfect/bio_semiperfect_4.png")
-            .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true).and()
-       // ── Custom geometry - derives IRaceModelComponent ──────────────────────────────────────────────────
-        .add(Type.ALL, "crest", "Head Crest")
+             .texture("semiperfect/bio_semiperfect_4.png")
+             .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true).and()
+                                                                     
+        // ── Custom geometry - uses IOverlayModel ──────────────────────────────────────────────────
+         .add(Type.Custom, "crest", "Head Crest").modelKey(CREST_MODEL)
             .texture("semiperfect/bio_semiperfect_crest.png")
-            .colorType(ColorType.BodyCM).componentKey("npcdbc:bio_crest").and()
-        .add(Type.ALL, "tail_static", "Tail Stinger")
+            .colorType(ColorType.BodyCM).and()
+        .add(Type.Custom, "tail_static", "Tail Stinger").modelKey(TAIL_MODEL)
             .texture("semiperfect/bio_semiperfect_stinger.png")
             .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true)
-            .componentKey("npcdbc:bio_tail").and()
-        .add(Type.ALL, "tail", "Tail Layer 0")
+            .and()
+        .add(Type.Custom, "tail", "Tail Layer 0").modelKey(TAIL_MODEL)
             .texture("semiperfect/bio_semiperfect_tail_0.png")
             .colorType(ColorType.BodyC2)
-            .componentKey("npcdbc:bio_tail").and()
-        .add(Type.ALL, "tail_1", "Tail Layer 1")
+            .and()
+        .add(Type.Custom, "tail_1", "Tail Layer 1").modelKey(TAIL_MODEL)
             .texture("semiperfect/bio_semiperfect_tail_1.png")
             .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true)
-            .componentKey("npcdbc:bio_tail").slotId("tail").and();
+            .and();
 
     public static final DisplayChainGroup SEMI_PERFECT_GROUP = DisplayChainGroup.of(SEMI_PERFECT_BODY, SEMI_PERFECT_FACE);
 
@@ -167,16 +174,16 @@ public class BioAndroidLayers {
             .texture("perfect/bio_perfect_3.png")
             .colorType(ColorType.BodyC3).defaultColor(0x6c2f7c).and()
         .add(Type.ALL, BODY_C4, "Body Layer 4")
-            .texture("perfect/bio_perfect_4.png")
-            .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true).and()
-       // ── Custom geometry - derives IRaceModelComponent ──────────────────────────────────────────────────
-        .add(Type.ALL, "crest", "Head Crest")
+             .texture("perfect/bio_perfect_4.png")
+             .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true).and()
+                                                                
+        // ── Custom geometry - uses IOverlayModel ──────────────────────────────────────────────────
+         .add(Type.Custom, "crest", "Head Crest").modelKey(CREST_MODEL)
             .texture("perfect/bio_perfect_crest.png")
-            .colorType(ColorType.BodyCM).componentKey("npcdbc:bio_crest").and()
-        .add(Type.ALL, "wings", "Wings")
+            .colorType(ColorType.BodyCM).and()
+        .add(Type.Custom, "wings", "Wings").modelKey(WINGS_MODEL)
             .texture("perfect/bio_perfect_wings.png")
-            .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true)
-            .componentKey("npcdbc:bio_wings").and();
+            .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true).and();
 
     public static final DisplayChainGroup PERFECT_GROUP = DisplayChainGroup.of(PERFECT_BODY, PERFECT_FACE);
 
@@ -217,28 +224,30 @@ public class BioAndroidLayers {
             .texture("max/bio_max_3.png")
             .colorType(ColorType.BodyC3).defaultColor(0x701b58).and()
         .add(Type.ALL, BODY_C4, "Body Layer 4")
-            .texture("max/bio_max_4.png")
-            .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true).and()
-       // ── Custom geometry - derives IRaceModelComponent ──────────────────────────────────────────────────
-        .add(Type.ALL, "crest", "Head Crest")
+             .texture("max/bio_max_4.png")
+             .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true).and()
+                                                            
+        // ── Custom geometry - uses IOverlayModel ──────────────────────────────────────────────────
+         .add(Type.Custom, "crest", "Head Crest").modelKey(CREST_MODEL)
             .texture("max/bio_max_crest.png")
-            .colorType(ColorType.BodyCM).componentKey("npcdbc:bio_crest").and()
-        .add(Type.ALL, "tail_static", "Tail Stinger")
-            .texture("max/bio_max_stinger.png")
-            .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true)
-            .componentKey("npcdbc:bio_tail_max").and()
-        .add(Type.ALL, "tail", "Tail Layer 0")
-            .texture("max/bio_max_tail_0.png")
             .colorType(ColorType.BodyCM)
-            .componentKey("npcdbc:bio_tail_max").and()
-        .add(Type.ALL, "tail_1", "Tail Layer 1")
-            .texture("max/bio_max_tail_1.png")
-            .colorType(ColorType.BodyC1)
-            .componentKey("npcdbc:bio_tail_max").slotId("tail").and()
-        .add(Type.ALL, "wings", "Wings")
+            .and()
+        .add(Type.Custom, "wings", "Wings").modelKey(WINGS_MODEL)
             .texture("max/bio_max_wings.png")
             .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true)
-            .componentKey("npcdbc:bio_wings").and();
+            .and()
+        .add(Type.Custom, "tail_static", "Tail Stinger").modelKey(TAIL_MAX_MODEL)
+            .texture("max/bio_max_stinger.png")
+            .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true)
+            .and()
+        .add(Type.Custom, "tail", "Tail Layer 0").modelKey(TAIL_MAX_MODEL)
+            .texture("max/bio_max_tail_0.png")
+            .colorType(ColorType.BodyCM)
+            .and()
+        .add(Type.Custom, "tail_1", "Tail Layer 1").modelKey(TAIL_MAX_MODEL)
+            .texture("max/bio_max_tail_1.png")
+            .colorType(ColorType.BodyC1)
+            .and();
 
     public static final DisplayChainGroup MAX_GROUP = DisplayChainGroup.of(MAX_BODY, MAX_FACE);
 

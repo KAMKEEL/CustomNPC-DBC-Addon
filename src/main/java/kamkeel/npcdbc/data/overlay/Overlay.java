@@ -10,6 +10,7 @@ import noppes.npcs.controllers.data.JaninoScriptHandler;
 import java.util.function.Function;
 
 public class Overlay implements IOverlay {
+    public String key = null;
     public OverlayChain chain;
     public String texture = "";
     public ColorType colorType = ColorType.Custom;
@@ -18,6 +19,7 @@ public class Overlay implements IOverlay {
     public float alpha = 1;
     public boolean glow = false;
     public boolean enabled = true;
+    public String modelKey = null;
 
     public TextureFunction applyTexture;
     public ColorFunction applyColor;
@@ -32,6 +34,24 @@ public class Overlay implements IOverlay {
     public Overlay type(Type type) {
         this.type = type;
         return this;
+    }
+
+    public Overlay modelKey(String modelKey) {
+        this.modelKey = modelKey;
+        return this;
+    }
+
+    public String getModelKey() {
+        return modelKey;
+    }
+
+    public Overlay key(String key) {
+        this.key = key;
+        return this;
+    }
+
+    public String getKey() {
+        return key;
     }
 
     public Overlay texture(TextureFunction function) {
@@ -325,6 +345,7 @@ public class Overlay implements IOverlay {
     }
 
     public void readFromNBT(NBTTagCompound compound) {
+        key = compound.hasKey("key") ? compound.getString("key") : null;
         enabled = compound.getBoolean("enabled");
 
         texture = compound.getString("texture");
@@ -340,6 +361,7 @@ public class Overlay implements IOverlay {
 
         alpha = compound.hasKey("alpha") ? compound.getFloat("alpha") : 1;
         glow = compound.hasKey("glow") && compound.getBoolean("glow");
+        modelKey = compound.hasKey("modelKey") ? compound.getString("modelKey") : null;
 
         scriptHandler.readFromNBT(compound);
     }
@@ -347,6 +369,9 @@ public class Overlay implements IOverlay {
     public NBTTagCompound writeToNBT() {
         NBTTagCompound compound = new NBTTagCompound();
 
+        if (key != null)
+            compound.setString("key", key);
+        
         compound.setBoolean("enabled", enabled);
 
         compound.setInteger("colorType", colorType.ordinal());
@@ -357,6 +382,9 @@ public class Overlay implements IOverlay {
         compound.setFloat("alpha", alpha);
         compound.setBoolean("glow", glow);
 
+        if (modelKey != null)
+            compound.setString("modelKey", modelKey);
+        
         scriptHandler.writeToNBT(compound);
 
         return compound;

@@ -12,6 +12,7 @@ import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.RaceController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.race.Race;
+import kamkeel.npcdbc.data.race.races.bioandroid.BioAndroidLayers;
 import kamkeel.npcs.util.Register;
 
 import java.util.HashMap;
@@ -19,24 +20,21 @@ import java.util.Map;
 
 public class AddonRegistries {
 
-    public static final Races RACES = Races.create("npcdbc", "DBC Addon");
-    public static final Forms FORMS = Forms.create("npcdbc", "DBC Addon");
+    public static final Races RACES = Races.create(CustomNpcPlusDBC.ID, "DBC Addon");
+    public static final Forms FORMS = Forms.create(CustomNpcPlusDBC.ID, "DBC Addon");
 
     @SideOnly(Side.CLIENT)
     public static void registerClient() {
-        Races.registerModelComponent("npcdbc:bio_tail", new BioAndroidTailModel());
-        Races.registerModelComponent("npcdbc:bio_tail_max", new BioAndroidMaxTailModel());
-        Races.registerModelComponent("npcdbc:bio_wings", new BioAndroidWingsModel());
-        Races.registerModelComponent("npcdbc:bio_crest", new BioAndroidCrestModel());
+        OverlayModels.register(BioAndroidLayers.CREST_MODEL, new BioAndroidCrestModel());
+        OverlayModels.register(BioAndroidLayers.WINGS_MODEL, new BioAndroidWingsModel());
+        OverlayModels.register(BioAndroidLayers.TAIL_MODEL, new BioAndroidTailModel());
+        OverlayModels.register(BioAndroidLayers.TAIL_MAX_MODEL, new BioAndroidMaxTailModel());
     }
 
     public static class Races extends Register<Race> {
 
         @SideOnly(Side.CLIENT)
         private static final Map<String, IRaceRenderer> renderers = new HashMap<>();
-
-        @SideOnly(Side.CLIENT)
-        private static final Map<String, IOverlayModel> modelComponents = new HashMap<>();
 
         private Races(String namespace) {
             super("race", namespace);
@@ -74,12 +72,12 @@ public class AddonRegistries {
 
         @SideOnly(Side.CLIENT)
         public static void registerModelComponent(String key, IOverlayModel component) {
-            modelComponents.put(key, component);
+            OverlayModels.register(key, component);
         }
 
         @SideOnly(Side.CLIENT)
         public static IOverlayModel getModelComponent(String key) {
-            return key == null ? null : modelComponents.get(key);
+            return OverlayModels.get(key);
         }
     }
 
@@ -97,6 +95,22 @@ public class AddonRegistries {
         public Form register(Form form) {
             FormController.Instance.registerBuiltIn(form);
             return super.register(form.getName(), () -> form);
+        }
+    }
+
+    public static class OverlayModels {
+        private static final Map<String, IOverlayModel> models = new HashMap<>();
+        
+        public static void register(String key, IOverlayModel model) {
+            models.put(key, model);
+        }
+
+        public static IOverlayModel get(String key) {
+            return key == null ? null : models.get(key);
+        }
+
+        public static IOverlayModel remove(String key) {
+            return models.remove(key);
         }
     }
 }

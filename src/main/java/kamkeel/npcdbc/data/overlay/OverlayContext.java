@@ -38,8 +38,13 @@ public class OverlayContext extends DBCRenderContext implements IOverlayContext 
         return ctx;
     }
 
+    public String key(){
+        return overlay.getKey();
+    }
+    
     public boolean isArmType(IOverlay.Type type) {
-        return type == IOverlay.Type.ALL || type == IOverlay.Type.Arms || type == IOverlay.Type.RightArm || type == IOverlay.Type.LeftArm;
+        return type == IOverlay.Type.ALL|| type == IOverlay.Type.Custom
+                || type == IOverlay.Type.Arms || type == IOverlay.Type.RightArm || type == IOverlay.Type.LeftArm;
     }
     
     @Override

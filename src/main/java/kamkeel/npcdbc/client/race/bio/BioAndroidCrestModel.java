@@ -3,7 +3,6 @@ package kamkeel.npcdbc.client.race.bio;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.race.IOverlayModel;
-import kamkeel.npcdbc.data.overlay.DisplayLayer;
 import kamkeel.npcdbc.data.overlay.OverlayContext;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
@@ -58,11 +57,7 @@ public class BioAndroidCrestModel implements IOverlayModel {
     }
 
     @Override
-    public void render(OverlayContext ctx, DisplayLayer layer) {
-        float f = 0.0625F;
-
-        ctx.glColor(ctx.color);
-
+    public void render(OverlayContext ctx) {
         boolean baseForm = ctx.form() == null;
         biohead1I.isHidden = !baseForm;
         biohead2I.isHidden = !baseForm;
@@ -76,13 +71,13 @@ public class BioAndroidCrestModel implements IOverlayModel {
         GL11.glTranslatef(0, (f6 - 1.0F) * 1.5F, 0);
 
         ModelRenderer head = ctx.getBipedHead();
-        
-        bioheadRoot.rotateAngleY = head.rotateAngleY;
+
         bioheadRoot.rotateAngleX = head.rotateAngleX;
+        bioheadRoot.rotateAngleY = head.rotateAngleY;
         bioheadRoot.rotationPointX = head.rotationPointX;
         bioheadRoot.rotationPointY = head.rotationPointY;
 
-        bioheadRoot.render(f);
+        bioheadRoot.render(SCALE);
 
         GL11.glPopMatrix();
     }

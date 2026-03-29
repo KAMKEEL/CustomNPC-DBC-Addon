@@ -1,12 +1,11 @@
 package kamkeel.npcdbc.client.race.bio;
 
-import net.minecraft.client.model.ModelBiped;
 import JinRyuu.JBRA.mod_JBRA;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.race.IOverlayModel;
-import kamkeel.npcdbc.data.overlay.DisplayLayer;
 import kamkeel.npcdbc.data.overlay.OverlayContext;
+import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.util.MathHelper;
@@ -68,21 +67,18 @@ public class BioAndroidMaxTailModel implements IOverlayModel {
     }
 
     @Override
-    public void render(OverlayContext ctx, DisplayLayer layer) {
-        float f = 0.0625F;
-        boolean animate = !"tail_static".equals(layer.slotId);
-
-        ctx.glColor(ctx.color);
-
+    public void render(OverlayContext ctx) {
+        boolean animate =!"tail_static".equals(ctx.key());
+        
         GL11.glPushMatrix();
         float f6 = ctx.age();
         GL11.glScalef(1.0F / f6 * (ctx.gender() <= 1 ? 1.0F : 0.7F), 1.0F / f6, 1.0F / f6 * (ctx.gender() <= 1 ? 1.0F : 0.7F));
         GL11.glTranslatef(0, (f6 - 1.0F) * 1.5F, 0);
-        transRot(f, ctx.getBodyRenderer());
-        if (animate) {
+        transRot(SCALE, ctx.getBodyRenderer());
+        if (animate) 
             animateMaxTail(ctx.getAnimationTick());
-        }
-        bioTailMaxRoot.render(f);
+        
+        bioTailMaxRoot.render(SCALE);
         GL11.glPopMatrix();
     }
 

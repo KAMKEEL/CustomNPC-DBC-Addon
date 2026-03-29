@@ -37,7 +37,9 @@ public interface IOverlay {
         LeftArm(),
         Legs(),
         RightLeg(),
-        LeftLeg();
+        LeftLeg(),
+        
+        Custom;
 
         Supplier<Overlay> factory;
 

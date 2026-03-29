@@ -143,6 +143,20 @@ public class OverlayChain implements IOverlayChain {
         return null;
     }
 
+    public Overlay getOverlay(String key) {
+        if (key == null) return null;
+        String lower = key.toLowerCase();
+        for (Overlay o : overlays) {
+            if (o.key != null && o.key.toLowerCase().equals(lower))
+                return o;
+        }
+        return null;
+    }
+
+    public boolean hasOverlay(String key) {
+        return getOverlay(key) != null;
+    }
+
     public Overlay deleteOverlay(int id) {
         if (id >= this.overlays.size())
             return null;

@@ -75,17 +75,17 @@ public class RaceDisplay implements DataSerializable {
 
     // ── Layer convenience ──────────────────────────────────────────────────────
 
-    public DisplayLayer getLayer(String slotId) {
-        String key = slotId.toLowerCase();
+    public DisplayLayer getLayer(String key) {
+        String lower = key.toLowerCase();
         for (DisplayChainGroup group : groups.values()) {
-            DisplayLayer found = group.getLayer(key);
+            DisplayLayer found = group.getLayer(lower);
             if (found != null) return found;
         }
         return null;
     }
 
-    public boolean hasLayer(String slotId) {
-        return getLayer(slotId) != null;
+    public boolean hasLayer(String key) {
+        return getLayer(key) != null;
     }
 
     // ── Properties ─────────────────────────────────────────────────────────────

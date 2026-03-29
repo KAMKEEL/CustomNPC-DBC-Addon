@@ -649,23 +649,19 @@ public class ModelDBC extends ModelBase {
                 GL11.glAlphaFunc(GL11.GL_GREATER, 0.001f);
 
                 ctx.glColor(ctx.color);
+
                 boolean handledByComponent = false;
-                if (overlay instanceof DisplayLayer) {
-                   DisplayLayer dl = (DisplayLayer) overlay;
-                    if (dl.componentKey != null) {
-                        IOverlayModel comp = AddonRegistries.Races.getModelComponent(dl.componentKey);
-                        if (comp != null && comp.appliesTo(ctx)) {
-                            if (!ctx.isFirstPersonArm || comp.rendersInFirstPerson(ctx)) {
-                                comp.initialize(ctx);
-                                comp.render(ctx, dl);
-                            }
-                        }
+                IOverlayModel comp = AddonRegistries.OverlayModels.get(overlay.getModelKey());
+                if (comp != null && comp.appliesTo(ctx)) {
+                    if (!ctx.isFirstPersonArm || comp.rendersInFirstPerson(ctx)) {
+                        comp.initialize(ctx);
+                        comp.render(ctx);
                         handledByComponent = true;
                     }
                 }
-                if (!handledByComponent) {
+
+                if (!handledByComponent) 
                     OverlayModelRenderer.render(type, ctx);
-                }
 
                 /* ───────── Post-Rendering ───────── */
                 if (ctx.isNPC) {

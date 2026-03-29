@@ -3,7 +3,6 @@ package kamkeel.npcdbc.client.race.bio;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.race.IOverlayModel;
-import kamkeel.npcdbc.data.overlay.DisplayLayer;
 import kamkeel.npcdbc.data.overlay.OverlayContext;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
@@ -37,11 +36,7 @@ public class BioAndroidWingsModel implements IOverlayModel {
     }
 
     @Override
-    public void render(OverlayContext ctx, DisplayLayer layer) {
-        float f = 0.0625F;
-
-        ctx.glColor(ctx.color);
-
+    public void render(OverlayContext ctx) {
         GL11.glPushMatrix();
         float f6 = ctx.age();
         GL11.glScalef(1.0F / f6 * (ctx.gender() <= 1 ? 1.0F : 0.7F), 1.0F / f6,
@@ -55,13 +50,13 @@ public class BioAndroidWingsModel implements IOverlayModel {
         wing.rotateAngleX = Math.abs(leftArm.rotateAngleX / 7.0F) + body.rotateAngleX;
         wing.rotationPointX = body.rotationPointX;
         wing.rotationPointY = body.rotationPointY;
-        wing.render(f);
+        wing.render(SCALE);
 
         wing2.rotateAngleY = Math.abs(leftArm.rotateAngleY / 7.0F) + body.rotateAngleY;
         wing2.rotateAngleX = Math.abs(leftArm.rotateAngleX / 7.0F) + body.rotateAngleX;
         wing2.rotationPointX = body.rotationPointX;
         wing2.rotationPointY = body.rotationPointY;
-        wing2.render(f);
+        wing2.render(SCALE);
 
         GL11.glPopMatrix();
     }

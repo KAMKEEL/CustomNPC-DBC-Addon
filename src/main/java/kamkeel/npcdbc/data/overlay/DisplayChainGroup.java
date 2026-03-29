@@ -27,10 +27,10 @@ public class DisplayChainGroup {
         return Collections.unmodifiableList(chains);
     }
 
-    public DisplayLayer getLayer(String slotId) {
-        String key = slotId.toLowerCase();
+    public DisplayLayer getLayer(String key) {
+        String lower = key.toLowerCase();
         for (int i = chains.size() - 1; i >= 0; i--) {
-            DisplayLayer found = chains.get(i).getLayer(key);
+            DisplayLayer found = chains.get(i).getLayer(lower);
             if (found != null) return found;
         }
         return null;

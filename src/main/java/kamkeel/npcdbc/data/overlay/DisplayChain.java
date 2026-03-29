@@ -162,32 +162,32 @@ public class DisplayChain extends OverlayChain implements DataSerializable {
         return (DisplayLayer) add(type).colorType(IOverlay.ColorType.Custom).color(color).glow(glow).texture(texture);
     }
 
-    // ── DisplayChain-specific add() overloads with slotId ─────────────────────
+    // ── DisplayChain-specific add() overloads with key ────────────────────────
 
-    public DisplayLayer add(IOverlay.Type type, String slotId, String displayName) {
+    public DisplayLayer add(IOverlay.Type type, String key, String displayName) {
         DisplayLayer dl = add(type);
-        dl.slotId = slotId;
+        dl.key = key;
         dl.displayName = displayName;
         return dl;
     }
 
-    public DisplayLayer add(IOverlay.Type type, IOverlay.ColorType colorType, String slotId, String displayName) {
-        return add(type, slotId, displayName).colorType(colorType);
+    public DisplayLayer add(IOverlay.Type type, IOverlay.ColorType colorType, String key, String displayName) {
+        return add(type, key, displayName).colorType(colorType);
     }
 
-    public DisplayLayer add(IOverlay.Type type, IOverlay.ColorType colorType, String slotId, String displayName, String texture) {
-        return add(type, slotId, displayName).colorType(colorType).texture(texture);
+    public DisplayLayer add(IOverlay.Type type, IOverlay.ColorType colorType, String key, String displayName, String texture) {
+        return add(type, key, displayName).colorType(colorType).texture(texture);
     }
 
     // ── Layer lookup ──────────────────────────────────────────────────────────
 
-    public DisplayLayer getLayer(String slotId) {
-        if (slotId == null) return null;
-        String lower = slotId.toLowerCase();
+    public DisplayLayer getLayer(String key) {
+        if (key == null) return null;
+        String lower = key.toLowerCase();
         for (Overlay overlay : overlays) {
             if (overlay instanceof DisplayLayer) {
                 DisplayLayer dl = (DisplayLayer) overlay;
-                if (dl.slotId != null && dl.slotId.toLowerCase().equals(lower))
+                if (dl.key != null && dl.key.toLowerCase().equals(lower))
                     return dl;
             }
         }
