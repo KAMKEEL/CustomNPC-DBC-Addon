@@ -56,8 +56,21 @@ public class OverlayContext extends DBCRenderContext implements IOverlayContext 
 
     public Color color(IOverlay.ColorType type, IOverlay iOverlay) {
         Overlay o = (Overlay) iOverlay;
-        int col = type == Custom ? o.color : color(type.name());
+        int col;
+        if (type == Custom) {
+            col = o.color;
+        } else {
+            col = color(type.name());
+            if (isUnsetColor(col) && o instanceof DisplayLayer) {
+                int def = ((DisplayLayer) o).getDefaultColor();
+                if (!isUnsetColor(def)) col = def;
+            }
+        }
         return new Color(col, o.alpha);
+    }
+
+    private static boolean isUnsetColor(int col) {
+        return col == 0;
     }
 
     @Override
