@@ -4,7 +4,7 @@ import net.minecraft.client.model.ModelBiped;
 import JinRyuu.JBRA.mod_JBRA;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import kamkeel.npcdbc.client.race.IRaceModelComponent;
+import kamkeel.npcdbc.client.race.IOverlayModel;
 import kamkeel.npcdbc.data.overlay.DisplayLayer;
 import kamkeel.npcdbc.data.overlay.OverlayContext;
 import net.minecraft.client.model.ModelBox;
@@ -13,7 +13,7 @@ import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
-public class BioAndroidMaxTailComponent implements IRaceModelComponent {
+public class BioAndroidMaxTailModel implements IOverlayModel {
     private boolean initialized;
 
     private ModelRenderer bioTailMaxRoot;
@@ -86,39 +86,39 @@ public class BioAndroidMaxTailComponent implements IRaceModelComponent {
         GL11.glPopMatrix();
     }
 
-    private void animateMaxTail(float rot3) {
-        float r = MathHelper.sin(rot3 * 0.02F) * 0.1F;
-        float r2 = MathHelper.cos(rot3 * 0.02F) * 0.1F;
-        float r3 = MathHelper.cos(rot3 * 0.14F) * 0.1F;
+    private void animateMaxTail(float tick) {
+        float r = MathHelper.sin(tick * 0.02F) * 0.1F;
+        float r2 = MathHelper.cos(tick * 0.02F) * 0.1F;
+        float r3 = MathHelper.cos(tick * 0.14F) * 0.1F;
         boolean anim = mod_JBRA.a6P9H9B;
 
         btailS1M.rotateAngleY = 0.2F;
-        if (anim) btailS1M.rotateAngleY += MathHelper.cos(rot3 * 0.09F) * 0.2F - 0.2F + r;
+        if (anim) btailS1M.rotateAngleY += MathHelper.cos(tick * 0.09F) * 0.2F - 0.2F + r;
         btailS1M.rotateAngleX = -0.3F;
 
         btailS2M.rotateAngleY = 0.2F;
-        if (anim) btailS2M.rotateAngleY += MathHelper.cos(rot3 * 0.09F) * 0.2F - 0.2F + r2 + r3;
+        if (anim) btailS2M.rotateAngleY += MathHelper.cos(tick * 0.09F) * 0.2F - 0.2F + r2 + r3;
         btailS2M.rotateAngleX = 0.4F;
 
         btailS3M.rotateAngleY = 0.1F;
-        if (anim) btailS3M.rotateAngleY += MathHelper.cos(rot3 * 0.09F) * 0.1F - 0.1F + r + r3;
+        if (anim) btailS3M.rotateAngleY += MathHelper.cos(tick * 0.09F) * 0.1F - 0.1F + r + r3;
         btailS3M.rotateAngleX = 0.6F;
-        if (anim) btailS3M.rotateAngleX += MathHelper.sin(rot3 * 0.09F) * 0.4F + 0.3F;
+        if (anim) btailS3M.rotateAngleX += MathHelper.sin(tick * 0.09F) * 0.4F + 0.3F;
 
         btailS4M.rotateAngleY = 0.1F;
-        if (anim) btailS4M.rotateAngleY += MathHelper.cos(rot3 * 0.09F) * 0.4F - 0.1F + r2;
+        if (anim) btailS4M.rotateAngleY += MathHelper.cos(tick * 0.09F) * 0.4F - 0.1F + r2;
         btailS4M.rotateAngleX = 0.3F;
-        if (anim) btailS4M.rotateAngleX += MathHelper.sin(rot3 * 0.09F) * 0.1F - 0.2F;
+        if (anim) btailS4M.rotateAngleX += MathHelper.sin(tick * 0.09F) * 0.1F - 0.2F;
 
         btailS5M.rotateAngleY = 0.2F;
-        if (anim) btailS5M.rotateAngleY += MathHelper.cos(rot3 * 0.09F) * 0.4F - 0.2F + r + r3;
+        if (anim) btailS5M.rotateAngleY += MathHelper.cos(tick * 0.09F) * 0.4F - 0.2F + r + r3;
         btailS5M.rotateAngleX = -0.2F;
-        if (anim) btailS5M.rotateAngleX += MathHelper.sin(rot3 * 0.09F) * 0.1F - 0.3F;
+        if (anim) btailS5M.rotateAngleX += MathHelper.sin(tick * 0.09F) * 0.1F - 0.3F;
 
         btailS6M.rotateAngleY = 0.2F;
-        if (anim) btailS6M.rotateAngleY += MathHelper.cos(rot3 * 0.09F) * 0.4F - 0.2F + r + r3;
+        if (anim) btailS6M.rotateAngleY += MathHelper.cos(tick * 0.09F) * 0.4F - 0.2F + r + r3;
         btailS6M.rotateAngleX = -0.2F;
-        if (anim) btailS6M.rotateAngleX += MathHelper.sin(rot3 * 0.09F) * 0.1F - 0.3F;
+        if (anim) btailS6M.rotateAngleX += MathHelper.sin(tick * 0.09F) * 0.1F - 0.3F;
 
         btailS7M.rotateAngleY = btailS6M.rotateAngleY;
         btailS7M.rotateAngleX = btailS6M.rotateAngleX;

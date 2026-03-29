@@ -6,7 +6,7 @@ import kamkeel.npcdbc.data.overlay.DisplayLayer;
 import kamkeel.npcdbc.data.overlay.OverlayContext;
 
 @SideOnly(Side.CLIENT)
-public interface IRaceModelComponent {
+public interface IOverlayModel {
 
     void initialize(OverlayContext ctx);
 

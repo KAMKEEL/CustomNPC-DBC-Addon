@@ -2,7 +2,7 @@ package kamkeel.npcdbc.client.race.bio;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import kamkeel.npcdbc.client.race.IRaceModelComponent;
+import kamkeel.npcdbc.client.race.IOverlayModel;
 import kamkeel.npcdbc.data.overlay.DisplayLayer;
 import kamkeel.npcdbc.data.overlay.OverlayContext;
 import net.minecraft.client.model.ModelBiped;
@@ -10,7 +10,7 @@ import net.minecraft.client.model.ModelRenderer;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
-public class BioAndroidCrestComponent implements IRaceModelComponent {
+public class BioAndroidCrestModel implements IOverlayModel {
     private boolean initialized;
 
     private ModelRenderer bioheadRoot;

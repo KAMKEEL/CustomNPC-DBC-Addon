@@ -14,7 +14,7 @@ import kamkeel.npcdbc.client.model.part.DBCHorns;
 import kamkeel.npcdbc.client.model.part.DBCLeftArms;
 import kamkeel.npcdbc.client.model.part.DBCRightArms;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
-import kamkeel.npcdbc.client.race.IRaceModelComponent;
+import kamkeel.npcdbc.client.race.IOverlayModel;
 import kamkeel.npcdbc.client.render.OverlayModelRenderer;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -485,7 +485,7 @@ public class ModelDBC extends ModelBase {
                 if (raceChains.isEmpty())
                     raceChains = customRace.display.getBaseChains();
                 chains.addAll(raceChains);
-               // chains.add(raceChains.get(0));
+                //   chains.add(raceChains.get(1));
             }
         }
 
@@ -653,8 +653,7 @@ public class ModelDBC extends ModelBase {
                 if (overlay instanceof DisplayLayer) {
                    DisplayLayer dl = (DisplayLayer) overlay;
                     if (dl.componentKey != null) {
-                        IRaceModelComponent comp =
-                           AddonRegistries.Races.getModelComponent(dl.componentKey);
+                        IOverlayModel comp = AddonRegistries.Races.getModelComponent(dl.componentKey);
                         if (comp != null && comp.appliesTo(ctx)) {
                             if (!ctx.isFirstPersonArm || comp.rendersInFirstPerson(ctx)) {
                                 comp.initialize(ctx);
