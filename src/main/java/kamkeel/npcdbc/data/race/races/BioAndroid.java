@@ -93,6 +93,7 @@ public class BioAndroid {
             .color(BODY_C1, 0xd5dbd9)
             .color(BODY_C2, 0xd7c827)
             .color(BODY_C3, 0x6c2f7c)
+            .auraColor(0xFFC125)
             .customizable(true)
             .and()
         .build(FORMS);
