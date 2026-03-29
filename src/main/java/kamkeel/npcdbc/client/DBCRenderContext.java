@@ -182,10 +182,18 @@ public class DBCRenderContext {
         return raceName().toLowerCase().replaceAll("-", "");
     }
 
-    public int bodyType() {
+    public int bodyTypeDBC() {
         return isNPC ? display.bodyType : JRMCoreH.dnsBodyT(dbcData.DNS);
     }
-
+    
+    public String bodyType(){
+        return isNPC ? display.bodyType +"" : dbcData.getBodyType();
+    }
+    
+    public boolean bodyType(String type){
+        return type.equals(bodyType());
+    }
+    
     public int eyeType() {
         return isNPC ? display.eyeType : JRMCoreH.dnsEyes(dbcData.DNS);
     }

@@ -48,6 +48,14 @@ public interface IDBCDisplay {
 
     int getBodyType();
 
+    /**
+     * The bodyType for forms i.e "semi_perfect", "perfect", "second_form", "final_form"
+     * @return
+     */
+    String getBodyTypeString();
+
+    void setBodyTypeString(String bodyType);
+
     byte getTailState();
 
     /**

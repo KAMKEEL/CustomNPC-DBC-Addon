@@ -4,15 +4,38 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.DBCRenderContext;
 import kamkeel.npcdbc.constants.BodyLayer;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.race.display.DisplayComponent;
 import kamkeel.npcdbc.data.race.display.DisplayLayer;
 import kamkeel.npcdbc.data.race.display.RaceDisplay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
+import noppes.npcs.entity.EntityCustomNpc;
 
 @SideOnly(Side.CLIENT)
 public class RaceRenderContext extends DBCRenderContext {
-    
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // Creators
+    // ══════════════════════════════════════════════════════════════════════════
+
+    public static RaceRenderContext from(DBCDisplay display) {
+        RaceRenderContext ctx = new RaceRenderContext();
+        ctx.isNPC = true;
+        ctx.npc = (EntityCustomNpc) display.npc;
+        ctx.display = display;
+        return ctx;
+    }
+
+    public static RaceRenderContext from(DBCData dbcData) {
+        RaceRenderContext ctx = new RaceRenderContext();
+        ctx.isNPC = false;
+        ctx.player = dbcData.player;
+        ctx.dbcData = dbcData;
+        return ctx;
+    }
+
     // ── Component access ───────────────────────────────────────────────────────
 
     /**

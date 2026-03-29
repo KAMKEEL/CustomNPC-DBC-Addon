@@ -103,6 +103,9 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public boolean Alive, isKO;
     public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS = "", DNSHair = "", MajinAbsorptionData = "", Fusion = "";
 
+    // The string set for forms i.e "semi_perfect", "final_form"
+    public String bodyType = "";
+    
     // Custom Form / Custom Aura
     public String currentFormKey = null;
     public int auraID = -1, outlineID = -1;
@@ -225,6 +228,9 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         comp.setString("jrmcDNSH", DNSHair);
         comp.setString("jrmcMajinAbsorptionData", MajinAbsorptionData);
         comp.setString("jrmcFuzion", Fusion);
+
+        comp.setString("bodyType", bodyType);
+        
         // DBC Addon
         comp.setString("currentRaceKey", currentRaceKey != null ? currentRaceKey : "");
         comp.setString("currentFormKey", currentFormKey != null ? currentFormKey : "");
@@ -291,6 +297,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         DNSHair = c.getString("jrmcDNSH");
         MajinAbsorptionData = c.getString("jrmcMajinAbsorptionData");
         Fusion = c.getString("jrmcFuzion");
+        
+        bodyType = c.getString("bodyType");
 
         isFlying = c.getBoolean("DBCisFlying");
 
@@ -1324,9 +1332,9 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             case "hair":
                 return JRMCoreH.dnsHairC(DNS);
             case "eye":
-            case "left_eye":
+            case "lefteye":
                 return JRMCoreH.dnsEyeC1(DNS);
-            case "right_eye":
+            case "righteye":
                 return JRMCoreH.dnsEyeC2(DNS);
             case "bodycm":
                 return JRMCoreH.dnsBodyCM(DNS);
@@ -1343,6 +1351,20 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
                 return 0xDA152C; //ssj4 red
         }
         return -1;
+    }
+
+    public String getBodyType() {
+        Form form = getForm();
+        if (form != null) {
+            String type = form.display.getBodyType();
+            if (type != null && !type.isEmpty())
+                return type;
+        }
+        return bodyType;
+    }
+
+    public void setBodyType(String bodyType) {
+        getRawCompound().setString("bodyType", this.bodyType = bodyType);
     }
 
     public Set<FacePartData.Part> getDisabledFaceParts() {

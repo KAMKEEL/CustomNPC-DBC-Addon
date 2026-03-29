@@ -4,6 +4,9 @@ import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.api.client.overlay.IOverlay;
 import kamkeel.npcdbc.api.client.overlay.IOverlayContext;
 import kamkeel.npcdbc.client.DBCRenderContext;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.npc.DBCDisplay;
+import noppes.npcs.entity.EntityCustomNpc;
 
 import java.util.List;
 import java.util.Set;
@@ -18,6 +21,22 @@ public class OverlayContext extends DBCRenderContext implements IOverlayContext 
     public OverlayChain exceptFor;
     public String texture;
     public Color color;
+
+    public static OverlayContext from(DBCDisplay display) {
+        OverlayContext ctx = new OverlayContext();
+        ctx.isNPC = true;
+        ctx.npc = (EntityCustomNpc) display.npc;
+        ctx.display = display;
+        return ctx;
+    }
+
+    public static OverlayContext from(DBCData dbcData) {
+        OverlayContext ctx = new OverlayContext();
+        ctx.isNPC = false;
+        ctx.player = dbcData.player;
+        ctx.dbcData = dbcData;
+        return ctx;
+    }
 
     @Override
     public boolean typeDisabled(IOverlay.Type type) {

@@ -13,6 +13,18 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
+/**
+ * Note on breast-size slider (ID {@link #BUST_SLIDER}):
+ * <p>
+ * {@link JRMCoreGuiSlider01} fires {@code actionPerformed} on mouse-press only.
+ * During dragging, the slider updates its {@code sliderValue} internally in
+ * {@code mouseDragged} (called from {@code drawButton}), but no second
+ * {@code actionPerformed} fires on release. To keep the session state and
+ * preview in sync with continuous drag, {@link #drawPage} polls the slider
+ * value each frame while dragging is active and pushes updates through
+ * {@link #syncAndRefresh()}.
+ */
+
 public final class AppearancePage extends CreatorPage {
 
     // Button IDs — namespaced to avoid collision with nav buttons (900-902)
@@ -34,8 +46,10 @@ public final class AppearancePage extends CreatorPage {
     private static final int STATE_PREV = 125, STATE_NEXT = 126;
     private static final int BODYCOL_MAIN = 130, BODYCOL_SUB1 = 131, BODYCOL_SUB2 = 132, BODYCOL_SUB3 = 133;
     private static final int EYECOL1 = 134, EYECOL2 = 135;
+    private static final int BUST_SLIDER = 5001;
 
     private int guiLeft, guiTop;
+    private JRMCoreGuiSlider01 bustSlider;
 
     private int lastMouseX, lastMouseY;
     private final EntityPreviewRenderer previewRenderer = new EntityPreviewRenderer()
@@ -101,7 +115,14 @@ public final class AppearancePage extends CreatorPage {
         }
         row++;
 
-        // Breast size slider row (skip for now — placeholder row)
+        // Breast size slider (female only — matches vanilla JRMCoreGuiScreen behavior)
+        bustSlider = null;
+        if (session.gender == 1) {
+            bustSlider = new JRMCoreGuiSlider01(BUST_SLIDER,
+                labelCenterX - 25, guiTop + 4 + row * 10,
+                50, 10, "", (float) session.breastSize * 0.1F, 1.0F);
+            buttonList.add(bustSlider);
+        }
         row++;
 
         // Years
@@ -283,7 +304,14 @@ public final class AppearancePage extends CreatorPage {
         }
         row++;
 
-        // Breast size placeholder row
+        // Breast size — poll slider value each frame to handle dragging
+        if (bustSlider != null && bustSlider.dragging) {
+            int newSize = (int) (bustSlider.sliderValue * 10.0F);
+            if (newSize != session.breastSize) {
+                session.breastSize = newSize;
+                bridge.applyPreview();
+            }
+        }
         row++;
 
         // Years
@@ -360,6 +388,10 @@ public final class AppearancePage extends CreatorPage {
             case RACE_NEXT: cycleRace(true); return true;
             case RACE_PREV: cycleRace(false); return true;
             case GENDER_NEXT: case GENDER_PREV: cycleGender(); return true;
+            case BUST_SLIDER:
+                session.breastSize = (int) (((JRMCoreGuiSlider01) button).sliderValue * 10.0F);
+                syncAndRefresh();
+                return true;
             case HAIR_NEXT: cycleHair(true); return true;
             case HAIR_PREV: cycleHair(false); return true;
             case CUSTOM_HAIR_BTN: parent.openVanillaCustomHairEditor(); return true;
