@@ -43,24 +43,7 @@ public class RaceDisplay implements DataSerializable {
 
     // ── Constructor ────────────────────────────────────────────────────────────
 
-    public RaceDisplay() {
-        DisplayChain bodyChain = DisplayChain.create("base");
-        bodyChain.add(IOverlay.Type.ALL, BodyLayer.BODY_CM, "Body Main");
-        addChain(bodyChain);
-
-        DisplayChain faceChain = DisplayChain.create("base");
-        faceChain.add(IOverlay.Type.EyeWhite, BodyLayer.EYEBASE, "Eye Base");
-        faceChain.add(IOverlay.Type.Eyebrows, BodyLayer.EYEBROWS, "Eyebrows");
-        faceChain.add(IOverlay.Type.LeftEye, BodyLayer.EYE_LEFT, "Left Eye");
-        faceChain.add(IOverlay.Type.RightEye, BodyLayer.EYE_RIGHT, "Right Eye");
-        faceChain.add(IOverlay.Type.Nose, BodyLayer.NOSE, "Nose");
-        faceChain.add(IOverlay.Type.Mouth, BodyLayer.MOUTH, "Mouth");
-        addChain(faceChain);
-
-        DisplayChain hairChain = DisplayChain.create("base");
-        hairChain.add(IOverlay.Type.Face, BodyLayer.HAIR, "Hair");
-        addChain(hairChain);
-    }
+    public RaceDisplay() {}
 
     // ── Chain management ───────────────────────────────────────────────────────
 

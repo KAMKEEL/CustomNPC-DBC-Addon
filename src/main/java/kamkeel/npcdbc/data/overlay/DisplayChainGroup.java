@@ -29,8 +29,8 @@ public class DisplayChainGroup {
 
     public DisplayLayer getLayer(String slotId) {
         String key = slotId.toLowerCase();
-        for (DisplayChain chain : chains) {
-            DisplayLayer found = chain.getLayer(key);
+        for (int i = chains.size() - 1; i >= 0; i--) {
+            DisplayLayer found = chains.get(i).getLayer(key);
             if (found != null) return found;
         }
         return null;
