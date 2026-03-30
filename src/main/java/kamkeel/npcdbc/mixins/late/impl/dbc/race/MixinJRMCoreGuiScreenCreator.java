@@ -9,7 +9,7 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.race.helper.RaceSelectorHelper;
 import kamkeel.npcdbc.network.DBCPacketHandler;
-import kamkeel.npcdbc.network.packets.player.DBCRaceSelect;
+import kamkeel.npcdbc.network.packets.player.race.DBCSelectRace;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -303,7 +303,7 @@ public abstract class MixinJRMCoreGuiScreenCreator extends GuiScreen {
             RaceSlcted = 0;
         }
 
-        DBCPacketHandler.Instance.sendToServer(new DBCRaceSelect(currentRaceKey));
+        DBCPacketHandler.Instance.sendToServer(new DBCSelectRace(currentRaceKey));
         RaceSelectorHelper.clearPreviewRace();
         RaceSelectorHelper.setPreviewActive(false);
     }

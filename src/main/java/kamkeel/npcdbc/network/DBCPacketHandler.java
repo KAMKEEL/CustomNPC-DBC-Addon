@@ -104,7 +104,7 @@ public class DBCPacketHandler {
         PLAYER_PACKETS.registerPacket(new DBCToggleAbilityAction());
         PLAYER_PACKETS.registerPacket(new KiAttackColorSyncPacket());
         PLAYER_PACKETS.registerPacket(new DBCSetAllowFlight());
-        PLAYER_PACKETS.registerPacket(new DBCRaceSelect());
+        PLAYER_PACKETS.registerPacket(new DBCSelectRace());
         PLAYER_PACKETS.registerPacket(new DBCSelectFormBranch());
     }
 

@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.network.packets.player;
+package kamkeel.npcdbc.network.packets.player.race;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.RaceController;
@@ -27,17 +27,17 @@ import java.nio.charset.StandardCharsets;
  * An empty raceKey means the player selected a vanilla race and any
  * existing addon race should be cleared.
  */
-public final class DBCRaceSelect extends AbstractPacket {
+public final class DBCSelectRace extends AbstractPacket {
 
     private String raceKey;
 
     /** String-key constructor — preferred for new callers. */
-    public DBCRaceSelect(String raceKey) {
+    public DBCSelectRace(String raceKey) {
         this.raceKey = raceKey;
     }
 
     /** No-arg constructor — required for packet registration. */
-    public DBCRaceSelect() {
+    public DBCSelectRace() {
     }
 
     @Override
