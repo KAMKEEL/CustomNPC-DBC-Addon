@@ -3,11 +3,8 @@ package kamkeel.npcdbc.data.overlay;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.api.client.overlay.IOverlay;
 import kamkeel.npcdbc.config.ConfigDBCClient;
-import kamkeel.npcdbc.data.form.FacePartData;
 import kamkeel.npcdbc.data.race.serial.DataCompound;
 import kamkeel.npcdbc.data.race.serial.DataSerializable;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -194,54 +191,6 @@ public class DisplayChain extends OverlayChain implements DataSerializable {
         return null;
     }
 
-    // ── NBT serialization ─────────────────────────────────────────────────────
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        super.writeToNBT(compound);
-
-        compound.setString("stateKey", stateKey);
-        if (presetCount >= 0) compound.setInteger("presetCount", presetCount);
-        String resolved = resolveTextureDir();
-        if (!resolved.isEmpty()) compound.setString("textureDir", resolved);
-
-        return compound;
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        enabled = compound.getBoolean("hasOverlays");
-        overlays.clear();
-        NBTTagCompound rendering = compound.getCompoundTag("overlayData");
-
-        int i = 0;
-        while (rendering.hasKey("overlay" + i)) {
-            NBTTagCompound overlayCompound = rendering.getCompoundTag("overlay" + i);
-
-            int typeOrd = overlayCompound.hasKey("type", Constants.NBT.TAG_INT) ? overlayCompound.getInteger("type") : 0;
-            DisplayLayer dl = new DisplayLayer();
-            if (typeOrd < IOverlay.Type.values().length)
-                dl.type = IOverlay.Type.values()[typeOrd];
-            dl.chain = this;
-            dl.readFromNBT(overlayCompound);
-            overlays.add(dl);
-            i++;
-        }
-
-        if (compound.hasKey("disabledParts")) {
-            disabledParts.clear();
-            FacePartData.Part[] values = FacePartData.Part.values();
-            for (byte ordinal : compound.getByteArray("disabledParts")) {
-                if (ordinal >= 0 && ordinal < values.length)
-                    disabledParts.add(values[ordinal]);
-            }
-        }
-
-        if (compound.hasKey("stateKey")) stateKey = compound.getString("stateKey");
-        if (compound.hasKey("presetCount")) presetCount = compound.getInteger("presetCount");
-        if (compound.hasKey("textureDir")) textureDir(compound.getString("textureDir"));
-    }
-
     // ── DataSerializable ──────────────────────────────────────────────────────
 
     @Override
@@ -255,7 +204,7 @@ public class DisplayChain extends OverlayChain implements DataSerializable {
             Overlay overlay = overlays.get(i);
             if (overlay instanceof DisplayLayer) {
                 DataCompound layerData = data.child();
-                ((DisplayLayer) overlay).serialize(layerData);
+                overlay.serialize(layerData);
                 data.put("layer" + i, layerData);
             }
         }
@@ -265,14 +214,14 @@ public class DisplayChain extends OverlayChain implements DataSerializable {
 
     @Override
     public void deserialize(DataCompound data) {
-        if (data.has("stateKey")) stateKey = data.getString("stateKey", "base");
-        if (data.has("presetCount")) presetCount = data.getInt("presetCount", -1);
+        stateKey = data.getString("stateKey", stateKey);
+        presetCount = data.getInt("presetCount", presetCount);
         if (data.has("textureDir")) textureDir(data.getString("textureDir", ""));
 
         for (int i = 0; i < overlays.size(); i++) {
             Overlay overlay = overlays.get(i);
             if (overlay instanceof DisplayLayer && data.has("layer" + i)) {
-                ((DisplayLayer) overlay).deserialize(data.get("layer" + i));
+                overlay.deserialize(data.get("layer" + i));
             }
         }
     }

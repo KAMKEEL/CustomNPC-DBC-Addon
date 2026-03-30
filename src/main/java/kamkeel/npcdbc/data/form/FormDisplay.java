@@ -16,6 +16,7 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.overlay.Overlay;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
+import kamkeel.npcdbc.data.race.serial.DataCompound;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 import noppes.npcs.scripted.CustomNPCsException;
@@ -78,7 +79,7 @@ public class FormDisplay implements IFormDisplay {
         bodyType = rendering.getString("bodyType");
 
         bodyColors.readFromNBT(rendering);
-        overlays.readFromNBT(rendering);
+        overlays.deserialize(DataCompound.ofNbt(rendering));
         faceData.readFromNBT(rendering, false);
 
 
@@ -123,7 +124,7 @@ public class FormDisplay implements IFormDisplay {
         rendering.setString("bodyType", bodyType);
 
         bodyColors.writeToNBT(rendering);
-        overlays.writeToNBT(rendering);
+        overlays.serialize(DataCompound.ofNbt(rendering));
         faceData.writeToNBT(rendering, false);
 
         rendering.setBoolean("hasArcoMask", hasArcoMask);

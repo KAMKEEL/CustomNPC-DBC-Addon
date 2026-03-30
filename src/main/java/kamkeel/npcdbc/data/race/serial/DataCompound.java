@@ -171,6 +171,7 @@ public final class DataCompound {
     // ── Put methods ───────────────────────────────────────────────────────────
 
     public DataCompound putString(String key, String value) {
+        if(value == null) return this;
         if (yaml != null) yaml.put(key, value);
         nbt.setString(key, value);
         return this;

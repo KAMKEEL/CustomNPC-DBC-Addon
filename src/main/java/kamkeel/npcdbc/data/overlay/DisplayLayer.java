@@ -4,9 +4,6 @@ import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.client.race.RaceRenderContext;
 import kamkeel.npcdbc.data.race.serial.DataCompound;
 import kamkeel.npcdbc.data.race.serial.DataSerializable;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -213,69 +210,19 @@ public class DisplayLayer extends Overlay implements DataSerializable {
         return texture;
     }
 
-    // ── NBT serialization ─────────────────────────────────────────────────────
-
-    @Override
-    public NBTTagCompound writeToNBT() {
-        NBTTagCompound compound = super.writeToNBT();
-
-        if (displayName != null) compound.setString("displayName", displayName);
-        compound.setBoolean("fixedColor", fixedColor);
-        compound.setBoolean("fixedTexture", fixedTexture);
-
-        if (!textureVariants.isEmpty()) {
-            NBTTagList variantList = new NBTTagList();
-            for (String v : textureVariants)
-                variantList.appendTag(new NBTTagString(v));
-            compound.setTag("textureVariants", variantList);
-        }
-
-        if (!colorPresets.isEmpty()) {
-            int[] presetColors = new int[colorPresets.size()];
-            for (int i = 0; i < colorPresets.size(); i++)
-                presetColors[i] = colorPresets.get(i).color;
-            compound.setIntArray("colorPresets", presetColors);
-        }
-
-        return compound;
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
-
-        if (compound.hasKey("slotId")) key = compound.getString("slotId");
-        displayName = compound.hasKey("displayName") ? compound.getString("displayName") : null;
-        fixedColor = compound.getBoolean("fixedColor");
-        fixedTexture = compound.getBoolean("fixedTexture");
-
-        textureVariants.clear();
-        if (compound.hasKey("textureVariants")) {
-            NBTTagList variantList = compound.getTagList("textureVariants", 8);
-            for (int i = 0; i < variantList.tagCount(); i++)
-                textureVariants.add(variantList.getStringTagAt(i));
-        }
-
-        colorPresets.clear();
-        if (compound.hasKey("colorPresets")) {
-            for (int c : compound.getIntArray("colorPresets"))
-                colorPresets.add(new Color(c));
-        }
-    }
-
     // ── DataSerializable ──────────────────────────────────────────────────────
 
     @Override
     public DataCompound serialize(DataCompound data) {
-        if (key != null) data.putString("key", key);
-        if (displayName != null) data.putString("displayName", displayName);
+        data.putString("key", key);
+        data.putString("displayName", displayName);
         data.putString("defaultColor", Color.getColor(this.color));
         data.putBoolean("fixedColor", fixedColor);
         data.putBoolean("fixedTexture", fixedTexture);
 
-        if (!textureVariants.isEmpty()) {
+        if (!textureVariants.isEmpty()) 
             data.putStringList("textureVariants", textureVariants);
-        }
+
 
         if (!colorPresets.isEmpty()) {
             List<String> hexList = new ArrayList<>();
@@ -289,8 +236,8 @@ public class DisplayLayer extends Overlay implements DataSerializable {
 
     @Override
     public void deserialize(DataCompound data) {
-        if (data.has("slotId")) key = data.getString("slotId", null);
-        if (data.has("displayName")) displayName = data.getString("displayName", null);
+        key = data.getString("slotId", key);
+        displayName = data.getString("displayName", displayName);
 
         if (data.has("defaultColor")) {
             String hex = data.getString("defaultColor", "ffffff");
@@ -301,13 +248,13 @@ public class DisplayLayer extends Overlay implements DataSerializable {
             }
         }
 
-        if (data.has("fixedColor")) fixedColor = data.getBoolean("fixedColor", false);
-        if (data.has("fixedTexture")) fixedTexture = data.getBoolean("fixedTexture", false);
+        fixedColor = data.getBoolean("fixedColor", fixedColor);
+        fixedTexture = data.getBoolean("fixedTexture", fixedTexture);
 
         textureVariants.clear();
-        if (data.has("textureVariants")) {
+        if (data.has("textureVariants")) 
             textureVariants.addAll(data.getStringList("textureVariants"));
-        }
+
 
         colorPresets.clear();
         if (data.has("colorPresets")) {

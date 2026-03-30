@@ -5,6 +5,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.client.overlay.IOverlay;
 import kamkeel.npcdbc.api.client.overlay.IOverlayChain;
 import kamkeel.npcdbc.data.form.FacePartData;
+import kamkeel.npcdbc.data.race.serial.DataCompound;
+import kamkeel.npcdbc.data.race.serial.DataSerializable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 
@@ -14,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-public class OverlayChain implements IOverlayChain {
+public class OverlayChain implements IOverlayChain, DataSerializable {
 
     public final ArrayList<Overlay> overlays = new ArrayList<>();
 
@@ -220,53 +222,52 @@ public class OverlayChain implements IOverlayChain {
         return this;
     }
 
-    public void readFromNBT(NBTTagCompound compound) {
-        enabled = compound.getBoolean("hasOverlays");
+    @Override
+    public DataCompound serialize(DataCompound data) {
+        data.putBoolean("hasOverlays", enabled);
+
+        DataCompound rendering = data.child();
+        for (int i = 0; i < overlays.size(); i++)
+            rendering.put("overlay" + i, overlays.get(i));
+        data.put("overlayData", rendering);
+
+
+        if (!disabledParts.isEmpty()) {
+            int[] arr = new int[disabledParts.size()];
+            int i = 0;
+            for (FacePartData.Part t : disabledParts)
+                arr[i++] = t.ordinal();
+            data.putIntArray("disabledParts", arr);
+        }
+        return data;
+    }
+
+    @Override
+    public void deserialize(DataCompound data) {
+        enabled = data.getBoolean("hasOverlays", enabled);
         overlays.clear();
-        NBTTagCompound rendering = compound.getCompoundTag("overlayData");
-
+        DataCompound rendering = data.get("overlayData");
+        
         int i = 0;
-        while (rendering.hasKey("overlay" + i)) {
-            NBTTagCompound overlayCompound = rendering.getCompoundTag("overlay" + i);
-
-            int type = overlayCompound.hasKey("type", Constants.NBT.TAG_INT) ? overlayCompound.getInteger("type") : 0;
+        while (rendering.has("overlay" + i)) {
+            DataCompound overlayData = data.get("overlay" + i);
+            int type = overlayData.has("type") ? overlayData.getInt("type", 0) : 0;
             Overlay overlay = (Overlay) IOverlay.Type.create(type);
 
             if (overlay != null) {
-                overlay.readFromNBT(overlayCompound);
-                overlays.add(overlays.size(), overlay);
+                overlay.deserialize(overlayData);
+                overlays.add(overlay);
             }
             i++;
         }
 
-        if (compound.hasKey("disabledParts")) {
+        if (data.has("disabledParts")) {
             disabledParts.clear();
             FacePartData.Part[] values = FacePartData.Part.values();
-            for (byte ordinal : compound.getByteArray("disabledParts")) {
+            for (int ordinal :  data.getIntArray("disabledParts", new int[0])) {
                 if (ordinal >= 0 && ordinal < values.length)
                     disabledParts.add(values[ordinal]);
             }
         }
-    }
-
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        compound.setBoolean("hasOverlays", enabled);
-
-        NBTTagCompound rendering = new NBTTagCompound();
-
-        for (int i = 0; i < overlays.size(); i++) {
-            rendering.setTag("overlay" + i, overlays.get(i).writeToNBT());
-        }
-
-        if (!disabledParts.isEmpty()) {
-            byte[] arr = new byte[disabledParts.size()];
-            int i = 0;
-            for (FacePartData.Part t : disabledParts)
-                arr[i++] = (byte) t.ordinal();
-            compound.setByteArray("disabledParts", arr);
-        }
-
-        compound.setTag("overlayData", rendering);
-        return compound;
     }
 }

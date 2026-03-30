@@ -4,12 +4,13 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.api.client.overlay.IOverlay;
-import net.minecraft.nbt.NBTTagCompound;
+import kamkeel.npcdbc.data.race.serial.DataCompound;
+import kamkeel.npcdbc.data.race.serial.DataSerializable;
 import noppes.npcs.controllers.data.JaninoScriptHandler;
 
 import java.util.function.Function;
 
-public class Overlay implements IOverlay {
+public class Overlay implements IOverlay, DataSerializable {
     public String key = null;
     public OverlayChain chain;
     public String texture = "";
@@ -305,7 +306,7 @@ public class Overlay implements IOverlay {
     public Overlay convertTo(Type type) {
         if (type != this.type) {
             Overlay newO = ((Overlay) type.create());
-            newO.readFromNBT(this.writeToNBT());
+            newO.deserialize(this.serialize(DataCompound.create()));
             newO.type = type;
             return newO;
         }
@@ -344,49 +345,42 @@ public class Overlay implements IOverlay {
         return colorType(colorType);
     }
 
-    public void readFromNBT(NBTTagCompound compound) {
-        key = compound.hasKey("key") ? compound.getString("key") : null;
-        enabled = compound.getBoolean("enabled");
+    @Override
+    public DataCompound serialize(DataCompound data) {
+        data.putString("key", key);
+        data.putBoolean("enabled", enabled);
 
-        texture = compound.getString("texture");
+        data.putInt("colorType", colorType.ordinal());
+        data.putInt("type", type.ordinal());
 
-        colorType = ColorType.values()[compound.getInteger("colorType")];
-        type = Type.values()[compound.getInteger("type")];
+        data.putString("texture", texture);
+        data.putInt("color", color);
+        data.putFloat("alpha", alpha);
+        data.putBoolean("glow", glow);
 
-        if (colorType != ColorType.Custom) {
-            color = 0xffffff;
-        } else {
-            color = compound.hasKey("color") ? compound.getInteger("color") : 0xffffff;
-        }
+        data.putString("modelKey", modelKey);
 
-        alpha = compound.hasKey("alpha") ? compound.getFloat("alpha") : 1;
-        glow = compound.hasKey("glow") && compound.getBoolean("glow");
-        modelKey = compound.hasKey("modelKey") ? compound.getString("modelKey") : null;
+        scriptHandler.writeToNBT(data.toNbt());
 
-        scriptHandler.readFromNBT(compound);
+        return data;
     }
 
-    public NBTTagCompound writeToNBT() {
-        NBTTagCompound compound = new NBTTagCompound();
+    @Override
+    public void deserialize(DataCompound data) {
+        key = data.getString("key", key);
+        enabled = data.getBoolean("enabled", enabled);
 
-        if (key != null)
-            compound.setString("key", key);
-        
-        compound.setBoolean("enabled", enabled);
+        texture = data.getString("texture", texture);
 
-        compound.setInteger("colorType", colorType.ordinal());
-        compound.setInteger("type", type.ordinal());
+        colorType = ColorType.values()[data.getInt("colorType", colorType.ordinal())];
+        type = Type.values()[data.getInt("type", type.ordinal())];
 
-        compound.setString("texture", texture);
-        compound.setInteger("color", color);
-        compound.setFloat("alpha", alpha);
-        compound.setBoolean("glow", glow);
+        color = data.getInt("color", color);
 
-        if (modelKey != null)
-            compound.setString("modelKey", modelKey);
-        
-        scriptHandler.writeToNBT(compound);
+        alpha = data.getFloat("alpha", alpha);
+        glow = data.getBoolean("glow", glow);
+        modelKey = data.getString("modelKey", modelKey);
 
-        return compound;
+        scriptHandler.readFromNBT(data.toNbt());
     }
 }
