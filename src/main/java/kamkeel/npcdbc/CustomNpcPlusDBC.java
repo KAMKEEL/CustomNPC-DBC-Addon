@@ -20,6 +20,7 @@ import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.BonusController;
 import kamkeel.npcdbc.controllers.CapsuleController;
 import kamkeel.npcdbc.controllers.DBCEffectController;
+import kamkeel.npcdbc.controllers.DBCSyncController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.controllers.RaceController;
@@ -128,6 +129,7 @@ public class CustomNpcPlusDBC {
         OutlineController.getInstance().load();
         SkillController.Instance.load();
         RaceController.getInstance().load();
+        DBCSyncController.load();
     }
 
     @Mod.EventHandler

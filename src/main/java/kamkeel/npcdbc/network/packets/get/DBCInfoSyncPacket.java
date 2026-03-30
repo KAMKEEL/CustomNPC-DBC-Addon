@@ -102,7 +102,7 @@ public final class DBCInfoSyncPacket extends LargeAbstractPacket {
                 DBCSyncController.clientSyncUpdate(syncType, data);
                 break;
             case REMOVE:
-                DBCSyncController.clientSyncRemove(syncType, id);
+                DBCSyncController.clientSyncRemove(syncType, id, data);
                 break;
         }
     }
