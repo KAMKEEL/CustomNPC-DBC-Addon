@@ -10,15 +10,23 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class ConfigManager<T extends DataSerializable> {
 
-    private final String subdirectory;
+    private String subdirectory;
     private final Function<T, String> nameExtractor;
 
-    public ConfigManager(String subdirectory, Function<T, String> fileNameExtractor) {
-        this.subdirectory  = subdirectory;
+    private Supplier<String> directory;
+
+    public ConfigManager(Supplier<String> directory, String subdirectory, Function<T, String> fileNameExtractor) {
+        this.directory = directory;
+        this.subdirectory = subdirectory;
         this.nameExtractor = fileNameExtractor;
+    }
+    
+    public ConfigManager(String subdirectory, Function<T, String> fileNameExtractor) {
+        this(null, subdirectory, fileNameExtractor);
     }
 
     public void loadOrCreate(T target) {
@@ -63,6 +71,10 @@ public class ConfigManager<T extends DataSerializable> {
     }
 
     private File getConfigFile(T target) {
-        return new File(CustomNpcs.getWorldSaveDirectory(), subdirectory + "/" + nameExtractor.apply(target) + ".yml");
+        return new File(getConfigDirectory(), subdirectory + "/" + nameExtractor.apply(target) + ".yml");
+    }
+
+    private File getConfigDirectory() {
+        return directory != null ? new File(directory.get()) : CustomNpcs.getWorldSaveDirectory();
     }
 }

@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.controllers;
 
+import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.race.helper.RaceSelectorHelper;
 import kamkeel.npcdbc.data.race.serial.ConfigManager;
@@ -16,8 +17,9 @@ public class RaceController {
 
     private final Map<String, Race> races = new HashMap<>();
     private final List<Race> raceOrder = new ArrayList<>();
-    private final ConfigManager<Race> configManager = new ConfigManager<>("races", Race::getName);
-
+    
+    private final ConfigManager<Race> configManager = new ConfigManager<>(() -> CustomNpcPlusDBC.addonConfig, "races", Race::getName);
+    
     public RaceController() {
         Instance = this;
     }
