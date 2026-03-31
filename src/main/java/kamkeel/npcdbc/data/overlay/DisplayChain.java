@@ -3,6 +3,7 @@ package kamkeel.npcdbc.data.overlay;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.api.client.overlay.IOverlay;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.data.form.FacePartData;
 import kamkeel.npcdbc.data.race.serial.DataCompound;
 import kamkeel.npcdbc.data.race.serial.DataSerializable;
 
@@ -195,10 +196,20 @@ public class DisplayChain extends OverlayChain implements DataSerializable {
 
     @Override
     public DataCompound serialize(DataCompound data) {
+        data.putBoolean("hasOverlays", enabled);
+        data.putString("name", name);
         data.putString("stateKey", stateKey);
         if (presetCount >= 0) data.putInt("presetCount", presetCount);
         String resolved = resolveTextureDir();
         if (!resolved.isEmpty()) data.putString("textureDir", resolved);
+
+        if (!disabledParts.isEmpty()) {
+            int[] arr = new int[disabledParts.size()];
+            int j = 0;
+            for (FacePartData.Part t : disabledParts)
+                arr[j++] = t.ordinal();
+            data.putIntArray("disabledParts", arr);
+        }
 
         for (int i = 0; i < overlays.size(); i++) {
             Overlay overlay = overlays.get(i);
@@ -214,14 +225,36 @@ public class DisplayChain extends OverlayChain implements DataSerializable {
 
     @Override
     public void deserialize(DataCompound data) {
+        enabled = data.getBoolean("hasOverlays", enabled);
+        name = data.getString("name", name);
         stateKey = data.getString("stateKey", stateKey);
         presetCount = data.getInt("presetCount", presetCount);
         if (data.has("textureDir")) textureDir(data.getString("textureDir", ""));
 
-        for (int i = 0; i < overlays.size(); i++) {
-            Overlay overlay = overlays.get(i);
-            if (overlay instanceof DisplayLayer && data.has("layer" + i)) {
-                overlay.deserialize(data.get("layer" + i));
+        if (data.has("disabledParts")) {
+            disabledParts.clear();
+            FacePartData.Part[] values = FacePartData.Part.values();
+            for (int ordinal : data.getIntArray("disabledParts", new int[0])) {
+                if (ordinal >= 0 && ordinal < values.length)
+                    disabledParts.add(values[ordinal]);
+            }
+        }
+
+        if (overlays.isEmpty()) {
+            int i = 0;
+            while (data.has("layer" + i)) {
+                DisplayLayer dl = new DisplayLayer();
+                dl.chain = this;
+                dl.deserialize(data.get("layer" + i));
+                overlays.add(dl);
+                i++;
+            }
+        } else {
+            for (int i = 0; i < overlays.size(); i++) {
+                Overlay overlay = overlays.get(i);
+                if (overlay instanceof DisplayLayer && data.has("layer" + i)) {
+                    overlay.deserialize(data.get("layer" + i));
+                }
             }
         }
     }

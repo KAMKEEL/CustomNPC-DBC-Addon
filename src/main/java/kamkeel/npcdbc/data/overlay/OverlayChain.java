@@ -250,7 +250,7 @@ public class OverlayChain implements IOverlayChain, DataSerializable {
         
         int i = 0;
         while (rendering.has("overlay" + i)) {
-            DataCompound overlayData = data.get("overlay" + i);
+            DataCompound overlayData = rendering.get("overlay" + i);
             int type = overlayData.has("type") ? overlayData.getInt("type", 0) : 0;
             Overlay overlay = (Overlay) IOverlay.Type.create(type);
 

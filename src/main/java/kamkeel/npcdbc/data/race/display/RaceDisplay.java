@@ -265,6 +265,7 @@ public class RaceDisplay implements DataSerializable {
 
     @Override
     public DataCompound serialize(DataCompound data) {
+        data.putString("rendererKey", rendererKey);
         data.putInt("genderCount", genderCount);
         data.putString("hairType", hairType);
         data.putString("allowedPowerTypes", allowedPowerTypes);
@@ -287,24 +288,34 @@ public class RaceDisplay implements DataSerializable {
 
     @Override
     public void deserialize(DataCompound data) {
-        if (data.has("genderCount"))       setGenderCount(data.getInt("genderCount", genderCount));
-        if (data.has("hairType"))          setHairType(data.getString("hairType", hairType));
-        if (data.has("allowedPowerTypes")) setAllowedPowerTypes(data.getString("allowedPowerTypes", allowedPowerTypes));
-        if (data.has("customSkinMode"))    setCustomSkinMode(data.getInt("customSkinMode", customSkinMode));
-        if (data.has("raceAllow"))         setRaceAllow(data.getString("raceAllow", raceAllow));
+        rendererKey = data.getString("rendererKey", rendererKey);
+        setGenderCount(data.getInt("genderCount", genderCount));
+        setHairType(data.getString("hairType", hairType));
+        setAllowedPowerTypes(data.getString("allowedPowerTypes", allowedPowerTypes));
+        setCustomSkinMode(data.getInt("customSkinMode", customSkinMode));
+        setRaceAllow(data.getString("raceAllow", raceAllow));
         if (data.has("skinLimits")) {
             int[] limits = data.getIntArray("skinLimits", skinLimits);
             if (limits.length == 6) setSkinLimits(limits[0], limits[1], limits[2], limits[3], limits[4], limits[5]);
         }
 
         if (data.has("chainCount")) {
-            groups.clear();
             int count = data.getInt("chainCount", 0);
-            for (int i = 0; i < count; i++) {
-                if (data.has("chain_" + i)) {
-                    DisplayChain chain = new DisplayChain();
-                    chain.deserialize(data.get("chain_" + i));
-                    addChain(chain);
+            if (groups.isEmpty()) {
+                for (int i = 0; i < count; i++) {
+                    if (data.has("chain_" + i)) {
+                        DisplayChain chain = new DisplayChain();
+                        chain.deserialize(data.get("chain_" + i));
+                        addChain(chain);
+                    }
+                }
+            } else {
+                List<DisplayChain> flat = new ArrayList<>();
+                for (DisplayChainGroup g : groups.values())
+                    flat.addAll(g.getChains());
+                for (int i = 0; i < count && i < flat.size(); i++) {
+                    if (data.has("chain_" + i))
+                        flat.get(i).deserialize(data.get("chain_" + i));
                 }
             }
         }

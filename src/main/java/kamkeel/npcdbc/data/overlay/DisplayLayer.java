@@ -214,15 +214,15 @@ public class DisplayLayer extends Overlay implements DataSerializable {
 
     @Override
     public DataCompound serialize(DataCompound data) {
-        data.putString("key", key);
+        super.serialize(data);
+        
         data.putString("displayName", displayName);
         data.putString("defaultColor", Color.getColor(this.color));
         data.putBoolean("fixedColor", fixedColor);
         data.putBoolean("fixedTexture", fixedTexture);
 
-        if (!textureVariants.isEmpty()) 
+        if (!textureVariants.isEmpty())
             data.putStringList("textureVariants", textureVariants);
-
 
         if (!colorPresets.isEmpty()) {
             List<String> hexList = new ArrayList<>();
@@ -236,8 +236,9 @@ public class DisplayLayer extends Overlay implements DataSerializable {
 
     @Override
     public void deserialize(DataCompound data) {
-        key = data.getString("slotId", key);
-        displayName = data.getString("displayName", displayName);
+        super.deserialize(data);
+
+       displayName = data.getString("displayName", displayName);
 
         if (data.has("defaultColor")) {
             String hex = data.getString("defaultColor", "ffffff");
@@ -252,9 +253,8 @@ public class DisplayLayer extends Overlay implements DataSerializable {
         fixedTexture = data.getBoolean("fixedTexture", fixedTexture);
 
         textureVariants.clear();
-        if (data.has("textureVariants")) 
+        if (data.has("textureVariants"))
             textureVariants.addAll(data.getStringList("textureVariants"));
-
 
         colorPresets.clear();
         if (data.has("colorPresets")) {

@@ -319,12 +319,18 @@ public class RaceSkill implements DataSerializable {
 
     @Override
     public DataCompound serialize(DataCompound data) {
-        data.comment("Racial skill config. Level keys are integer skill level numbers.");
+        data.comment("Racial skill config. Level entries are stored as levelEntry_N nodes.");
         data.putInt("maxLevel", maxLevel);
         data.putString("displayName", displayName);
         data.putString("description", description);
-        for (Map.Entry<Integer, LevelEntry> entry : levelEntries.entrySet())
-            data.put(String.valueOf(entry.getKey()), entry.getValue());
+        int i = 0;
+        for (Map.Entry<Integer, LevelEntry> entry : levelEntries.entrySet()) {
+            DataCompound entryData = data.child();
+            entryData.putInt("level", entry.getKey());
+            entryData.put("entry", entry.getValue());
+            data.put("levelEntry_" + i, entryData);
+            i++;
+        }
         return data;
     }
 
@@ -332,7 +338,23 @@ public class RaceSkill implements DataSerializable {
     public void deserialize(DataCompound data) {
         setDisplayName(data.getString("displayName", displayName));
         setDescription(data.getString("description", description));
-        for (Map.Entry<Integer, LevelEntry> entry : levelEntries.entrySet())
-            data.put(String.valueOf(entry.getKey()), entry.getValue());
+        int i = 0;
+        while (data.has("levelEntry_" + i)) {
+            DataCompound entryData = data.get("levelEntry_" + i);
+            int level = entryData.getInt("level", -1);
+            if (level < 0) {
+                i++;
+                continue;
+            }
+
+            DataCompound payload = entryData.get("entry");
+            LevelEntry entry = levelEntries.get(level);
+            if (entry == null) {
+                entry = new LevelEntry(level, null, 0, 0);
+                levelEntries.put(level, entry);
+            }
+            entry.deserialize(payload);
+            i++;
+        }
     }
 }

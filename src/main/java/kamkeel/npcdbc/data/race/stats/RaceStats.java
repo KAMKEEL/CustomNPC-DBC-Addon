@@ -52,7 +52,14 @@ public class RaceStats implements DataSerializable {
 
     @Override
     public void deserialize(DataCompound data) {
-        for (Map.Entry<EnumDBCClasses, ClassStats> entry : classes.entrySet())
-            data.deserialize(entry.getKey(), entry.getValue());
+        for (EnumDBCClasses raceClass : EnumDBCClasses.values()) {
+            if (!data.has(raceClass.name())) continue;
+            ClassStats stats = classes.get(raceClass);
+            if (stats == null) {
+                stats = ClassStats.defaults();
+                classes.put(raceClass, stats);
+            }
+            data.deserialize(raceClass, stats);
+        }
     }
 }
