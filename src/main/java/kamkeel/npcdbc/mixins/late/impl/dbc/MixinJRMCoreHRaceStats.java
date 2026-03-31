@@ -1,6 +1,8 @@
 package kamkeel.npcdbc.mixins.late.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreH;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.constants.enums.EnumDBCClasses;
 import kamkeel.npcdbc.controllers.RaceController;
 import kamkeel.npcdbc.data.race.Race;
@@ -98,7 +100,7 @@ public class MixinJRMCoreHRaceStats {
     )
     private static void npcdbc$injectCustomRaceStartAttributes(
         int powerType, int attribute, int race, int classID,
-        CallbackInfoReturnable<Integer> cir
+        CallbackInfoReturnable<Integer> cir, @Local(ordinal = 2) LocalIntRef raceParam 
     ) {
         if (powerType != 1) return;
 
@@ -106,7 +108,10 @@ public class MixinJRMCoreHRaceStats {
         if (customRace == null) return;
 
         ClassStats stats = customRace.stats.get(classID);
-        if (stats == null) return;
+        if (stats == null) {
+            raceParam.set(0); // IndexOutOfBounds when ClassStats is null  
+            return;
+        }
 
         cir.setReturnValue(RaceStatCalculator.getInitialAttribute(stats, attribute));
     }
