@@ -2,17 +2,19 @@ package kamkeel.npcdbc.controllers.sync;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.constants.DBCSyncType;
+import kamkeel.npcs.controllers.sync.SyncHandler;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * Contract for a DBC addon synchronized data type. Mirrors
- * {@link kamkeel.npcs.controllers.sync.SyncHandler} but works
- * with {@code int}-based {@link kamkeel.npcdbc.constants.DBCSyncType}
+ * {@link SyncHandler} but works
+ * with {@code int}-based {@link DBCSyncType}
  * constants instead of an enum.
  *
  * <p>Each handler is registered with {@link DBCSyncRegistry} and covers
- * all three sync actions: RELOAD (full), UPDATE (single entity),
- * and REMOVE (delete entity).</p>
+ * all three sync actions: RELOAD (all objects), UPDATE (single object),
+ * and REMOVE (single object).</p>
  *
  * <p>Handlers that don't support UPDATE or REMOVE should use the
  * default no-op implementations.</p>
@@ -22,7 +24,7 @@ public interface DBCSyncHandler {
     // ========== SERVER-SIDE ==========
 
     /**
-     * Serialize ALL entities of this type into an NBTTagCompound.
+     * Serialize ALL objects of this sync type into an NBTTagCompound.
      * Called during {@code syncPlayer()} to build the full RELOAD payload.
      *
      * @return the serialized compound with a "Data" NBTTagList
@@ -32,8 +34,7 @@ public interface DBCSyncHandler {
     // ========== CLIENT-SIDE ==========
 
     /**
-     * Handle a RELOAD action on the client. Deserialize the full
-     * dataset and replace the client-side data.
+     * Updates the full dataset for the client-side data.
      *
      * <p>Implementations should deserialize into a sync buffer,
      * atomically swap to the primary map, then reset the buffer.</p>
@@ -44,48 +45,38 @@ public interface DBCSyncHandler {
     void clientHandleReload(NBTTagCompound compound);
 
     /**
-     * Handle an UPDATE action on the client. Deserialize a single
-     * entity and insert/replace it in the client-side data.
-     *
-     * <p>Default: no-op.</p>
-     *
-     * @param compound the serialized single entity
+     * Updates a single object in the client-side data.
+     * 
+     * @param compound the serialized single object
      */
     @SideOnly(Side.CLIENT)
     default void clientHandleUpdate(NBTTagCompound compound) {
     }
 
     /**
-     * Handle a REMOVE action on the client. Remove the entity
-     * with the given ID from client-side data.
-     *
-     * <p>Default: no-op.</p>
-     *
-     * @param id the ID of the entity to remove
-     */
-    @SideOnly(Side.CLIENT)
-    default void clientHandleRemove(int id) {
-    }
-
-    /**
-     * Handle a REMOVE action for string-keyed entities.
-     * The key is read from the compound under the "Key" tag.
+     * Removes a single object from client-side data.
+     * Full object NBTTagCompound sent finer query control
      * Int-keyed handlers should override {@link #clientHandleRemove(int)} instead.
      */
     @SideOnly(Side.CLIENT)
     default void clientHandleRemove(NBTTagCompound compound) {
     }
-
+    
     /**
-     * Whether this handler supports the UPDATE action.
+     * Removes a single object with the given ID from client-side data.
+     * 
+     * @param id the ID of the object to remove
      */
+    @SideOnly(Side.CLIENT)
+    default void clientHandleRemove(int id) {
+    }
+
+    /**Whether this handler supports the UPDATE action.*/
     default boolean supportsUpdate() {
         return false;
     }
 
-    /**
-     * Whether this handler supports the REMOVE action.
-     */
+    /**Whether this handler supports the REMOVE action.*/
     default boolean supportsRemove() {
         return false;
     }

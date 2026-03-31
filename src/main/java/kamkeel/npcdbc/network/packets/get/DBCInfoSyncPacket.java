@@ -96,7 +96,7 @@ public final class DBCInfoSyncPacket extends LargeAbstractPacket {
     private void handleSyncPacketClient(int syncType, EnumSyncAction enumSyncAction, int id, NBTTagCompound data) {
         switch (enumSyncAction) {
             case RELOAD:
-                DBCSyncController.clientSync(syncType, data);
+                DBCSyncController.clientSyncReload(syncType, data);
                 break;
             case UPDATE:
                 DBCSyncController.clientSyncUpdate(syncType, data);

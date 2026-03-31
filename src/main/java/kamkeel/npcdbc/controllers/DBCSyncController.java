@@ -1,12 +1,11 @@
 package kamkeel.npcdbc.controllers;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.controllers.sync.DBCSyncHandler;
 import kamkeel.npcdbc.controllers.sync.DBCSyncRegistry;
-import kamkeel.npcdbc.controllers.sync.handlers.AuraSyncHandler;
-import kamkeel.npcdbc.controllers.sync.handlers.FormSyncHandler;
-import kamkeel.npcdbc.controllers.sync.handlers.OutlineSyncHandler;
-import kamkeel.npcdbc.controllers.sync.handlers.SkillSyncHandler;
+import kamkeel.npcdbc.controllers.sync.handlers.*;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
 import kamkeel.npcs.network.enums.EnumSyncAction;
@@ -34,6 +33,10 @@ public class DBCSyncController {
         );
     }
 
+    /**
+     * (Server side) Fires on Player login, sync all registered handlers
+     * @param player
+     */
     public static void syncPlayer(EntityPlayerMP player) {
         for(Map.Entry<Integer, DBCSyncHandler> handlers : DBCSyncRegistry.getAll().entrySet())
             syncType(handlers.getKey(), handlers.getValue(), player);
@@ -51,7 +54,9 @@ public class DBCSyncController {
         }
     }
 
-    public static void clientSync(int syncType, NBTTagCompound compound) {
+    /** Reloads all objects for the given syncType*/
+    @SideOnly(Side.CLIENT)
+    public static void clientSyncReload(int syncType, NBTTagCompound compound) {
         DBCSyncHandler handler = DBCSyncRegistry.getHandler(syncType);
         if (handler == null) return;
         try {
@@ -61,6 +66,8 @@ public class DBCSyncController {
         }
     }
 
+    /** Updates a single object for the given syncType*/
+    @SideOnly(Side.CLIENT)
     public static void clientSyncUpdate(int syncType, NBTTagCompound compound) {
         DBCSyncHandler handler = DBCSyncRegistry.getHandler(syncType);
         if (handler == null) return;
@@ -71,6 +78,8 @@ public class DBCSyncController {
         }
     }
 
+    /** Removes a single object for the given syncType*/
+    @SideOnly(Side.CLIENT)
     public static void clientSyncRemove(int syncType, int id, NBTTagCompound compound) {
         DBCSyncHandler handler = DBCSyncRegistry.getHandler(syncType);
         if (handler == null) return;
