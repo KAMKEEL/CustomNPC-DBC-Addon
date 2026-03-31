@@ -80,13 +80,15 @@ public class Overlay implements IOverlay, DataSerializable {
         int furType = ctx.furType();
         int noseType = ctx.nose();
         int mouthType = ctx.mouth();
+        int gender = ctx.gender();
 
         return text
             .replaceAll("%b", bodyType + "")
             .replaceAll("%f", furType + "")
             .replaceAll("%e", eyeType + "")
             .replaceAll("%n", noseType + "")
-            .replaceAll("%m", mouthType + "");
+            .replaceAll("%m", mouthType + "")
+            .replaceAll("%g", gender == 2 ? "f" : "m");
     }
 
     public Overlay color(ColorFunction function) {

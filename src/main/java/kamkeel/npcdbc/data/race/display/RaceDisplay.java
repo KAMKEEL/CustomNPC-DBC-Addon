@@ -25,7 +25,15 @@ public class RaceDisplay implements DataSerializable {
     // ── Creator metadata ───────────────────────────────────────────────────────
     public String rendererKey;
 
+    // Indices: [0]=bodyType, [1]=colorSlots, [2]=nose, [3]=mouth, [4]=eyes, [5]=eyeColorSlots
+
     private int[] skinLimits = {1, 1, 5, 5, 6, 2};
+
+    private int noseSlots = 1;
+
+    private int mouthSlots = 1;
+
+    private int eyeSlots = 1;
 
     private int genderCount = 2;
 
@@ -145,6 +153,29 @@ public class RaceDisplay implements DataSerializable {
         skinLimits = new int[]{bodyType, colorSlots, nose, mouth, eyes, eyeColorSlots};
     }
 
+    public int getNoseSlots() {
+        return noseSlots;
+    }
+
+    public void setNoseSlots(int noseSlots) {
+        this.noseSlots = Math.max(1, noseSlots);
+    }
+
+    public int getMouthSlots() {
+        return mouthSlots;
+    }
+
+    public void setMouthSlots(int mouthSlots) {
+        this.mouthSlots = Math.max(1, mouthSlots);
+    }
+
+    public int getEyeSlots() {
+        return eyeSlots;
+    }
+
+    public void setEyeSlots(int eyeSlots) {
+        this.eyeSlots = Math.max(1, eyeSlots);
+    }
     // ── Body color introspection ───────────────────────────────────────────────
 
     public int getBodyColorLayerCount() {
@@ -199,9 +230,9 @@ public class RaceDisplay implements DataSerializable {
 
     public void syncCreatorMetadata() {
         skinLimits[1] = getBodyColorLayerCount();
-        skinLimits[2] = getTextureVariantCount("nose");
-        skinLimits[3] = getTextureVariantCount("mouth");
-        skinLimits[4] = getTextureVariantCount("eye_left");
+        skinLimits[2] = getNoseSlots();
+        skinLimits[3] = getMouthSlots();
+        skinLimits[4] = getEyeSlots();
         skinLimits[5] = getEyeColorLayerCount();
         fixedHairColor = getFixedHairColor();
 

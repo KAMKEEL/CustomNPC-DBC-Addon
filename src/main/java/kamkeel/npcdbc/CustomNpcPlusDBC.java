@@ -10,6 +10,7 @@ import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.event.IDBCEvent;
+import kamkeel.npcdbc.data.race.races.Android;
 import kamkeel.npcdbc.data.race.races.BioAndroid;
 import noppes.npcs.controllers.APIRegistry;
 import kamkeel.npcdbc.config.LoadConfiguration;
@@ -116,6 +117,7 @@ public class CustomNpcPlusDBC {
         // Force-load builtin race definitions so their static fields
         // register into RaceRegistry before we push entries to RaceController.
         BioAndroid.init();
+        Android.init();
 
         APIRegistry.Instance.register("DBC Addon API", "https://kamkeel.github.io/CustomNPC-DBC-Addon/");
     }
