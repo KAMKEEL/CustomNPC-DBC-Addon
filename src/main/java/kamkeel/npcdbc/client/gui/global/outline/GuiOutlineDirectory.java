@@ -2,7 +2,7 @@ package kamkeel.npcdbc.client.gui.global.outline;
 
 import noppes.npcs.client.gui.util.GuiDirectoryCategorized;
 import net.minecraft.client.gui.GuiScreen;
-import kamkeel.npcdbc.constants.DBCSyncType;
+import kamkeel.npcdbc.controllers.sync.DBCSyncType;
 import kamkeel.npcdbc.controllers.OutlineController;
 import net.minecraft.client.Minecraft;
 import noppes.npcs.controllers.data.Category;

@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.network.packets.request.category;
 
 import io.netty.buffer.ByteBuf;
-import kamkeel.npcdbc.constants.DBCSyncType;
+import kamkeel.npcdbc.controllers.sync.DBCSyncType;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
@@ -9,6 +9,7 @@ import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.PacketChannel;
 import kamkeel.npcdbc.network.packets.EnumPacketRequest;
+import kamkeel.npcs.network.enums.SyncType;
 import kamkeel.npcs.network.packets.data.large.ScrollDataPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -24,10 +25,10 @@ import java.util.UUID;
 public class DBCRequestCategoryItems extends AbstractPacket {
     public static final String packetName = "NPC|CatItems";
 
-    private int dbcType;
+    private SyncType dbcType;
     private int catId;
 
-    public DBCRequestCategoryItems(int dbcType, int catId) {
+    public DBCRequestCategoryItems(SyncType dbcType, int catId) {
         this.dbcType = dbcType;
         this.catId = catId;
     }
@@ -47,32 +48,29 @@ public class DBCRequestCategoryItems extends AbstractPacket {
 
     @Override
     public void sendData(ByteBuf out) throws IOException {
-        out.writeInt(dbcType);
+        out.writeInt(dbcType.ordinal());
         out.writeInt(catId);
     }
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        int type = in.readInt();
+        SyncType type = SyncType.byOrdinal(in.readInt());
         int catId = in.readInt();
+        if (type == null) return;
 
         Map<String, Integer> items;
         HashMap<String, HashSet<UUID>> tagMap = null;
-        switch (type) {
-            case DBCSyncType.FORM:
-                items = FormController.getInstance().getItemsByCategoryScrollData(catId);
-                tagMap = FormController.getInstance().getItemTagMapForCategory(catId);
-                break;
-            case DBCSyncType.AURA:
-                items = AuraController.getInstance().getItemsByCategoryScrollData(catId);
-                tagMap = AuraController.getInstance().getItemTagMapForCategory(catId);
-                break;
-            case DBCSyncType.OUTLINE:
-                items = OutlineController.getInstance().getItemsByCategoryScrollData(catId);
-                tagMap = OutlineController.getInstance().getItemTagMapForCategory(catId);
-                break;
-            default:
-                return;
+        if (type == DBCSyncType.FORM) {
+            items = FormController.getInstance().getItemsByCategoryScrollData(catId);
+            tagMap = FormController.getInstance().getItemTagMapForCategory(catId);
+        } else if (type == DBCSyncType.AURA) {
+            items = AuraController.getInstance().getItemsByCategoryScrollData(catId);
+            tagMap = AuraController.getInstance().getItemTagMapForCategory(catId);
+        } else if (type == DBCSyncType.OUTLINE) {
+            items = OutlineController.getInstance().getItemsByCategoryScrollData(catId);
+            tagMap = OutlineController.getInstance().getItemTagMapForCategory(catId);
+        } else {
+            return;
         }
 
         ScrollDataPacket.sendScrollData((EntityPlayerMP) player, items, EnumScrollData.CATEGORY_GROUP);

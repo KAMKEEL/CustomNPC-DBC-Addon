@@ -10,6 +10,7 @@ import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.event.IDBCEvent;
+import kamkeel.npcdbc.controllers.sync.DBCSyncType;
 import kamkeel.npcdbc.data.race.races.Android;
 import kamkeel.npcdbc.data.race.races.BioAndroid;
 import noppes.npcs.controllers.APIRegistry;
@@ -21,7 +22,6 @@ import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.BonusController;
 import kamkeel.npcdbc.controllers.CapsuleController;
 import kamkeel.npcdbc.controllers.DBCEffectController;
-import kamkeel.npcdbc.controllers.DBCSyncController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.controllers.RaceController;
@@ -131,7 +131,7 @@ public class CustomNpcPlusDBC {
         OutlineController.getInstance().load();
         SkillController.Instance.load();
         RaceController.getInstance().load();
-        DBCSyncController.load();
+        DBCSyncType.load();
     }
 
     @Mod.EventHandler

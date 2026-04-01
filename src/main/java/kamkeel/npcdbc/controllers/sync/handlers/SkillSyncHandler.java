@@ -3,15 +3,15 @@ package kamkeel.npcdbc.controllers.sync.handlers;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.controllers.SkillController;
-import kamkeel.npcdbc.controllers.sync.DBCSyncHandler;
 import kamkeel.npcdbc.data.skill.CustomSkill;
 import kamkeel.npcdbc.util.NBTHelper;
+import kamkeel.npcs.controllers.sync.SyncHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import java.util.HashMap;
 
-public class SkillSyncHandler implements DBCSyncHandler {
+public class SkillSyncHandler implements SyncHandler {
 
     @Override
     public NBTTagCompound serializeAll() {

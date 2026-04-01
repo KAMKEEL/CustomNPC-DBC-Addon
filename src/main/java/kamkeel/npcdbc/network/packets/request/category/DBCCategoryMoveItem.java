@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.network.packets.request.category;
 
 import io.netty.buffer.ByteBuf;
-import kamkeel.npcdbc.constants.DBCSyncType;
+import kamkeel.npcdbc.controllers.sync.DBCSyncType;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
@@ -9,6 +9,7 @@ import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.PacketChannel;
 import kamkeel.npcdbc.network.packets.EnumPacketRequest;
+import kamkeel.npcs.network.enums.SyncType;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.io.IOException;
@@ -18,11 +19,11 @@ import static kamkeel.npcdbc.network.packets.request.category.DBCCategorySave.*;
 public class DBCCategoryMoveItem extends AbstractPacket {
     public static final String packetName = "NPC|CatMoveItem";
 
-    private int dbcType;
+    private SyncType dbcType;
     private int itemId;
     private int catId;
 
-    public DBCCategoryMoveItem(int dbcType, int itemId, int catId) {
+    public DBCCategoryMoveItem(SyncType dbcType, int itemId, int catId) {
         this.dbcType = dbcType;
         this.itemId = itemId;
         this.catId = catId;
@@ -43,29 +44,26 @@ public class DBCCategoryMoveItem extends AbstractPacket {
 
     @Override
     public void sendData(ByteBuf out) throws IOException {
-        out.writeInt(dbcType);
+        out.writeInt(dbcType.ordinal());
         out.writeInt(itemId);
         out.writeInt(catId);
     }
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        int type = in.readInt();
+        SyncType type = SyncType.byOrdinal(in.readInt());
         int itemId = in.readInt();
         int catId = in.readInt();
+        if (type == null) return;
 
         if (!hasPermission(player, type)) return;
 
-        switch (type) {
-            case DBCSyncType.FORM:
-                FormController.getInstance().moveItemToCategory(itemId, catId);
-                break;
-            case DBCSyncType.AURA:
-                AuraController.getInstance().moveItemToCategory(itemId, catId);
-                break;
-            case DBCSyncType.OUTLINE:
-                OutlineController.getInstance().moveItemToCategory(itemId, catId);
-                break;
+        if (type == DBCSyncType.FORM) {
+            FormController.getInstance().moveItemToCategory(itemId, catId);
+        } else if (type == DBCSyncType.AURA) {
+            AuraController.getInstance().moveItemToCategory(itemId, catId);
+        } else if (type == DBCSyncType.OUTLINE) {
+            OutlineController.getInstance().moveItemToCategory(itemId, catId);
         }
     }
 }

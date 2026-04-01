@@ -2,11 +2,9 @@ package kamkeel.npcdbc.controllers;
 
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.api.outline.IOutlineHandler;
-import kamkeel.npcdbc.constants.DBCSyncType;
+import kamkeel.npcdbc.controllers.sync.DBCSyncType;
 import kamkeel.npcdbc.data.outline.Outline;
-import kamkeel.npcdbc.network.DBCPacketHandler;
-import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
-import kamkeel.npcs.network.enums.EnumSyncAction;
+import kamkeel.npcs.controllers.SyncController;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -112,7 +110,7 @@ public class OutlineController implements IOutlineHandler {
             if (file2.exists())
                 file2.delete();
             file.renameTo(file2);
-            DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.OUTLINE, EnumSyncAction.UPDATE, -1, nbtTagCompound));
+            SyncController.syncUpdate(DBCSyncType.OUTLINE, nbtTagCompound);
         } catch (Exception e) {
             LogWriter.except(e);
         }
@@ -250,7 +248,7 @@ public class OutlineController implements IOutlineHandler {
                 file.delete();
             }
             categoryManager.removeItem(id);
-            DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.OUTLINE, EnumSyncAction.REMOVE, foundOutline.getID(), new NBTTagCompound()));
+            SyncController.syncRemove(DBCSyncType.OUTLINE, foundOutline.getID());
             saveOutlineLoadMap();
         }
     }

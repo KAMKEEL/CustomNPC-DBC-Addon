@@ -2,12 +2,10 @@ package kamkeel.npcdbc.controllers;
 
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormHandler;
-import kamkeel.npcdbc.constants.DBCSyncType;
+import kamkeel.npcdbc.controllers.sync.DBCSyncType;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormKey;
-import kamkeel.npcdbc.network.DBCPacketHandler;
-import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
-import kamkeel.npcs.network.enums.EnumSyncAction;
+import kamkeel.npcs.controllers.SyncController;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -236,7 +234,7 @@ public class FormController implements IFormHandler {
             if (file2.exists())
                 file2.delete();
             file.renameTo(file2);
-            DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.FORM, EnumSyncAction.UPDATE, -1, nbtTagCompound));
+            SyncController.syncUpdate(DBCSyncType.FORM, nbtTagCompound);
         } catch (Exception e) {
             LogWriter.except(e);
         }
@@ -298,7 +296,7 @@ public class FormController implements IFormHandler {
                 file.delete();
             }
             categoryManager.removeItem(id);
-            DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.FORM, EnumSyncAction.REMOVE, foundForm.getID(), new NBTTagCompound()));
+            SyncController.syncRemove(DBCSyncType.FORM, foundForm.getID());
             saveFormLoadMap();
         }
     }

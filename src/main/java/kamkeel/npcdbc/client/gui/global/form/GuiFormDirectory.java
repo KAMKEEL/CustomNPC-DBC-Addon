@@ -4,7 +4,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import noppes.npcs.client.gui.util.GuiDirectoryCategorized;
 import net.minecraft.client.gui.GuiScreen;
 import kamkeel.npcdbc.constants.DBCRace;
-import kamkeel.npcdbc.constants.DBCSyncType;
+import kamkeel.npcdbc.controllers.sync.DBCSyncType;
 import kamkeel.npcdbc.controllers.FormController;
 import noppes.npcs.controllers.data.Category;
 import kamkeel.npcdbc.data.form.Form;

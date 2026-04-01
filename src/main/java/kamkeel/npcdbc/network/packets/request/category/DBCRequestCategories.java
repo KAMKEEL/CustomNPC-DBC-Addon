@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.network.packets.request.category;
 
 import io.netty.buffer.ByteBuf;
-import kamkeel.npcdbc.constants.DBCSyncType;
+import kamkeel.npcdbc.controllers.sync.DBCSyncType;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
@@ -9,6 +9,7 @@ import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.PacketChannel;
 import kamkeel.npcdbc.network.packets.EnumPacketRequest;
+import kamkeel.npcs.network.enums.SyncType;
 import kamkeel.npcs.network.packets.data.large.ScrollDataPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -20,9 +21,9 @@ import java.util.Map;
 public class DBCRequestCategories extends AbstractPacket {
     public static final String packetName = "NPC|CatList";
 
-    private int dbcType;
+    private SyncType dbcType;
 
-    public DBCRequestCategories(int dbcType) {
+    public DBCRequestCategories(SyncType dbcType) {
         this.dbcType = dbcType;
     }
 
@@ -41,27 +42,24 @@ public class DBCRequestCategories extends AbstractPacket {
 
     @Override
     public void sendData(ByteBuf out) throws IOException {
-        out.writeInt(dbcType);
+        out.writeInt(dbcType.ordinal());
     }
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        int type = in.readInt();
+        SyncType type = SyncType.byOrdinal(in.readInt());
+        if (type == null) return;
 
         Map<String, Integer> catScrollData;
 
-        switch (type) {
-            case DBCSyncType.FORM:
-                catScrollData = FormController.getInstance().getCategoryScrollData();
-                break;
-            case DBCSyncType.AURA:
-                catScrollData = AuraController.getInstance().getCategoryScrollData();
-                break;
-            case DBCSyncType.OUTLINE:
-                catScrollData = OutlineController.getInstance().getCategoryScrollData();
-                break;
-            default:
-                return;
+        if (type == DBCSyncType.FORM) {
+            catScrollData = FormController.getInstance().getCategoryScrollData();
+        } else if (type == DBCSyncType.AURA) {
+            catScrollData = AuraController.getInstance().getCategoryScrollData();
+        } else if (type == DBCSyncType.OUTLINE) {
+            catScrollData = OutlineController.getInstance().getCategoryScrollData();
+        } else {
+            return;
         }
 
         ScrollDataPacket.sendScrollData((EntityPlayerMP) player, catScrollData, EnumScrollData.CATEGORY_LIST);

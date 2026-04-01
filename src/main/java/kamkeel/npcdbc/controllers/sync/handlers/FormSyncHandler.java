@@ -3,21 +3,14 @@ package kamkeel.npcdbc.controllers.sync.handlers;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.controllers.sync.DBCSyncHandler;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcs.controllers.sync.SyncHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import java.util.HashMap;
 
-/**
- * Sync handler for custom forms. Extracted from
- * {@code DBCSyncController}'s Form-related sync logic.
- *
- * <p>Covers RELOAD, UPDATE, and REMOVE actions for
- * {@link kamkeel.npcdbc.constants.DBCSyncType#FORM}.</p>
- */
-public class FormSyncHandler implements DBCSyncHandler {
+public class FormSyncHandler implements SyncHandler {
 
     @Override
     public NBTTagCompound serializeAll() {
