@@ -3,12 +3,15 @@ package kamkeel.npcdbc.items;
 import cpw.mods.fml.common.registry.GameRegistry;
 import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.config.ConfigCapsules;
+import kamkeel.npcdbc.items.android.ItemAndroidPart;
 import kamkeel.npcdbc.items.capsules.ItemHealthCapsule;
 import kamkeel.npcdbc.items.capsules.ItemKiCapsule;
 import kamkeel.npcdbc.items.capsules.ItemMiscCapsule;
 import kamkeel.npcdbc.items.capsules.ItemRegenCapsule;
 import kamkeel.npcdbc.items.capsules.ItemStaminaCapsule;
 import net.minecraft.item.Item;
+import noppes.npcs.CreativeTabNpcs;
+import noppes.npcs.CustomItems;
 
 public class ModItems {
     public static Item KiCapsules;
@@ -20,6 +23,10 @@ public class ModItems {
     public static Item FruitOfMight;
 
     public static Item Potaras;
+
+    public static Item AndroidParts;
+
+    public static final CreativeTabNpcs tabAndroid = new CreativeTabNpcs("cnpcsandroid");
 
     /**
      * Declare and register items. Do NOT add recipes here!
@@ -54,5 +61,11 @@ public class ModItems {
 
         Potaras = new ItemPotara();
         GameRegistry.registerItem(Potaras, "potara");
+
+        AndroidParts = new ItemAndroidPart();
+        GameRegistry.registerItem(AndroidParts, "androidpart");
+
+
+        tabAndroid.item = CustomItems.coinIron;
     }
 }

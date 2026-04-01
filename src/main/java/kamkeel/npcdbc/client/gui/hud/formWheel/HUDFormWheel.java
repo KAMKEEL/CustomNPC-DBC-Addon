@@ -4,6 +4,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
+import kamkeel.npcdbc.client.gui.hud.android.HUDAndroidParts;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -150,6 +151,9 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
             addButton(new GuiNpcButton(8, x - 94 - 75, y - 25, 150, 20, "Edit"));
             addButton(new GuiNpcButton(7, x += 62, y, 80, 20, "Switch Wheel"));
 
+            if (dbcData.currentRaceKey != null && dbcData.currentRaceKey.equals("android"))
+                addButton(new GuiNpcButton(550, x - 156 - 75, y - 45, 150, 20, "Android Parts"));
+
 
             x = (int) ((this.width / 2) * undoMCScaling + 190);
             y = (this.height / 2) - 100;
@@ -248,6 +252,12 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
         }
         if (button.id == 8) {
             this.setSubGui(new SubGuiSelectForm(button.id, true, true).displayDBCForms(DBCData.getClient()));
+        }
+
+        if (button.id == 550) {
+//            this.close();
+            mc.displayGuiScreen(new HUDAndroidParts());
+            return;
         }
         initGui();
     }
@@ -437,7 +447,7 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
                         slot.setForm(next, true);
                 } else if (newDBCForm != -1)
                     slot.setForm(newDBCForm, true, true);
-                
+
             }
         }
         if (isClosing && guiAnimationScale >= 0) {

@@ -31,6 +31,8 @@ import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
 import kamkeel.npcdbc.data.overlay.OverlayManager;
 import kamkeel.npcdbc.data.race.Race;
+import kamkeel.npcdbc.data.race.races.Android;
+import kamkeel.npcdbc.data.race.races.android.DBCDataAndroid;
 import kamkeel.npcdbc.data.skill.CustomSkillContainer;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.network.DBCPacketHandler;
@@ -105,7 +107,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
     // The string set for forms i.e "semi_perfect", "final_form"
     public String bodyType = "";
-    
+
     // Custom Form / Custom Aura
     public String currentFormKey = null;
     public int auraID = -1, outlineID = -1;
@@ -151,6 +153,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public DBCDataStats stats = new DBCDataStats(this);
     public DBCDataBonus bonus = new DBCDataBonus(this);
     public DBCDataRace addonRace = new DBCDataRace(this);
+    public DBCDataAndroid androidParts = new DBCDataAndroid(this);
 
     /**
      * ALL overlay chains that were drawn this tick, forms and everything
@@ -230,12 +233,16 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         comp.setString("jrmcFuzion", Fusion);
 
         comp.setString("bodyType", bodyType);
-        
+
         // DBC Addon
         comp.setString("currentRaceKey", currentRaceKey != null ? currentRaceKey : "");
         comp.setString("currentFormKey", currentFormKey != null ? currentFormKey : "");
         comp.setInteger("auraID", auraID);
         comp.setInteger("outlineID", outlineID);
+
+        if (currentRaceKey != null && currentRaceKey.equals("android")) {
+            androidParts.saveToNBT(comp);
+        }
 
         comp.setFloat("addonFormLevel", addonFormLevel);
         comp.setFloat("addonCurrentHeat", addonCurrentHeat);
@@ -297,7 +304,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         DNSHair = c.getString("jrmcDNSH");
         MajinAbsorptionData = c.getString("jrmcMajinAbsorptionData");
         Fusion = c.getString("jrmcFuzion");
-        
+
         bodyType = c.getString("bodyType");
 
         isFlying = c.getBoolean("DBCisFlying");
@@ -312,6 +319,9 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             currentRaceKey = legacyRace != null ? legacyRace.getName() : null;
         }
 
+        if (currentRaceKey != null && currentRaceKey.equals("android")) {
+            androidParts.loadFromNBT(c);
+        }
 
         currentFormKey = c.getString("currentFormKey");
         addonFormLevel = c.getFloat("addonFormLevel");
