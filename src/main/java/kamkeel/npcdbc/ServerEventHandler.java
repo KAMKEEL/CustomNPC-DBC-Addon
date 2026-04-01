@@ -23,16 +23,13 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
-import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.CapsuleInfo;
-import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
 import kamkeel.npcdbc.network.packets.player.LoginInfo;
 import kamkeel.npcdbc.data.ability.DBCAbilities;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
-import kamkeel.npcs.network.enums.EnumSyncAction;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -104,16 +101,6 @@ public class ServerEventHandler {
 
         EntityPlayer player = event.player;
         if (event.side == Side.SERVER && event.phase == TickEvent.Phase.START) {
-            // Send Form Information
-            if (PlayerDataController.Instance != null) {
-                PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
-                if (((IPlayerDBCInfo) playerData).getDBCInfoUpdate()) {
-                    NBTTagCompound formCompound = new NBTTagCompound();
-                    playerData.getDBCSync(formCompound);
-                    DBCPacketHandler.Instance.sendToPlayer(new DBCInfoSyncPacket(DBCSyncType.PLAYERDATA, EnumSyncAction.RELOAD, -1, formCompound), (EntityPlayerMP) player);
-                    ((IPlayerDBCInfo) playerData).endDBCInfo();
-                }
-            }
 
             if (ConfigDBCEffects.AUTO_BLOATED)
                 if (player.ticksExisted % ConfigDBCEffects.DECREASE_TIME == 0)
