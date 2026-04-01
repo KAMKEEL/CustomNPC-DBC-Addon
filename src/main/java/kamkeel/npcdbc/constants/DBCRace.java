@@ -9,9 +9,10 @@ public class DBCRace {
     public static final int NAMEKIAN = 3;
     public static final int ARCOSIAN = 4;
     public static final int MAJIN = 5;
-    
+
     //Addon races
-    public static final int BIO_ANDROID = 6;
+    public static final int ANDROID = 6;
+    public static final int BIO_ANDROID = 7;
 
     public static boolean isSaiyan(int race) {
         return race == SAIYAN || race == HALFSAIYAN || race == ALL_SAIYANS;

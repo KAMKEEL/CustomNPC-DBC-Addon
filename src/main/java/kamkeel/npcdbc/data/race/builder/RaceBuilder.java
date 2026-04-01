@@ -936,6 +936,21 @@ public class RaceBuilder {
             return this;
         }
 
+        public DisplayBuilder noseSlots(int slots) {
+            parent.display.setNoseSlots(slots);
+            return this;
+        }
+
+        public DisplayBuilder mouthSlots(int slots) {
+            parent.display.setMouthSlots(slots);
+            return this;
+        }
+
+        public DisplayBuilder eyeSlots(int slots) {
+            parent.display.setEyeSlots(slots);
+            return this;
+        }
+
         // ── Finalise ───────────────────────────────────────────────────────────────
 
         public RaceBuilder and() {
