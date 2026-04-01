@@ -3,14 +3,14 @@ package kamkeel.npcdbc.controllers.sync.handlers;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.controllers.OutlineController;
-import kamkeel.npcdbc.controllers.sync.DBCSyncHandler;
 import kamkeel.npcdbc.data.outline.Outline;
+import kamkeel.npcs.controllers.sync.SyncHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import java.util.HashMap;
 
-public class OutlineSyncHandler implements DBCSyncHandler {
+public class OutlineSyncHandler implements SyncHandler {
 
     @Override
     public NBTTagCompound serializeAll() {

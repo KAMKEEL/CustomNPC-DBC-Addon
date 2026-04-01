@@ -1,7 +1,6 @@
 package kamkeel.npcdbc.mixins.late.impl.npc;
 
 import kamkeel.npcdbc.constants.DBCDamageSource;
-import kamkeel.npcdbc.controllers.DBCSyncController;
 import kamkeel.npcdbc.data.DBCDamageCalc;
 import kamkeel.npcdbc.data.npc.DBCStats;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
@@ -176,14 +175,5 @@ public class MixinDBCAddon {
     @Overwrite(remap = false)
     public void readFromNBT(PlayerData playerData, NBTTagCompound nbtTagCompound) {
         ((IPlayerDBCInfo) playerData).getPlayerDBCInfo().loadNBTData(nbtTagCompound);
-    }
-
-    /**
-     * @author Kamkeel
-     * @reason Performs Syncing | SyncController. Sent by Server to Client
-     */
-    @Overwrite(remap = false)
-    public void syncPlayer(EntityPlayerMP playerMP) {
-        DBCSyncController.syncPlayer(playerMP);
     }
 }
