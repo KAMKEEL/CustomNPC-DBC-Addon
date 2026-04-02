@@ -1,14 +1,18 @@
 package kamkeel.npcdbc.data.race.races.android;
 
 import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.data.race.races.android.AndroidPartSlot;
-import kamkeel.npcdbc.data.race.races.android.AndroidPartType;
-import kamkeel.npcdbc.data.race.serial.DataCompound;
-import kamkeel.npcdbc.data.race.serial.DataSerializable;
+import kamkeel.npcdbc.scripted.DBCEventHooks;
+import kamkeel.npcdbc.scripted.DBCPlayerEvent;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.LogWriter;
+import noppes.npcs.api.entity.IPlayer;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class DBCDataAndroid {
 
@@ -29,27 +33,68 @@ public class DBCDataAndroid {
         return AndroidPartType.byId(id);
     }
 
+    public AndroidPartType[] getAllEquipped() {
+        List<AndroidPartType> list = new ArrayList<>();
+        for (String key : equippedParts.values()) {
+            AndroidPartType type = AndroidPartType.byId(key);
+            if (type == null) continue;
+
+            list.add(type);
+        }
+
+        return list.toArray(new AndroidPartType[0]);
+    }
+
     public boolean isSlotEmpty(AndroidPartSlot slot) {
         return getEquipped(slot) == null;
     }
 
     public void equip(AndroidPartSlot slot, AndroidPartType part) {
-        if (part != null && !part.fitsSlot(slot))
-            throw new IllegalArgumentException("Part " + part.getId() + " does not fit slot " + slot.name());
-        equippedParts.put(slot, part != null ? part.getId() : "");
+        if (part == null) return;
+
+        if (!part.fitsSlot(slot)) {
+            LogWriter.error("Part " + part.getId() + " does not fit slot " + slot.name());
+            return;
+        }
+
+        if (!slot.isPhysical()) {
+            LogWriter.error("Slot " + slot.name() + " is not physical");
+            return;
+        }
+
+        IPlayer player = PlayerDataUtil.getIPlayer(data.player);
+        DBCPlayerEvent.AndroidPartEvent event = new DBCPlayerEvent.AndroidPartEvent.Equip(player, part.getId(), slot.ordinal());
+
+        DBCEventHooks.onAndroidPartEvent(event);
+        equippedParts.put(slot, part.getId());
+        part.getPart().onEquip(data.player);
     }
 
     public void unequip(AndroidPartSlot slot) {
+        if (isSlotEmpty(slot)) return;
+
+        AndroidPartType part = getEquipped(slot);
+        String partId = part.getId();
+        IPlayer player = PlayerDataUtil.getIPlayer(data.player);
+        DBCPlayerEvent.AndroidPartEvent event = new DBCPlayerEvent.AndroidPartEvent.Unequip(player, partId, slot.ordinal());
+
+        DBCEventHooks.onAndroidPartEvent(event);
         equippedParts.put(slot, "");
+        part.getPart().onUnequip(data.player);
+    }
+
+    public void tick() {
+        for (AndroidPartType type : getAllEquipped()) {
+            type.onTick(data.player);
+        }
     }
 
     // ──────────────────── NBT ────────────────────
 
     public void saveToNBT(NBTTagCompound comp) {
         NBTTagCompound tag = new NBTTagCompound();
-        for (AndroidPartSlot slot : AndroidPartSlot.values()) {
-            String id = equippedParts.getOrDefault(slot, "");
-            tag.setString(slot.name(), id);
+        for (AndroidPartSlot slot : AndroidPartSlot.PHYSICAL) {
+            tag.setString(slot.name(), equippedParts.getOrDefault(slot, ""));
         }
         comp.setTag("androidParts", tag);
     }
@@ -57,12 +102,10 @@ public class DBCDataAndroid {
     public void loadFromNBT(NBTTagCompound comp) {
         equippedParts.clear();
         if (!comp.hasKey("androidParts")) return;
-
         NBTTagCompound tag = comp.getCompoundTag("androidParts");
-        for (AndroidPartSlot slot : AndroidPartSlot.values()) {
-            if (tag.hasKey(slot.name())) {
+        for (AndroidPartSlot slot : AndroidPartSlot.PHYSICAL) {
+            if (tag.hasKey(slot.name()))
                 equippedParts.put(slot, tag.getString(slot.name()));
-            }
         }
     }
 }

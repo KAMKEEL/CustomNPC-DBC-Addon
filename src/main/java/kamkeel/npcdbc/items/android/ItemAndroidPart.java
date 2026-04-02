@@ -30,7 +30,7 @@ public class ItemAndroidPart extends Item {
     public String getUnlocalizedName(ItemStack stack) {
         AndroidPartType type = getPartType(stack);
         if (type == null) return LocalizationHelper.ITEM_PREFIX + "android_part_unknown";
-        return LocalizationHelper.ITEM_PREFIX + type.getName().toLowerCase();
+        return type.getName();
     }
 
     @Override
@@ -43,9 +43,8 @@ public class ItemAndroidPart extends Item {
     @Override
     public void registerIcons(IIconRegister reg) {
         icons = new IIcon[AndroidPartType.count()];
-        String prefix = "npcdbc:androidparts/";
         for (AndroidPartType type : AndroidPartType.values()) {
-            icons[type.ordinal()] = reg.registerIcon(prefix + type.getName().toLowerCase());
+            icons[type.ordinal()] = reg.registerIcon(type.resolveTextureDir());
         }
     }
 

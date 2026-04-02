@@ -8,7 +8,8 @@ public enum DBCScriptType {
     SENZUUSED("dbcSenzuUsed"),
     REVIVED("dbcRevived"),
     KNOCKOUT("dbcKnockout"),
-    SKILL_EVENT("dbcSkillSlotEvent");
+    SKILL_EVENT("dbcSkillSlotEvent"),
+    ANDROID_PART("dbcAndroidPartEvent");
 
     public String function;
 

@@ -48,4 +48,10 @@ public class DBCEventHooks {
         handler.callScript(DBCScriptType.SKILL_EVENT.function, event);
         return NpcAPI.EVENT_BUS.post(event);
     }
+
+    public static boolean onAndroidPartEvent(DBCPlayerEvent.AndroidPartEvent event) {
+        PlayerDataScript handler = ScriptController.Instance.getPlayerScripts(event.getPlayer());
+        handler.callScript(DBCScriptType.ANDROID_PART.function, event);
+        return NpcAPI.EVENT_BUS.post(event);
+    }
 }

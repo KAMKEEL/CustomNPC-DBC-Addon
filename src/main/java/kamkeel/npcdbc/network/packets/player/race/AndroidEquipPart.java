@@ -66,7 +66,14 @@ public final class AndroidEquipPart extends AbstractPacket {
                     + " sent invalid android slot ordinal: " + slotOrdinal);
             return;
         }
+
         slot = slots[slotOrdinal];
+
+        if (!slot.isPhysical()) {
+            LogWriter.error("[NPCDBC] Player " + player.getCommandSenderName()
+                + " sent non-physical android slot: " + slot);
+            return;
+        }
 
         DBCData data = DBCData.get(player);
         if (!"android".equals(data.currentRaceKey)) {

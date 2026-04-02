@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.data.race.races.android;
 
-import kamkeel.npcdbc.CustomNpcPlusDBC;
+import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -18,9 +18,9 @@ public final class AndroidPartType {
 
     // ──────────────────── Instance fields ────────────────────
     private final int ordinal;
-    private final AndroidPart part;
+    private final AndroidPartData part;
 
-    private AndroidPartType(AndroidPart part, int ordinal) {
+    private AndroidPartType(AndroidPartData part, int ordinal) {
         this.part = part;
         this.ordinal = ordinal;
     }
@@ -36,11 +36,22 @@ public final class AndroidPartType {
     }
 
     public String getName() {
-        String id = part.getId();
-        return id.contains(":") ? id.split(":")[1] : id;
+        return part.getName();
     }
 
-    public AndroidPart getPart() {
+    public String getNamespace() {
+        return part.getNamespace();
+    }
+
+    public String getTextureDir() {
+        return part.getTextureDir();
+    }
+
+    public String resolveTextureDir() {
+        return part.resolveTextureDir();
+    }
+
+    public AndroidPartData getPart() {
         return part;
     }
 
@@ -52,13 +63,25 @@ public final class AndroidPartType {
         return part.fitsSlot(slot);
     }
 
+    public void onEquip(EntityPlayer player) {
+        part.onEquip(player);
+    }
+
+    public void onUnequip(EntityPlayer player) {
+        part.onUnequip(player);
+    }
+
+    public void onTick(EntityPlayer player) {
+        part.onUnequip(player);
+    }
+
     // ──────────────────── Registration ────────────────────
 
-    public static AndroidPartType register(String namespace, AndroidPart part) {
+    public static AndroidPartType register(AndroidPartData part) {
         if (part == null)
             throw new IllegalArgumentException("AndroidPart must not be null");
 
-        String id = namespace + ":" + part.getId();
+        String id = part.getId();
 
         if (REGISTRY.containsKey(id))
             throw new IllegalStateException("Duplicate AndroidPartType registration: " + id);
@@ -66,10 +89,6 @@ public final class AndroidPartType {
         AndroidPartType type = new AndroidPartType(part, nextOrdinal++);
         REGISTRY.put(id, type);
         return type;
-    }
-
-    private static AndroidPartType register(AndroidPart part) {
-        return register(CustomNpcPlusDBC.ID, part);
     }
 
     public static AndroidPartType byId(String id) {
