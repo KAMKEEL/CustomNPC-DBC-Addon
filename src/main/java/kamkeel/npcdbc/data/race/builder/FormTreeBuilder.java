@@ -14,7 +14,8 @@ public class FormTreeBuilder {
 
     FormTreeBuilder(RaceBuilder raceBuilder, String raceNamespace) {
         this.raceBuilder = raceBuilder;
-        this.formTree = new FormTree(raceNamespace);
+        this.formTree = new FormTree();
+        this.formTree.raceNamespace =raceNamespace;
     }
 
     public static FormTreeBuilder create(String raceNamespace) {
