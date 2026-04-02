@@ -8,6 +8,7 @@ import kamkeel.npcdbc.data.race.helper.RaceSelectorHelper;
 import kamkeel.npcdbc.mixins.late.impl.dbc.IJRMCoreGuiScreenAccessor;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.race.DBCSelectRace;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 
 public final class VanillaCreatorBridge {
@@ -38,6 +39,7 @@ public final class VanillaCreatorBridge {
             JRMCoreGuiScreen.RaceSlcted = 0;
         }
         DBCPacketHandler.Instance.sendToServer(new DBCSelectRace(currentRaceKey));
+        PlayerDataUtil.getClientDBCInfo().setCurrentRace(currentRaceKey);
         
         JRMCoreH.Char((byte) 0, raceValue);
         pushPreviewDns();
