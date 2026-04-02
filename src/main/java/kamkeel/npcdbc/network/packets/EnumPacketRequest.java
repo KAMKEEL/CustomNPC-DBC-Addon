@@ -19,5 +19,7 @@ public enum EnumPacketRequest {
     OutlineSave,
     AuraClone,
     FormClone,
-    OutlineClone
+    OutlineClone,
+    RaceSave,
+    RaceRemove
 }
