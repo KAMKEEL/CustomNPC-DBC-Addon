@@ -19,7 +19,7 @@ public class Race implements DataSerializable {
     public RaceDisplay display = new RaceDisplay();
     public RaceStats stats = new RaceStats();
     public RaceSkill skill = new RaceSkill(1);
-    public FormTree formTree;
+    public FormTree formTree = new FormTree();
     public RaceAttributeConfig attributeConfig = RaceAttributeConfig.defaults();
 
     public Race(int id, String name, String menuName, RaceDisplay display, RaceStats stats, RaceSkill skill, FormTree formTree, RaceAttributeConfig attributeConfig) {
@@ -69,20 +69,25 @@ public class Race implements DataSerializable {
         data.putString("MenuName", menuName);
 
         data.spacing();
-        data.comment("=== Display ===");
-        data.put("Display", display);
+        data.comment("=== Form Tree ===");
+        data.put("FormTree", formTree);
+        
+        data.spacing();
+        data.comment("=== Racial Skill ===");
+        data.put("RacialSkill", skill);
 
         data.spacing();
         data.comment("=== Stats ===");
         data.put("Stats", stats);
-
-        data.spacing();
-        data.comment("=== RacialSkill ===");
-        data.put("RacialSkill", skill);
-
+        
         data.spacing();
         data.comment("=== AttributeConfig ===");
         data.put("AttributeConfig", attributeConfig);
+
+        data.spacing();
+        data.comment("=== Display ===");
+        data.put("Display", display);
+
 
         if (formTree != null) {
             data.spacing();
@@ -109,10 +114,11 @@ public class Race implements DataSerializable {
     @Override
     public void deserialize(DataCompound data) {
         menuName = data.getString("MenuName", menuName);
-        data.deserialize("Display", display);
-        data.deserialize("Stats", stats);
+        data.deserialize("FormTree", formTree);
         data.deserialize("RacialSkill", skill);
+        data.deserialize("Stats", stats);
         data.deserialize("AttributeConfig", attributeConfig);
+        data.deserialize("Display", display);
 
         DataCompound formsData = data.get("Forms");
         for (String key : formsData.getKeys()) {

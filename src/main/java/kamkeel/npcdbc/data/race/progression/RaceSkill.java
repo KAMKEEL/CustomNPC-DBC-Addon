@@ -55,8 +55,8 @@ public class RaceSkill implements DataSerializable {
         }
     }
 
-    private final int maxLevel;
     private final LinkedHashMap<Integer, LevelEntry> levelEntries;
+    private int maxLevel;
     private String displayName = "SuperForm";
     private String description = "SuperForm";
 
@@ -64,12 +64,12 @@ public class RaceSkill implements DataSerializable {
     private final Map<Integer, List<Ability>> toggles = new HashMap<>();
 
     public RaceSkill(int maxLevel) {
-        this(maxLevel, new LinkedHashMap<Integer, LevelEntry>());
+        this(maxLevel, new LinkedHashMap<>());
     }
 
     public RaceSkill(int maxLevel, LinkedHashMap<Integer, LevelEntry> levelEntries) {
         this.maxLevel = Math.min(Math.max(maxLevel, 1), 10);
-        this.levelEntries = new LinkedHashMap<Integer, LevelEntry>();
+        this.levelEntries = new LinkedHashMap<>();
 
         if (levelEntries != null) {
             for (Map.Entry<Integer, LevelEntry> entry : levelEntries.entrySet()) {
@@ -336,6 +336,7 @@ public class RaceSkill implements DataSerializable {
 
     @Override
     public void deserialize(DataCompound data) {
+        maxLevel = data.getInt("maxLevel", maxLevel);
         setDisplayName(data.getString("displayName", displayName));
         setDescription(data.getString("description", description));
         int i = 0;

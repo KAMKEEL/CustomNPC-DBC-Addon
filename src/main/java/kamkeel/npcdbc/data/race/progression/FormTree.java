@@ -1,20 +1,22 @@
 package kamkeel.npcdbc.data.race.progression;
 
+import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.race.serial.DataCompound;
+import kamkeel.npcdbc.data.race.serial.DataSerializable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FormTree {
-    private final String raceNamespace;
+public class FormTree implements DataSerializable {
     private final List<Branch> branches = new ArrayList<>();
+    public String raceNamespace;
 
-    public FormTree(String raceNamespace) {
-        this.raceNamespace = raceNamespace;
-    }
 
-    public static class Branch {
+    public FormTree() {}
+
+    public static class Branch implements DataSerializable {
         private final String name;
         private final List<Form> forms = new ArrayList<>();
         private Form unlockAnchor;
@@ -115,6 +117,45 @@ public class FormTree {
             }
             return null;
         }
+
+        @Override
+        public DataCompound serialize(DataCompound data) {
+            data.putString("name", name);
+            data.putInt("unlockLevel", unlockLevel);
+
+            String anchorKey = (unlockAnchor != null && unlockAnchor.key != null)
+                ? unlockAnchor.key.toString() : "";
+            data.putString("unlockAnchorKey", anchorKey);
+
+            List<String> formKeys = new ArrayList<>();
+            for (Form f : forms) {
+                if (f.key != null)
+                    formKeys.add(f.key.toString());
+            }
+            data.putStringList("formKeys", formKeys);
+
+            return data;
+        }
+
+        @Override
+        public void deserialize(DataCompound data) {
+            unlockLevel = data.getInt("unlockLevel", unlockLevel);
+
+            forms.clear();
+            unlockAnchor = null;
+            for (String key : data.getStringList("formKeys")) {
+                Form form = FormController.Instance.getBuiltIn(key);
+                if (form != null)
+                    addForm(form);
+            }
+
+            String anchorKey = data.getString("unlockAnchorKey", "");
+            if (!anchorKey.isEmpty()) {
+                Form anchor = FormController.Instance.getBuiltIn(anchorKey);
+                if (anchor != null)
+                    unlockAnchor = anchor;
+            }
+        }
     }
 
     public void addBranch(Branch branch) {
@@ -195,5 +236,33 @@ public class FormTree {
             total += branch.length();
         }
         return total;
+    }
+
+    @Override
+    public DataCompound serialize(DataCompound data) {
+        if (raceNamespace != null)
+            data.putString("namespace", raceNamespace);
+
+        for (int i = 0; i < branches.size(); i++) 
+            data.put("branch_" + i, branches.get(i));
+        
+
+        return data;
+    }
+
+    @Override
+    public void deserialize(DataCompound data) {
+        raceNamespace = data.getString("namespace", raceNamespace);
+
+        branches.clear();
+        int i = 0;
+        while (data.has("branch_" + i)) {
+            DataCompound branchData = data.get("branch_" + i);
+            String branchName = branchData.getString("name", "");
+            Branch branch = new Branch(branchName);
+            branch.deserialize(branchData);
+            branches.add(branch);
+            i++;
+        }
     }
 }
