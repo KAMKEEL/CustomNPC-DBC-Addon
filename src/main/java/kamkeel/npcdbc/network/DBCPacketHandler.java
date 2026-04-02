@@ -12,6 +12,7 @@ import kamkeel.npcdbc.network.packets.get.aura.DBCGetAura;
 import kamkeel.npcdbc.network.packets.get.form.DBCGetForm;
 import kamkeel.npcdbc.network.packets.get.outline.DBCGetOutline;
 import kamkeel.npcdbc.network.packets.player.*;
+import kamkeel.npcdbc.network.packets.player.race.AndroidEquipPart;
 import kamkeel.npcdbc.network.packets.player.race.DBCSelectRace;
 import kamkeel.npcdbc.network.packets.player.ability.DBCToggleAbilityAction;
 import kamkeel.npcdbc.network.packets.player.aura.DBCRequestAura;
@@ -107,6 +108,7 @@ public class DBCPacketHandler {
         PLAYER_PACKETS.registerPacket(new DBCSetAllowFlight());
         PLAYER_PACKETS.registerPacket(new DBCSelectRace());
         PLAYER_PACKETS.registerPacket(new DBCSelectFormBranch());
+        PLAYER_PACKETS.registerPacket(new AndroidEquipPart());
     }
 
     private void registerGetPackets() {
