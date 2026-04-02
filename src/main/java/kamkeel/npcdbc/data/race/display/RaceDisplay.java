@@ -110,6 +110,9 @@ public class RaceDisplay implements DataSerializable {
         if (isHairTypeValid(hairType)) this.hairType = hairType;
     }
 
+    public boolean hasHair() {
+        return getHairType() != null && !getHairType().equals("X");
+    }
     private boolean isHairTypeValid(String h) {
         return h != null && (h.equals("H") || h.equals("A") || h.equals("R") || h.equals("X"));
     }
