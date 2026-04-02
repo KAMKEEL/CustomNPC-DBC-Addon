@@ -38,6 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class PlayerDBCInfo {
     public PlayerData parent;
+    public boolean updateClient;
 
     private String currentFormKey = null;
     private String selectedFormKey = null;
@@ -484,10 +485,10 @@ public class PlayerDBCInfo {
 
     public void updateClient() {
         this.handleLinkedFormMastery();
-        ((IPlayerDBCInfo) parent).updateDBCInfo();
+        updateClient = true;
     }
 
-    public void saveNBTData(NBTTagCompound compound) {
+    public NBTTagCompound saveNBTData(NBTTagCompound compound) {
         NBTTagCompound dbcCompound = new NBTTagCompound();
         dbcCompound.setString("CurrentFormKey", currentFormKey != null ? currentFormKey : "");
         dbcCompound.setString("SelectedFormKey", selectedFormKey != null? selectedFormKey : "");
@@ -518,6 +519,7 @@ public class PlayerDBCInfo {
 
         dbcCompound.setTag("OverlayManager", overlayManager.writeToNBT());
         compound.setTag("DBCInfo", dbcCompound);
+        return compound;
     }
 
     public void loadNBTData(NBTTagCompound compound) {

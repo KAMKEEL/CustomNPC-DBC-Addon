@@ -15,6 +15,7 @@ import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.FusionHandler;
 import kamkeel.npcdbc.controllers.TransformController;
+import kamkeel.npcdbc.controllers.sync.handlers.DBCInfoSyncHandler;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -100,6 +101,11 @@ public class ServerEventHandler {
 
         EntityPlayer player = event.player;
         if (event.side == Side.SERVER && event.phase == TickEvent.Phase.START) {
+            PlayerDBCInfo data = PlayerDataUtil.getDBCInfo(player);
+            if (data != null && data.updateClient) {
+                DBCInfoSyncHandler.sync((EntityPlayerMP) player);
+                data.updateClient = false;
+            }
 
             if (ConfigDBCEffects.AUTO_BLOATED)
                 if (player.ticksExisted % ConfigDBCEffects.DECREASE_TIME == 0)
