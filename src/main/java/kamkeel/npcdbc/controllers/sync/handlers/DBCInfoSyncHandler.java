@@ -29,4 +29,9 @@ public class DBCInfoSyncHandler implements SyncHandler {
     public void clientHandleUpdate(NBTTagCompound compound) {
         PlayerDataUtil.getClientDBCInfo().loadNBTData(compound);
     }
+
+    /** No need to cache, same as CNPC player data*/
+    public boolean isCachedType() {
+        return false;
+    }
 }
