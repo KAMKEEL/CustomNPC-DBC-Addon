@@ -95,7 +95,7 @@ public class AndroidPartData {
         private final String id;
         private final AndroidPartSlot slot;
         private String unlocalizedName;
-        private String textureDir = "androidpart/";
+        private String textureDir = "androidparts/";
         private OverlayChain overlays = null;
 
         private BiConsumer<AndroidPartData, EntityPlayer> onEquip = null;
