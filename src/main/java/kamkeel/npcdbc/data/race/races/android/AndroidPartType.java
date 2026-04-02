@@ -39,6 +39,10 @@ public final class AndroidPartType {
         return part.getName();
     }
 
+    public String getUnlocalizedName() {
+        return part.getUnlocalizedName();
+    }
+
     public String getNamespace() {
         return part.getNamespace();
     }
@@ -51,7 +55,7 @@ public final class AndroidPartType {
         return part.resolveTextureDir();
     }
 
-    public AndroidPartData getPart() {
+    public AndroidPartData getData() {
         return part;
     }
 

@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 public class DBCDataAndroid {
 
@@ -67,7 +66,7 @@ public class DBCDataAndroid {
 
         DBCEventHooks.onAndroidPartEvent(event);
         equippedParts.put(slot, part.getId());
-        part.getPart().onEquip(data.player);
+        part.onEquip(data.player);
     }
 
     public void unequip(AndroidPartSlot slot) {
@@ -80,12 +79,12 @@ public class DBCDataAndroid {
 
         DBCEventHooks.onAndroidPartEvent(event);
         equippedParts.put(slot, "");
-        part.getPart().onUnequip(data.player);
+        part.onUnequip(data.player);
     }
 
     public void tick() {
-        for (AndroidPartType type : getAllEquipped()) {
-            type.onTick(data.player);
+        for (AndroidPartType part : getAllEquipped()) {
+            part.onTick(data.player);
         }
     }
 

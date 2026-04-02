@@ -30,7 +30,7 @@ public class ItemAndroidPart extends Item {
     public String getUnlocalizedName(ItemStack stack) {
         AndroidPartType type = getPartType(stack);
         if (type == null) return LocalizationHelper.ITEM_PREFIX + "android_part_unknown";
-        return type.getName();
+        return type.getUnlocalizedName();
     }
 
     @Override
