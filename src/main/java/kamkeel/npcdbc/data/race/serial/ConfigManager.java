@@ -70,8 +70,17 @@ public class ConfigManager<T extends DataSerializable> {
         }
     }
 
+    public void deleteConfig(String name) {
+        File file = getConfigFile(name);
+        if (file.exists() && file.delete())
+            LogWriter.info("[" + subdirectory + "] Deleted config: " + name);
+    }
+
+    private File getConfigFile(String name) {
+        return new File(getConfigDirectory(), subdirectory + "/" + name + ".yml");
+    }
     private File getConfigFile(T target) {
-        return new File(getConfigDirectory(), subdirectory + "/" + nameExtractor.apply(target) + ".yml");
+        return getConfigFile(nameExtractor.apply(target));
     }
 
     private File getConfigDirectory() {
