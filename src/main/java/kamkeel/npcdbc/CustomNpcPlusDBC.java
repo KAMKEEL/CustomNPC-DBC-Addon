@@ -114,6 +114,7 @@ public class CustomNpcPlusDBC {
         DBCConditions.register();
         DBCAnimations.register();
         DBCAbilities.register();
+        DBCSyncType.register();
 
         // Force-load builtin race definitions so their static fields
         // register into RaceRegistry before we push entries to RaceController.
@@ -132,7 +133,6 @@ public class CustomNpcPlusDBC {
         OutlineController.getInstance().load();
         SkillController.Instance.load();
         RaceController.getInstance().load();
-        DBCSyncType.load();
     }
 
     @Mod.EventHandler
