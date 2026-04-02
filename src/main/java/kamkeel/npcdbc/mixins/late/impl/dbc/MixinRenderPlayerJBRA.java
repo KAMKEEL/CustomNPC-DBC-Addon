@@ -96,6 +96,8 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Unique
     private boolean npcdbc$customRaceBodySuppressed;
     @Unique
+    private boolean npcdbc$customRaceHasHair;
+    @Unique
     private int npcdbc$customRaceOriginalRace;
 
     @Shadow
@@ -392,6 +394,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             race.set(addonRace.id > DBCRace.MAJIN ? addonRace.id : DBCRace.BIO_ANDROID);
             npcdbc$customRaceBodyHandled = true;
             npcdbc$customRaceBodySuppressed = true;
+            npcdbc$customRaceHasHair = addonRace.display.hasHair();
             GL11.glPushMatrix();
             GL11.glTranslatef(0.0F, 100000.0F, 0.0F);
             return;
@@ -410,6 +413,34 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         RaceRenderContext ctx = RaceRenderContext.from(data);
         ctx.model = this.modelMain;
         ctx.setRenderVars(renderX, renderY, renderZ, par1AbstractClientPlayer.rotationYaw, par2);
+    }
+
+    /**
+     * Render default hair presets for custom races
+     */
+    @Redirect(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "LJinRyuu/JBRA/ModelBipedDBC;renderHairs(FLjava/lang/String;)V", ordinal = 33))
+    private void npcdbc$restoreCustomRaceBodyBeforeHair(ModelBipedDBC instance, float par1, String hair,
+                                                        @Local(name = "race") LocalIntRef race) {
+        if (npcdbc$customRaceHasHair && npcdbc$customRaceBodySuppressed) {
+            race.set(npcdbc$customRaceOriginalRace);
+            GL11.glPopMatrix();
+            npcdbc$customRaceBodySuppressed = false;
+
+            instance.renderHairs(par1, hair);
+        }
+    }
+
+    /**
+     * Render custom DNSH hair for custom races
+     */
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "LJinRyuu/JBRA/ModelBipedDBC;renderHairsV2(FLjava/lang/String;FIIIILJinRyuu/JBRA/RenderPlayerJBRA;Lnet/minecraft/client/entity/AbstractClientPlayer;)V"))
+    private void npcdbc$restoreCustomRaceBodyBeforeHairV2(AbstractClientPlayer player, float partialTicks,
+                                                          CallbackInfo ci, @Local(name = "race") LocalIntRef race) {
+        if (npcdbc$customRaceHasHair && npcdbc$customRaceBodySuppressed) {
+            race.set(npcdbc$customRaceOriginalRace);
+            GL11.glPopMatrix();
+            npcdbc$customRaceBodySuppressed = false;
+        }
     }
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "CONSTANT", args = "stringValue=textures/misc/m.png"))
