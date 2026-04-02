@@ -9,17 +9,18 @@ import kamkeel.npcdbc.data.race.serial.DataCompound;
 import kamkeel.npcdbc.data.race.serial.DataSerializable;
 import kamkeel.npcdbc.data.race.stats.RaceAttributeConfig;
 import kamkeel.npcdbc.data.race.stats.RaceStats;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class Race implements DataSerializable {
-    public int id;
+    public int id = -1;
     private String name;
     private String menuName;
 
-    public RaceDisplay display;
-    public RaceStats stats;
-    public RaceSkill skill;
+    public RaceDisplay display = new RaceDisplay();
+    public RaceStats stats = new RaceStats();
+    public RaceSkill skill = new RaceSkill(1);
     public FormTree formTree;
-    public RaceAttributeConfig attributeConfig;
+    public RaceAttributeConfig attributeConfig = RaceAttributeConfig.defaults();
 
     public Race(int id, String name, String menuName, RaceDisplay display, RaceStats stats, RaceSkill skill, FormTree formTree, RaceAttributeConfig attributeConfig) {
         this.id = id;
@@ -32,8 +33,35 @@ public class Race implements DataSerializable {
         this.attributeConfig = attributeConfig;
     }
 
+    public Race() {}
+
     public String getName() { return name; }
     public String getMenuName() { return menuName; }
+
+    /**
+     * Serialize this race to NBT for network transport.
+     * Includes identity fields (id, name) which are NOT written
+     * by the config-oriented {@link #serialize(DataCompound)}.
+     */
+    public NBTTagCompound writeToNBT() {
+        DataCompound data = DataCompound.create();
+        data.putInt("id", id);
+        data.putString("name", name);
+        serialize(data);
+        return data.toNbt();
+    }
+
+    /**
+     * Deserialize this race from NBT received over the network.
+     * Reads identity fields (id, name) and delegates to
+     * {@link #deserialize(DataCompound)} for config fields.
+     */
+    public void readFromNBT(NBTTagCompound nbt) {
+        DataCompound data = DataCompound.ofNbt(nbt);
+        id = data.getInt("id", id);
+        name = data.getString("name", name);
+        deserialize(data);
+    }
 
     @Override
     public DataCompound serialize(DataCompound data) {

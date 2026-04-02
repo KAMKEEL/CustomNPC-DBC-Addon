@@ -1,9 +1,13 @@
 package kamkeel.npcdbc.controllers;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.controllers.sync.DBCSyncType;
+import kamkeel.npcdbc.controllers.sync.handlers.RaceSyncHandler;
 import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.race.helper.RaceSelectorHelper;
 import kamkeel.npcdbc.data.race.serial.ConfigManager;
+import kamkeel.npcs.controllers.SyncController;
+import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.LogWriter;
 
 import java.util.ArrayList;
@@ -15,10 +19,10 @@ import java.util.Map;
 public class RaceController {
     public static RaceController Instance = new RaceController();
 
-    private final Map<String, Race> races = new HashMap<>();
-    private final List<Race> raceOrder = new ArrayList<>();
+    public final Map<String, Race> races = new HashMap<>();
+    public final List<Race> raceOrder = new ArrayList<>();
     
-    private final ConfigManager<Race> configManager = new ConfigManager<>(() -> CustomNpcPlusDBC.addonConfig, "races", Race::getName);
+    public final ConfigManager<Race> configManager = new ConfigManager<>(() -> CustomNpcPlusDBC.addonConfig, "races", Race::getName);
     
     public RaceController() {
         Instance = this;
@@ -136,6 +140,74 @@ public class RaceController {
 
     public int getCustomRaceCount() {
         return raceOrder.size();
+    }
+
+    public Race save(Race race) {
+        if (race == null) 
+            return null;
+
+        Race existing = get(race.id);
+        if (existing != null) {
+            races.remove(existing.getName());
+            raceOrder.remove(existing);
+        }
+
+        races.put(race.getName(), race);
+        if (!raceOrder.contains(race))
+            raceOrder.add(race);
+
+        configManager.loadOrCreate(race);
+
+        NBTTagCompound nbt = race.writeToNBT();
+        SyncController.syncUpdate(DBCSyncType.RACE, nbt);
+
+        return race;
+    }
+
+    public void delete(String name) {
+        Race removed = races.remove(name);
+        if (removed == null) return;
+
+        raceOrder.remove(removed);
+        SyncController.syncRemove(DBCSyncType.RACE, name);
+    }
+
+    public void deleteRaceFile(Race race) {
+        configManager.deleteConfig(race.getName());
+    }
+
+    /**
+     * Client-side: atomically replace all race data after RELOAD.
+     * Called by {@link RaceSyncHandler}.
+     */
+    public void setRaceData(Map<String, Race> newRaces, List<Race> newOrder) {
+        races.clear();
+        races.putAll(newRaces);
+        raceOrder.clear();
+        raceOrder.addAll(newOrder);
+        RaceSelectorHelper.markDirty();
+    }
+
+    /**
+     * Client-side: insert or replace a single race after UPDATE.
+     * Called by {@link RaceSyncHandler}.
+     */
+    public void put(Race race) {
+        Race existing = getByName(race.getName());
+        if (existing != null) raceOrder.remove(existing);
+        races.put(race.getName(), race);
+        raceOrder.add(race);
+        RaceSelectorHelper.markDirty();
+    }
+
+    /**
+     * Client-side: remove a race by name after REMOVE.
+     * Called by {@link RaceSyncHandler}.
+     */
+    public void remove(String name) {
+        Race removed = races.remove(name);
+        if (removed != null) raceOrder.remove(removed);
+        RaceSelectorHelper.markDirty();
     }
 
     public static RaceController getInstance() {

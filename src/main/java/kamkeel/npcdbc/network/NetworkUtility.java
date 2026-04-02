@@ -3,11 +3,13 @@ package kamkeel.npcdbc.network;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
+import kamkeel.npcdbc.controllers.RaceController;
 import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.outline.Outline;
+import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.packets.player.SendChat;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -45,6 +47,14 @@ public class NetworkUtility {
         Map<String, Integer> map = new HashMap<String, Integer>();
         for (Outline outline : OutlineController.getInstance().customOutlines.values()) {
             map.put(outline.name, outline.id);
+        }
+        ScrollDataPacket.sendScrollData(player, map, EnumScrollData.OPTIONAL);
+    }
+
+    public static void sendCustomRaceDataAll(EntityPlayerMP player) {
+        Map<String, Integer> map = new HashMap<>();
+        for (Race race : RaceController.getInstance().getRaceOrder()) {
+            map.put(race.getName(), race.id);
         }
         ScrollDataPacket.sendScrollData(player, map, EnumScrollData.OPTIONAL);
     }
