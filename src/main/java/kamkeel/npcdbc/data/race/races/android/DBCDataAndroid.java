@@ -1,6 +1,9 @@
 package kamkeel.npcdbc.data.race.races.android;
 
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.overlay.Overlay;
+import kamkeel.npcdbc.data.overlay.OverlayChain;
+import kamkeel.npcdbc.data.overlay.OverlayManager;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -67,6 +70,7 @@ public class DBCDataAndroid {
         DBCEventHooks.onAndroidPartEvent(event);
         equippedParts.put(slot, part.getId());
         part.onEquip(data.player);
+        addOverlays(slot, part.getData());
     }
 
     public void unequip(AndroidPartSlot slot) {
@@ -80,12 +84,46 @@ public class DBCDataAndroid {
         DBCEventHooks.onAndroidPartEvent(event);
         equippedParts.put(slot, "");
         part.onUnequip(data.player);
+        removeOverlays(part.getData());
     }
 
     public void tick() {
         for (AndroidPartType part : getAllEquipped()) {
             part.onTick(data.player);
         }
+    }
+
+    private void addOverlays(AndroidPartSlot slot, AndroidPartData part) {
+        if (!part.hasOverlays()) return;
+
+        OverlayManager manager = data.getDBCInfo().overlayManager;
+        if (manager.getChains().isEmpty()) {
+            manager.getChains().add(modifyChainType(part.getOverlays(), slot));
+            return;
+        }
+
+        for (OverlayChain chain : manager.getChains()) {
+            if (chain.getName().equals(part.getId()))
+                continue;
+            manager.add(modifyChainType(part.getOverlays(), slot));
+        }
+    }
+
+    private void removeOverlays(AndroidPartData part) {
+        if (!part.hasOverlays()) return;
+
+        for (OverlayChain chain : data.getDBCInfo().overlayManager.getChains()) {
+            if (chain.getName().equals(part.getId())) {
+                data.getDBCInfo().overlayManager.remove(chain);
+            }
+        }
+    }
+
+    private OverlayChain modifyChainType(OverlayChain chain, AndroidPartSlot slot) {
+        for (Overlay overlay : chain.getOverlays()) {
+            overlay.type(AndroidPartSlot.overlayType(slot));
+        }
+        return chain;
     }
 
     // ──────────────────── NBT ────────────────────

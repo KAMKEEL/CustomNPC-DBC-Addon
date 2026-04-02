@@ -63,7 +63,7 @@ public class AndroidPartData {
     }
 
     public boolean hasOverlays() {
-        return overlays != null;
+        return !overlays.getOverlays().isEmpty();
     }
 
     public OverlayChain getOverlays() {
@@ -96,7 +96,7 @@ public class AndroidPartData {
         private final AndroidPartSlot slot;
         private String unlocalizedName;
         private String textureDir = "androidparts/";
-        private OverlayChain overlays = null;
+        private OverlayChain overlays;
 
         private BiConsumer<AndroidPartData, EntityPlayer> onEquip = null;
         private BiConsumer<AndroidPartData, EntityPlayer> onUnequip = null;
@@ -113,20 +113,24 @@ public class AndroidPartData {
             this.id = namespace + ":" + name;
             this.slot = slot;
             this.unlocalizedName = "item.android_part." + name.toLowerCase();
+            this.overlays = new OverlayChain(id);
         }
 
         public Builder unlocalizedName(String unlocalizedName) {
-            this.unlocalizedName = unlocalizedName;
+            if (unlocalizedName != null && !unlocalizedName.isEmpty())
+                this.unlocalizedName = unlocalizedName;
             return this;
         }
 
         public Builder textureDir(String dir) {
-            this.textureDir = dir;
+            if (dir != null && !dir.isEmpty())
+                this.textureDir = dir;
             return this;
         }
 
         public Builder overlays(OverlayChain overlays) {
-            this.overlays = overlays;
+            if (overlays != null)
+                this.overlays = overlays;
             return this;
         }
 

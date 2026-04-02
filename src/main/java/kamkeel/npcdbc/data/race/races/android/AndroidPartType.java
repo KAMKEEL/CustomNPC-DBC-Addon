@@ -15,6 +15,7 @@ public final class AndroidPartType {
 
     // ──────────────────── Built-in parts ────────────────────
     public static final AndroidPartType RED_RIBBON_CORE = register(AndroidParts.RED_RIBBON_CORE);
+    public static final AndroidPartType KI_RING = register(AndroidParts.KI_RING);
 
     // ──────────────────── Instance fields ────────────────────
     private final int ordinal;
