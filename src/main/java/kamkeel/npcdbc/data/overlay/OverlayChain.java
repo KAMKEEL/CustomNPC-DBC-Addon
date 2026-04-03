@@ -60,6 +60,12 @@ public class OverlayChain implements IOverlayChain, DataSerializable {
         return condition.apply(ctx);
     }
 
+    public void add(Overlay... overlays) {
+        for (Overlay overlay : overlays) {
+            overlay.chain(this);
+            this.overlays.add(overlay);
+        }
+    }
 
     public Overlay add(IOverlay.Type type) {
         Overlay o = ((Overlay) type.create()).chain(this);

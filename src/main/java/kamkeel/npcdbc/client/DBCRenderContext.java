@@ -21,7 +21,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.api.entity.IEntityLivingBase;
 import noppes.npcs.api.entity.IPlayer;
+import noppes.npcs.client.ClientCacheHandler;
 import noppes.npcs.client.model.ModelMPM;
+import noppes.npcs.client.renderer.ImageData;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.scripted.NpcAPI;
 
@@ -186,6 +188,20 @@ public class DBCRenderContext {
         return partialTicks;
     }
 
+    public boolean bindTexture(String texture) {
+        if (texture == null || texture.isEmpty())
+            return false;
+
+        try {
+            ImageData imageData = ClientCacheHandler.getImageData(texture);
+            if (!imageData.imageLoaded())
+                return false;
+            imageData.bindTexture();
+            return true;
+        } catch (Exception exception) {
+            return false;
+        }
+    }
     // ══════════════════════════════════════════════════════════════════════════
     // DBC Data
     // ══════════════════════════════════════════════════════════════════════════

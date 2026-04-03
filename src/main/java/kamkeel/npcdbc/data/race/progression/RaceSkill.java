@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.data.race.progression;
 
+import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.race.serial.DataCompound;
 import kamkeel.npcdbc.data.race.serial.DataSerializable;
@@ -16,7 +17,7 @@ import java.util.Map;
 public class RaceSkill implements DataSerializable {
     public static final class LevelEntry implements DataSerializable {
         private final int level;
-        private final Form form;
+        private Form form;
         private int tpCost;
         private int mindCost;
 
@@ -45,10 +46,8 @@ public class RaceSkill implements DataSerializable {
         @Override
         public void deserialize(DataCompound data) {
             if (data.has("formKey")) {
-                String existingKey = form != null && form.key != null ? form.key.toString() : null;
-                String fileKey = data.getString("formKey", null);
-                if (fileKey != null && !fileKey.equals(existingKey))
-                    LogWriter.info("[RaceConfig] Level " + level + " formKey '" + fileKey + "' does not match '" + existingKey + "' — skipping.");
+                String formKey = data.getString("formKey", null);
+                form = FormController.getInstance().getFromKey(formKey);
             }
             tpCost   = data.getInt("tpCost",   tpCost);
             mindCost = data.getInt("mindCost",  mindCost);

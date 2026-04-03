@@ -605,7 +605,7 @@ public class ModelDBC extends ModelBase {
 
                 ctx.texture = Overlay.matchTexture(ctx, ctx.texture);
 
-                if (!bindTexture(ctx.texture))
+                if (!ctx.bindTexture(ctx.texture) && type != Type.Custom)
                     continue;
 
                 /* ───────── Colors ───────── */
