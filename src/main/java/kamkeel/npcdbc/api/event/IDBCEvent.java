@@ -192,4 +192,19 @@ public interface IDBCEvent extends IPlayerEvent {
             int getNewLevel();
         }
     }
+
+    interface AndroidPartEvent extends IDBCEvent {
+
+        int getType();
+
+        String getId();
+
+        int getSlot();
+
+        interface Equip extends AndroidPartEvent {
+        }
+
+        interface Unequip extends AndroidPartEvent {
+        }
+    }
 }

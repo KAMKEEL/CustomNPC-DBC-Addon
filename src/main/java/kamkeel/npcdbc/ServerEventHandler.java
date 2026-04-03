@@ -124,6 +124,10 @@ public class ServerEventHandler {
                 if (ConfigDBCGameplay.EnableHumanSpirit && dbcData.Race == DBCRace.HUMAN)
                     DBCEffectController.Instance.checkHumanSpirit(player);
 
+                if ("android".equals(dbcData.currentRaceKey)) {
+                    dbcData.androidParts.tick();
+                }
+
                 dbcData.syncTracking();
                 // ChargeKi
             }

@@ -376,6 +376,52 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
 
     }
 
+    @Cancelable
+    public static class AndroidPartEvent extends DBCPlayerEvent implements IDBCEvent.AndroidPartEvent {
+
+        public final String id;
+        public final int slot;
+
+        public AndroidPartEvent(IPlayer player, String id, int slot) {
+            super(player);
+            this.id = id;
+            this.slot = slot;
+        }
+
+        @Override
+        public int getType() {
+            if (this instanceof Equip) return 0;
+            else if (this instanceof Unequip) return 1;
+            else return -1;
+        }
+
+        @Override
+        public String getId() {
+            return id;
+        }
+
+        @Override
+        public int getSlot() {
+            return slot;
+        }
+
+        public String getHookName() {
+            return DBCScriptType.ANDROID_PART.function;
+        }
+
+        public static class Equip extends DBCPlayerEvent.AndroidPartEvent implements IDBCEvent.AndroidPartEvent.Equip {
+            public Equip(IPlayer player, String id, int slot) {
+                super(player, id, slot);
+            }
+        }
+
+        public static class Unequip extends DBCPlayerEvent.AndroidPartEvent implements IDBCEvent.AndroidPartEvent.Unequip {
+            public Unequip(IPlayer player, String id, int slot) {
+                super(player, id, slot);
+            }
+        }
+    }
+
     public static class RenderEvent extends RenderPlayerEvent {
 
         public RenderEvent(EntityPlayer player, RenderPlayer renderer, float partialRenderTick) {

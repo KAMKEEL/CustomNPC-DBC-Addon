@@ -108,6 +108,7 @@ public class CustomNpcPlusDBC {
             ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.REVIVED.function, IDBCEvent.DBCReviveEvent.class);
             ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.KNOCKOUT.function, IDBCEvent.DBCKnockout.class);
             ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.SKILL_EVENT.function, IDBCEvent.SkillEvent.class);
+            ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.ANDROID_PART.function, IDBCEvent.AndroidPartEvent.class);
         }
 
         DBCConditions.register();
