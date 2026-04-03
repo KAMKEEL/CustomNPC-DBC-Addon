@@ -518,6 +518,7 @@ public final class DataCompound {
     // ── Serializable child helper ──────────────────────────────────────────
 
     public DataCompound put(String key, DataSerializable child) {
+        if(child == null) return this;
         return put(key, child.serialize(this.child()));
     }
 
