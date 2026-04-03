@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.gui.global.overlaymodel;
 
 import kamkeel.npcdbc.data.overlay.ScriptOverlayModel;
+import kamkeel.npcdbc.data.race.serial.DataCompound;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.request.overlaymodel.OverlayModelSavePacket;
 import net.minecraft.client.Minecraft;
@@ -97,11 +98,11 @@ public class GuiOverlayModelScript extends GuiScriptInterface {
 
     @Override
     public void onDataUpdated(NBTTagCompound compound) {
-        model.readFromNBT(compound);
+        model.deserialize(DataCompound.ofNbt(compound));
         this.handler = model.getScriptHandler();
 
         if (parent instanceof GuiNpcManageOverlayModels)
-            ((GuiNpcManageOverlayModels) parent).setModel(model);
+            ((GuiNpcManageOverlayModels) parent).setSelected(model);
     }
 
     // -------------------- Close --------------------

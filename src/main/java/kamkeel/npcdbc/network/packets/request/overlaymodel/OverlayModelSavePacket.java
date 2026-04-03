@@ -3,6 +3,7 @@ package kamkeel.npcdbc.network.packets.request.overlaymodel;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.OverlayModelController;
 import kamkeel.npcdbc.data.overlay.ScriptOverlayModel;
+import kamkeel.npcdbc.data.race.serial.DataCompound;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.PacketChannel;
@@ -60,7 +61,7 @@ public class OverlayModelSavePacket extends AbstractPacket {
         NBTTagCompound nbt = ByteBufUtils.readBigNBT(in);
 
         ScriptOverlayModel model = new ScriptOverlayModel();
-        model.readFromNBT(nbt);
+        model.deserialize(DataCompound.ofNbt(nbt));
         OverlayModelController.getInstance().save(model);
 
         if (!prev.isEmpty() && !prev.equals(model.key))
