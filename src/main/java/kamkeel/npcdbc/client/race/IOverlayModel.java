@@ -1,10 +1,16 @@
 package kamkeel.npcdbc.client.race;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.data.overlay.OverlayContext;
 
-@SideOnly(Side.CLIENT)
+/**
+ * Contract for overlay model rendering.
+ * <p>
+ * Not annotated {@code @SideOnly(Side.CLIENT)} so that Janino script types
+ * whose {@code Functions} class implements this interface can be loaded on
+ * the dedicated server without triggering a missing-class crash.  All
+ * concrete implementations and call-sites remain client-only; the interface
+ * itself only references the common-side {@link OverlayContext}.
+ */
 public interface IOverlayModel {
     
     float SCALE = 0.0625f;

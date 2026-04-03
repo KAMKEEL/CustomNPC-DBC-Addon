@@ -12,6 +12,7 @@ dbc.clientsettings.aura.firstPersonOpacity=Opacidad de aura 3D en 1ª persona: %
 global.customforms=Formas
 global.customauras=Auras
 global.customoutlines=Contornos
+global.customoverlaymodels=Modelos de Superposición
 
 stats.dbcsettings=Ajustes DBC
 

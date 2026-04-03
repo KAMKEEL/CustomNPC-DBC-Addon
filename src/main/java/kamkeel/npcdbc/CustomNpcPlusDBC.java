@@ -24,6 +24,7 @@ import kamkeel.npcdbc.controllers.CapsuleController;
 import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
+import kamkeel.npcdbc.controllers.OverlayModelController;
 import kamkeel.npcdbc.controllers.RaceController;
 import kamkeel.npcdbc.controllers.SkillController;
 import kamkeel.npcdbc.data.DBCProfileData;
@@ -131,6 +132,7 @@ public class CustomNpcPlusDBC {
         CapsuleController.getInstance().load();
         BonusController.getInstance().load();
         OutlineController.getInstance().load();
+        OverlayModelController.getInstance().load();
         SkillController.Instance.load();
         RaceController.getInstance().load();
     }

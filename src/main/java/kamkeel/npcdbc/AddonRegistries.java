@@ -8,6 +8,7 @@ import kamkeel.npcdbc.client.race.bio.BioAndroidCrestModel;
 import kamkeel.npcdbc.client.race.bio.BioAndroidTailModel;
 import kamkeel.npcdbc.client.race.bio.BioAndroidWingsModel;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.controllers.OverlayModelController;
 import kamkeel.npcdbc.controllers.RaceController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.race.Race;
@@ -24,9 +25,9 @@ public class AddonRegistries {
 
     @SideOnly(Side.CLIENT)
     public static void registerClient() {
-        OverlayModels.register(BioAndroidLayers.CREST_MODEL, new BioAndroidCrestModel());
-        OverlayModels.register(BioAndroidLayers.WINGS_MODEL, new BioAndroidWingsModel());
-        OverlayModels.register(BioAndroidLayers.TAIL_MODEL, new BioAndroidTailModel());
+        OverlayModelController.getInstance().register(BioAndroidLayers.CREST_MODEL, new BioAndroidCrestModel());
+        OverlayModelController.getInstance().register(BioAndroidLayers.WINGS_MODEL, new BioAndroidWingsModel());
+        OverlayModelController.getInstance().register(BioAndroidLayers.TAIL_MODEL, new BioAndroidTailModel());
     }
 
     public static class Races extends Register<Race> {
@@ -70,12 +71,12 @@ public class AddonRegistries {
 
         @SideOnly(Side.CLIENT)
         public static void registerModelComponent(String key, IOverlayModel component) {
-            OverlayModels.register(key, component);
+            OverlayModelController.getInstance().register(key, component);
         }
 
         @SideOnly(Side.CLIENT)
         public static IOverlayModel getModelComponent(String key) {
-            return OverlayModels.get(key);
+            return OverlayModelController.getInstance().getBuiltIn(key);
         }
     }
 
@@ -96,20 +97,5 @@ public class AddonRegistries {
         }
     }
 
-    public static class OverlayModels {
-        private static final Map<String, IOverlayModel> models = new HashMap<>();
-        
-        public static void register(String key, IOverlayModel model) {
-            models.put(key, model);
-        }
-
-        public static IOverlayModel get(String key) {
-            return key == null ? null : models.get(key);
-        }
-
-        public static IOverlayModel remove(String key) {
-            return models.remove(key);
-        }
-    }
 }
 

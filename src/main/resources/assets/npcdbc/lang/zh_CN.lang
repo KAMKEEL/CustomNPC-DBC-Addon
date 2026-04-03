@@ -12,6 +12,7 @@ dbc.clientsettings.aura.firstPersonOpacity=第一人称3D气焰不透明度: %s%
 global.customforms=形态
 global.customauras=气焰
 global.customoutlines=气轮廓
+global.customoverlaymodels=叠加模型
 
 stats.dbcsettings=DBC 设置
 inventory.extras=额外

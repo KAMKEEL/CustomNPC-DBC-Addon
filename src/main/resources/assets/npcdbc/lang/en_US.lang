@@ -12,6 +12,7 @@ dbc.clientsettings.aura.firstPersonOpacity=First person 3D Aura Opacity: %s%%
 global.customforms=Forms
 global.customauras=Auras
 global.customoutlines=Outlines
+global.customoverlaymodels=Overlay Models
 
 stats.dbcsettings=DBC Settings
 inventory.extras=Extras

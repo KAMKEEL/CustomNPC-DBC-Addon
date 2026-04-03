@@ -39,6 +39,9 @@ import kamkeel.npcdbc.network.packets.request.form.DBCSaveForm;
 import kamkeel.npcdbc.network.packets.request.outline.DBCCloneOutline;
 import kamkeel.npcdbc.network.packets.request.outline.DBCRemoveOutline;
 import kamkeel.npcdbc.network.packets.request.outline.DBCSaveOutline;
+import kamkeel.npcdbc.network.packets.request.overlaymodel.OverlayModelClonePacket;
+import kamkeel.npcdbc.network.packets.request.overlaymodel.OverlayModelDeletePacket;
+import kamkeel.npcdbc.network.packets.request.overlaymodel.OverlayModelSavePacket;
 import kamkeel.npcdbc.network.packets.request.race.DBCRemoveRace;
 import kamkeel.npcdbc.network.packets.request.race.DBCSaveRace;
 import net.minecraft.entity.Entity;
@@ -135,6 +138,9 @@ public class DBCPacketHandler {
         REQUEST_PACKETS.registerPacket(new DBCCloneOutline());
         REQUEST_PACKETS.registerPacket(new DBCSaveRace());
         REQUEST_PACKETS.registerPacket(new DBCRemoveRace());
+        REQUEST_PACKETS.registerPacket(new OverlayModelSavePacket());
+        REQUEST_PACKETS.registerPacket(new OverlayModelDeletePacket());
+        REQUEST_PACKETS.registerPacket(new OverlayModelClonePacket());
 
     }
 

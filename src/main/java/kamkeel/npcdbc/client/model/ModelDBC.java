@@ -3,7 +3,6 @@ package kamkeel.npcdbc.client.model;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHJBRA;
-import kamkeel.npcdbc.AddonRegistries;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.client.ColorMode;
@@ -17,6 +16,7 @@ import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.client.race.IOverlayModel;
 import kamkeel.npcdbc.client.render.OverlayModelRenderer;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.controllers.OverlayModelController;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.aura.Aura;
@@ -651,7 +651,7 @@ public class ModelDBC extends ModelBase {
                 ctx.glColor(ctx.color);
 
                 boolean handledByComponent = false;
-                IOverlayModel comp = AddonRegistries.OverlayModels.get(overlay.getModelKey());
+                IOverlayModel comp = OverlayModelController.getInstance().resolve(overlay.getModelKey());
                 if (comp != null && comp.appliesTo(ctx)) {
                     if (!ctx.isFirstPersonArm || comp.rendersInFirstPerson(ctx)) {
                         comp.initialize(ctx);
