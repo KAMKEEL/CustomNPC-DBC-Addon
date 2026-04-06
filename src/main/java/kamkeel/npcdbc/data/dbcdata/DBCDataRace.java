@@ -5,9 +5,11 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.race.Race;
 
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.data.race.progression.RaceDataHolder;
 import kamkeel.npcdbc.data.race.serial.DataCompound;
 import kamkeel.npcdbc.data.race.serial.DataSerializable;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.LogWriter;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -18,7 +20,7 @@ public class DBCDataRace {
 
     public final DBCData data;
 
-    public final Map<String, DataSerializable> customData = new LinkedHashMap<>();
+    public final Map<String, RaceDataHolder> customData = new LinkedHashMap<>();
 
     public DBCDataRace(DBCData data) {
         this.data = data;
@@ -80,19 +82,21 @@ public class DBCDataRace {
     }
 
     public void writeCustomRaceData(Race race) {
-        if (race == null || race.raceDataCallback == null) {
+        if (race == null || race.dataHolder == null) {
             customData.clear();
             return;
         }
 
-        customData.put(race.getName(), race.raceDataCallback.apply(data));
+        RaceDataHolder raceData = race.dataHolder.get();
+        raceData.attach(data);
+        customData.put(race.getName(), raceData);
     }
 
     public void writeToNBT(NBTTagCompound nbt) {
         DataCompound c = DataCompound.ofNbt(nbt);
         DataCompound child = DataCompound.create();
 
-        for (Map.Entry<String, DataSerializable> entry : customData.entrySet()) {
+        for (Map.Entry<String, RaceDataHolder> entry : customData.entrySet()) {
             child.put(entry.getKey(), entry.getValue().serialize(DataCompound.create()));
         }
 
@@ -104,8 +108,12 @@ public class DBCDataRace {
         DataCompound child = c.get("customRace");
 
         for (Race race : RaceController.getInstance().getRaces()) {
-            DataSerializable raceData = race.raceDataCallback.apply(data);
+            if (race.dataHolder == null) continue;
+
+            RaceDataHolder raceData = race.dataHolder.get();
             if (raceData == null) continue;
+
+            raceData.attach(data);
             raceData.deserialize(child);
             customData.put(race.getName(), raceData);
         }

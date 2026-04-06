@@ -1,33 +1,20 @@
 package kamkeel.npcdbc.data.race.races.android;
 
-import kamkeel.npcdbc.client.model.ModelDBC;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.data.overlay.Overlay;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
-import kamkeel.npcdbc.data.overlay.OverlayContext;
-import kamkeel.npcdbc.data.overlay.OverlayManager;
-import kamkeel.npcdbc.data.race.races.Android;
+import kamkeel.npcdbc.data.race.progression.RaceDataHolder;
 import kamkeel.npcdbc.data.race.serial.DataCompound;
-import kamkeel.npcdbc.data.race.serial.DataSerializable;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
-import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.LogWriter;
 import noppes.npcs.api.entity.IPlayer;
 
 import java.util.*;
 
-public class DBCDataAndroid implements DataSerializable {
-
-    private final DBCData data;
+public class DBCDataAndroid extends RaceDataHolder {
 
     // slot -> part id string (null = empty)
     private final Map<AndroidPartSlot, String> equippedParts = new LinkedHashMap<>();
-
-    public DBCDataAndroid(DBCData data) {
-        this.data = data;
-    }
 
     // ──────────────────── Public API ────────────────────
 
@@ -66,12 +53,12 @@ public class DBCDataAndroid implements DataSerializable {
             return;
         }
 
-        IPlayer player = PlayerDataUtil.getIPlayer(data.player);
+        IPlayer player = PlayerDataUtil.getIPlayer(dbcData.player);
         DBCPlayerEvent.AndroidPartEvent event = new DBCPlayerEvent.AndroidPartEvent.Equip(player, part.getId(), slot.ordinal());
 
         DBCEventHooks.onAndroidPartEvent(event);
         equippedParts.put(slot, part.getId());
-        part.onEquip(data.player);
+        part.onEquip(dbcData.player);
     }
 
     public void unequip(AndroidPartSlot slot) {
@@ -79,17 +66,17 @@ public class DBCDataAndroid implements DataSerializable {
 
         AndroidPartType part = getEquipped(slot);
         String partId = part.getId();
-        IPlayer player = PlayerDataUtil.getIPlayer(data.player);
+        IPlayer player = PlayerDataUtil.getIPlayer(dbcData.player);
         DBCPlayerEvent.AndroidPartEvent event = new DBCPlayerEvent.AndroidPartEvent.Unequip(player, partId, slot.ordinal());
 
         DBCEventHooks.onAndroidPartEvent(event);
         equippedParts.put(slot, "");
-        part.onUnequip(data.player);
+        part.onUnequip(dbcData.player);
     }
 
     public void tick() {
         for (AndroidPartType part : getAllEquipped()) {
-            part.onTick(data.player);
+            part.onTick(dbcData.player);
         }
     }
 

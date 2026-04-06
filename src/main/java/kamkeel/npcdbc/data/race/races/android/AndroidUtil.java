@@ -3,7 +3,6 @@ package kamkeel.npcdbc.data.race.races.android;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
 import kamkeel.npcdbc.data.overlay.OverlayContext;
-import kamkeel.npcdbc.data.race.races.Android;
 
 import java.util.List;
 
@@ -17,7 +16,7 @@ public class AndroidUtil {
         if (!isAndroid(data))
             return null;
 
-        return (DBCDataAndroid) data.addonRace.customData.get(Android.ANDROID_NS);
+        return (DBCDataAndroid) data.addonRace.customData.get(data.currentRaceKey);
     }
 
     public static void tickIfAndroid(DBCData dbcData) {
@@ -35,7 +34,10 @@ public class AndroidUtil {
         DBCDataAndroid data = getData(ctx.dbcData);
         if (data == null) return;
 
-        chains.addAll(data.getOverlays());
+        List<OverlayChain> overlays = data.getOverlays();
+        if (overlays == null) return;
+
+        chains.addAll(overlays);
     }
 
     public static AndroidPartType getEquippedPart(DBCData dbcData, AndroidPartSlot slot) {

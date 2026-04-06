@@ -256,7 +256,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         NBTTagList skillList = NBTHelper.nbtIntegerObjectMap(this.customSkills, skill -> skill.writeToNBT(new NBTTagCompound()), (i, skill) -> SkillController.Instance.getSkill(i) != null);
         comp.setTag("customSkills", skillList);
 
-        if (addonRace != null)
+        if (addonRace != null && addonRace.isCustomRace())
             addonRace.writeToNBT(comp);
 
         return comp;
@@ -321,7 +321,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         addonFormLevel = c.getFloat("addonFormLevel");
         addonCurrentHeat = c.getFloat("addonCurrentHeat");
 
-        if (c.hasKey("addonRace"))
+        if (c.hasKey("customRace") && addonRace != null && addonRace.isCustomRace())
             addonRace.readFromNBT(c);
 
         if (!c.hasKey("auraID"))
@@ -486,6 +486,9 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             currentColors.writeToNBT(colorCompound);
             dataNeededOnClient.setTag("CustomFormColors", colorCompound);
         }
+
+        if (addonRace != null && addonRace.isCustomRace())
+            addonRace.writeToNBT(dataNeededOnClient);
 
         DBCPacketHandler.Instance.sendTracking(new PingPacket(this, dataNeededOnClient), player);
 

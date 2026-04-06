@@ -1,10 +1,12 @@
 package kamkeel.npcdbc.data.race;
 
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.controllers.RaceController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.race.display.RaceDisplay;
 import kamkeel.npcdbc.data.race.progression.FormTree;
+import kamkeel.npcdbc.data.race.progression.RaceDataHolder;
 import kamkeel.npcdbc.data.race.progression.RaceSkill;
 import kamkeel.npcdbc.data.race.serial.DataCompound;
 import kamkeel.npcdbc.data.race.serial.DataSerializable;
@@ -25,10 +27,10 @@ public class Race implements DataSerializable {
     public RaceSkill skill = new RaceSkill(1);
     public FormTree formTree = new FormTree();
     public RaceAttributeConfig attributeConfig = RaceAttributeConfig.defaults();
-    public Function<DBCData, DataSerializable> raceDataCallback = null;
+    public Supplier<RaceDataHolder> dataHolder = null;
 
     public Race(int id, String name, String menuName, RaceDisplay display, RaceStats stats, RaceSkill skill,
-                FormTree formTree, RaceAttributeConfig attributeConfig, Function<DBCData, DataSerializable> raceDataCallback) {
+                FormTree formTree, RaceAttributeConfig attributeConfig, Supplier<RaceDataHolder> dataHolder) {
         this.id = id;
         this.name = name;
         this.menuName = menuName;
@@ -37,7 +39,7 @@ public class Race implements DataSerializable {
         this.skill = skill;
         this.formTree = formTree;
         this.attributeConfig = attributeConfig;
-        this.raceDataCallback = raceDataCallback;
+        this.dataHolder = dataHolder;
     }
 
     public Race() {}
@@ -138,5 +140,7 @@ public class Race implements DataSerializable {
             form.dexMulti      = formData.getFloat("dexMulti",       form.dexMulti);
             form.willMulti     = formData.getFloat("willMulti",      form.willMulti);
         }
+
+        dataHolder = RaceController.Instance.getDataHolder(this.name);
     }
 }

@@ -103,11 +103,6 @@ public class HUDAndroidParts extends GuiNPCInterface implements ISubGuiListener 
 
         hoveredSlot = null;
         for (Map.Entry<AndroidPartSlot, int[]> entry : SLOT_HITBOX.entrySet()) {
-            DBCDataAndroid data = AndroidUtil.getData(dbcData);
-            if (data == null) {
-                LogWriter.error("Android Data is null");
-            }
-
             AndroidPartSlot slot = entry.getKey();
             int[] hb = entry.getValue();
             int hx = cx + hb[0];

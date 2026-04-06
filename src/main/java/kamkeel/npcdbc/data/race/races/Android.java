@@ -79,6 +79,6 @@ public class Android {
             .noseSlots(3)
             .eyeSlots(3)
             .and()
-        .dataCallback(DBCDataAndroid::new)
+        .dataHolder(DBCDataAndroid::new)
         .build(RACES);
 }

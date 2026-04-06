@@ -3,8 +3,10 @@ package kamkeel.npcdbc.controllers;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.controllers.sync.DBCSyncType;
 import kamkeel.npcdbc.controllers.sync.handlers.RaceSyncHandler;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.race.helper.RaceSelectorHelper;
+import kamkeel.npcdbc.data.race.progression.RaceDataHolder;
 import kamkeel.npcdbc.data.race.serial.ConfigManager;
 import kamkeel.npcs.controllers.SyncController;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,12 +17,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class RaceController {
     public static RaceController Instance = new RaceController();
 
     public final Map<String, Race> races = new HashMap<>();
     public final List<Race> raceOrder = new ArrayList<>();
+    public final Map<String, Supplier<RaceDataHolder>> raceDataHolders = new HashMap<>();
 
     public final ConfigManager<Race> configManager = new ConfigManager<>(() -> CustomNpcPlusDBC.addonConfig, "races", Race::getName);
 
@@ -69,6 +74,7 @@ public class RaceController {
             return;
         }
         races.put(race.getName(), race);
+        if (race.dataHolder != null) raceDataHolders.put(race.getName(), race.dataHolder);
         raceOrder.add(race);
         RaceSelectorHelper.markDirty();
         LogWriter.info("Registered race: " + race.getName() + " (ID: " + race.id + ") at GUI index: " + (5 + raceOrder.size()));
@@ -142,6 +148,10 @@ public class RaceController {
         return list;
     }
 
+    public Supplier<RaceDataHolder> getDataHolder(String name) {
+        return raceDataHolders.get(name);
+    }
+
     /** Legacy: check if an int ID maps to a custom race. Linear scan. */
     public boolean isCustomRace(int raceID) {
         return get(raceID) != null;
@@ -194,6 +204,13 @@ public class RaceController {
         races.putAll(newRaces);
         raceOrder.clear();
         raceOrder.addAll(newOrder);
+
+        raceDataHolders.clear();
+        for (Race race : races.values()) {
+            if (race.dataHolder == null) continue;
+            raceDataHolders.put(race.getName(), race.dataHolder);
+        }
+
         RaceSelectorHelper.markDirty();
     }
 
