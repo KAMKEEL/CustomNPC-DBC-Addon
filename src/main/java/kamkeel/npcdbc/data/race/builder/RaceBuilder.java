@@ -24,7 +24,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class RaceBuilder {
     private final int id;
@@ -55,7 +54,7 @@ public class RaceBuilder {
         return new FormTreeBuilder(this, namespace);
     }
 
-    public RaceBuilder formTree(FormTree tree) { // we gotta turn it into a func huss
+    public RaceBuilder formTree(FormTree tree) {
         this.formTree = tree;
         return this;
     }
