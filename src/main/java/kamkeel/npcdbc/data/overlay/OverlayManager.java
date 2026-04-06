@@ -7,6 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO WHY DOES THIS EXIST
 public class OverlayManager implements DataSerializable {
 
     public final ArrayList<OverlayChain> chains = new ArrayList<>();

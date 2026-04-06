@@ -33,7 +33,7 @@ public class AndroidLayers {
             .colorType(ColorType.Hair).and()
         .add(Type.Eyebrows, "eyeshade", "Eye Shade")
             .texture("base/face/eye_shade_%e_%g.png")
-            .colorType(ColorType.BodyCM).and()
+            .colorType(ColorType.BodyCM).defaultColor(0x0).and()
         .add(Type.LeftEye, EYE_LEFT, "Left Eye")
             .texture("base/face/eye_left_%e_%g.png")
             .colorType(ColorType.Eye).defaultColor(0x84c8e9).and()

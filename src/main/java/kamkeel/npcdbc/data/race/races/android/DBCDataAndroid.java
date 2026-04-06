@@ -1,8 +1,10 @@
 package kamkeel.npcdbc.data.race.races.android;
 
+import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.overlay.Overlay;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
+import kamkeel.npcdbc.data.overlay.OverlayContext;
 import kamkeel.npcdbc.data.overlay.OverlayManager;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
@@ -11,10 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.LogWriter;
 import noppes.npcs.api.entity.IPlayer;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DBCDataAndroid {
 
@@ -70,7 +69,11 @@ public class DBCDataAndroid {
         DBCEventHooks.onAndroidPartEvent(event);
         equippedParts.put(slot, part.getId());
         part.onEquip(data.player);
-        addOverlays(slot, part.getData());
+
+        if (part.getData().hasOverlays()) {
+            List<OverlayChain> chains = buildOverlayList();
+//            ModelDBC.applyOverlayChains(chains, OverlayContext.from(data));
+        }
     }
 
     public void unequip(AndroidPartSlot slot) {
@@ -84,7 +87,9 @@ public class DBCDataAndroid {
         DBCEventHooks.onAndroidPartEvent(event);
         equippedParts.put(slot, "");
         part.onUnequip(data.player);
-        removeOverlays(part.getData());
+
+        List<OverlayChain> chains = buildOverlayList();
+//        ModelDBC.applyOverlayChains(chains, OverlayContext.from(data));
     }
 
     public void tick() {
@@ -93,37 +98,15 @@ public class DBCDataAndroid {
         }
     }
 
-    private void addOverlays(AndroidPartSlot slot, AndroidPartData part) {
-        if (!part.hasOverlays()) return;
-
-        OverlayManager manager = data.getDBCInfo().overlayManager;
-        if (manager.getChains().isEmpty()) {
-            manager.getChains().add(modifyChainType(part.getOverlays(), slot));
-            return;
+    private List<OverlayChain> buildOverlayList() {
+        List<OverlayChain> chains = new ArrayList<>();
+        for (AndroidPartType type : getAllEquipped()) {
+            AndroidPartData part = type.getData();
+            if (part.hasOverlays())
+                chains.add(part.getOverlays());
         }
 
-        for (OverlayChain chain : manager.getChains()) {
-            if (chain.getName().equals(part.getId()))
-                continue;
-            manager.add(modifyChainType(part.getOverlays(), slot));
-        }
-    }
-
-    private void removeOverlays(AndroidPartData part) {
-        if (!part.hasOverlays()) return;
-
-        for (OverlayChain chain : data.getDBCInfo().overlayManager.getChains()) {
-            if (chain.getName().equals(part.getId())) {
-                data.getDBCInfo().overlayManager.remove(chain);
-            }
-        }
-    }
-
-    private OverlayChain modifyChainType(OverlayChain chain, AndroidPartSlot slot) {
-        for (Overlay overlay : chain.getOverlays()) {
-            overlay.type(AndroidPartSlot.overlayType(slot));
-        }
-        return chain;
+        return chains.isEmpty() ? null : chains;
     }
 
     // ──────────────────── NBT ────────────────────
