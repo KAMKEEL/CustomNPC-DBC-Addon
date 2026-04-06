@@ -79,6 +79,15 @@ public class DBCDataRace {
         return null;
     }
 
+    public void writeCustomRaceData(Race race) {
+        if (race == null || race.raceDataCallback == null) {
+            customData.clear();
+            return;
+        }
+
+        customData.put(race.getName(), race.raceDataCallback.apply(data));
+    }
+
     public void writeToNBT(NBTTagCompound nbt) {
         DataCompound c = DataCompound.ofNbt(nbt);
         DataCompound child = DataCompound.create();

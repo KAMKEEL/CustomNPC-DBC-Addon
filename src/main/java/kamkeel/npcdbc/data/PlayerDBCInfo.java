@@ -50,7 +50,7 @@ public class PlayerDBCInfo {
     public HashSet<Integer> unlockedAuras = new HashSet<Integer>();
 
     private String currentRaceKey = null;
-    
+
     /** Addon-side branch cursor for multi-branch custom race FormTrees. 0 = first branch (default). */
     private int selectedFormBranch = 0;
 
@@ -207,7 +207,7 @@ public class PlayerDBCInfo {
 
     public Form getSelectedForm() {
         if (selectedFormKey == null) return null;
-        
+
         Form f = FormController.Instance.getFromKey(selectedFormKey);
         if (f != null) return f;
         return null;
@@ -247,11 +247,11 @@ public class PlayerDBCInfo {
         for (FormWheelData formWheelData : formWheel) formWheelData.reset();
     }
 
-    
+
     public void setSelectedFormBranch(int selectedFormBranch) {
         this.selectedFormBranch = selectedFormBranch;
     }
-    
+
     public int getSelectedFormBranch() {
         return selectedFormBranch;
     }
@@ -284,7 +284,7 @@ public class PlayerDBCInfo {
         formLevels.replace(key, playerLevel);
         updateClient();
     }
-    
+
     public void addFormLevel(String key, float amount) {
         Form form = FormController.getInstance().getFromKey(key);
         if (form != null) {
@@ -511,7 +511,7 @@ public class PlayerDBCInfo {
         dbcCompound.setInteger("CurrentAura", currentAura);
         dbcCompound.setInteger("SelectedAura", selectedAura);
         dbcCompound.setTag("UnlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
-        
+
         dbcCompound.setString("CurrentRace", currentRaceKey != null ? currentRaceKey : "");
         dbcCompound.setInteger("SelectedBranchIndex", selectedFormBranch);
 
@@ -552,7 +552,7 @@ public class PlayerDBCInfo {
             }
             dbcCompound.removeTag("SelectedForm");
         }
-        
+
         selectedDBCForm = dbcCompound.hasKey("SelectedDBCForm") ? dbcCompound.getInteger("SelectedDBCForm") : -1;
         lastFormBeforeStack = dbcCompound.hasKey("LastFormBeforeStack") ? dbcCompound.getInteger("LastFormBeforeStack") : -1;
 
@@ -839,6 +839,7 @@ public class PlayerDBCInfo {
 
     public void setCurrentRace(Race race) {
         currentRaceKey = race != null ? race.getName() : null;
+        DBCData.get(parent.player).addonRace.writeCustomRaceData(race);
     }
 
     public void setCurrentRace(String key) {
