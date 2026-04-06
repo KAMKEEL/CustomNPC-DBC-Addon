@@ -153,7 +153,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public DBCDataStats stats = new DBCDataStats(this);
     public DBCDataBonus bonus = new DBCDataBonus(this);
     public DBCDataRace addonRace = new DBCDataRace(this);
-    public DBCDataAndroid androidParts = new DBCDataAndroid(this);
 
     /**
      * ALL overlay chains that were drawn this tick, forms and everything
@@ -240,10 +239,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         comp.setInteger("auraID", auraID);
         comp.setInteger("outlineID", outlineID);
 
-        if (currentRaceKey != null && currentRaceKey.equals("android")) {
-            androidParts.saveToNBT(comp);
-        }
-
         comp.setFloat("addonFormLevel", addonFormLevel);
         comp.setFloat("addonCurrentHeat", addonCurrentHeat);
 
@@ -260,6 +255,9 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         NBTTagList skillList = NBTHelper.nbtIntegerObjectMap(this.customSkills, skill -> skill.writeToNBT(new NBTTagCompound()), (i, skill) -> SkillController.Instance.getSkill(i) != null);
         comp.setTag("customSkills", skillList);
+
+        if (addonRace != null)
+            addonRace.writeToNBT(comp);
 
         return comp;
     }
@@ -319,13 +317,12 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             currentRaceKey = legacyRace != null ? legacyRace.getName() : null;
         }
 
-        if (currentRaceKey != null && currentRaceKey.equals("android")) {
-            androidParts.loadFromNBT(c);
-        }
-
         currentFormKey = c.getString("currentFormKey");
         addonFormLevel = c.getFloat("addonFormLevel");
         addonCurrentHeat = c.getFloat("addonCurrentHeat");
+
+        if (c.hasKey("addonRace"))
+            addonRace.readFromNBT(c);
 
         if (!c.hasKey("auraID"))
             c.setInteger("auraID", auraID);

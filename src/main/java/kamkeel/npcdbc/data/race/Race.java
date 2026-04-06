@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data.race;
 
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.race.display.RaceDisplay;
 import kamkeel.npcdbc.data.race.progression.FormTree;
@@ -10,6 +11,9 @@ import kamkeel.npcdbc.data.race.serial.DataSerializable;
 import kamkeel.npcdbc.data.race.stats.RaceAttributeConfig;
 import kamkeel.npcdbc.data.race.stats.RaceStats;
 import net.minecraft.nbt.NBTTagCompound;
+
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class Race implements DataSerializable {
     public int id = -1;
@@ -21,8 +25,10 @@ public class Race implements DataSerializable {
     public RaceSkill skill = new RaceSkill(1);
     public FormTree formTree = new FormTree();
     public RaceAttributeConfig attributeConfig = RaceAttributeConfig.defaults();
+    public Function<DBCData, DataSerializable> raceDataCallback = null;
 
-    public Race(int id, String name, String menuName, RaceDisplay display, RaceStats stats, RaceSkill skill, FormTree formTree, RaceAttributeConfig attributeConfig) {
+    public Race(int id, String name, String menuName, RaceDisplay display, RaceStats stats, RaceSkill skill,
+                FormTree formTree, RaceAttributeConfig attributeConfig, Function<DBCData, DataSerializable> raceDataCallback) {
         this.id = id;
         this.name = name;
         this.menuName = menuName;
@@ -31,6 +37,7 @@ public class Race implements DataSerializable {
         this.skill = skill;
         this.formTree = formTree;
         this.attributeConfig = attributeConfig;
+        this.raceDataCallback = raceDataCallback;
     }
 
     public Race() {}
@@ -71,7 +78,7 @@ public class Race implements DataSerializable {
         data.spacing();
         data.comment("=== Form Tree ===");
         data.put("FormTree", formTree);
-        
+
         data.spacing();
         data.comment("=== Racial Skill ===");
         data.put("RacialSkill", skill);
@@ -79,7 +86,7 @@ public class Race implements DataSerializable {
         data.spacing();
         data.comment("=== Stats ===");
         data.put("Stats", stats);
-        
+
         data.spacing();
         data.comment("=== AttributeConfig ===");
         data.put("AttributeConfig", attributeConfig);

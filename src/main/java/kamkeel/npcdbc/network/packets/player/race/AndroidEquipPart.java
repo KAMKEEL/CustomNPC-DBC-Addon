@@ -4,6 +4,8 @@ import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.race.races.android.AndroidPartSlot;
 import kamkeel.npcdbc.data.race.races.android.AndroidPartType;
+import kamkeel.npcdbc.data.race.races.android.AndroidUtil;
+import kamkeel.npcdbc.data.race.races.android.DBCDataAndroid;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.PacketChannel;
@@ -75,10 +77,17 @@ public final class AndroidEquipPart extends AbstractPacket {
             return;
         }
 
-        DBCData data = DBCData.get(player);
-        if (!"android".equals(data.currentRaceKey)) {
+        DBCData dbcData = DBCData.get(player);
+        if (!AndroidUtil.isAndroid(dbcData)) {
             LogWriter.error("[NPCDBC] Player " + player.getCommandSenderName()
                     + " tried to equip android part but is not android");
+            return;
+        }
+
+        DBCDataAndroid data = AndroidUtil.getData(dbcData);
+        if (data == null) {
+            LogWriter.error("[NPCDBC] Player " + player.getCommandSenderName()
+                + " has null android data and is probably not an android");
             return;
         }
 
@@ -94,11 +103,12 @@ public final class AndroidEquipPart extends AbstractPacket {
                         + " tried to equip part " + partId + " in wrong slot: " + slot);
                 return;
             }
-            data.androidParts.equip(slot, type);
+
+            data.equip(slot, type);
         } else {
-            data.androidParts.unequip(slot);
+            data.unequip(slot);
         }
 
-        data.saveNBTData(true);
+        dbcData.saveNBTData(true);
     }
 }

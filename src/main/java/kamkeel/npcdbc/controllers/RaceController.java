@@ -21,9 +21,9 @@ public class RaceController {
 
     public final Map<String, Race> races = new HashMap<>();
     public final List<Race> raceOrder = new ArrayList<>();
-    
+
     public final ConfigManager<Race> configManager = new ConfigManager<>(() -> CustomNpcPlusDBC.addonConfig, "races", Race::getName);
-    
+
     public RaceController() {
         Instance = this;
     }
@@ -133,6 +133,15 @@ public class RaceController {
         return raceOrder;
     }
 
+    public List<String> getRaceNames() {
+        List<String> list = new ArrayList<>();
+        for (Race race : getRaceOrder()) {
+            list.add(race.getName());
+        }
+
+        return list;
+    }
+
     /** Legacy: check if an int ID maps to a custom race. Linear scan. */
     public boolean isCustomRace(int raceID) {
         return get(raceID) != null;
@@ -143,7 +152,7 @@ public class RaceController {
     }
 
     public Race save(Race race) {
-        if (race == null) 
+        if (race == null)
             return null;
 
         Race existing = get(race.id);

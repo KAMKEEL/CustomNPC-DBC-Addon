@@ -4,6 +4,7 @@ import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumDBCClasses;
 import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.race.builder.RaceBuilder;
+import kamkeel.npcdbc.data.race.races.android.DBCDataAndroid;
 import kamkeel.npcdbc.data.race.stats.RaceAttributeConfig;
 
 import static kamkeel.npcdbc.AddonRegistries.RACES;
@@ -11,7 +12,7 @@ import static kamkeel.npcdbc.data.race.races.android.AndroidLayers.*;
 
 public class Android {
 
-    private static final String ANDROID_NS = "npcdbc:android";
+    public static final String ANDROID_NS = "npcdbc:android";
 
     public static void init() {
         // Triggers class loading — static fields below self-register into AddonRegistries.RACES.
@@ -78,5 +79,6 @@ public class Android {
             .noseSlots(3)
             .eyeSlots(3)
             .and()
+        .dataCallback(DBCDataAndroid::new)
         .build(RACES);
 }

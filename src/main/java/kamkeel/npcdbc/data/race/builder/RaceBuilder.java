@@ -5,12 +5,14 @@ import kamkeel.npcdbc.constants.BodyLayer;
 import kamkeel.npcdbc.constants.enums.EnumDBCAttributes;
 import kamkeel.npcdbc.constants.enums.EnumDBCClasses;
 import kamkeel.npcdbc.constants.enums.EnumDBCStats;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.overlay.DisplayChain;
 import kamkeel.npcdbc.data.race.display.*;
 import kamkeel.npcdbc.data.race.progression.FormTree;
 import kamkeel.npcdbc.data.race.progression.RaceSkill;
+import kamkeel.npcdbc.data.race.serial.DataSerializable;
 import kamkeel.npcdbc.data.race.stats.ClassStats;
 import kamkeel.npcdbc.data.race.stats.RaceAttributeConfig;
 import kamkeel.npcdbc.data.race.stats.RaceStats;
@@ -21,6 +23,8 @@ import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class RaceBuilder {
     private final int id;
@@ -32,6 +36,7 @@ public class RaceBuilder {
     private RaceDisplay display = new RaceDisplay();
     private FormTree formTree = null;
     private RaceAttributeConfig attributeConfig;
+    private Function<DBCData, DataSerializable> raceDataCallback = null;
 
     private final String namespace;
 
@@ -50,7 +55,7 @@ public class RaceBuilder {
         return new FormTreeBuilder(this, namespace);
     }
 
-    public RaceBuilder formTree(FormTree tree) {
+    public RaceBuilder formTree(FormTree tree) { // we gotta turn it into a func huss
         this.formTree = tree;
         return this;
     }
@@ -80,6 +85,11 @@ public class RaceBuilder {
         this.attributeConfig = config;
     }
 
+    public RaceBuilder dataCallback(Function<DBCData, DataSerializable> callback) {
+        this.raceDataCallback = callback;
+        return this;
+    }
+
     public Race build() {
         return build(null);
     }
@@ -95,7 +105,8 @@ public class RaceBuilder {
         }
 
         Race race = new Race(id, name, menuName, display, stats, skill, formTree,
-            attributeConfig != null ? attributeConfig : RaceAttributeConfig.defaults());
+            attributeConfig != null ? attributeConfig : RaceAttributeConfig.defaults(),
+            raceDataCallback);
         if(registry != null)
             registry.register(race);
 

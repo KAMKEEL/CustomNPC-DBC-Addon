@@ -5,13 +5,20 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.race.Race;
 
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.data.race.serial.DataCompound;
+import kamkeel.npcdbc.data.race.serial.DataSerializable;
+import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DBCDataRace {
 
     public final DBCData data;
+
+    public final Map<String, DataSerializable> customData = new LinkedHashMap<>();
 
     public DBCDataRace(DBCData data) {
         this.data = data;
@@ -71,6 +78,27 @@ public class DBCDataRace {
         }
         return null;
     }
-    
-    
+
+    public void writeToNBT(NBTTagCompound nbt) {
+        DataCompound c = DataCompound.ofNbt(nbt);
+        DataCompound child = DataCompound.create();
+
+        for (Map.Entry<String, DataSerializable> entry : customData.entrySet()) {
+            child.put(entry.getKey(), entry.getValue().serialize(DataCompound.create()));
+        }
+
+        c.put("customRace", child);
+    }
+
+    public void readFromNBT(NBTTagCompound nbt) {
+        DataCompound c = DataCompound.ofNbt(nbt);
+        DataCompound child = c.get("customRace");
+
+        for (Race race : RaceController.getInstance().getRaces()) {
+            DataSerializable raceData = race.raceDataCallback.apply(data);
+            if (raceData == null) continue;
+            raceData.deserialize(child);
+            customData.put(race.getName(), raceData);
+        }
+    }
 }

@@ -21,6 +21,7 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
+import kamkeel.npcdbc.data.race.races.android.AndroidUtil;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.network.DBCPacketHandler;
@@ -124,9 +125,7 @@ public class ServerEventHandler {
                 if (ConfigDBCGameplay.EnableHumanSpirit && dbcData.Race == DBCRace.HUMAN)
                     DBCEffectController.Instance.checkHumanSpirit(player);
 
-                if ("android".equals(dbcData.currentRaceKey)) {
-                    dbcData.androidParts.tick();
-                }
+                AndroidUtil.tickIfAndroid(dbcData);
 
                 dbcData.syncTracking();
                 // ChargeKi

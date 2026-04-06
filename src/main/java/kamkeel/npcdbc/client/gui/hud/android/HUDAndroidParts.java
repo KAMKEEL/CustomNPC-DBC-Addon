@@ -5,6 +5,8 @@ import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.race.races.android.AndroidPartSlot;
 import kamkeel.npcdbc.data.race.races.android.AndroidPartType;
+import kamkeel.npcdbc.data.race.races.android.AndroidUtil;
+import kamkeel.npcdbc.data.race.races.android.DBCDataAndroid;
 import kamkeel.npcdbc.items.android.ItemAndroidPart;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.race.AndroidEquipPart;
@@ -19,6 +21,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import noppes.npcs.LogWriter;
 import noppes.npcs.client.gui.util.GuiNPCInterface;
 import noppes.npcs.client.gui.util.ISubGuiListener;
 import noppes.npcs.client.gui.util.SubGuiInterface;
@@ -100,6 +103,11 @@ public class HUDAndroidParts extends GuiNPCInterface implements ISubGuiListener 
 
         hoveredSlot = null;
         for (Map.Entry<AndroidPartSlot, int[]> entry : SLOT_HITBOX.entrySet()) {
+            DBCDataAndroid data = AndroidUtil.getData(dbcData);
+            if (data == null) {
+                LogWriter.error("Android Data is null");
+            }
+
             AndroidPartSlot slot = entry.getKey();
             int[] hb = entry.getValue();
             int hx = cx + hb[0];
@@ -117,17 +125,17 @@ public class HUDAndroidParts extends GuiNPCInterface implements ISubGuiListener 
             if (hovered) {
                 GL11.glColor4f(1f, 1f, 1f, 0.25f);
             } else {
-                AndroidPartType equipped = dbcData.androidParts.getEquipped(slot);
+                AndroidPartType equipped = AndroidUtil.getEquippedPart(dbcData, slot);
                 GL11.glColor4f(equipped != null ? 0f : 1f, equipped != null ? 1f : 0f, 0f, 0.12f);
             }
 
-            drawRect(hx, hy, hx + hw, hy + hh, hovered ? 0x44FFFFFF : (dbcData.androidParts.getEquipped(slot) != null ? 0x2200FF00 : 0x22FF0000));
+            drawRect(hx, hy, hx + hw, hy + hh, hovered ? 0x44FFFFFF : (AndroidUtil.getEquippedPart(dbcData, slot) != null ? 0x2200FF00 : 0x22FF0000));
 
             GL11.glEnable(GL11.GL_TEXTURE_2D);
             GL11.glDisable(GL11.GL_BLEND);
 
             String label = slotLabel(slot);
-            AndroidPartType equipped = dbcData.androidParts.getEquipped(slot);
+            AndroidPartType equipped = AndroidUtil.getEquippedPart(dbcData, slot);
             String display = equipped != null ? equipped.getName() : "Empty";
             if (hovered) {
                 drawCenteredString(fontRendererObj, "§e" + label, hx + hw / 2, hy - 10, 0xFFFFFF);

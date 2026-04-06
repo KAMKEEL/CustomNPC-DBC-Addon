@@ -28,6 +28,8 @@ import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.npc.KiWeaponData;
 import kamkeel.npcdbc.data.overlay.*;
 import kamkeel.npcdbc.data.race.Race;
+import kamkeel.npcdbc.data.race.races.android.AndroidUtil;
+import kamkeel.npcdbc.data.race.races.android.DBCDataAndroid;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
@@ -550,6 +552,8 @@ public class ModelDBC extends ModelBase {
             }
         }
 
+        AndroidUtil.applyPartOverlayChains(chains, ctx);
+
         /* ───────── Main Entity Overlays ───────── */
         if (uniqueChains != null)
             chains.addAll(uniqueChains);
@@ -660,7 +664,7 @@ public class ModelDBC extends ModelBase {
                     }
                 }
 
-                if (!handledByComponent) 
+                if (!handledByComponent)
                     OverlayModelRenderer.render(type, ctx);
 
                 /* ───────── Post-Rendering ───────── */

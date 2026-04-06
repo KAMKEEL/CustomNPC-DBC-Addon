@@ -6,6 +6,9 @@ import kamkeel.npcdbc.data.overlay.Overlay;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
 import kamkeel.npcdbc.data.overlay.OverlayContext;
 import kamkeel.npcdbc.data.overlay.OverlayManager;
+import kamkeel.npcdbc.data.race.races.Android;
+import kamkeel.npcdbc.data.race.serial.DataCompound;
+import kamkeel.npcdbc.data.race.serial.DataSerializable;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -15,7 +18,7 @@ import noppes.npcs.api.entity.IPlayer;
 
 import java.util.*;
 
-public class DBCDataAndroid {
+public class DBCDataAndroid implements DataSerializable {
 
     private final DBCData data;
 
@@ -69,11 +72,6 @@ public class DBCDataAndroid {
         DBCEventHooks.onAndroidPartEvent(event);
         equippedParts.put(slot, part.getId());
         part.onEquip(data.player);
-
-        if (part.getData().hasOverlays()) {
-            List<OverlayChain> chains = buildOverlayList();
-//            ModelDBC.applyOverlayChains(chains, OverlayContext.from(data));
-        }
     }
 
     public void unequip(AndroidPartSlot slot) {
@@ -87,9 +85,6 @@ public class DBCDataAndroid {
         DBCEventHooks.onAndroidPartEvent(event);
         equippedParts.put(slot, "");
         part.onUnequip(data.player);
-
-        List<OverlayChain> chains = buildOverlayList();
-//        ModelDBC.applyOverlayChains(chains, OverlayContext.from(data));
     }
 
     public void tick() {
@@ -98,7 +93,7 @@ public class DBCDataAndroid {
         }
     }
 
-    private List<OverlayChain> buildOverlayList() {
+    public List<OverlayChain> getOverlays() {
         List<OverlayChain> chains = new ArrayList<>();
         for (AndroidPartType type : getAllEquipped()) {
             AndroidPartData part = type.getData();
@@ -109,23 +104,30 @@ public class DBCDataAndroid {
         return chains.isEmpty() ? null : chains;
     }
 
-    // ──────────────────── NBT ────────────────────
+    // ──────────────────── SERIALIZATION ────────────────────
 
-    public void saveToNBT(NBTTagCompound comp) {
-        NBTTagCompound tag = new NBTTagCompound();
+    @Override
+    public DataCompound serialize(DataCompound data) {
+        DataCompound c = DataCompound.create();
+
         for (AndroidPartSlot slot : AndroidPartSlot.PHYSICAL) {
-            tag.setString(slot.name(), equippedParts.getOrDefault(slot, ""));
+            c.putString(slot.name(), equippedParts.getOrDefault(slot, ""));
         }
-        comp.setTag("androidParts", tag);
+
+        data.put("androidParts", c);
+        return data;
     }
 
-    public void loadFromNBT(NBTTagCompound comp) {
+    @Override
+    public void deserialize(DataCompound data) {
         equippedParts.clear();
-        if (!comp.hasKey("androidParts")) return;
-        NBTTagCompound tag = comp.getCompoundTag("androidParts");
+
+        if (!data.has("androidParts")) return;
+
+        DataCompound c = data.get("androidParts");
         for (AndroidPartSlot slot : AndroidPartSlot.PHYSICAL) {
-            if (tag.hasKey(slot.name()))
-                equippedParts.put(slot, tag.getString(slot.name()));
+            if (c.has(slot.name()))
+                equippedParts.put(slot, c.getString(slot.name(), ""));
         }
     }
 }
