@@ -180,7 +180,7 @@ public class OverlayChain implements IOverlayChain, DataSerializable {
         if (index != -1)
             overlays.set(index, (Overlay) newOverlay);
     }
-    
+
     public List<Overlay> getOverlays() {
         return this.overlays;
     }
@@ -199,7 +199,7 @@ public class OverlayChain implements IOverlayChain, DataSerializable {
     public IOverlay getOverlay(int index) {
         return get(index);
     }
-    
+
     public int size() {
         return overlays.size();
     }
@@ -228,6 +228,21 @@ public class OverlayChain implements IOverlayChain, DataSerializable {
         return this;
     }
 
+    public OverlayChain copy() {
+        OverlayChain copy = new OverlayChain(this.name);
+        copy.enabled = this.enabled;
+        copy.condition = this.condition;
+        copy.disabledParts.addAll(this.disabledParts);
+
+        for (Overlay overlay : this.overlays) {
+            Overlay cloned = overlay.copy();
+            cloned.chain(copy);
+            copy.overlays.add(cloned);
+        }
+
+        return copy;
+    }
+
     @Override
     public DataCompound serialize(DataCompound data) {
         data.putBoolean("hasOverlays", enabled);
@@ -253,7 +268,7 @@ public class OverlayChain implements IOverlayChain, DataSerializable {
         enabled = data.getBoolean("hasOverlays", enabled);
         overlays.clear();
         DataCompound rendering = data.get("overlayData");
-        
+
         int i = 0;
         while (rendering.has("overlay" + i)) {
             DataCompound overlayData = rendering.get("overlay" + i);

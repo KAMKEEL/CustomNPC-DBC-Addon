@@ -12,6 +12,7 @@ public class AndroidPartData {
     private final String unlocalizedName;
     private final String textureDir;
     private final OverlayChain overlays;
+    private final boolean matchSlot;
 
     private final BiConsumer<AndroidPartData, EntityPlayer> onEquip;
     private final BiConsumer<AndroidPartData, EntityPlayer> onUnequip;
@@ -23,6 +24,7 @@ public class AndroidPartData {
         this.unlocalizedName = builder.unlocalizedName;
         this.textureDir = builder.textureDir;
         this.overlays = builder.overlays;
+        this.matchSlot = builder.matchSlot;
         this.onEquip = builder.onEquip;
         this.onUnequip = builder.onUnequip;
         this.onTick = builder.onTick;
@@ -70,6 +72,10 @@ public class AndroidPartData {
         return overlays;
     }
 
+    public boolean isMatchSlot() {
+        return matchSlot;
+    }
+
     // ──────────────────── Consumers ────────────────────
 
     public void onEquip(EntityPlayer player) {
@@ -97,6 +103,7 @@ public class AndroidPartData {
         private String unlocalizedName;
         private String textureDir = "androidparts/";
         private OverlayChain overlays;
+        private boolean matchSlot;
 
         private BiConsumer<AndroidPartData, EntityPlayer> onEquip = null;
         private BiConsumer<AndroidPartData, EntityPlayer> onUnequip = null;
@@ -114,6 +121,7 @@ public class AndroidPartData {
             this.slot = slot;
             this.unlocalizedName = "item.android_part." + name.toLowerCase();
             this.overlays = new OverlayChain(id);
+            this.matchSlot = false;
         }
 
         public Builder unlocalizedName(String unlocalizedName) {
@@ -131,6 +139,12 @@ public class AndroidPartData {
         public Builder overlays(OverlayChain overlays) {
             if (overlays != null)
                 this.overlays = overlays;
+            return this;
+        }
+
+        public Builder matchSlot(boolean match) {
+            if (overlays != null)
+                this.matchSlot = match;
             return this;
         }
 

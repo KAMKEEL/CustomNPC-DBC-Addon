@@ -301,6 +301,12 @@ public class Overlay implements IOverlay, DataSerializable {
         return this;
     }
 
+    public Overlay copy() {
+        Overlay copy = (Overlay) this.type.create();
+        copy.deserialize(this.serialize(DataCompound.create()));
+        return copy;
+    }
+
     /*
            This returns the new Overlay object, which you gotta
            manually replace in the overlays list.

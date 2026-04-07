@@ -7,9 +7,7 @@ import kamkeel.npcdbc.data.race.Race;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.data.race.progression.RaceDataHolder;
 import kamkeel.npcdbc.data.race.serial.DataCompound;
-import kamkeel.npcdbc.data.race.serial.DataSerializable;
 import net.minecraft.nbt.NBTTagCompound;
-import noppes.npcs.LogWriter;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -110,11 +108,15 @@ public class DBCDataRace {
         for (Race race : RaceController.getInstance().getRaces()) {
             if (race.dataHolder == null) continue;
 
-            RaceDataHolder raceData = race.dataHolder.get();
-            if (raceData == null) continue;
+            RaceDataHolder raceData = customData.get(race.getName());
+            if (raceData == null) {
+                raceData = race.dataHolder.get();
+                raceData.attach(data);
+            }
 
-            raceData.attach(data);
-            raceData.deserialize(child);
+            if (child.has(race.getName()))
+                raceData.deserialize(child.get(race.getName()));
+
             customData.put(race.getName(), raceData);
         }
     }

@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.data.race.races.android;
 
+import kamkeel.npcdbc.data.overlay.Overlay;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
 import kamkeel.npcdbc.data.race.progression.RaceDataHolder;
 import kamkeel.npcdbc.data.race.serial.DataCompound;
@@ -82,10 +83,24 @@ public class DBCDataAndroid extends RaceDataHolder {
 
     public List<OverlayChain> getOverlays() {
         List<OverlayChain> chains = new ArrayList<>();
-        for (AndroidPartType type : getAllEquipped()) {
+        for (AndroidPartSlot slot : AndroidPartSlot.PHYSICAL) {
+            AndroidPartType type = getEquipped(slot);
+            if (type == null) continue;
+
             AndroidPartData part = type.getData();
-            if (part.hasOverlays())
-                chains.add(part.getOverlays());
+            if (part.hasOverlays()) {
+                OverlayChain chain = part.getOverlays();
+
+                if (part.isMatchSlot()) {
+                    OverlayChain cloned = chain.copy();
+                    for (Overlay overlay : cloned.getOverlays()) {
+                        overlay.type(AndroidPartSlot.overlayType(slot));
+                    }
+                    chains.add(cloned);
+                } else {
+                    chains.add(chain);
+                }
+            }
         }
 
         return chains.isEmpty() ? null : chains;
@@ -107,8 +122,6 @@ public class DBCDataAndroid extends RaceDataHolder {
 
     @Override
     public void deserialize(DataCompound data) {
-        equippedParts.clear();
-
         if (!data.has("androidParts")) return;
 
         DataCompound c = data.get("androidParts");
