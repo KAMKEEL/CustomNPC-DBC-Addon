@@ -2,12 +2,20 @@ package kamkeel.npcdbc.data.race.races;
 
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumDBCClasses;
+import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormKey;
 import kamkeel.npcdbc.data.race.Race;
+import kamkeel.npcdbc.data.race.builder.FormBuilder;
+import kamkeel.npcdbc.data.race.builder.FormTreeBuilder;
 import kamkeel.npcdbc.data.race.builder.RaceBuilder;
+import kamkeel.npcdbc.data.race.progression.FormTree;
+import kamkeel.npcdbc.data.race.races.android.AndroidLayers;
 import kamkeel.npcdbc.data.race.races.android.DBCDataAndroid;
 import kamkeel.npcdbc.data.race.stats.RaceAttributeConfig;
 
+import static kamkeel.npcdbc.AddonRegistries.FORMS;
 import static kamkeel.npcdbc.AddonRegistries.RACES;
+import static kamkeel.npcdbc.constants.BodyLayer.*;
 import static kamkeel.npcdbc.data.race.races.android.AndroidLayers.*;
 
 public class Android {
@@ -19,14 +27,43 @@ public class Android {
     }
 
     // ════════════════════════════════════════════════════════════════
+    // Forms
+    // ════════════════════════════════════════════════════════════════
+
+    public static final Form SUPER = FormBuilder.create(FormKey.of(ANDROID_NS, "super"))
+        .menuName("Super")
+        .strengthMulti(2.0f).dexMulti(1.8f).willMulti(1.5f)
+        .display()
+            .bodyType(AndroidLayers.SUPER)
+            .color(HAIR, 0xe9630f)
+            .color(BODY_CM, 0x385198)
+            .color(BODY_C1, 0xa8a38c)
+            .hairType("ssj")
+            .berserk(true)
+            .size(1.2f)
+            .width(1.2f)
+            .and()
+        .build(FORMS);
+
+    // ════════════════════════════════════════════════════════════════
+    // Form Tree
+    // ════════════════════════════════════════════════════════════════
+
+    public static final FormTree ANDROID_FORMS = FormTreeBuilder.create(ANDROID_NS)
+        .branch(SUPER)
+        .build();
+
+    // ════════════════════════════════════════════════════════════════
     // Race
     // ════════════════════════════════════════════════════════════════
 
     public static final Race RACE = RaceBuilder.create(DBCRace.ANDROID, "android", "Android", ANDROID_NS)
+        .formTree(ANDROID_FORMS)
         .racialSkill()
             .maxLevel(5)
             .displayName("Enhancements")
             .description("Nano machines, son.")
+            .level(1, SUPER, 100, 10)
             .and()
         .stats()
             .allClasses()
@@ -75,6 +112,7 @@ public class Android {
         .display()
             .hairType("H")
             .addChain(BASE_GROUP)
+            .addChain(SUPER_GROUP)
             .mouthSlots(3)
             .noseSlots(3)
             .eyeSlots(3)

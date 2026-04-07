@@ -13,13 +13,13 @@ public class AndroidLayers {
 
     // ── Body Types ─────────────────────────────────────────
 
-    public static final String BASE = "base";
+    public static final String BASE = "base", SUPER = "super";
 
     // ════════════════════════════════════════════════════════════════
     // Display Chains
     // ════════════════════════════════════════════════════════════════
 
-    // ── Base (Imperfect) ─────────────────────────────────────────
+    // ── Base ─────────────────────────────────────────
 
     public static final DisplayChain BASE_FACE = DisplayChain.create(BASE)
         .textureDir(() ->
@@ -58,4 +58,19 @@ public class AndroidLayers {
         .and();
 
     public static final DisplayChainGroup BASE_GROUP = DisplayChainGroup.of(BASE_BODY, BASE_FACE);
+
+    public static final DisplayChain SUPER_BODY = DisplayChain.create(SUPER)
+        .textureDir(() ->
+            CustomNpcPlusDBC.ID + ":textures/" +
+                (ConfigDBCClient.EnableHDTextures ? "hd" : "sd") + "/android/")
+        .add(Type.ALL, BODY_CM, "Body Main")
+            .texture("super/android_super_0_%g.png")
+            .colorType(ColorType.BodyCM).defaultColor(0x385198)
+            .and()
+        .add(Type.ALL, BODY_C1, "Body Layer 1")
+            .texture("super/android_super_1_%g.png")
+            .colorType(ColorType.BodyC1).defaultColor(0xa8a38c)
+        .and();
+
+    public static final DisplayChainGroup SUPER_GROUP = DisplayChainGroup.of(SUPER_BODY, BASE_FACE);
 }
