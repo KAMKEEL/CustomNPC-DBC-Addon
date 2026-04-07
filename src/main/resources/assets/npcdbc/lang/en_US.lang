@@ -498,6 +498,9 @@ item.npcdbc:one_potara.name=Potara Earring
 item.npcdbc:two_potara.name=Grand Potara Earring
 item.npcdbc:three_potara.name=Supreme Potara Earring
 
+item.npcdbc:ki_ring.name=Ki Ring
+item.npcdbc:rr_core.name=RedRibbon Core
+
 wheel.configure=Configure
 wheel.switchWheel=Switch Wheel
 hotbar.vertical=Vertical Hotbar
@@ -675,4 +678,5 @@ statsheet.bonus.label.addonPercentage=Bonus Percent
 
 # Races
 jinryuujrmcore.Bio-Android=Bio-Android
+jinryuujrmcore.Android=Android
 
