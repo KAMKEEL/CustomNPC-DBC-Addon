@@ -1,6 +1,8 @@
 package kamkeel.npcdbc.data.race.races.android;
 
+import kamkeel.npcdbc.items.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -113,6 +115,10 @@ public final class AndroidPartType {
 
     public static int count() {
         return REGISTRY.size();
+    }
+
+    public ItemStack toItemStack() {
+        return new ItemStack(ModItems.AndroidParts, 1, this.ordinal());
     }
 
     // ──────────────────── Object overrides ────────────────────
