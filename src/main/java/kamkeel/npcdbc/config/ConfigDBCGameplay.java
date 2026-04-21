@@ -63,6 +63,8 @@ public class ConfigDBCGameplay {
     public static int MaxLifetimeTicks = 400;
     public static boolean EnableMaxDistance = true;
     public static double MaxDistance = 200.0;
+    public static boolean EnableFormSizeKiAttackLimit = true;
+    public static float MaxFormSizeKiAttackScale = 1.0f;
 
     public final static String FixesMovement = "Fixes.Movement";
     public static boolean EnhancedMovement = true;
@@ -146,7 +148,8 @@ public class ConfigDBCGameplay {
                     "configurable lifetime or distance. Helps reduce server lag from runaway projectiles.\n" +
                     "These override DBC's own EnergyAttackMaxLifeTick if the addon limits are stricter.");
             config.setCategoryPropertyOrder(KiAttacks, new ArrayList<>(Arrays.asList(
-                "Enable Max Lifetime", "Max Lifetime Ticks", "Enable Max Distance", "Max Distance")));
+                "Enable Max Lifetime", "Max Lifetime Ticks", "Enable Max Distance", "Max Distance",
+                "Enable Form Size Scaling Limit", "Max Form Size Ki Attack Scale")));
             EnableMaxLifetime = config.get(KiAttacks, "Enable Max Lifetime", true,
                 "Kill ki attacks after a maximum number of ticks alive.\n" +
                     "This acts as an additional cap alongside DBC's own lifetime configs.").getBoolean(true);
@@ -160,6 +163,13 @@ public class ConfigDBCGameplay {
                 "Maximum distance (in blocks) a ki attack can travel from its spawn point.\n" +
                     "Default: 200. Set to 0 to disable.").getDouble(200.0);
             MaxDistance = Math.max(0.0, MaxDistance);
+            EnableFormSizeKiAttackLimit = config.get(KiAttacks, "Enable Form Size Scaling Limit", true,
+                "Caps the projectile and explosion size multiplier that comes from the shooter's model height.\n" +
+                    "This prevents giant custom forms from bypassing DBC's intended ki attack size limits.").getBoolean(true);
+            MaxFormSizeKiAttackScale = (float) config.get(KiAttacks, "Max Form Size Ki Attack Scale", 1.0,
+                "Maximum allowed shooter-height multiplier for ki attack size/explosion scale.\n" +
+                    "1.0 means no form-size bonus; 0 disables this cap.").getDouble(1.0);
+            MaxFormSizeKiAttackScale = Math.max(0.0f, MaxFormSizeKiAttackScale);
 
             config.setCategoryPropertyOrder(FixesMovement, new ArrayList<>(Arrays.asList(
                 "Enhanced Movement", "Allow Speed Modifier Turbo-Flight", "Speed Modifier Turbo-Flight", "Flight Vertical Damping")));

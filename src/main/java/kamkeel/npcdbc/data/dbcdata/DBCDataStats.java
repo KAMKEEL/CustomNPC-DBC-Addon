@@ -265,7 +265,9 @@ public class DBCDataStats {
         if (data.Race != DBCRace.MAJIN)
             return;
 
-        nbt(data.player).setString("jrmcMajinAbsorptionData", amount + ",0,0+0");
+        String[] absorptionData = normalizeAbsorptionData(nbt(data.player).getString("jrmcMajinAbsorptionData"));
+        absorptionData[0] = String.valueOf(amount);
+        nbt(data.player).setString("jrmcMajinAbsorptionData", String.join(",", absorptionData));
     }
 
     public void restoreAbsorption(int percToRestoreFromMax) {
@@ -453,5 +455,16 @@ public class DBCDataStats {
             data.FormMasteryNR = newMastery;
             data.getRawCompound().setString("jrmcFormMasteryNonRacial", newMastery);
         }
+    }
+
+    private String[] normalizeAbsorptionData(String absorptionData) {
+        String[] split = absorptionData == null ? new String[0] : absorptionData.split(",", -1);
+        String[] normalized = new String[]{"0", "0", "0+0"};
+        for (int i = 0; i < split.length && i < normalized.length; i++) {
+            if (!split[i].isEmpty()) {
+                normalized[i] = split[i];
+            }
+        }
+        return normalized;
     }
 }

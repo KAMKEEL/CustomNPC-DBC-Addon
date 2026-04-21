@@ -38,7 +38,6 @@ import noppes.npcs.scripted.entity.ScriptDBCPlayer;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 // Implemented by Kam, Ported from Goatee Design
 @SuppressWarnings({"rawtypes", "unused"})
@@ -563,13 +562,9 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         if (getRace() != 5)
             return;
 
-        String[] data = nbt.getString("jrmcMajinAbsorptionData").split(",");
-        StringBuilder str = new StringBuilder(race + ",");
-        for (int i = 1; i < data.length; i++)
-            str.append(Arrays.toString(data)).append(",");
-
-        str = new StringBuilder(str.substring(0, str.length() - 1));
-        nbt.setString("jrmcMajinAbsorptionData", str.toString());
+        String[] data = normalizeMajinAbsorptionData();
+        data[1] = String.valueOf(race);
+        nbt.setString("jrmcMajinAbsorptionData", String.join(",", data));
     }
 
     @Override
@@ -582,13 +577,20 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         if (getRace() != 5)
             return;
 
-        String[] data = nbt.getString("jrmcMajinAbsorptionData").split(",");
-        String str = power + ",";
-        for (int i = 1; i < data.length; i++)
-            str += data + ",";
+        String[] data = normalizeMajinAbsorptionData();
+        data[0] = String.valueOf(power);
+        nbt.setString("jrmcMajinAbsorptionData", String.join(",", data));
+    }
 
-        str = str.substring(0, str.length() - 1);
-        nbt.setString("jrmcMajinAbsorptionData", str);
+    private String[] normalizeMajinAbsorptionData() {
+        String[] split = nbt.getString("jrmcMajinAbsorptionData").split(",", -1);
+        String[] normalized = new String[]{"0", "0", "0+0"};
+        for (int i = 0; i < split.length && i < normalized.length; i++) {
+            if (!split[i].isEmpty()) {
+                normalized[i] = split[i];
+            }
+        }
+        return normalized;
     }
 
 

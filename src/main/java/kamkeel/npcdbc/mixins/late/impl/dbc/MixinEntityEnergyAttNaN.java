@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = EntityEnergyAtt.class, remap = false)
 public abstract class MixinEntityEnergyAttNaN {
 
-    @Inject(method = "onUpdate", at = @At("HEAD"), remap = true)
+    @Inject(method = "onUpdate", at = @At("HEAD"), remap = true, cancellable = true)
     private void killOnInvalidPosition(CallbackInfo ci) {
         EntityEnergyAtt self = (EntityEnergyAtt) (Object) this;
         if (Double.isNaN(self.posX) || Double.isNaN(self.posY) || Double.isNaN(self.posZ) ||
