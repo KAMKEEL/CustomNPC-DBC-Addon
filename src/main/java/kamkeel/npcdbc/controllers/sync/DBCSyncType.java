@@ -12,6 +12,7 @@ public class DBCSyncType {
     public static final SyncType OUTLINE = register("outline");
     public static final SyncType SKILL = register("skill");
     public static final SyncType RACE = register("race");
+    public static final SyncType OVERLAY_CHAIN = register("overlay_chain");
     public static final SyncType OVERLAY_MODEL = register("overlay_model");
 
     public static void register() {
@@ -21,9 +22,10 @@ public class DBCSyncType {
         SyncRegistry.register(OUTLINE, new OutlineSyncHandler());
         SyncRegistry.register(SKILL, new SkillSyncHandler());
         SyncRegistry.register(RACE, new RaceSyncHandler());
+        SyncRegistry.register(OVERLAY_CHAIN, new OverlaySyncHandler());
         SyncRegistry.register(OVERLAY_MODEL, new OverlayModelSyncHandler());
     }
-    
+
     private static SyncType register(String name) {
        return SyncType.register("npcdbc:" + name);
     }

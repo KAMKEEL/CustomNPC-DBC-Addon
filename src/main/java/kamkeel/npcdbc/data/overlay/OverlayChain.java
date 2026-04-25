@@ -16,11 +16,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-public class OverlayChain implements IOverlayChain, DataSerializable {
+public class OverlayChain implements IOverlayChain {
 
     public final ArrayList<Overlay> overlays = new ArrayList<>();
 
-    public String name = "";
+    public String key;
+    public String name;
     public boolean enabled = true;
 
     public Set<FacePartData.Part> disabledParts = new HashSet<>();
@@ -29,10 +30,13 @@ public class OverlayChain implements IOverlayChain, DataSerializable {
 
 
     public OverlayChain() {
+        this.key = "";
+        this.name = "";
     }
 
     public OverlayChain(String name) {
         this.name = name;
+        this.key = deriveKey(name);
     }
 
 
@@ -187,8 +191,16 @@ public class OverlayChain implements IOverlayChain, DataSerializable {
 
     // ── IOverlayChain implementation ──
 
-    public String getName() {
+    public String getKey() {
+        return this.key;
+    }
+
+    public String getDisplayName() {
         return this.name;
+    }
+
+    public void setDisplayName(String name) {
+        this.name = name;
     }
 
     public IOverlayChain setEnabled(boolean enable) {
@@ -242,6 +254,22 @@ public class OverlayChain implements IOverlayChain, DataSerializable {
 
         return copy;
     }
+
+    // -------------------- Key derivation --------------------
+
+    public static String deriveKey(String displayName) {
+        if (displayName == null || displayName.trim().isEmpty())
+            return "cnpc:custom/unnamed";
+
+        String slug = displayName;
+
+        if (slug.isEmpty())
+            slug = "unnamed";
+
+        return "cnpc:custom/" + slug;
+    }
+
+    // -------------------- DataSerializable --------------------
 
     @Override
     public DataCompound serialize(DataCompound data) {

@@ -1,14 +1,13 @@
 package kamkeel.npcdbc.api.client.overlay;
 
+import kamkeel.npcdbc.controllers.base.IControllerSerializable;
 import kamkeel.npcdbc.data.form.FacePartData;
 import kamkeel.npcdbc.data.overlay.OverlayContext;
 
 import java.util.List;
 import java.util.function.Function;
 
-public interface IOverlayChain {
-
-    String getName();
+public interface IOverlayChain extends IControllerSerializable {
 
     boolean isEnabled();
 

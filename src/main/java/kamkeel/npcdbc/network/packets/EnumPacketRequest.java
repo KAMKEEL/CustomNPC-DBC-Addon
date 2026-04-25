@@ -22,6 +22,9 @@ public enum EnumPacketRequest {
     OutlineClone,
     RaceSave,
     RaceRemove,
+    OverlayChainSave,
+    OverlayChainRemove,
+    OverlayChainClone,
     OverlayModelSave,
     OverlayModelRemove,
     OverlayModelClone
