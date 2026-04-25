@@ -6,6 +6,7 @@ import kamkeel.npcdbc.data.race.Race;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.data.race.progression.RaceDataHolder;
+import kamkeel.npcdbc.data.race.properties.RacePropertyData;
 import kamkeel.npcdbc.data.race.serial.DataCompound;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -19,6 +20,7 @@ public class DBCDataRace {
     public final DBCData data;
 
     public final Map<String, RaceDataHolder> customData = new LinkedHashMap<>();
+    public final RacePropertyData properties = new RacePropertyData();
 
     public DBCDataRace(DBCData data) {
         this.data = data;
@@ -80,7 +82,15 @@ public class DBCDataRace {
     }
 
     public void writeCustomRaceData(Race race) {
-        if (race == null || race.dataHolder == null) {
+        if (race == null) {
+            properties.clear();
+            customData.clear();
+            return;
+        }
+
+        properties.initDefaults(race);
+
+        if (race.dataHolder == null) {
             customData.clear();
             return;
         }
@@ -92,6 +102,9 @@ public class DBCDataRace {
 
     public void writeToNBT(NBTTagCompound nbt) {
         DataCompound c = DataCompound.ofNbt(nbt);
+
+        c.put("raceProperties", properties.serialize(DataCompound.create()));
+
         DataCompound child = DataCompound.create();
 
         for (RaceDataHolder holder : customData.values()) {
@@ -103,6 +116,9 @@ public class DBCDataRace {
 
     public void readFromNBT(NBTTagCompound nbt) {
         DataCompound c = DataCompound.ofNbt(nbt);
+
+        properties.deserialize(c.get("raceProperties"));
+
         DataCompound child = c.get("customRace");
 
         for (Race race : RaceController.getInstance().getRaces()) {

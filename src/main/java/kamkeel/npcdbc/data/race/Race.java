@@ -2,19 +2,18 @@ package kamkeel.npcdbc.data.race;
 
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.RaceController;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.race.display.RaceDisplay;
 import kamkeel.npcdbc.data.race.progression.FormTree;
 import kamkeel.npcdbc.data.race.progression.RaceDataHolder;
 import kamkeel.npcdbc.data.race.progression.RaceSkill;
+import kamkeel.npcdbc.data.race.properties.RaceProperties;
 import kamkeel.npcdbc.data.race.serial.DataCompound;
 import kamkeel.npcdbc.data.race.serial.DataSerializable;
 import kamkeel.npcdbc.data.race.stats.RaceAttributeConfig;
 import kamkeel.npcdbc.data.race.stats.RaceStats;
 import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Race implements DataSerializable {
@@ -27,10 +26,12 @@ public class Race implements DataSerializable {
     public RaceSkill skill = new RaceSkill(1);
     public FormTree formTree = new FormTree();
     public RaceAttributeConfig attributeConfig = RaceAttributeConfig.defaults();
+    public RaceProperties properties = new RaceProperties();
     public Supplier<RaceDataHolder> dataHolder = null;
 
     public Race(int id, String name, String menuName, RaceDisplay display, RaceStats stats, RaceSkill skill,
-                FormTree formTree, RaceAttributeConfig attributeConfig, Supplier<RaceDataHolder> dataHolder) {
+                FormTree formTree, RaceAttributeConfig attributeConfig, RaceProperties properties,
+                Supplier<RaceDataHolder> dataHolder) {
         this.id = id;
         this.name = name;
         this.menuName = menuName;
@@ -39,6 +40,7 @@ public class Race implements DataSerializable {
         this.skill = skill;
         this.formTree = formTree;
         this.attributeConfig = attributeConfig;
+        this.properties = properties;
         this.dataHolder = dataHolder;
     }
 

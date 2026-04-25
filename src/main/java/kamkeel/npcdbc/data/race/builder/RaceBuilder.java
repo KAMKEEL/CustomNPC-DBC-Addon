@@ -12,6 +12,9 @@ import kamkeel.npcdbc.data.race.display.*;
 import kamkeel.npcdbc.data.race.progression.FormTree;
 import kamkeel.npcdbc.data.race.progression.RaceDataHolder;
 import kamkeel.npcdbc.data.race.progression.RaceSkill;
+import kamkeel.npcdbc.data.race.properties.RaceProperties;
+import kamkeel.npcdbc.data.race.properties.RaceProperty;
+import kamkeel.npcdbc.data.race.properties.RacePropertyData;
 import kamkeel.npcdbc.data.race.stats.ClassStats;
 import kamkeel.npcdbc.data.race.stats.RaceAttributeConfig;
 import kamkeel.npcdbc.data.race.stats.RaceStats;
@@ -22,6 +25,7 @@ import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class RaceBuilder {
@@ -34,6 +38,7 @@ public class RaceBuilder {
     private RaceDisplay display = new RaceDisplay();
     private FormTree formTree = null;
     private RaceAttributeConfig attributeConfig;
+    private RaceProperties properties = new RaceProperties();
     private Supplier<RaceDataHolder> dataHolder = null;
 
     private final String namespace;
@@ -83,6 +88,10 @@ public class RaceBuilder {
         this.attributeConfig = config;
     }
 
+    public PropertiesBuilder properties() {
+        return new PropertiesBuilder(this);
+    }
+
     public RaceBuilder dataHolder(Supplier<RaceDataHolder> holder) {
         this.dataHolder = holder;
         return this;
@@ -103,7 +112,7 @@ public class RaceBuilder {
         }
 
         Race race = new Race(id, name, menuName, display, stats, skill, formTree,
-            attributeConfig != null ? attributeConfig : RaceAttributeConfig.defaults(), dataHolder);
+            attributeConfig != null ? attributeConfig : RaceAttributeConfig.defaults(), properties, dataHolder);
         if(registry != null)
             registry.register(race);
 
@@ -970,6 +979,66 @@ public class RaceBuilder {
 
         public RaceBuilder build() {
             parent.display.syncCreatorMetadata();
+            return parent;
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // PropertiesBuilder — race property definitions
+    // ══════════════════════════════════════════════════════════
+
+    public static class PropertiesBuilder {
+        private final RaceBuilder parent;
+        private final RaceProperties properties = new RaceProperties();
+
+        PropertiesBuilder(RaceBuilder parent) {
+            this.parent = parent;
+        }
+
+        public PropertyBuilder property(String key, String displayName) {
+            return new PropertyBuilder(this, key, displayName);
+        }
+
+        public RaceBuilder and() {
+            parent.properties = properties;
+            return parent;
+        }
+
+        void addProperty(RaceProperty property) {
+            properties.add(property);
+        }
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // PropertyBuilder — single property scope
+    // ══════════════════════════════════════════════════════════
+
+    public static class PropertyBuilder {
+        private final PropertiesBuilder parent;
+        private final String key;
+        private final String displayName;
+
+        private int defaultValue = 0;
+        private Predicate<RacePropertyData> condition = null;
+
+        PropertyBuilder(PropertiesBuilder parent, String key, String displayName) {
+            this.parent = parent;
+            this.key = key;
+            this.displayName = displayName;
+        }
+
+        public PropertyBuilder defaultValue(int value) {
+            this.defaultValue = value;
+            return this;
+        }
+
+        public PropertyBuilder condition(Predicate<RacePropertyData> condition) {
+            this.condition = condition;
+            return this;
+        }
+
+        public PropertiesBuilder and() {
+            parent.addProperty(new RaceProperty(key, displayName, defaultValue, condition));
             return parent;
         }
     }
