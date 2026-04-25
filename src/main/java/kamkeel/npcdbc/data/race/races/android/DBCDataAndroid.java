@@ -16,6 +16,12 @@ public class DBCDataAndroid extends RaceDataHolder {
 
     // slot -> part id string (null = empty)
     private final Map<AndroidPartSlot, String> equippedParts = new LinkedHashMap<>();
+    public static final String KEY = "AndroidParts";
+
+    @Override
+    public String getKey() {
+        return KEY;
+    }
 
     // ──────────────────── Public API ────────────────────
 

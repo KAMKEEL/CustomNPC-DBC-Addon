@@ -16,7 +16,7 @@ public class AndroidUtil {
         if (!isAndroid(data))
             return null;
 
-        return (DBCDataAndroid) data.addonRace.customData.get(data.currentRaceKey);
+        return (DBCDataAndroid) data.addonRace.customData.get(DBCDataAndroid.KEY);
     }
 
     public static void tickIfAndroid(DBCData dbcData) {

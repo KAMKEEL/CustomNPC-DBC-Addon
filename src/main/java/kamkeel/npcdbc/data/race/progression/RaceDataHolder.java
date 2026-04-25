@@ -16,4 +16,6 @@ public abstract class RaceDataHolder implements DataSerializable {
     protected DBCData getDBCData() {
         return dbcData;
     }
+
+    public abstract String getKey();
 }

@@ -87,15 +87,15 @@ public class DBCDataRace {
 
         RaceDataHolder raceData = race.dataHolder.get();
         raceData.attach(data);
-        customData.put(race.getName(), raceData);
+        customData.put(raceData.getKey(), raceData);
     }
 
     public void writeToNBT(NBTTagCompound nbt) {
         DataCompound c = DataCompound.ofNbt(nbt);
         DataCompound child = DataCompound.create();
 
-        for (Map.Entry<String, RaceDataHolder> entry : customData.entrySet()) {
-            child.put(entry.getKey(), entry.getValue().serialize(DataCompound.create()));
+        for (RaceDataHolder holder : customData.values()) {
+            child.put(holder.getKey(), holder.serialize(DataCompound.create()));
         }
 
         c.put("customRace", child);
@@ -108,16 +108,13 @@ public class DBCDataRace {
         for (Race race : RaceController.getInstance().getRaces()) {
             if (race.dataHolder == null) continue;
 
-            RaceDataHolder raceData = customData.get(race.getName());
-            if (raceData == null) {
-                raceData = race.dataHolder.get();
-                raceData.attach(data);
-            }
+            RaceDataHolder raceData = race.dataHolder.get();
+            raceData.attach(data);
 
-            if (child.has(race.getName()))
-                raceData.deserialize(child.get(race.getName()));
+            if (child.has(raceData.getKey()))
+                raceData.deserialize(child.get(raceData.getKey()));
 
-            customData.put(race.getName(), raceData);
+            customData.put(raceData.getKey(), raceData);
         }
     }
 }
