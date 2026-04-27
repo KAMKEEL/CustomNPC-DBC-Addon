@@ -166,6 +166,7 @@ public final class AppearancePage extends CreatorPage {
                     int sw = Minecraft.getMinecraft().fontRenderer.getStringWidth(label) / 2;
                     buttonList.add(new JRMCoreGuiButtons01(PROP_VAL_NEXT, labelCenterX - sw, guiTop + 5 + row * 10, sw,
                         label, value ? 3452672 : 4210752).setShadow(false));
+                    break;
                 case ARROW:
                 default:
                     buttonList.add(new JRMCoreGuiButtonsA2(PROP_VAL_PREV, controlX, guiTop + 5 + row * 10, "<"));
@@ -371,7 +372,7 @@ public final class AppearancePage extends CreatorPage {
 
             // Property value row
 
-            Object currentVal = session.racePropertyValues.getOrDefault(currentProp.key, currentProp);
+            Object currentVal = session.racePropertyValues.getOrDefault(currentProp.key, currentProp.getDefault());
             switch (currentProp.getButtonType()) {
                 case TOGGLE:
                 case COLOR:
