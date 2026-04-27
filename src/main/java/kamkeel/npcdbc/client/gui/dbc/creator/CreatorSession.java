@@ -6,6 +6,12 @@ import kamkeel.npcdbc.controllers.RaceController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.race.helper.RaceSelectorHelper;
+import kamkeel.npcdbc.data.race.properties.RaceProperty;
+
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Ephemeral client-side state model for the enhanced character creator wizard.
@@ -67,6 +73,10 @@ public final class CreatorSession {
     public int preMajinHairColor;
     public boolean hasPreMajinHair;
 
+    // ── Race Properties ──
+    public Map<String, Object> racePropertyValues = new LinkedHashMap<>();
+    public int selectedPropertyIndex = 0;
+
     // ── Snapshot (captured on open for cancel/reset) ──
     private int snapRaceIndex;
     private String snapCurrentRaceKey;
@@ -97,6 +107,8 @@ public final class CreatorSession {
     private int snapKiColor;
     private boolean snapTail;
     private float snapBrightness;
+    private Map<String, Object> snapRacePropertyValues = new LinkedHashMap<>();
+    private int snapSelectedPropertyIndex = 0;
 
     private CreatorSession() {}
 
@@ -189,6 +201,8 @@ public final class CreatorSession {
         snapKiColor = kiColor;
         snapTail = tail;
         snapBrightness = brightness;
+        snapRacePropertyValues = new LinkedHashMap<>(racePropertyValues);
+        snapSelectedPropertyIndex = selectedPropertyIndex;
     }
 
     /** Restores all working values to their initial snapshot state. */
@@ -226,6 +240,8 @@ public final class CreatorSession {
         preMajinHairFront = snapHairFront;
         preMajinHairColor = snapHairColor;
         hasPreMajinHair = !JRMCoreH.isRaceMajin(getVanillaRaceIndex());
+        racePropertyValues = new LinkedHashMap<>(snapRacePropertyValues);
+        selectedPropertyIndex = snapSelectedPropertyIndex;
     }
 
     /** Whether the currently selected race is a custom addon race (index >= 6). */
@@ -244,6 +260,30 @@ public final class CreatorSession {
      */
     public int getVanillaRaceIndex() {
         return RaceSelectorHelper.clampRaceForStats(raceIndex);
+    }
+
+    /**
+     * Rebuilds racePropertyValues from the given race's property defaults.
+     * Existing keys are preserved so player edits survive a race-change to the same race.
+     */
+    public void initRaceProperties(Race race) {
+        if (race == null || race.properties == null) return;
+        selectedPropertyIndex = 0;
+        for (RaceProperty<?> property : race.properties.getAll()) {
+            if (!racePropertyValues.containsKey(property.key)) {
+                racePropertyValues.put(property.key, property.getDefault());
+            }
+        }
+    }
+
+    /**
+     * Returns the available (condition-passing) properties for the currently selected race,
+     * or an empty list if vanilla or race has none.
+     */
+    public List<RaceProperty<?>> getAvailableProperties() {
+        Race race = getSelectedCustomRace();
+        if (race == null || race.properties == null) return Collections.emptyList();
+        return race.properties.getAll();
     }
 
     /**
@@ -312,6 +352,8 @@ public final class CreatorSession {
             hairColor = raceHairColor[raceIndex];
         }
 
+        racePropertyValues.clear();
+        initRaceProperties(getSelectedCustomRace());
     }
 
     /** Applies body colors from the current preset, mirroring {@code setchangebodycol()}. */
@@ -372,7 +414,7 @@ public final class CreatorSession {
             int[] raceCustomSkin = RaceSelectorHelper.getRaceCustomSkin();
             int[] raceHairColor = RaceSelectorHelper.getRaceHairColor();
             int[][] sknLimits = RaceSelectorHelper.getCustomSknLimits();
-            
+
             canRace = s.raceIndex < raceAllow.length && JRMCoreH.Allow(raceAllow[s.raceIndex]);
             canGender = s.raceIndex < raceGenders.length && raceGenders[s.raceIndex] != 1
                 && JRMCoreH.Allow(JRMCoreH.GenderAllow[s.gender < JRMCoreH.GenderAllow.length ? s.gender : 0]);

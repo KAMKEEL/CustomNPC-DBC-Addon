@@ -7,6 +7,7 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.race.helper.RaceSelectorHelper;
 import kamkeel.npcdbc.data.race.progression.RaceDataHolder;
+import kamkeel.npcdbc.data.race.properties.RaceProperties;
 import kamkeel.npcdbc.data.race.serial.ConfigManager;
 import kamkeel.npcs.controllers.SyncController;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,6 +27,7 @@ public class RaceController {
     public final Map<String, Race> races = new HashMap<>();
     public final List<Race> raceOrder = new ArrayList<>();
     public final Map<String, Supplier<RaceDataHolder>> raceDataHolders = new HashMap<>();
+    public final Map<String, RaceProperties> raceProperties = new HashMap<>();
 
     public final ConfigManager<Race> configManager = new ConfigManager<>(() -> CustomNpcPlusDBC.addonConfig, "races", Race::getName);
 
@@ -75,6 +77,7 @@ public class RaceController {
         }
         races.put(race.getName(), race);
         if (race.dataHolder != null) raceDataHolders.put(race.getName(), race.dataHolder);
+        if (!race.properties.isEmpty()) raceProperties.put(race.getName(), race.properties);
         raceOrder.add(race);
         RaceSelectorHelper.markDirty();
         LogWriter.info("Registered race: " + race.getName() + " (ID: " + race.id + ") at GUI index: " + (5 + raceOrder.size()));
@@ -152,6 +155,10 @@ public class RaceController {
         return raceDataHolders.get(name);
     }
 
+    public RaceProperties getProperties(String name) {
+        return raceProperties.get(name);
+    }
+
     /** Legacy: check if an int ID maps to a custom race. Linear scan. */
     public boolean isCustomRace(int raceID) {
         return get(raceID) != null;
@@ -209,6 +216,12 @@ public class RaceController {
         for (Race race : races.values()) {
             if (race.dataHolder == null) continue;
             raceDataHolders.put(race.getName(), race.dataHolder);
+        }
+
+        raceProperties.clear();
+        for (Race race : races.values()) {
+            if (race.properties.isEmpty()) continue;
+            raceProperties.put(race.getName(), race.properties);
         }
 
         RaceSelectorHelper.markDirty();

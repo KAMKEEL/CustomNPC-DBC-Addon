@@ -117,6 +117,18 @@ public class Android {
             .noseSlots(3)
             .eyeSlots(3)
             .and()
+        .properties()
+            .intProperty("android.subrace", "Sub-Race")
+                .clamp(0, 0, 2)
+                .and()
+            .boolProperty("android.explosive", "Self-Detonation")
+                .defaultValue(false)
+                .and()
+            .strProperty("android.name", "Model")
+                .defaultValue("Red Ribbon")
+                .values("Gamma", "OG-73")
+                .and()
+            .and()
         .dataHolder(DBCDataAndroid::new)
         .build(RACES);
 }

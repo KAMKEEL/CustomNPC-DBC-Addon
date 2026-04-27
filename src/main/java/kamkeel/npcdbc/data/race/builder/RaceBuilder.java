@@ -995,8 +995,16 @@ public class RaceBuilder {
             this.parent = parent;
         }
 
-        public PropertyBuilder property(String key, String displayName) {
-            return new PropertyBuilder(this, key, displayName);
+        public PropertyBuilder.Int intProperty(String key, String displayName) {
+            return new PropertyBuilder.Int(this, key, displayName);
+        }
+
+        public PropertyBuilder.Bool boolProperty(String key, String displayName) {
+            return new PropertyBuilder.Bool(this, key, displayName);
+        }
+
+        public PropertyBuilder.Str strProperty(String key, String displayName) {
+            return new PropertyBuilder.Str(this, key, displayName);
         }
 
         public RaceBuilder and() {
@@ -1004,42 +1012,8 @@ public class RaceBuilder {
             return parent;
         }
 
-        void addProperty(RaceProperty property) {
+        void addProperty(RaceProperty<?> property) {
             properties.add(property);
-        }
-    }
-
-    // ══════════════════════════════════════════════════════════
-    // PropertyBuilder — single property scope
-    // ══════════════════════════════════════════════════════════
-
-    public static class PropertyBuilder {
-        private final PropertiesBuilder parent;
-        private final String key;
-        private final String displayName;
-
-        private int defaultValue = 0;
-        private Predicate<RacePropertyData> condition = null;
-
-        PropertyBuilder(PropertiesBuilder parent, String key, String displayName) {
-            this.parent = parent;
-            this.key = key;
-            this.displayName = displayName;
-        }
-
-        public PropertyBuilder defaultValue(int value) {
-            this.defaultValue = value;
-            return this;
-        }
-
-        public PropertyBuilder condition(Predicate<RacePropertyData> condition) {
-            this.condition = condition;
-            return this;
-        }
-
-        public PropertiesBuilder and() {
-            parent.addProperty(new RaceProperty(key, displayName, defaultValue, condition));
-            return parent;
         }
     }
 }

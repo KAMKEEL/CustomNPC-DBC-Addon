@@ -5,6 +5,7 @@ import kamkeel.npcdbc.client.gui.dbc.EntityPreviewRenderer;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.race.helper.RaceSelectorHelper;
+import kamkeel.npcdbc.data.race.properties.RaceProperty;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -47,6 +48,10 @@ public final class AppearancePage extends CreatorPage {
     private static final int BODYCOL_MAIN = 130, BODYCOL_SUB1 = 131, BODYCOL_SUB2 = 132, BODYCOL_SUB3 = 133;
     private static final int EYECOL1 = 134, EYECOL2 = 135;
     private static final int BUST_SLIDER = 5001;
+    private static final int PROP_PREV  = 140; // cycle to previous property
+    private static final int PROP_NEXT  = 141; // cycle to next property
+    private static final int PROP_VAL_PREV = 142; // decrease property value
+    private static final int PROP_VAL_NEXT = 143; // increase property value
 
     private int guiLeft, guiTop;
     private JRMCoreGuiSlider01 bustSlider;
@@ -140,7 +145,33 @@ public final class AppearancePage extends CreatorPage {
             buttonList.add(new JRMCoreGuiButtons01(TAIL_BTN, labelCenterX - sw, guiTop + 5 + row * 10, sw,
                 tailLabel, session.tail ? 3452672 : 4210752).setShadow(false));
         }
-        
+
+        List<RaceProperty<?>> props = session.getAvailableProperties();
+        if (!props.isEmpty()) {
+            // Property selector row
+            if (props.size() > 1) {
+                buttonList.add(new JRMCoreGuiButtonsA2(PROP_PREV, controlX, guiTop + 5 + row * 10, "<"));
+                buttonList.add(new JRMCoreGuiButtonsA2(PROP_NEXT, arrowRight, guiTop + 5 + row * 10, ">"));
+            }
+            row++;
+
+            // Property value row
+            RaceProperty<?> currentProp = props.get(session.selectedPropertyIndex);
+
+            if (currentProp instanceof RaceProperty.Int || currentProp instanceof RaceProperty.Str) {
+                buttonList.add(new JRMCoreGuiButtonsA2(PROP_VAL_PREV, controlX, guiTop + 5 + row * 10, "<"));
+                buttonList.add(new JRMCoreGuiButtonsA2(PROP_VAL_NEXT, arrowRight, guiTop + 5 + row * 10, ">"));
+            } else if (currentProp instanceof RaceProperty.Bool) {
+                boolean value = (Boolean) session.racePropertyValues.getOrDefault(currentProp.key, currentProp);
+                String label = currentProp.displayName + " " + (value ? "Enabled" : "Disabled");
+                int sw = Minecraft.getMinecraft().fontRenderer.getStringWidth(label) / 2;
+                buttonList.add(new JRMCoreGuiButtons01(PROP_VAL_NEXT, labelCenterX - sw, guiTop + 5 + row * 10, sw,
+                    label, value ? 3452672 : 4210752).setShadow(false));
+            }
+
+            row++;
+        }
+
         if(session.getVanillaRaceIndex() == DBCRace.SAIYAN && !session.tail) {
             session.tail = true;
             syncAndRefreshTail();
@@ -321,6 +352,29 @@ public final class AppearancePage extends CreatorPage {
         }
         row++;
 
+        List<RaceProperty<?>> drawProps = session.getAvailableProperties();
+        if (!drawProps.isEmpty()) {
+            // Clamp index in case properties changed
+            if (session.selectedPropertyIndex >= drawProps.size()) {
+                session.selectedPropertyIndex = 0;
+            }
+
+            RaceProperty<?> currentProp = drawProps.get(session.selectedPropertyIndex);
+
+            // Property name row
+            drawCentered(font, currentProp.displayName, labelCenterX, guiTop + 5 + row * 10);
+            row++;
+
+            // Property value row
+            Object currentVal = session.racePropertyValues.getOrDefault(currentProp.key, currentProp);
+
+            if (!(currentVal instanceof Boolean)) {
+                drawCentered(font, String.valueOf(currentVal), labelCenterX, guiTop + 5 + row * 10);
+            }
+
+            row++;
+        }
+
         // Tail (button already shows label)
         row++;
 
@@ -419,6 +473,18 @@ public final class AppearancePage extends CreatorPage {
             case BODYCOL_MAIN: case BODYCOL_SUB1: case BODYCOL_SUB2: case BODYCOL_SUB3:
             case EYECOL1: case EYECOL2:
                 openColorPicker(button.id);
+                return true;
+            case PROP_PREV:
+                cycleProperty(false);
+                return true;
+            case PROP_NEXT:
+                cycleProperty(true);
+                return true;
+            case PROP_VAL_PREV:
+                cyclePropertyValue(false);
+                return true;
+            case PROP_VAL_NEXT:
+                cyclePropertyValue(true);
                 return true;
             default: return false;
         }
@@ -548,6 +614,52 @@ public final class AppearancePage extends CreatorPage {
         }
         session.stateSelected = JRMCoreGuiScreen.StateSlcted;
         syncAndRefreshState();
+    }
+
+    private void cycleProperty(boolean forward) {
+        List<RaceProperty<?>> props = session.getAvailableProperties();
+        if (props.isEmpty()) return;
+        int next = session.selectedPropertyIndex + (forward ? 1 : -1);
+        if (next >= props.size()) next = 0;
+        if (next < 0) next = props.size() - 1;
+        session.selectedPropertyIndex = next;
+        parent.refreshPage();
+    }
+
+    private void cyclePropertyValue(boolean forward) {
+        List<RaceProperty<?>> props = session.getAvailableProperties();
+        if (props.isEmpty()) return;
+        if (session.selectedPropertyIndex >= props.size()) return;
+
+        RaceProperty<?> prop = props.get(session.selectedPropertyIndex);
+        Object current = session.racePropertyValues.getOrDefault(prop.key, prop.getDefault());
+
+        if (prop instanceof RaceProperty.Int) {
+            RaceProperty.Int intProp = (RaceProperty.Int) prop;
+            int val = (current instanceof Integer) ? (Integer) current : intProp.defaultValue;
+            int next = val + (forward ? 1 : -1);
+            if (next < intProp.min) next = intProp.min;
+            if (next > intProp.max) next = intProp.max;
+            session.racePropertyValues.put(prop.key, next);
+
+        } else if (prop instanceof RaceProperty.Bool) {
+            RaceProperty.Bool boolProp = (RaceProperty.Bool) prop;
+            boolean val = (current instanceof Boolean) ? (Boolean) current : boolProp.defaultValue;
+            session.racePropertyValues.put(prop.key, !val);
+
+        } else if (prop instanceof RaceProperty.Str) {
+            RaceProperty.Str strProp = (RaceProperty.Str) prop;
+            List<String> allowed = strProp.allowedValues;
+            String val = (current instanceof String) ? (String) current : strProp.defaultValue;
+            int idx = allowed.indexOf(val);
+            if (idx < 0) idx = 0;
+            int next = idx + (forward ? 1 : -1);
+            if (next >= allowed.size()) next = 0;
+            if (next < 0) next = allowed.size() - 1;
+            session.racePropertyValues.put(prop.key, allowed.get(next));
+        }
+
+        parent.refreshPage();
     }
 
     private void openColorPicker(int buttonId) {

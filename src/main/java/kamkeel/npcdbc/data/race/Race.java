@@ -99,7 +99,6 @@ public class Race implements DataSerializable {
         data.comment("=== Display ===");
         data.put("Display", display);
 
-
         if (formTree != null) {
             data.spacing();
             data.comment("=== Forms ===");
@@ -143,6 +142,7 @@ public class Race implements DataSerializable {
             form.willMulti     = formData.getFloat("willMulti",      form.willMulti);
         }
 
+        properties = RaceController.getInstance().getProperties(this.name);
         dataHolder = RaceController.Instance.getDataHolder(this.name);
     }
 }

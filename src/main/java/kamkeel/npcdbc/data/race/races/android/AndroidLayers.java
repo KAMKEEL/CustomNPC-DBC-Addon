@@ -2,6 +2,7 @@ package kamkeel.npcdbc.data.race.races.android;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.api.client.overlay.IOverlay.ColorType;
+import kamkeel.npcdbc.client.DBCRenderContext;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.overlay.DisplayChain;
 import kamkeel.npcdbc.data.overlay.DisplayChainGroup;
@@ -30,7 +31,7 @@ public class AndroidLayers {
             .colorType(ColorType.Custom).defaultColor(0xFFFFFF).fixedColor(true).and()
         .add(Type.Eyebrows, EYEBROWS, "Eyebrows")
             .texture("base/face/eyebrow_%e_%g.png")
-            .colorType(ColorType.Hair).and()
+            .colorType(ColorType.Hair).defaultColor(0x0).and()
         .add(Type.Eyebrows, "eyeshade", "Eye Shade")
             .texture("base/face/eye_shade_%e_%g.png")
             .colorType(ColorType.BodyCM).defaultColor(0x0).and()
@@ -45,7 +46,8 @@ public class AndroidLayers {
             .colorType(ColorType.BodyCM).and()
         .add(Type.Mouth, MOUTH, "Mouth")
             .texture("base/face/mouth_%m_%g.png")
-            .colorType(ColorType.BodyCM).and();
+            .colorType(ColorType.BodyCM)
+        .and().condition(DBCRenderContext::customSkin);
 
 
     public static final DisplayChain BASE_BODY = DisplayChain.create(BASE)
@@ -55,7 +57,7 @@ public class AndroidLayers {
         .add(Type.ALL, BODY_CM, "Body Main")
             .texture("base/android_0_%g.png")
             .colorType(ColorType.BodyCM).defaultColor(0xecd2b4)
-        .and();
+        .and().condition(DBCRenderContext::customSkin);
 
     public static final DisplayChainGroup BASE_GROUP = DisplayChainGroup.of(BASE_BODY, BASE_FACE);
 

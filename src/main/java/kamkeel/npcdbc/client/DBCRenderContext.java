@@ -32,8 +32,8 @@ import java.util.List;
 import static kamkeel.npcdbc.constants.BodyLayer.*;
 
 public class DBCRenderContext {
-    public Entity entity; 
-    
+    public Entity entity;
+
     public EntityPlayer player;
     public DBCData dbcData;
     public ModelBipedBody modelBiped;
@@ -44,7 +44,7 @@ public class DBCRenderContext {
     public EntityCustomNpc npc;
     public DBCDisplay display;
     public ModelDBC modelNpc;
-    
+
     public double renderX;
     public double renderY;
     public double renderZ;
@@ -60,7 +60,7 @@ public class DBCRenderContext {
 
     // ══════════════════════════════════════════════════════════════════════════
     // Creators
-    // ══════════════════════════════════════════════════════════════════════════ 
+    // ══════════════════════════════════════════════════════════════════════════
 
     public static <T extends DBCRenderContext> T from(DBCDisplay display) {
         T data = (T) new DBCRenderContext();
@@ -80,7 +80,7 @@ public class DBCRenderContext {
 
     // ══════════════════════════════════════════════════════════════════════════
     // Entity Data
-    // ══════════════════════════════════════════════════════════════════════════ 
+    // ══════════════════════════════════════════════════════════════════════════
 
     public IEntityLivingBase getEntity() {
         return isNPC ? getNPC() : getPlayer();
@@ -209,7 +209,7 @@ public class DBCRenderContext {
     public SimplifiedDBCData getDBCData() {
         return dbcData.simplifiedDBCData;
     }
-    
+
     public int gender() {
         if (isNPC)
             return display.isFemaleInternal() ? 2 : 1;
@@ -253,18 +253,30 @@ public class DBCRenderContext {
         return raceName().toLowerCase().replaceAll("-", "");
     }
 
+    public int skinType() {
+        return isNPC ? display.isEnabled() ? 1 : 0 : JRMCoreH.dnsSkinT(dbcData.DNS);
+    }
+
+    public boolean customSkin() {
+        return skinType() == 1;
+    }
+
+    public boolean defaultSkin() {
+        return skinType() == 0;
+    }
+
     public int bodyTypeDBC() {
         return isNPC ? display.bodyType : JRMCoreH.dnsBodyT(dbcData.DNS);
     }
-    
+
     public String bodyType(){
         return isNPC ? display.bodyType +"" : dbcData.getBodyType();
     }
-    
+
     public boolean bodyType(String type){
         return type.equals(bodyType());
     }
-    
+
     public int eyeType() {
         return isNPC ? display.eyeType : JRMCoreH.dnsEyes(dbcData.DNS);
     }
