@@ -29,6 +29,7 @@ public enum EnumPacketPlayer {
     KiAttackColorSync,
     AllowFlight,
     RaceSelect,
+    RacePropertiesSave,
     FormBranchSelect,
     AndroidPartSelect
 }

@@ -157,16 +157,20 @@ public final class AppearancePage extends CreatorPage {
 
             // Property value row
             RaceProperty<?> currentProp = props.get(session.selectedPropertyIndex);
+            Object raw = session.racePropertyValues.getOrDefault(currentProp.key, currentProp.getDefault());
 
-            if (currentProp instanceof RaceProperty.Int || currentProp instanceof RaceProperty.Str) {
-                buttonList.add(new JRMCoreGuiButtonsA2(PROP_VAL_PREV, controlX, guiTop + 5 + row * 10, "<"));
-                buttonList.add(new JRMCoreGuiButtonsA2(PROP_VAL_NEXT, arrowRight, guiTop + 5 + row * 10, ">"));
-            } else if (currentProp instanceof RaceProperty.Bool) {
-                boolean value = (Boolean) session.racePropertyValues.getOrDefault(currentProp.key, currentProp);
-                String label = currentProp.displayName + " " + (value ? "Enabled" : "Disabled");
-                int sw = Minecraft.getMinecraft().fontRenderer.getStringWidth(label) / 2;
-                buttonList.add(new JRMCoreGuiButtons01(PROP_VAL_NEXT, labelCenterX - sw, guiTop + 5 + row * 10, sw,
-                    label, value ? 3452672 : 4210752).setShadow(false));
+            switch (currentProp.getButtonType()) {
+                case TOGGLE:
+                    boolean value = Boolean.TRUE.equals(raw);
+                    String label = currentProp.toString(raw);
+                    int sw = Minecraft.getMinecraft().fontRenderer.getStringWidth(label) / 2;
+                    buttonList.add(new JRMCoreGuiButtons01(PROP_VAL_NEXT, labelCenterX - sw, guiTop + 5 + row * 10, sw,
+                        label, value ? 3452672 : 4210752).setShadow(false));
+                case ARROW:
+                default:
+                    buttonList.add(new JRMCoreGuiButtonsA2(PROP_VAL_PREV, controlX, guiTop + 5 + row * 10, "<"));
+                    buttonList.add(new JRMCoreGuiButtonsA2(PROP_VAL_NEXT, arrowRight, guiTop + 5 + row * 10, ">"));
+                    break;
             }
 
             row++;
@@ -366,10 +370,17 @@ public final class AppearancePage extends CreatorPage {
             row++;
 
             // Property value row
-            Object currentVal = session.racePropertyValues.getOrDefault(currentProp.key, currentProp);
 
-            if (!(currentVal instanceof Boolean)) {
-                drawCentered(font, String.valueOf(currentVal), labelCenterX, guiTop + 5 + row * 10);
+            Object currentVal = session.racePropertyValues.getOrDefault(currentProp.key, currentProp);
+            switch (currentProp.getButtonType()) {
+                case TOGGLE:
+                case COLOR:
+                case SLIDER:
+                    break;
+                case ARROW:
+                default:
+                    drawCentered(font, currentProp.toString(currentVal), labelCenterX, guiTop + 5 + row * 10);
+                    break;
             }
 
             row++;

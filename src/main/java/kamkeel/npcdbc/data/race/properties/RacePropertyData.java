@@ -12,22 +12,59 @@ import java.util.Map;
  * Stores the current values of all {@link RaceProperty} definitions
  * belonging to the player's race. Lives inside {@link DBCDataRace}.
  *
- * Values are keyed by {@link RaceProperty#key} and default to
- * {@link RaceProperty#getDefault()} when first initialized.
- *
- * Supports Integer, Boolean and String values depending on the property type.
+ * Values are accessed via the typed {@link RaceProperty} itself
  */
 public class RacePropertyData implements DataSerializable {
-    // TODO REWRITE ALL OF THIS AND FIND A BETTER WAY TO STORE SHIT
+
+    /** Schema: maps each property key to its definition. Populated by {@link #initDefaults(Race)}. */
+    private final Map<String, RaceProperty<?>> schema = new LinkedHashMap<>();
+
+    /** Live values, keyed by {@link RaceProperty#key}. Type matches the property subclass. */
     private final Map<String, Object> values = new LinkedHashMap<>();
 
+    // ── Initialization ────────────────────────────────────────────────────────
+
+    /**
+     * Rebuilds the schema from the given race and fills in missing values with defaults.
+     * Existing keys are preserved so player edits survive minor race reloads.
+     * Always call this before {@link #deserialize(DataCompound)}.
+     */
     public void initDefaults(Race race) {
         if (race == null || race.properties == null) return;
 
+        schema.clear();
         for (RaceProperty<?> property : race.properties.getAll()) {
+            schema.put(property.key, property);
             if (!values.containsKey(property.key)) {
                 values.put(property.key, property.getDefault());
             }
+        }
+    }
+
+    // ── Typed access ──────────────────────────────────────────────────────────
+
+    /**
+     * Returns the current value for the given property,
+     * or its default if no value has been set.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T get(RaceProperty<T> property) {
+        Object val = values.get(property.key);
+        if (val == null) return property.getDefault();
+        try {
+            return (T) val;
+        } catch (ClassCastException e) {
+            return property.getDefault();
+        }
+    }
+
+    /**
+     * Sets the value for the given property.
+     * Ignores the call if the value fails {@link RaceProperty#isValid(Object)}.
+     */
+    public <T> void set(RaceProperty<T> property, T value) {
+        if (property.isValid(value)) {
+            values.put(property.key, value);
         }
     }
 
@@ -38,102 +75,38 @@ public class RacePropertyData implements DataSerializable {
     }
 
     public void clear() {
+        schema.clear();
         values.clear();
-    }
-
-    // ── Int ───────────────────────────────────────────────────────────────────
-
-    public int getInt(String key, int defaultValue) {
-        Object val = values.get(key);
-        return (val instanceof Integer) ? (Integer) val : defaultValue;
-    }
-
-    public int getInt(String key) {
-        return getInt(key, 0);
-    }
-
-    public void set(String key, int value) {
-        values.put(key, value);
-    }
-
-    // ── Bool ──────────────────────────────────────────────────────────────────
-
-    public boolean getBool(String key, boolean defaultValue) {
-        Object val = values.get(key);
-        return (val instanceof Boolean) ? (Boolean) val : defaultValue;
-    }
-
-    public boolean getBool(String key) {
-        return getBool(key, false);
-    }
-
-    public void set(String key, boolean value) {
-        values.put(key, value);
-    }
-
-    // ── String ────────────────────────────────────────────────────────────────
-
-    public String getString(String key, String defaultValue) {
-        Object val = values.get(key);
-        return (val instanceof String) ? (String) val : defaultValue;
-    }
-
-    public String getString(String key) {
-        return getString(key, "");
-    }
-
-    public void set(String key, String value) {
-        values.put(key, value);
     }
 
     // ── Serialization ─────────────────────────────────────────────────────────
 
     @Override
+    @SuppressWarnings("unchecked")
     public DataCompound serialize(DataCompound data) {
-        DataCompound ints = DataCompound.create();
-        DataCompound bools = DataCompound.create();
-        DataCompound strings = DataCompound.create();
+        DataCompound child = DataCompound.create();
 
-        for (Map.Entry<String, Object> entry : values.entrySet()) {
-            String key = entry.getKey();
-            Object val = entry.getValue();
-
-            if (val instanceof Integer) {
-                ints.putInt(key, (Integer) val);
-            } else if (val instanceof Boolean) {
-                bools.putBoolean(key, (Boolean) val);
-            } else if (val instanceof String) {
-                strings.putString(key, (String) val);
-            }
+        for (Map.Entry<String, RaceProperty<?>> entry : schema.entrySet()) {
+            RaceProperty<Object> property = (RaceProperty<Object>) entry.getValue();
+            Object value = values.getOrDefault(property.key, property.getDefault());
+            property.write(child, value);
         }
 
-        DataCompound child = DataCompound.create();
-        child.put("integers", ints);
-        child.put("booleans", bools);
-        child.put("strings", strings);
         data.put("raceProperties", child);
         return data;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void deserialize(DataCompound data) {
         values.clear();
         if (!data.has("raceProperties")) return;
+
         DataCompound child = data.get("raceProperties");
 
-        DataCompound ints = child.get("integers");
-        for (String key : ints.getKeys()) {
-            values.put(key, ints.getInt(key, 0));
-        }
-
-        DataCompound bools = child.get("booleans");
-        for (String key : bools.getKeys()) {
-            values.put(key, bools.getBoolean(key, false));
-        }
-
-        DataCompound strings = child.get("strings");
-        for (String key : strings.getKeys()) {
-            values.put(key, strings.getString(key, ""));
+        for (Map.Entry<String, RaceProperty<?>> entry : schema.entrySet()) {
+            RaceProperty<Object> property = (RaceProperty<Object>) entry.getValue();
+            values.put(property.key, property.read(child));
         }
     }
 }

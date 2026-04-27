@@ -7,6 +7,7 @@ import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.data.race.helper.RaceSelectorHelper;
 import kamkeel.npcdbc.mixins.late.impl.dbc.IJRMCoreGuiScreenAccessor;
 import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.player.race.DBCSaveRaceProperties;
 import kamkeel.npcdbc.network.packets.player.race.DBCSelectRace;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
@@ -31,7 +32,7 @@ public final class VanillaCreatorBridge {
         byte raceValue = (byte) (session.isCustomRace()
             ? session.getVanillaRaceIndex()
             : JRMCoreGuiScreen.RaceSlcted);
-        
+
         String currentRaceKey = null;
         if (session.isCustomRace()) {
             Race customRace = session.getSelectedCustomRace();
@@ -40,7 +41,7 @@ public final class VanillaCreatorBridge {
         }
         DBCPacketHandler.Instance.sendToServer(new DBCSelectRace(currentRaceKey));
         PlayerDataUtil.getClientDBCInfo().setCurrentRace(currentRaceKey);
-        
+
         JRMCoreH.Char((byte) 0, raceValue);
         pushPreviewDns();
         syncLocalPreviewCache();
@@ -152,13 +153,20 @@ public final class VanillaCreatorBridge {
         session.syncToVanillaStatics();
 
         String currentRaceKey = null;
+        Race customRace = null;
         if (session.isCustomRace()) {
-            Race customRace = session.getSelectedCustomRace();
+            customRace = session.getSelectedCustomRace();
             if (customRace != null) currentRaceKey = customRace.getName();
             JRMCoreGuiScreen.RaceSlcted = 0;
         }
 
         DBCPacketHandler.Instance.sendToServer(new DBCSelectRace(currentRaceKey));
+
+        if (customRace != null && !customRace.properties.isEmpty() && !session.racePropertyValues.isEmpty()) {
+            DBCPacketHandler.Instance.sendToServer(
+                new DBCSaveRaceProperties(customRace, session.racePropertyValues)
+            );
+        }
 
         JRMCoreGuiScreen.setdns();
         JRMCoreH.jrmcDataFC(0, IJRMCoreGuiScreenAccessor.npcdbc$getDns());
