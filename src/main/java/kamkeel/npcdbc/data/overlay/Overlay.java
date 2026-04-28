@@ -85,7 +85,7 @@ public class Overlay implements IOverlay, DataSerializable {
         int gender = ctx.gender();
         int race = ctx.race();
 
-        String modified = applyRaceProperties(ctx, text);
+        String modified = matchRegex(ctx, text);
 
         return modified
             .replaceAll("%b", bodyType + "")
@@ -97,7 +97,7 @@ public class Overlay implements IOverlay, DataSerializable {
             .replaceAll("%g", gender == 2 ? "f" : "m");
     }
 
-    private static String applyRaceProperties(OverlayContext ctx, String text) {
+    private static String matchRegex(OverlayContext ctx, String text) {
         text = text.replace("{body}", "%b");
         text = text.replace("{fur}", "%f");
         text = text.replace("{eye}", "%e");
