@@ -4,6 +4,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.Color;
 import kamkeel.npcdbc.api.client.overlay.IOverlay;
+import kamkeel.npcdbc.data.race.Race;
+import kamkeel.npcdbc.data.race.properties.RaceProperty;
 import kamkeel.npcdbc.data.race.serial.DataCompound;
 import kamkeel.npcdbc.data.race.serial.DataSerializable;
 import noppes.npcs.controllers.data.JaninoScriptHandler;
@@ -81,14 +83,43 @@ public class Overlay implements IOverlay, DataSerializable {
         int noseType = ctx.nose();
         int mouthType = ctx.mouth();
         int gender = ctx.gender();
+        int race = ctx.race();
 
-        return text
+        String modified = applyRaceProperties(ctx, text);
+
+        return modified
             .replaceAll("%b", bodyType + "")
             .replaceAll("%f", furType + "")
             .replaceAll("%e", eyeType + "")
             .replaceAll("%n", noseType + "")
             .replaceAll("%m", mouthType + "")
+            .replaceAll("%r", race + "")
             .replaceAll("%g", gender == 2 ? "f" : "m");
+    }
+
+    private static String applyRaceProperties(OverlayContext ctx, String text) {
+        text = text.replace("{body}", "%b");
+        text = text.replace("{fur}", "%f");
+        text = text.replace("{eye}", "%e");
+        text = text.replace("{nose}", "%n");
+        text = text.replace("{mouth}", "%m");
+        text = text.replace("{arcostate}", "" + ctx.arcoState());
+        text = text.replace("{race}", "%r");
+        text = text.replace("{customrace}", "" + (ctx.customRace() != null ? ctx.customRace().id : 0));
+        text = text.replace("{gender}", "%g");
+
+        Race race = ctx.customRace();
+        if (race != null && race.properties != null) {
+            for (RaceProperty<?> property : race.properties.getAll()) {
+                String token = "{" + property.key + "}";
+                if (text.contains(token)) {
+                    Object val = ctx.dbcData.addonRace.properties.getRaw(property.key, property.getDefault());
+                    text = text.replace(token, property.toString(val));
+                }
+            }
+        }
+
+        return text;
     }
 
     public Overlay color(ColorFunction function) {

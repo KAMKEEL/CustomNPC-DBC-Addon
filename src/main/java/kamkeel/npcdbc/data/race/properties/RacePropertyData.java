@@ -58,6 +58,10 @@ public class RacePropertyData implements DataSerializable {
         }
     }
 
+    public Object getRaw(String key, Object defaultValue) {
+        return values.getOrDefault(key, defaultValue);
+    }
+
     /**
      * Sets the value for the given property.
      * Ignores the call if the value fails {@link RaceProperty#isValid(Object)}.
