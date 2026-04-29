@@ -103,7 +103,7 @@ public class DBCDataRace {
     public void writeToNBT(NBTTagCompound nbt) {
         DataCompound c = DataCompound.ofNbt(nbt);
 
-        c.put("raceProperties", properties.serialize(DataCompound.create()));
+        properties.serialize(c);
 
         DataCompound child = DataCompound.create();
 
@@ -117,7 +117,7 @@ public class DBCDataRace {
     public void readFromNBT(NBTTagCompound nbt) {
         DataCompound c = DataCompound.ofNbt(nbt);
 
-        properties.deserialize(c.get("raceProperties"));
+        properties.deserialize(c);
 
         DataCompound child = c.get("customRace");
 

@@ -154,6 +154,9 @@ public class RaceDisplay implements DataSerializable {
 
     public void setSkinLimits(int bodyType, int colorSlots, int nose, int mouth, int eyes, int eyeColorSlots) {
         skinLimits = new int[]{bodyType, colorSlots, nose, mouth, eyes, eyeColorSlots};
+        this.noseSlots = Math.max(1, nose);
+        this.mouthSlots = Math.max(1, mouth);
+        this.eyeSlots = Math.max(1, eyes);
     }
 
     public int getNoseSlots() {

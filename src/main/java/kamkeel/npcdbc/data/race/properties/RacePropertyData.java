@@ -103,7 +103,6 @@ public class RacePropertyData implements DataSerializable {
     @Override
     @SuppressWarnings("unchecked")
     public void deserialize(DataCompound data) {
-        values.clear();
         if (!data.has("raceProperties")) return;
 
         DataCompound child = data.get("raceProperties");
