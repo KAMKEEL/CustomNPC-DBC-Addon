@@ -164,7 +164,7 @@ public final class VanillaCreatorBridge {
 
         if (customRace != null && !customRace.properties.isEmpty() && !session.racePropertyValues.isEmpty()) {
             DBCPacketHandler.Instance.sendToServer(
-                new DBCSaveRaceProperties(customRace, session.racePropertyValues)
+                new DBCSaveRaceProperties(currentRaceKey, session.racePropertyValues)
             );
         }
 

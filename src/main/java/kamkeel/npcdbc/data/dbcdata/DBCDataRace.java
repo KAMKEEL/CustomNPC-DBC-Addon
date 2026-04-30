@@ -89,9 +89,9 @@ public class DBCDataRace {
         }
 
         properties.initDefaults(race);
+        customData.clear();
 
         if (race.dataHolder == null) {
-            customData.clear();
             return;
         }
 
@@ -108,20 +108,34 @@ public class DBCDataRace {
         DataCompound child = DataCompound.create();
 
         for (RaceDataHolder holder : customData.values()) {
+            boolean correctRace = false;
+            for (Race race : RaceController.getInstance().getRaces()) {
+                if (race.id != this.getRaceID() || race.dataHolder == null) continue;
+                if (race.dataHolder.get().getKey().equals(holder.getKey())) {
+                    correctRace = true;
+                    break;
+                }
+            }
+
+            if (!correctRace) continue;
             child.put(holder.getKey(), holder.serialize(DataCompound.create()));
         }
 
-        c.put("customRace", child);
+        c.put("raceData", child);
     }
 
     public void readFromNBT(NBTTagCompound nbt) {
         DataCompound c = DataCompound.ofNbt(nbt);
 
+        // Schema must be populated before deserializing so the typed
+        // property loop in RacePropertyData.deserialize has entries to iterate.
+        properties.initDefaults(getRace());
         properties.deserialize(c);
 
-        DataCompound child = c.get("customRace");
+        DataCompound child = c.get("raceData");
 
         for (Race race : RaceController.getInstance().getRaces()) {
+            if (this.getRace().id != race.id) continue;
             if (race.dataHolder == null) continue;
 
             RaceDataHolder raceData = race.dataHolder.get();

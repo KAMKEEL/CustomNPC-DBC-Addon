@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.network.packets.player.race;
 
 import io.netty.buffer.ByteBuf;
+import kamkeel.npcdbc.controllers.RaceController;
 import kamkeel.npcs.util.ByteBufUtils;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.race.Race;
@@ -31,8 +32,8 @@ public final class DBCSaveRaceProperties extends AbstractPacket {
 
     private NBTTagCompound payload;
 
-    public DBCSaveRaceProperties(Race race, Map<String, Object> racePropertyValues) {
-        this.payload = serializeValues(race, racePropertyValues);
+    public DBCSaveRaceProperties(String raceKey, Map<String, Object> racePropertyValues) {
+        this.payload = serializeValues(raceKey, racePropertyValues);
     }
 
     public DBCSaveRaceProperties() {}
@@ -69,12 +70,19 @@ public final class DBCSaveRaceProperties extends AbstractPacket {
         applyValidated(propertyData, race, payload);
 
         PlayerDataUtil.getDBCInfo(player).updateClient();
+        data.saveNBTData(true);
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
-    private static NBTTagCompound serializeValues(Race race, Map<String, Object> values) {
+    private static NBTTagCompound serializeValues(String raceKey, Map<String, Object> values) {
         DataCompound data = DataCompound.create();
+        Race race = RaceController.getInstance().getByName(raceKey);
+        if (race == null) {
+            LogWriter.error("[NPCDBC] Race '" + raceKey + "' not found.");
+            return data.toNbt();
+        }
+
         for (RaceProperty<?> property : race.properties.getAll()) {
             writeProperty(data, property, values.get(property.key));
         }

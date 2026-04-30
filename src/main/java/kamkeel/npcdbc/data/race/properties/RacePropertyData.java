@@ -33,6 +33,7 @@ public class RacePropertyData implements DataSerializable {
         if (race == null || race.properties == null) return;
 
         schema.clear();
+        values.clear();
         for (RaceProperty<?> property : race.properties.getAll()) {
             schema.put(property.key, property);
             if (!values.containsKey(property.key)) {

@@ -414,6 +414,9 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             }
         }
 
+        if (addonRace != null && addonRace.isCustomRace())
+            addonRace.readFromNBT(c);
+
         loadClientSideFormColorData(c);
     }
 
