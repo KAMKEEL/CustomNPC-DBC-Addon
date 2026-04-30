@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
-public abstract class PropertyBuilder<V, P extends RaceProperty<V>, S extends PropertyBuilder<V, P, S>> {
+public abstract class PropertyBuilder<V, P extends RaceProperty<V>> {
     protected final RaceBuilder.PropertiesBuilder parent;
     protected final String key;
     protected final String displayName;
@@ -26,7 +26,7 @@ public abstract class PropertyBuilder<V, P extends RaceProperty<V>, S extends Pr
         return parent;
     }
 
-    public static class Int extends PropertyBuilder<Integer, RaceProperty.Int, Int> {
+    public static class Int extends PropertyBuilder<Integer, RaceProperty.Int> {
         private int defaultValue = 0;
         private int min = 0;
         private int max = Integer.MAX_VALUE;
@@ -63,7 +63,7 @@ public abstract class PropertyBuilder<V, P extends RaceProperty<V>, S extends Pr
         }
     }
 
-    public static class Bool extends PropertyBuilder<Boolean, RaceProperty.Bool, Bool> {
+    public static class Bool extends PropertyBuilder<Boolean, RaceProperty.Bool> {
         private boolean defaultValue = false;
 
         Bool(RaceBuilder.PropertiesBuilder parent, String key, String displayName) {
@@ -81,7 +81,7 @@ public abstract class PropertyBuilder<V, P extends RaceProperty<V>, S extends Pr
         }
     }
 
-    public static class Str extends PropertyBuilder<String, RaceProperty.Str, Str> {
+    public static class Str extends PropertyBuilder<String, RaceProperty.Str> {
         private String defaultValue = null;
         private final List<String> allowedValues = new ArrayList<>();
 
@@ -108,7 +108,7 @@ public abstract class PropertyBuilder<V, P extends RaceProperty<V>, S extends Pr
         }
     }
 
-    public static class Custom<V, P extends RaceProperty<V>> extends PropertyBuilder<V, P, Custom<V, P>> {
+    public static class Custom<V, P extends RaceProperty<V>> extends PropertyBuilder<V, P> {
         private V defaultValue = null;
         private final Function<V, P> factory;
 
