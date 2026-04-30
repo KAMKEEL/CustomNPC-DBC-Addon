@@ -27,6 +27,10 @@ public abstract class RaceProperty<T> {
 
     public abstract boolean isValid(T value);
 
+    protected abstract T cycleValue(T currentValue, boolean forward);
+
+    protected abstract String stringify(T value);
+
     /**
      * Writes this property's value into the given DataCompound under {@link #key}.
      */
@@ -38,11 +42,15 @@ public abstract class RaceProperty<T> {
      */
     public abstract T read(DataCompound data);
 
-    protected abstract String stringify(T value);
 
     @SuppressWarnings("unchecked")
     public String toString(Object value) {
         return stringify(value != null ? (T) value : getDefault());
+    }
+
+    @SuppressWarnings("unchecked")
+    public Object cycle(Object value, boolean forward) {
+        return cycleValue(value != null ? (T) value : getDefault(), forward);
     }
 
     public Button getButtonType() {
@@ -71,6 +79,14 @@ public abstract class RaceProperty<T> {
         @Override
         public boolean isValid(Integer value) {
             return value != null && value >= min && value <= max;
+        }
+
+        @Override
+        public Integer cycleValue(Integer currentValue, boolean forward) {
+            int next = currentValue + (forward ? 1 : -1);
+            if (next > max) next = min;
+            if (next < min) next = max;
+            return next;
         }
 
         @Override
@@ -104,6 +120,11 @@ public abstract class RaceProperty<T> {
 
         @Override
         public boolean isValid(Boolean value) { return value != null; }
+
+        @Override
+        public Boolean cycleValue(Boolean currentValue, boolean forward) {
+            return !currentValue;
+        }
 
         @Override
         public void write(DataCompound data, Boolean value) {
@@ -148,6 +169,16 @@ public abstract class RaceProperty<T> {
         @Override
         public boolean isValid(String value) {
             return value != null && allowedValues.contains(value);
+        }
+
+        @Override
+        public String cycleValue(String currentValue, boolean forward) {
+            int idx = allowedValues.indexOf(currentValue);
+            if (idx < 0) idx = 0;
+            int next = idx + (forward ? 1 : -1);
+            if (next >= allowedValues.size()) next = 0;
+            if (next < 0) next = allowedValues.size() - 1;
+            return allowedValues.get(next);
         }
 
         @Override

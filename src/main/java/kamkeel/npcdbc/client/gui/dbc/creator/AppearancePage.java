@@ -645,31 +645,9 @@ public final class AppearancePage extends CreatorPage {
 
         RaceProperty<?> prop = props.get(session.selectedPropertyIndex);
         Object current = session.racePropertyValues.getOrDefault(prop.key, prop.getDefault());
+        Object newValue = prop.cycle(current, forward);
+        session.racePropertyValues.put(prop.key, newValue);
 
-        if (prop instanceof RaceProperty.Int) {
-            RaceProperty.Int intProp = (RaceProperty.Int) prop;
-            int val = (current instanceof Integer) ? (Integer) current : intProp.defaultValue;
-            int next = val + (forward ? 1 : -1);
-            if (next < intProp.min) next = intProp.min;
-            if (next > intProp.max) next = intProp.max;
-            session.racePropertyValues.put(prop.key, next);
-
-        } else if (prop instanceof RaceProperty.Bool) {
-            RaceProperty.Bool boolProp = (RaceProperty.Bool) prop;
-            boolean val = (current instanceof Boolean) ? (Boolean) current : boolProp.defaultValue;
-            session.racePropertyValues.put(prop.key, !val);
-
-        } else if (prop instanceof RaceProperty.Str) {
-            RaceProperty.Str strProp = (RaceProperty.Str) prop;
-            List<String> allowed = strProp.allowedValues;
-            String val = (current instanceof String) ? (String) current : strProp.defaultValue;
-            int idx = allowed.indexOf(val);
-            if (idx < 0) idx = 0;
-            int next = idx + (forward ? 1 : -1);
-            if (next >= allowed.size()) next = 0;
-            if (next < 0) next = allowed.size() - 1;
-            session.racePropertyValues.put(prop.key, allowed.get(next));
-        }
 
         parent.refreshPage();
     }

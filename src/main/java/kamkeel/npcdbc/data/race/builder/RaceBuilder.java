@@ -14,7 +14,6 @@ import kamkeel.npcdbc.data.race.progression.RaceDataHolder;
 import kamkeel.npcdbc.data.race.progression.RaceSkill;
 import kamkeel.npcdbc.data.race.properties.RaceProperties;
 import kamkeel.npcdbc.data.race.properties.RaceProperty;
-import kamkeel.npcdbc.data.race.properties.RacePropertyData;
 import kamkeel.npcdbc.data.race.stats.ClassStats;
 import kamkeel.npcdbc.data.race.stats.RaceAttributeConfig;
 import kamkeel.npcdbc.data.race.stats.RaceStats;
@@ -25,7 +24,7 @@ import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class RaceBuilder {
@@ -1005,6 +1004,14 @@ public class RaceBuilder {
 
         public PropertyBuilder.Str strProperty(String key, String displayName) {
             return new PropertyBuilder.Str(this, key, displayName);
+        }
+
+        public <V, P extends RaceProperty<V>> PropertyBuilder.Custom<V, P> customProperty(
+            String key,
+            String displayName,
+            Function<V, P> factory
+        ) {
+            return new PropertyBuilder.Custom<>(this, key, displayName, factory);
         }
 
         public RaceBuilder and() {
