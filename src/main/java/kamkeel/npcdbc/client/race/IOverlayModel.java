@@ -12,7 +12,7 @@ import kamkeel.npcdbc.data.overlay.OverlayContext;
  * itself only references the common-side {@link OverlayContext}.
  */
 public interface IOverlayModel {
-    
+
     float SCALE = 0.0625f;
 
     void initialize(OverlayContext ctx);
@@ -25,5 +25,9 @@ public interface IOverlayModel {
 
     default boolean rendersInFirstPerson(OverlayContext ctx) {
         return false;
+    }
+
+    default boolean renderDBCHair(OverlayContext ctx) {
+        return true;
     }
 }

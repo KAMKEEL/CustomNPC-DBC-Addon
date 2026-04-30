@@ -12,15 +12,20 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
+import kamkeel.npcdbc.client.race.IOverlayModel;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.controllers.OverlayModelController;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.FacePartData.Part;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
+import kamkeel.npcdbc.data.overlay.Overlay;
+import kamkeel.npcdbc.data.overlay.OverlayChain;
+import kamkeel.npcdbc.data.overlay.OverlayContext;
 import kamkeel.npcdbc.util.Utility;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import net.minecraft.client.Minecraft;
@@ -28,6 +33,7 @@ import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.ClientEventHandler;
 import org.spongepowered.asm.mixin.Mixin;
@@ -115,6 +121,11 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
 
         if (ClientEventHandler.renderingPlayer != null) {
+            if (shouldHideHairForOverlay()) {
+                ci.cancel();
+                return;
+            }
+
             Form form = DBCData.getForm(ClientEventHandler.renderingPlayer);
             if (form != null) {
                 hair = Hair.get();
@@ -157,7 +168,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 //majin effect check
                 if (dbcData.Race == 5 && !form.display.effectMajinHair)
                     return;
-                
+
                 boolean isSSJ3 = false;
                 if (form.display.hairType.equals("ssj3") || form.display.hairType.equals("raditz")) {
                     isSSJ3 = form.display.hairType.equals("ssj3") ? true : false;
@@ -243,6 +254,11 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     @Inject(method = "renderHairsV2(FLjava/lang/String;FIIIILJinRyuu/JBRA/RenderPlayerJBRA;Lnet/minecraft/client/entity/AbstractClientPlayer;)V", at = @At("HEAD"), cancellable = true)
     public void DNSHairRendering(float par1, String h, float hl, int s, int rg, int pl, int rc, RenderPlayerJBRA rp, AbstractClientPlayer abstractClientPlayer, CallbackInfo ci, @Local(ordinal = 0) LocalRef<String> hair, @Local(ordinal = 0) LocalIntRef st, @Local(ordinal = 3) LocalIntRef race) {
         if (ClientEventHandler.renderingPlayer != null) {
+            if (shouldHideHairForOverlay()) {
+                ci.cancel();
+                return;
+            }
+
             Form form = DBCData.getForm(ClientEventHandler.renderingPlayer);
 
             //set texture for non saiyan CH, animate it when ascending
@@ -352,6 +368,23 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     @Unique
     public boolean isHairPreset(String hair) {
         return hair.startsWith("A0") || hair.startsWith("A1") || hair.startsWith("B0") || hair.startsWith("C0") || hair.contains("12") || hair.startsWith("D");
+    }
+
+    @Unique
+    private boolean shouldHideHairForOverlay() {
+        if (ClientEventHandler.renderingPlayer == null) return false;
+
+        DBCData data = DBCData.get(ClientEventHandler.renderingPlayer);
+        OverlayContext ctx = OverlayContext.from(data);
+
+        for (OverlayChain chain : data.cachedOverlays) {
+            for (Overlay overlay : chain.getOverlays()) {
+                IOverlayModel comp = OverlayModelController.getInstance().resolve(overlay.getModelKey());
+                if (comp != null && comp.appliesTo(ctx))
+                    return !comp.renderDBCHair(ctx);
+            }
+        }
+        return false;
     }
 }
 

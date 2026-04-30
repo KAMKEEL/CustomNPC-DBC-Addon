@@ -32,5 +32,10 @@ public interface IOverlayModelScript {
         public boolean rendersInFirstPerson(@ParamName("ctx") OverlayContext ctx) {
             return false;
         }
+
+        @Override
+        public boolean renderDBCHair(@ParamName("ctx") OverlayContext ctx) {
+            return true;
+        }
     }
 }

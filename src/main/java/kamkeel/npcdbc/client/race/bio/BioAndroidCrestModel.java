@@ -19,7 +19,7 @@ public class BioAndroidCrestModel implements IOverlayModel {
     public void initialize(OverlayContext ctx) {
         if (initialized)
             return;
-        
+
         ModelBiped model = ctx.getComponentModel();
 
         bioheadRoot = new ModelRenderer(model, 0, 0);
@@ -86,5 +86,10 @@ public class BioAndroidCrestModel implements IOverlayModel {
         m.rotateAngleX = x;
         m.rotateAngleY = y;
         m.rotateAngleZ = z;
+    }
+
+    @Override
+    public boolean renderDBCHair(OverlayContext ctx) {
+        return false;
     }
 }
