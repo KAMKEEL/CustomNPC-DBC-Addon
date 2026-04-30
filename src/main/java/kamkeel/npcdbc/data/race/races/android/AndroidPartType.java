@@ -1,41 +1,34 @@
 package kamkeel.npcdbc.data.race.races.android;
 
 import kamkeel.npcdbc.items.ModItems;
+import kamkeel.npcdbc.util.EnumRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
-public final class AndroidPartType {
-
-    // ──────────────────── Registry ────────────────────
-    private static final Map<String, AndroidPartType> REGISTRY = new LinkedHashMap<>();
-    private static int nextOrdinal = 0;
+public final class AndroidPartType extends EnumRegistry {
 
     // ──────────────────── Built-in parts ────────────────────
     public static final AndroidPartType RED_RIBBON_CORE = register(AndroidParts.RED_RIBBON_CORE);
     public static final AndroidPartType KI_RING = register(AndroidParts.KI_RING);
 
     // ──────────────────── Instance fields ────────────────────
-    private final int ordinal;
     private final AndroidPartData part;
 
-    private AndroidPartType(AndroidPartData part, int ordinal) {
+    private AndroidPartType(AndroidPartData part) {
         this.part = part;
-        this.ordinal = ordinal;
+    }
+
+    // ──────────────────── Registration ────────────────────
+    public static AndroidPartType register(AndroidPartData part) {
+        return new AndroidPartType(part).register();
     }
 
     // ──────────────────── Public API ────────────────────
 
     public String getId() {
         return part.getId();
-    }
-
-    public int ordinal() {
-        return ordinal;
     }
 
     public String getName() {
@@ -79,64 +72,17 @@ public final class AndroidPartType {
     }
 
     public void onTick(EntityPlayer player) {
-        part.onUnequip(player);
-    }
-
-    // ──────────────────── Registration ────────────────────
-
-    public static AndroidPartType register(AndroidPartData part) {
-        if (part == null)
-            throw new IllegalArgumentException("AndroidPart must not be null");
-
-        String id = part.getId();
-
-        if (REGISTRY.containsKey(id))
-            throw new IllegalStateException("Duplicate AndroidPartType registration: " + id);
-
-        AndroidPartType type = new AndroidPartType(part, nextOrdinal++);
-        REGISTRY.put(id, type);
-        return type;
-    }
-
-    public static AndroidPartType byId(String id) {
-        return id == null ? null : REGISTRY.get(id);
-    }
-
-    public static AndroidPartType byOrdinal(int ordinal) {
-        if (ordinal < 0) return null;
-        for (AndroidPartType type : REGISTRY.values())
-            if (type.ordinal == ordinal) return type;
-        return null;
-    }
-
-    public static Collection<AndroidPartType> values() {
-        return Collections.unmodifiableCollection(REGISTRY.values());
-    }
-
-    public static int count() {
-        return REGISTRY.size();
+        part.onTick(player);
     }
 
     public ItemStack toItemStack() {
         return new ItemStack(ModItems.AndroidParts, 1, this.ordinal());
     }
 
-    // ──────────────────── Object overrides ────────────────────
+    // ──────────────────── Convenience Methods ────────────────────
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof AndroidPartType)) return false;
-        return getId().equals(((AndroidPartType) o).getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getId().hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return getId();
-    }
+    public static AndroidPartType byId(String id) { return EnumRegistry.byId(AndroidPartType.class, id); }
+    public static AndroidPartType byOrdinal(int ordinal) { return EnumRegistry.byOrdinal(AndroidPartType.class, ordinal); }
+    public static Collection<AndroidPartType> values() { return EnumRegistry.values(AndroidPartType.class); }
+    public static int count() { return EnumRegistry.count(AndroidPartType.class); }
 }
