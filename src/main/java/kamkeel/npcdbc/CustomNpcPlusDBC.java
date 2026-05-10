@@ -10,6 +10,8 @@ import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.event.IDBCEvent;
+import kamkeel.npcdbc.api.event.IFormEvent;
+import kamkeel.npcdbc.constants.DBCScriptContext;
 import noppes.npcs.controllers.APIRegistry;
 import kamkeel.npcdbc.config.LoadConfiguration;
 import kamkeel.npcdbc.data.ability.DBCAbilities;
@@ -104,6 +106,10 @@ public class CustomNpcPlusDBC {
             ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.REVIVED.function, IDBCEvent.DBCReviveEvent.class);
             ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.KNOCKOUT.function, IDBCEvent.DBCKnockout.class);
             ScriptHookController.Instance.registerHook(ScriptContext.PLAYER, DBCScriptType.SKILL_EVENT.function, IDBCEvent.SkillEvent.class);
+
+            ScriptHookController.Instance.registerHook(DBCScriptContext.FORM, DBCScriptType.Form.ASCEND.function, IFormEvent.class);
+            ScriptHookController.Instance.registerHook(DBCScriptContext.FORM, DBCScriptType.Form.DESCEND.function, IFormEvent.class);
+            ScriptHookController.Instance.registerHook(DBCScriptContext.FORM, DBCScriptType.Form.TICK.function, IFormEvent.class);
         }
 
         DBCConditions.register();
