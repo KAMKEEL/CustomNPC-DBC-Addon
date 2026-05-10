@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.data.form;
 
 import kamkeel.npcdbc.constants.DBCScriptContext;
-import kamkeel.npcdbc.network.packets.request.form.DBCFormScript;
+import kamkeel.npcdbc.network.packets.request.form.FormScriptPacket;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.constants.ScriptContext;
 import noppes.npcs.controllers.data.IScriptHandlerPacket;
@@ -38,12 +38,12 @@ public class FormScript extends SingleScriptHandler implements IScriptHandlerPac
     @Override
     public void requestData() {
         if (formId >= 0)
-            DBCFormScript.Get(formId);
+            FormScriptPacket.Get(formId);
     }
 
     @Override
     public void sendSavePacket(int index, int totalCount, NBTTagCompound nbt) {
         if (formId >= 0)
-            DBCFormScript.Save(formId, index, totalCount, nbt);
+            FormScriptPacket.Save(formId, index, totalCount, nbt);
     }
 }

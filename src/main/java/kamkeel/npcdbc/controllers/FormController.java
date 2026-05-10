@@ -36,7 +36,7 @@ public class FormController implements IFormHandler {
     public static FormController Instance = new FormController();
     public HashMap<Integer, Form> customFormsSync = new HashMap();
     public HashMap<Integer, Form> customForms;
-    public HashMap<Integer, FormScript> customFormsScripts;
+    public HashMap<Integer, FormScript> customFormsScripts = new HashMap<>();
     private HashMap<Integer, String> bootOrder;
     private int lastUsedID = 0;
 

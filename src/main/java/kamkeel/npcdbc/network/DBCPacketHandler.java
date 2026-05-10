@@ -32,7 +32,7 @@ import kamkeel.npcdbc.network.packets.request.category.DBCCategorySave;
 import kamkeel.npcdbc.network.packets.request.category.DBCRequestCategories;
 import kamkeel.npcdbc.network.packets.request.category.DBCRequestCategoryItems;
 import kamkeel.npcdbc.network.packets.request.form.DBCCloneForm;
-import kamkeel.npcdbc.network.packets.request.form.DBCFormScript;
+import kamkeel.npcdbc.network.packets.request.form.FormScriptPacket;
 import kamkeel.npcdbc.network.packets.request.form.DBCRemoveForm;
 import kamkeel.npcdbc.network.packets.request.form.DBCSaveForm;
 import kamkeel.npcdbc.network.packets.request.outline.DBCCloneOutline;
@@ -123,7 +123,7 @@ public class DBCPacketHandler {
         REQUEST_PACKETS.registerPacket(new DBCRequestCategoryItems());
         REQUEST_PACKETS.registerPacket(new DBCRemoveForm());
         REQUEST_PACKETS.registerPacket(new DBCSaveForm());
-        REQUEST_PACKETS.registerPacket(new DBCFormScript());
+        REQUEST_PACKETS.registerPacket(new FormScriptPacket());
         REQUEST_PACKETS.registerPacket(new DBCRemoveOutline());
         REQUEST_PACKETS.registerPacket(new DBCSaveOutline());
         REQUEST_PACKETS.registerPacket(new DBCCloneAura());

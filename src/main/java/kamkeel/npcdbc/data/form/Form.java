@@ -14,6 +14,7 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.Constants;
 import noppes.npcs.NBTTags;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.controllers.AnimationController;
@@ -104,6 +105,12 @@ public class Form implements IForm {
         advanced.readFromNBT(compound);
         customAttributes.readFromNBT(compound);
         magicData.readFromNBT(compound);
+
+        if (compound.hasKey("ScriptData", Constants.NBT.TAG_COMPOUND)) {
+            FormScript handler = new FormScript();
+            handler.readFromNBT(compound.getCompoundTag("ScriptData"));
+            setScriptHandler(handler);
+        }
     }
 
     public NBTTagCompound writeToNBT() {

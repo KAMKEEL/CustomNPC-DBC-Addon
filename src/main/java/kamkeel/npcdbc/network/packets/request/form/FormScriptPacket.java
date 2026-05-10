@@ -23,7 +23,7 @@ import noppes.npcs.controllers.data.IScriptHandler;
 
 import java.io.IOException;
 
-public class DBCFormScript extends AbstractPacket {
+public class FormScriptPacket extends AbstractPacket {
     public static String packetName = "NPC|FormScript";
 
     private Action type;
@@ -32,10 +32,10 @@ public class DBCFormScript extends AbstractPacket {
     private int maxSize;
     private NBTTagCompound compound;
 
-    public DBCFormScript() {
+    public FormScriptPacket() {
     }
 
-    public DBCFormScript(Action type, int id, int page, int maxSize, NBTTagCompound compound) {
+    public FormScriptPacket(Action type, int id, int page, int maxSize, NBTTagCompound compound) {
         this.type = type;
         this.id = id;
         this.page = page;
@@ -90,11 +90,11 @@ public class DBCFormScript extends AbstractPacket {
     }
 
     public static void Save(int formId, int id, int maxSize, NBTTagCompound compound) {
-        DBCPacketHandler.Instance.sendToServer(new DBCFormScript(Action.SAVE, formId, id, maxSize, compound));
+        DBCPacketHandler.Instance.sendToServer(new FormScriptPacket(Action.SAVE, formId, id, maxSize, compound));
     }
 
     public static void Get(int formId) {
-        DBCPacketHandler.Instance.sendToServer(new DBCFormScript(Action.GET, formId, -1, -1, new NBTTagCompound()));
+        DBCPacketHandler.Instance.sendToServer(new FormScriptPacket(Action.GET, formId, -1, -1, new NBTTagCompound()));
     }
 
     private enum Action {
