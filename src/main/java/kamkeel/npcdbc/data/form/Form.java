@@ -107,6 +107,10 @@ public class Form implements IForm {
     }
 
     public NBTTagCompound writeToNBT() {
+        return writeToNBT(false);
+    }
+
+    public NBTTagCompound writeToNBT(boolean saveScripts) {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger("ID", id);
         compound.setString("name", name);
@@ -139,6 +143,15 @@ public class Form implements IForm {
         advanced.writeToNBT(compound);
         customAttributes.writeToNBT(compound);
         magicData.writeToNBT(compound);
+
+        if (saveScripts) {
+            NBTTagCompound scriptData = new NBTTagCompound();
+            FormScript handler = getScriptHandler();
+            if (handler != null)
+                handler.writeToNBT(scriptData);
+            compound.setTag("ScriptData", scriptData);
+        }
+
         return compound;
     }
 
@@ -486,7 +499,7 @@ public class Form implements IForm {
     @Override
     public IForm clone() {
         Form form = new Form();
-        form.readFromNBT(writeToNBT());
+        form.readFromNBT(writeToNBT(true));
         form.id = FormController.Instance.getUnusedId();
         return form;
     }
@@ -494,5 +507,20 @@ public class Form implements IForm {
     @Override
     public IForm save() {
         return FormController.Instance.saveForm(this);
+    }
+
+    public FormScript getScriptHandler() {
+        return FormController.getInstance().customFormsScripts.get(this.id);
+    }
+
+    public void setScriptHandler(FormScript handler) {
+        FormController.getInstance().customFormsScripts.put(this.id, handler);
+    }
+
+    public FormScript getOrCreateScriptHandler() {
+        FormScript data = getScriptHandler();
+        if (data == null)
+            setScriptHandler(data = new FormScript());
+        return data;
     }
 }
