@@ -20,4 +20,16 @@ public enum DBCScriptType {
         channelName = channelName.toUpperCase();
         return valueOf(channelName);
     }
+
+    public enum Form {
+        ASCEND("onAscend"),
+        DESCEND("onDescend"),
+        TICK("onTick");
+
+        public String function;
+
+        Form(String function) {
+            this.function = function;
+        }
+    }
 }
