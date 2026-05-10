@@ -4,6 +4,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
@@ -280,6 +281,13 @@ public class TransformController {
             if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), formData.currentForm != 1, prevID, true, form.id)))
                 return;
 
+            IForm currentForm = formData.getCurrentForm();
+
+            if (currentForm != null)
+                DBCEventHooks.onFormDescend(PlayerDataUtil.getIPlayer(player), currentForm);
+
+            DBCEventHooks.onFormAscend(PlayerDataUtil.getIPlayer(player), (IForm) form);
+
             PlaySound.play(new SoundSource(form.getAscendSound(), player));
             if (!isInBaseForm(dbcData.Race, dbcData.State)) {
                 if (!form.stackable.vanillaStackable) {
@@ -337,6 +345,11 @@ public class TransformController {
             int prevID = formData.currentForm != 1 ? formData.currentForm : dbcData.State;
             if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), formData.currentForm != 1, prevID, true, intoParent ? form.getParentID() : -1)))
                 return;
+
+            DBCEventHooks.onFormDescend(PlayerDataUtil.getIPlayer(player), (IForm) form);
+
+            if (intoParent)
+                DBCEventHooks.onFormAscend(PlayerDataUtil.getIPlayer(player), form.getParent());
 
             PlaySound.play(new SoundSource(form.getDescendSound(), player));
             if (form.mastery.hasHeat() && dbcData.addonCurrentHeat > 0) {

@@ -5,6 +5,7 @@ import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
+import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.combat.Dodge;
 import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
@@ -29,6 +30,7 @@ import kamkeel.npcdbc.network.packets.get.CapsuleInfo;
 import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
 import kamkeel.npcdbc.network.packets.player.LoginInfo;
 import kamkeel.npcdbc.data.ability.DBCAbilities;
+import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
@@ -225,6 +227,10 @@ public class ServerEventHandler {
             formData.decrementTimer(form.id);
             if (player.ticksExisted % 20 == 0)
                 formData.updateClient();
+        }
+
+        if (player.ticksExisted % 10 == 0) {
+            DBCEventHooks.onFormTick(PlayerDataUtil.getIPlayer(player), (IForm) form);
         }
 
         if (form.mastery.hasKiDrain() && isInSurvival) {

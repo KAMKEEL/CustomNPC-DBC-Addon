@@ -859,6 +859,10 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public void setCustomForm(int formID, boolean ignoreUnlockCheck) {
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
         if (formID == -1) {
+            if (c.getCurrentForm() != null) {
+                DBCEventHooks.onFormDescend(PlayerDataUtil.getIPlayer(player), (IForm) c.getCurrentForm());
+            }
+
             c.currentForm = -1;
             c.updateClient();
             return;
@@ -887,8 +891,12 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
                 d.setForm(DBCForm.Mystic, false);
             }
 
+            if (c.getCurrentForm() != null) {
+                DBCEventHooks.onFormDescend(PlayerDataUtil.getIPlayer(player), (IForm) c.getCurrentForm());
+            }
 
             c.currentForm = f.id;
+            DBCEventHooks.onFormAscend(PlayerDataUtil.getIPlayer(player), (IForm) f);
             c.updateClient();
         } else {
             throw new CustomNPCsException("Player doesn't have form " + f.name + " unlocked!");
