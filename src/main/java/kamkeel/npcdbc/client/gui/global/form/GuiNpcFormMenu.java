@@ -1,11 +1,13 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormScript;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.request.form.DBCSaveForm;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import noppes.npcs.client.NoppesUtil;
+import noppes.npcs.client.gui.script.GuiScriptInterface;
 import noppes.npcs.client.gui.util.GuiMenuTopButton;
 import noppes.npcs.client.gui.util.GuiNpcTextField;
 import noppes.npcs.client.gui.util.SubGuiInterface;
@@ -39,8 +41,9 @@ public class GuiNpcFormMenu {
         GuiMenuTopButton stackable = new GuiMenuTopButton(-4, mastery.xPosition + mastery.getWidth(), guiTop - 17, "display.stackable");
         GuiMenuTopButton advanced = new GuiMenuTopButton(-6, stackable.xPosition + stackable.getWidth(), guiTop - 17, "display.adv");
         GuiMenuTopButton attributes = new GuiMenuTopButton(-7, advanced.xPosition + advanced.getWidth(), guiTop - 17, "display.attri");
+        GuiMenuTopButton scripts = new GuiMenuTopButton(-8, attributes.xPosition + attributes.getWidth(), guiTop - 17, "script.scripts");
 
-        this.topButtons = new GuiMenuTopButton[]{general, display, mastery, stackable, advanced, attributes, close};
+        this.topButtons = new GuiMenuTopButton[]{general, display, mastery, stackable, advanced, attributes, scripts, close};
         GuiMenuTopButton[] var12 = this.topButtons;
         int var13 = var12.length;
 
@@ -69,6 +72,9 @@ public class GuiNpcFormMenu {
                     formsParent.setSubGui(new SubGuiFormAdvanced(formsParent, form));
                 } else if (id == -7) {
                     formsParent.setSubGui(new SubGuiFormAttributes(formsParent, form));
+                } else if (id == -8) {
+                    save();
+                    GuiScriptInterface.open(parent.parent, new FormScript(form.id));
                 }
 
                 this.activeMenu = id;

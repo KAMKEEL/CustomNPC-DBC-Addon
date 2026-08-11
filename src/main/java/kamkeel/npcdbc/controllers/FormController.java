@@ -4,6 +4,7 @@ import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormHandler;
 import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormScript;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
 import kamkeel.npcs.network.enums.EnumSyncAction;
@@ -35,6 +36,7 @@ public class FormController implements IFormHandler {
     public static FormController Instance = new FormController();
     public HashMap<Integer, Form> customFormsSync = new HashMap();
     public HashMap<Integer, Form> customForms;
+    public HashMap<Integer, FormScript> customFormsScripts = new HashMap<>();
     private HashMap<Integer, String> bootOrder;
     private int lastUsedID = 0;
 
@@ -190,7 +192,7 @@ public class FormController implements IFormHandler {
         File file2 = new File(dir, customForm.getName() + ".json");
 
         try {
-            NBTTagCompound nbtTagCompound = ((Form) customForm).writeToNBT();
+            NBTTagCompound nbtTagCompound = ((Form) customForm).writeToNBT(true);
             NBTJsonUtil.SaveFile(file, nbtTagCompound);
             if (file2.exists())
                 file2.delete();
@@ -209,7 +211,7 @@ public class FormController implements IFormHandler {
         int originalCatId = categoryManager.getItemCategory(originalId);
 
         Form clone = new Form();
-        clone.readFromNBT(original.writeToNBT());
+        clone.readFromNBT(original.writeToNBT(true));
         clone.id = getUnusedId();
         clone.parentID = -1;
         clone.childID = -1;
@@ -248,6 +250,7 @@ public class FormController implements IFormHandler {
 
         Form foundForm = this.customForms.remove(id);
         if (foundForm != null && foundForm.name != null) {
+            customFormsScripts.remove(foundForm.getID());
             File dir = categoryManager.getItemDir(id);
             File file = new File(dir, foundForm.name + ".json");
             if (file.exists()) {

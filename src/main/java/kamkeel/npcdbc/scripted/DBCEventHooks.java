@@ -1,6 +1,10 @@
 package kamkeel.npcdbc.scripted;
 
+import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.constants.DBCScriptType;
+import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormScript;
+import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.controllers.ScriptController;
 import noppes.npcs.controllers.data.PlayerDataScript;
 import noppes.npcs.scripted.NpcAPI;
@@ -47,5 +51,26 @@ public class DBCEventHooks {
         PlayerDataScript handler = ScriptController.Instance.getPlayerScripts(event.getPlayer());
         handler.callScript(DBCScriptType.SKILL_EVENT.function, event);
         return NpcAPI.EVENT_BUS.post(event);
+    }
+
+    public static void onFormAscend(IPlayer player, IForm form) {
+        FormScript handler = ((Form) form).getScriptHandler();
+        if (handler == null) return;
+        DBCPlayerEvent.FormEvent.Ascend event = new DBCPlayerEvent.FormEvent.Ascend(player, form);
+        handler.callScript(DBCScriptType.Form.ASCEND.function, event);
+    }
+
+    public static void onFormDescend(IPlayer player, IForm form) {
+        FormScript handler = ((Form) form).getScriptHandler();
+        if (handler == null) return;
+        DBCPlayerEvent.FormEvent.Descend event = new DBCPlayerEvent.FormEvent.Descend(player, form);
+        handler.callScript(DBCScriptType.Form.DESCEND.function, event);
+    }
+
+    public static void onFormTick(IPlayer player, IForm form) {
+        FormScript handler = ((Form) form).getScriptHandler();
+        if (handler == null) return;
+        DBCPlayerEvent.FormEvent.Tick event = new DBCPlayerEvent.FormEvent.Tick(player, form);
+        handler.callScript(DBCScriptType.Form.TICK.function, event);
     }
 }

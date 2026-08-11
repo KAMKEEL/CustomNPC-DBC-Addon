@@ -2,6 +2,8 @@ package kamkeel.npcdbc.scripted;
 
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import kamkeel.npcdbc.api.event.IDBCEvent;
+import kamkeel.npcdbc.api.event.IFormEvent;
+import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.constants.Capsule;
 import kamkeel.npcdbc.constants.DBCDamageSource;
 import kamkeel.npcdbc.constants.DBCScriptType;
@@ -393,6 +395,53 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         public static class Post extends RenderPlayerEvent {
             public Post(EntityPlayer player, RenderPlayer renderer, float tick) {
                 super(player, renderer, tick);
+            }
+        }
+    }
+
+    public static class FormEvent extends DBCPlayerEvent implements IFormEvent {
+        public final IForm form;
+
+        public FormEvent(IPlayer player, IForm form) {
+            super(player);
+            this.form = form;
+        }
+
+        @Override
+        public IForm getForm() {
+            return form;
+        }
+
+        public static class Ascend extends FormEvent implements IFormEvent.Ascend {
+            public Ascend(IPlayer player, IForm form) {
+                super(player, form);
+            }
+
+            @Override
+            public String getHookName() {
+                return DBCScriptType.Form.ASCEND.function;
+            }
+        }
+
+        public static class Descend extends FormEvent implements IFormEvent.Descend {
+            public Descend(IPlayer player, IForm form) {
+                super(player, form);
+            }
+
+            @Override
+            public String getHookName() {
+                return DBCScriptType.Form.DESCEND.function;
+            }
+        }
+
+        public static class Tick extends FormEvent implements IFormEvent.Tick {
+            public Tick(IPlayer player, IForm form) {
+                super(player, form);
+            }
+
+            @Override
+            public String getHookName() {
+                return DBCScriptType.Form.TICK.function;
             }
         }
     }
