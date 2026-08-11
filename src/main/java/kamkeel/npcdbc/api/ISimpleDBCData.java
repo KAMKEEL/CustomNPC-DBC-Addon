@@ -62,9 +62,15 @@ public interface ISimpleDBCData {
 
     boolean isChargingKiAttack();
 
-    int getMaxStat(int id);
+    /**
+     * @param statID 0 Melee Dmg, 1 Defense, 2 Body, 3 Stamina, 4 Ki Power, 5 Ki Pool
+     */
+    int getMaxStat(int statID);
 
-    int getCurrentStat(int id);
+    /**
+     * @param statID check getMaxStat
+     */
+    int getCurrentStat(int statID);
 
     int getMajinAbsorptionRace();
 

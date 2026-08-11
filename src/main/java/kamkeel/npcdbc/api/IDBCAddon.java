@@ -236,16 +236,16 @@ public interface IDBCAddon extends IDBCPlayer {
     void setSkillLevel(String skillname, int skilllevel);
 
     /**
-     * @param attribute 0 for Melee Dmg, 1 for Defense, 3 for Ki Power
+     * @param statID 0 Melee Dmg, 1 Defense, 2 Body, 3 Stamina, 4 Ki Power, 5 Ki Pool
      * @return Player's stat, NOT attributes i.e Melee Dmg, not STR
      */
-    int getMaxStat(int attribute);
+    int getMaxStat(int statID);
 
     /**
-     * @param attribute check getMaxStat
+     * @param statID check getMaxStat
      * @return Player's stat as a percentage of MaxStat through power release i.e if MaxStat is 1000 and release is 10, returns 100
      */
-    int getCurrentStat(int attribute);
+    int getCurrentStat(int statID);
 
     /**
      * @return if Form player is in is 10x base, returns 10

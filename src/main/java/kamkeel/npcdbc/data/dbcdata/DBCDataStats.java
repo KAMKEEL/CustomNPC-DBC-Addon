@@ -6,8 +6,10 @@ import JinRyuu.JRMCore.i.ExtendedPlayer;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
+import kamkeel.npcdbc.constants.DBCAttribute;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.constants.DBCStatistics;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.DBCEffectController;
 import net.minecraft.entity.player.EntityPlayer;
@@ -100,21 +102,36 @@ public class DBCDataStats {
         return extraoutput;
     }
 
-    public int getMaxStat(int attributeID) { // gets max player stat, 0 dmg 1 def only, rest are
-        int attribute = 0;
+    /**
+     * Attribute each stat is derived from, indexed by stat id.
+     * Melee from STR, Defense from DEX, Body from CON, Stamina from CON,
+     * EnergyPower from WIL, EnergyPool from SPI.
+     */
+    private static final int[] STAT_ATTRIBUTE = {
+        DBCAttribute.Strength,
+        DBCAttribute.Dexterity,
+        DBCAttribute.Constitution,
+        DBCAttribute.Constitution,
+        DBCAttribute.Willpower,
+        DBCAttribute.Spirit
+    };
 
-        if (attributeID == 0 || attributeID == 1 || attributeID == 4)
+    public int getMaxStat(int statID) { // gets max player stat, 0 dmg 1 def only, rest are
+        int attributeID = STAT_ATTRIBUTE[statID];
+        int attribute;
+
+        if (statID == DBCStatistics.Melee || statID == DBCStatistics.Defense || statID == DBCStatistics.EnergyPower)
             attribute = getFullAttribute(attributeID);
         else
             attribute = getAllAttributes()[attributeID];
 
-        float f = attributeID == 5 ? JRMCoreH.SklLvl_KiBs(data.Skills.split(","), 1) : 0f;
-        int stat = JRMCoreH.stat(data.player, attributeID, data.Powertype, attributeID, attribute, data.Race, data.Class, f);
+        float f = statID == DBCStatistics.EnergyPool ? JRMCoreH.SklLvl_KiBs(data.Skills.split(","), 1) : 0f;
+        int stat = JRMCoreH.stat(data.player, attributeID, data.Powertype, statID, attribute, data.Race, data.Class, f);
 
-        if (attributeID == 0)
-            stat += getExtraOutput(attributeID, 100);
-        else if (attributeID == 1)
-            stat += getExtraOutput(attributeID, 100);
+        if (statID == DBCStatistics.Melee)
+            stat += getExtraOutput(statID, 100);
+        else if (statID == DBCStatistics.Defense)
+            stat += getExtraOutput(statID, 100);
 
         return stat;
     }

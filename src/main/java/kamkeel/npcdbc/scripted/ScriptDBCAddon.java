@@ -527,7 +527,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     /**
-     * @param statID 0 for Melee Dmg, 1 for Defense, 3 for Ki Power
+     * @param statID 0 Melee Dmg, 1 Defense, 2 Body, 3 Stamina, 4 Ki Power, 5 Ki Pool
      * @return Player's stat, NOT attributes i.e Melee Dmg, not STR
      */
     @Override
