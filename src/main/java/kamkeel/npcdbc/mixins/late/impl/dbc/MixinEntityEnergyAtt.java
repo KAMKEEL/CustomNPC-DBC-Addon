@@ -2,9 +2,11 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.entity.EntityEnergyAtt;
+import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCGoD;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -20,6 +22,28 @@ public abstract class MixinEntityEnergyAtt {
 
     @Shadow
     private float explevel;
+
+    @Shadow
+    private double damage;
+
+    /**
+     * DBC's Destroyer branch of handleKiaiClash awards technique exp to the shooter and casts it
+     * straight to EntityPlayer. NPCs can fire Destroyer-flagged attacks through the addon, so run
+     * the branch here without the player-only reward and let DBC skip it.
+     */
+    @Inject(method = "handleKiaiClash", at = @At("HEAD"), cancellable = true)
+    private void npcdbc$guardNonPlayerKiaiClash(EntityEnergyAtt attack, CallbackInfo ci) {
+        EntityEnergyAtt self = (EntityEnergyAtt) (Object) this;
+        if (self.shootingEntity instanceof EntityPlayer)
+            return;
+        if (!JGConfigDBCGoD.CONFIG_GOD_ENABLED || !JGConfigDBCGoD.CONFIG_GOD_ENERGY_ENABLED || !self.destroyer)
+            return;
+
+        if (this.damage * self.DAMAGE_REDUCTION / 2.0 > (float) attack.getDamage()) {
+            attack.setDead();
+            ci.cancel();
+        }
+    }
 
     @Inject(method = "setTarget", at = @At("HEAD"), cancellable = true)
     private void target(Entity entity, CallbackInfo ci) {
