@@ -474,7 +474,14 @@ public class DBCDataStats {
         }
     }
 
-    private String[] normalizeAbsorptionData(String absorptionData) {
+    private static final Pattern ABSORPTION_VANITY = Pattern.compile("\\d+\\+\\d+(-\\d+\\+\\d+)*");
+
+    /**
+     * Splits jrmcMajinAbsorptionData into its three fields: absorption level, absorbed race and
+     * vanity items. DBC re-parses this string every server tick and its own repair branch is dead
+     * code, so a malformed field would stay malformed forever - drop anything unparseable.
+     */
+    public static String[] normalizeAbsorptionData(String absorptionData) {
         String[] split = absorptionData == null ? new String[0] : absorptionData.split(",", -1);
         String[] normalized = new String[]{"0", "0", "0+0"};
         for (int i = 0; i < split.length && i < normalized.length; i++) {
@@ -482,6 +489,23 @@ public class DBCDataStats {
                 normalized[i] = split[i];
             }
         }
+
+        if (!isAbsorptionInteger(normalized[0]))
+            normalized[0] = "0";
+        if (!isAbsorptionInteger(normalized[1]))
+            normalized[1] = "0";
+        if (!ABSORPTION_VANITY.matcher(normalized[2]).matches())
+            normalized[2] = "0+0";
+
         return normalized;
+    }
+
+    private static boolean isAbsorptionInteger(String value) {
+        try {
+            Integer.parseInt(value);
+            return true;
+        } catch (NumberFormatException ex) {
+            return false;
+        }
     }
 }

@@ -23,6 +23,7 @@ import kamkeel.npcdbc.data.KiAttack;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.dbcdata.DBCDataStats;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.DBCSetAllowFlight;
@@ -583,14 +584,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     private String[] normalizeMajinAbsorptionData() {
-        String[] split = nbt.getString("jrmcMajinAbsorptionData").split(",", -1);
-        String[] normalized = new String[]{"0", "0", "0+0"};
-        for (int i = 0; i < split.length && i < normalized.length; i++) {
-            if (!split[i].isEmpty()) {
-                normalized[i] = split[i];
-            }
-        }
-        return normalized;
+        return DBCDataStats.normalizeAbsorptionData(nbt.getString("jrmcMajinAbsorptionData"));
     }
 
 
