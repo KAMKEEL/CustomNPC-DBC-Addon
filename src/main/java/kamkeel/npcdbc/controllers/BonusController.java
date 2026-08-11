@@ -166,6 +166,11 @@ public class BonusController implements IBonusHandler {
     }
 
     @Override
+    public IPlayerBonus createBonus(String name, int type) {
+        return new PlayerBonus(name, (byte) type);
+    }
+
+    @Override
     public boolean hasBonus(IPlayer player, String name) {
         if (player == null || player.getMCEntity() == null)
             return false;

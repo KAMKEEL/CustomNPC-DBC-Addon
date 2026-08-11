@@ -142,7 +142,11 @@ public abstract class MixinJRMCoreH {
 
         if (player instanceof EntityPlayer && powerType == 1) {
             DBCData dbcData = DBCData.get((EntityPlayer) player);
-            int modifiedValue = value.get();
+            if (dbcData == null)
+                return;
+
+            int baseValue = value.get();
+            int modifiedValue = baseValue;
             Form form = dbcData.getForm();
             if (form != null && form.advanced.isStatEnabled(stat)) {
                 // Multi
@@ -153,6 +157,10 @@ public abstract class MixinJRMCoreH {
                 modifiedValue = (int) round(bsValue + (double) getStatBonus(powerType, race, classID, stat, false) * 0.01 * bsValue + (double) getStatBonus(powerType, race, classID, stat, true) * 0.01 * bsValue + bsValue * (double) skillBonus, 0, 0);
                 modifiedValue += form.advanced.getStatBonus(stat);
             }
+
+            if (!DBCUtils.noBonusEffects && !dbcData.bonus.getCurrentBonuses().isEmpty())
+                modifiedValue = dbcData.bonus.calculateTotals().applyAllStats(stat, baseValue, modifiedValue);
+
             value.set(modifiedValue);
         }
     }

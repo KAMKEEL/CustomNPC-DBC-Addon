@@ -2,9 +2,16 @@ package kamkeel.npcdbc.data;
 
 import kamkeel.npcdbc.api.effect.IPlayerBonus;
 import kamkeel.npcdbc.constants.DBCAttribute;
+import kamkeel.npcdbc.constants.DBCStatistics;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class PlayerBonus implements IPlayerBonus {
+
+    /**
+     * Number of statistics that run through the DBC stat pipeline,
+     * covering {@link DBCStatistics#Melee} through {@link DBCStatistics#MaxSkills}.
+     */
+    public static final int STAT_COUNT = 7;
 
     public String name;
     // Type 0 = Percentage (additive stacking, applied as % of base)
@@ -19,6 +26,8 @@ public class PlayerBonus implements IPlayerBonus {
     public float constituion = 0;
     public float spirit = 0;
 
+    public final float[] stats = new float[STAT_COUNT];
+
     public PlayerBonus(String name, byte type) {
         this.name = name;
         this.type = type;
@@ -26,19 +35,19 @@ public class PlayerBonus implements IPlayerBonus {
 
     public PlayerBonus(String name, byte type, float strength, float dexterity, float willpower) {
         this.name = name;
-        this.strength = strength;
-        this.dexterity = dexterity;
-        this.willpower = willpower;
+        this.strength = sanitize(strength);
+        this.dexterity = sanitize(dexterity);
+        this.willpower = sanitize(willpower);
         this.type = type;
     }
 
     public PlayerBonus(String name, byte type, float strength, float dexterity, float willpower, float con, float spirit) {
         this.name = name;
-        this.strength = strength;
-        this.dexterity = dexterity;
-        this.willpower = willpower;
-        this.spirit = spirit;
-        this.constituion = con;
+        this.strength = sanitize(strength);
+        this.dexterity = sanitize(dexterity);
+        this.willpower = sanitize(willpower);
+        this.spirit = sanitize(spirit);
+        this.constituion = sanitize(con);
         this.type = type;
     }
 
@@ -64,7 +73,7 @@ public class PlayerBonus implements IPlayerBonus {
 
     @Override
     public void setStrength(float strength) {
-        this.strength = strength;
+        this.strength = sanitize(strength);
     }
 
     @Override
@@ -74,7 +83,7 @@ public class PlayerBonus implements IPlayerBonus {
 
     @Override
     public void setDexterity(float dexterity) {
-        this.dexterity = dexterity;
+        this.dexterity = sanitize(dexterity);
     }
 
     @Override
@@ -84,7 +93,7 @@ public class PlayerBonus implements IPlayerBonus {
 
     @Override
     public void setWillpower(float willpower) {
-        this.willpower = willpower;
+        this.willpower = sanitize(willpower);
     }
 
     @Override
@@ -94,7 +103,7 @@ public class PlayerBonus implements IPlayerBonus {
 
     @Override
     public void setConstitution(float constitution) {
-        this.constituion = constitution;
+        this.constituion = sanitize(constitution);
     }
 
     @Override
@@ -104,11 +113,106 @@ public class PlayerBonus implements IPlayerBonus {
 
     @Override
     public void setSpirit(float spirit) {
-        this.spirit = spirit;
+        this.spirit = sanitize(spirit);
+    }
+
+    @Override
+    public float getStat(int statID) {
+        if (statID < 0 || statID >= STAT_COUNT)
+            return 0;
+        return stats[statID];
+    }
+
+    @Override
+    public void setStat(int statID, float value) {
+        if (statID < 0 || statID >= STAT_COUNT)
+            return;
+        stats[statID] = sanitize(value);
+    }
+
+    @Override
+    public float getMelee() {
+        return stats[DBCStatistics.Melee];
+    }
+
+    @Override
+    public void setMelee(float melee) {
+        stats[DBCStatistics.Melee] = sanitize(melee);
+    }
+
+    @Override
+    public float getDefense() {
+        return stats[DBCStatistics.Defense];
+    }
+
+    @Override
+    public void setDefense(float defense) {
+        stats[DBCStatistics.Defense] = sanitize(defense);
+    }
+
+    @Override
+    public float getBody() {
+        return stats[DBCStatistics.Body];
+    }
+
+    @Override
+    public void setBody(float body) {
+        stats[DBCStatistics.Body] = sanitize(body);
+    }
+
+    @Override
+    public float getStamina() {
+        return stats[DBCStatistics.Stamina];
+    }
+
+    @Override
+    public void setStamina(float stamina) {
+        stats[DBCStatistics.Stamina] = sanitize(stamina);
+    }
+
+    @Override
+    public float getEnergyPower() {
+        return stats[DBCStatistics.EnergyPower];
+    }
+
+    @Override
+    public void setEnergyPower(float energyPower) {
+        stats[DBCStatistics.EnergyPower] = sanitize(energyPower);
+    }
+
+    @Override
+    public float getEnergyPool() {
+        return stats[DBCStatistics.EnergyPool];
+    }
+
+    @Override
+    public void setEnergyPool(float energyPool) {
+        stats[DBCStatistics.EnergyPool] = sanitize(energyPool);
+    }
+
+    @Override
+    public float getMaxSkills() {
+        return stats[DBCStatistics.MaxSkills];
+    }
+
+    @Override
+    public void setMaxSkills(float maxSkills) {
+        stats[DBCStatistics.MaxSkills] = sanitize(maxSkills);
     }
 
     public float[] getValues() {
         return new float[]{strength, dexterity, willpower, constituion, spirit};
+    }
+
+    public float[] getStatValues() {
+        return stats.clone();
+    }
+
+    /**
+     * NaN and infinity are rejected so a bad script value cannot poison the whole bonus stack.
+     */
+    private static float sanitize(float value) {
+        return (Float.isNaN(value) || Float.isInfinite(value)) ? 0.0F : value;
     }
 
     public static PlayerBonus readBonusData(NBTTagCompound nbt) {
@@ -119,7 +223,14 @@ public class PlayerBonus implements IPlayerBonus {
         float willpower = nbt.getFloat(String.valueOf(DBCAttribute.Willpower));
         float con = nbt.getFloat(String.valueOf(DBCAttribute.Constitution));
         float spirit = nbt.getFloat(String.valueOf(DBCAttribute.Spirit));
-        return new PlayerBonus(name, type, strength, dexterity, willpower, con, spirit);
+        PlayerBonus bonus = new PlayerBonus(name, type, strength, dexterity, willpower, con, spirit);
+
+        if (nbt.hasKey("Stats", 10)) {
+            NBTTagCompound statTag = nbt.getCompoundTag("Stats");
+            for (int i = 0; i < STAT_COUNT; i++)
+                bonus.stats[i] = sanitize(statTag.getFloat(String.valueOf(i)));
+        }
+        return bonus;
     }
 
     public NBTTagCompound writeBonusData(NBTTagCompound nbt) {
@@ -130,6 +241,11 @@ public class PlayerBonus implements IPlayerBonus {
         nbt.setFloat(String.valueOf(DBCAttribute.Willpower), willpower);
         nbt.setFloat(String.valueOf(DBCAttribute.Constitution), constituion);
         nbt.setFloat(String.valueOf(DBCAttribute.Spirit), spirit);
+
+        NBTTagCompound statTag = new NBTTagCompound();
+        for (int i = 0; i < STAT_COUNT; i++)
+            statTag.setFloat(String.valueOf(i), stats[i]);
+        nbt.setTag("Stats", statTag);
         return nbt;
     }
 }
