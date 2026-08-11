@@ -87,5 +87,7 @@ public abstract class MixinEntityEnergyAtt {
         EntityEnergyAtt self = (EntityEnergyAtt) (Object) this;
         self.width = this.size;
         self.height = this.size;
+        // The bounding box was built from the uncapped size; rebuild it around the new one.
+        self.setPosition(self.posX, self.posY, self.posZ);
     }
 }
