@@ -5,6 +5,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.util.AbilityDamageSource;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.util.AttributeAttackUtil;
@@ -184,7 +185,7 @@ public class DBCAbilityExtender implements IAbilityExtender {
         if (caster instanceof EntityNPCInterface) {
             source = new NpcDamageSource("mob", (EntityNPCInterface) caster);
         } else if (caster instanceof EntityPlayer) {
-            source = DamageSource.causePlayerDamage((EntityPlayer) caster);
+            source = new AbilityDamageSource(caster);
         } else {
             source = DamageSource.causeMobDamage(caster);
         }
