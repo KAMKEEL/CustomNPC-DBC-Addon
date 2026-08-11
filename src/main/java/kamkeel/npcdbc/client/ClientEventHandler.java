@@ -72,12 +72,6 @@ public class ClientEventHandler {
             DBCData dbcData = DBCData.getClient();
             if (dbcData.stats.isFusionSpectator())
                 return;
-            float healthReq = (selectedForm.mastery.healthRequirement >= 100f || selectedForm.mastery.healthRequirement <= 0f) ? 150 : selectedForm.mastery.healthRequirement * selectedForm.mastery.calculateMulti("healthRequirement", formData.getFormLevel(selectedForm.id));
-            if (dbcData.stats.getCurrentBodyPercentage() > healthReq)
-                return;
-            if (selectedForm.mastery.hasHeat() && dbcData.Pain > 0)
-                return;
-
 
             if (currentForm != null && currentForm.isChildOf(selectedForm)) {
                 Form child = (Form) currentForm.getChild();
@@ -101,6 +95,12 @@ public class ClientEventHandler {
             return false;
 
         DBCData dbcData = DBCData.getClient();
+
+        float healthReq = (form.mastery.healthRequirement >= 100f || form.mastery.healthRequirement <= 0f) ? 150 : form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
+        if (dbcData.stats.getCurrentBodyPercentage() > healthReq)
+            return false;
+        if (form.mastery.hasHeat() && dbcData.Pain > 0)
+            return false;
 
         if (!form.raceEligible(dbcData.Race))
             return false;
@@ -173,6 +173,17 @@ public class ClientEventHandler {
 
                             if ((form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")) && DBCRace.isSaiyan(dbcData.Race) && !dbcData.hasTail()) {
                                 Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.noTail"));
+                                return;
+                            }
+
+                            float childHealthReq = (form.mastery.healthRequirement >= 100f || form.mastery.healthRequirement <= 0f) ? 150 : form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
+                            if (dbcData.stats.getCurrentBodyPercentage() > childHealthReq) {
+                                Utility.sendMessage(mc.thePlayer, "§c" + StatCollector.translateToLocalFormatted("npcdbc.healthRequirement", childHealthReq, "§c"));
+                                return;
+                            }
+
+                            if (form.mastery.hasHeat() && dbcData.Pain > 0) {
+                                Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.pain"));
                                 return;
                             }
                         }
