@@ -74,7 +74,7 @@ public class DBCRequestCategoryItems extends AbstractPacket {
         }
 
         ScrollDataPacket.sendScrollData((EntityPlayerMP) player, items, EnumScrollData.CATEGORY_GROUP);
-        if (tagMap != null && !tagMap.isEmpty()) {
+        if (tagMap != null) {
             TagController.sendCategoryTagMap((EntityPlayerMP) player, tagMap);
         }
     }

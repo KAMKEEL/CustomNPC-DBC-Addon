@@ -333,8 +333,15 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
                 return bodyC2;
             case "bodyc3":
                 return bodyC3;
-            case "fur":
-                return furColor;
+            case "fur": {
+                if (furColor != -1)
+                    return furColor;
+
+                // -1 means "unset"; fall back to the DBC default for the fur being rendered,
+                // otherwise the raw sentinel masks down to white.
+                String fur = form != null ? form.display.hairType : hairType;
+                return "oozaru".equals(fur) ? 6498048 : 0xDA152C;
+            }
         }
         throw new CustomNPCsException("Invalid type! Legal types: hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
     }

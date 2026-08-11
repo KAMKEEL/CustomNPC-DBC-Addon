@@ -124,6 +124,7 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
     public void resetDamageEntityCalled(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         npcdbc$shouldResetHurtTime = false;
         DBCUtils.preCalculatedAttackerDamage = null;
+        DBCUtils.rawIncomingAmount = amount;
         Entity attackerEntity = NoppesUtilServer.GetDamageSource(source);
         if (attackerEntity instanceof EntityPlayer) {
             npcdbc$shouldResetHurtTime = true;
@@ -151,5 +152,6 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
         npcdbc$shouldResetHurtTime = false;
         DBCUtils.insideAttackEntityFrom = false;
         DBCUtils.preCalculatedAttackerDamage = null;
+        DBCUtils.rawIncomingAmount = null;
     }
 }

@@ -6,8 +6,10 @@ import JinRyuu.JRMCore.i.ExtendedPlayer;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
+import kamkeel.npcdbc.constants.DBCAttribute;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.constants.DBCStatistics;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.DBCEffectController;
 import net.minecraft.entity.player.EntityPlayer;
@@ -100,21 +102,36 @@ public class DBCDataStats {
         return extraoutput;
     }
 
-    public int getMaxStat(int attributeID) { // gets max player stat, 0 dmg 1 def only, rest are
-        int attribute = 0;
+    /**
+     * Attribute each stat is derived from, indexed by stat id.
+     * Melee from STR, Defense from DEX, Body from CON, Stamina from CON,
+     * EnergyPower from WIL, EnergyPool from SPI.
+     */
+    private static final int[] STAT_ATTRIBUTE = {
+        DBCAttribute.Strength,
+        DBCAttribute.Dexterity,
+        DBCAttribute.Constitution,
+        DBCAttribute.Constitution,
+        DBCAttribute.Willpower,
+        DBCAttribute.Spirit
+    };
 
-        if (attributeID == 0 || attributeID == 1 || attributeID == 4)
+    public int getMaxStat(int statID) { // gets max player stat, 0 dmg 1 def only, rest are
+        int attributeID = STAT_ATTRIBUTE[statID];
+        int attribute;
+
+        if (statID == DBCStatistics.Melee || statID == DBCStatistics.Defense || statID == DBCStatistics.EnergyPower)
             attribute = getFullAttribute(attributeID);
         else
             attribute = getAllAttributes()[attributeID];
 
-        float f = attributeID == 5 ? JRMCoreH.SklLvl_KiBs(data.Skills.split(","), 1) : 0f;
-        int stat = JRMCoreH.stat(data.player, attributeID, data.Powertype, attributeID, attribute, data.Race, data.Class, f);
+        float f = statID == DBCStatistics.EnergyPool ? JRMCoreH.SklLvl_KiBs(data.Skills.split(","), 1) : 0f;
+        int stat = JRMCoreH.stat(data.player, attributeID, data.Powertype, statID, attribute, data.Race, data.Class, f);
 
-        if (attributeID == 0)
-            stat += getExtraOutput(attributeID, 100);
-        else if (attributeID == 1)
-            stat += getExtraOutput(attributeID, 100);
+        if (statID == DBCStatistics.Melee)
+            stat += getExtraOutput(statID, 100);
+        else if (statID == DBCStatistics.Defense)
+            stat += getExtraOutput(statID, 100);
 
         return stat;
     }
@@ -265,7 +282,9 @@ public class DBCDataStats {
         if (data.Race != DBCRace.MAJIN)
             return;
 
-        nbt(data.player).setString("jrmcMajinAbsorptionData", amount + ",0,0+0");
+        String[] absorptionData = normalizeAbsorptionData(nbt(data.player).getString("jrmcMajinAbsorptionData"));
+        absorptionData[0] = String.valueOf(amount);
+        nbt(data.player).setString("jrmcMajinAbsorptionData", String.join(",", absorptionData));
     }
 
     public void restoreAbsorption(int percToRestoreFromMax) {
@@ -452,6 +471,41 @@ public class DBCDataStats {
         } else {
             data.FormMasteryNR = newMastery;
             data.getRawCompound().setString("jrmcFormMasteryNonRacial", newMastery);
+        }
+    }
+
+    private static final Pattern ABSORPTION_VANITY = Pattern.compile("\\d+\\+\\d+(-\\d+\\+\\d+)*");
+
+    /**
+     * Splits jrmcMajinAbsorptionData into its three fields: absorption level, absorbed race and
+     * vanity items. DBC re-parses this string every server tick and its own repair branch is dead
+     * code, so a malformed field would stay malformed forever - drop anything unparseable.
+     */
+    public static String[] normalizeAbsorptionData(String absorptionData) {
+        String[] split = absorptionData == null ? new String[0] : absorptionData.split(",", -1);
+        String[] normalized = new String[]{"0", "0", "0+0"};
+        for (int i = 0; i < split.length && i < normalized.length; i++) {
+            if (!split[i].isEmpty()) {
+                normalized[i] = split[i];
+            }
+        }
+
+        if (!isAbsorptionInteger(normalized[0]))
+            normalized[0] = "0";
+        if (!isAbsorptionInteger(normalized[1]))
+            normalized[1] = "0";
+        if (!ABSORPTION_VANITY.matcher(normalized[2]).matches())
+            normalized[2] = "0+0";
+
+        return normalized;
+    }
+
+    private static boolean isAbsorptionInteger(String value) {
+        try {
+            Integer.parseInt(value);
+            return true;
+        } catch (NumberFormatException ex) {
+            return false;
         }
     }
 }

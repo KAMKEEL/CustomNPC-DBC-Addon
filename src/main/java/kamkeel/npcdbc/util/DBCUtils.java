@@ -102,6 +102,8 @@ public class DBCUtils {
     public static boolean insideAttackEntityFrom = false;
     /** Pre-calculated DBC attack damage from the current attacker (set at HEAD of attackEntityFrom). */
     public static Float preCalculatedAttackerDamage = null;
+    /** Unmodified damage passed to attackEntityFrom, before any DBC scaling was written into it. */
+    public static Float rawIncomingAmount = null;
 
     public static String[] CONFIG_UI_NAME;
     public static String[] cCONFIG_UI_NAME;
@@ -840,6 +842,24 @@ public class DBCUtils {
         }
 
         return Math.max(damage, 1.0f);
+    }
+
+    /**
+     * The player's plain DBC melee damage, i.e. what a normal punch adds on top of the weapon.
+     * Used where no LivingHurtEvent fires for the target, so DBC never gets to scale the hit
+     * itself - barriers being the case that matters, since they are not living entities.
+     */
+    public static float calculatePlayerMeleeDamage(EntityPlayer attacker) {
+        DBCPlayerContext ctx = DBCPlayerContext.create(attacker);
+        if (ctx.isFusionSpectator() || !ctx.isPowerTypeKi())
+            return 0;
+
+        int modifiedSTR = ctx.getModifiedAttribute(DBCAttribute.Strength);
+        int meleeStat = stat(attacker, DBCAttribute.Strength, ctx.powerType, DBCStatistics.Melee,
+            modifiedSTR, ctx.race, ctx.classID, 0.0F);
+        double baseMeleeDmg = (double) meleeStat * ctx.release * 0.01 * weightPerc(0, attacker);
+
+        return (float) (baseMeleeDmg + computeKiFistBonus(ctx, false) + computeKiWeaponBonus(ctx, false));
     }
 
     /**

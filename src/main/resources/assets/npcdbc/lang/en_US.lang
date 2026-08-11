@@ -680,3 +680,8 @@ statsheet.bonus.label.addonPercentage=Bonus Percent
 jinryuujrmcore.Bio-Android=Bio-Android
 jinryuujrmcore.Android=Android
 
+############################
+## DEATH MESSAGES
+############################
+
+death.attack.npcdbc.ability=%1$s was slain by %2$s

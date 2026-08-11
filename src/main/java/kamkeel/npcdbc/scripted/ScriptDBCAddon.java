@@ -23,6 +23,7 @@ import kamkeel.npcdbc.data.KiAttack;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.dbcdata.DBCDataStats;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.DBCSetAllowFlight;
@@ -38,7 +39,6 @@ import noppes.npcs.scripted.entity.ScriptDBCPlayer;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 // Implemented by Kam, Ported from Goatee Design
 @SuppressWarnings({"rawtypes", "unused"})
@@ -528,7 +528,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     /**
-     * @param statID 0 for Melee Dmg, 1 for Defense, 3 for Ki Power
+     * @param statID 0 Melee Dmg, 1 Defense, 2 Body, 3 Stamina, 4 Ki Power, 5 Ki Pool
      * @return Player's stat, NOT attributes i.e Melee Dmg, not STR
      */
     @Override
@@ -563,13 +563,9 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         if (getRace() != 5)
             return;
 
-        String[] data = nbt.getString("jrmcMajinAbsorptionData").split(",");
-        StringBuilder str = new StringBuilder(race + ",");
-        for (int i = 1; i < data.length; i++)
-            str.append(Arrays.toString(data)).append(",");
-
-        str = new StringBuilder(str.substring(0, str.length() - 1));
-        nbt.setString("jrmcMajinAbsorptionData", str.toString());
+        String[] data = normalizeMajinAbsorptionData();
+        data[1] = String.valueOf(race);
+        nbt.setString("jrmcMajinAbsorptionData", String.join(",", data));
     }
 
     @Override
@@ -582,13 +578,13 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         if (getRace() != 5)
             return;
 
-        String[] data = nbt.getString("jrmcMajinAbsorptionData").split(",");
-        String str = power + ",";
-        for (int i = 1; i < data.length; i++)
-            str += data + ",";
+        String[] data = normalizeMajinAbsorptionData();
+        data[0] = String.valueOf(power);
+        nbt.setString("jrmcMajinAbsorptionData", String.join(",", data));
+    }
 
-        str = str.substring(0, str.length() - 1);
-        nbt.setString("jrmcMajinAbsorptionData", str);
+    private String[] normalizeMajinAbsorptionData() {
+        return DBCDataStats.normalizeAbsorptionData(nbt.getString("jrmcMajinAbsorptionData"));
     }
 
 

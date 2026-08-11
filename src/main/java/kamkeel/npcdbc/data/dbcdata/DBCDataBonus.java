@@ -8,11 +8,13 @@ import kamkeel.npcdbc.data.PlayerBonus;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class DBCDataBonus {
     private static final int ATTRIBUTE_COUNT = 5;
+    private static final int STAT_COUNT = PlayerBonus.STAT_COUNT;
     private final DBCData data;
 
     public DBCDataBonus(DBCData dbcData) {
@@ -32,22 +34,38 @@ public class DBCDataBonus {
     public BonusTotals calculateTotals() {
         float[] percentage = new float[ATTRIBUTE_COUNT];
         float[] flat = new float[ATTRIBUTE_COUNT];
-        float[] multiplicative = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+        float[] multiplicative = new float[ATTRIBUTE_COUNT];
+        Arrays.fill(multiplicative, 1.0f);
+
+        float[] statPercentage = new float[STAT_COUNT];
+        float[] statFlat = new float[STAT_COUNT];
+        float[] statMultiplicative = new float[STAT_COUNT];
+        Arrays.fill(statMultiplicative, 1.0f);
 
         for (PlayerBonus playerBonus : getCurrentBonuses().values()) {
+            if (playerBonus == null)
+                continue;
+
             float[] values = playerBonus.getValues();
+            float[] statValues = playerBonus.getStatValues();
             switch (playerBonus.type) {
                 case 0: // Percentage (additive stacking)
                     for (int i = 0; i < ATTRIBUTE_COUNT; i++)
                         percentage[i] += values[i];
+                    for (int i = 0; i < STAT_COUNT; i++)
+                        statPercentage[i] += statValues[i];
                     break;
                 case 1: // Flat
                     for (int i = 0; i < ATTRIBUTE_COUNT; i++)
                         flat[i] += values[i];
+                    for (int i = 0; i < STAT_COUNT; i++)
+                        statFlat[i] += statValues[i];
                     break;
                 case 2: // Multiplicative (true percentage multiplication)
                     for (int i = 0; i < ATTRIBUTE_COUNT; i++)
                         multiplicative[i] *= Math.max(0.0f, 1.0f + values[i] / 100.0f);
+                    for (int i = 0; i < STAT_COUNT; i++)
+                        statMultiplicative[i] *= Math.max(0.0f, 1.0f + statValues[i] / 100.0f);
                     break;
             }
         }
@@ -56,8 +74,11 @@ public class DBCDataBonus {
         for (int i = 0; i < ATTRIBUTE_COUNT; i++) {
             if (percentage[i] < -1.0f) percentage[i] = -1.0f;
         }
+        for (int i = 0; i < STAT_COUNT; i++) {
+            if (statPercentage[i] < -1.0f) statPercentage[i] = -1.0f;
+        }
 
-        return new BonusTotals(percentage, flat, multiplicative);
+        return new BonusTotals(percentage, flat, multiplicative, statPercentage, statFlat, statMultiplicative);
     }
 
     public float[] getMultiBonus() {
@@ -74,6 +95,22 @@ public class DBCDataBonus {
 
     public float getFlatBonusForAttribute(int attributeID) {
         return calculateTotals().getFlat(attributeID);
+    }
+
+    public float[] getStatMultiBonus() {
+        return calculateTotals().copyStatPercentage();
+    }
+
+    public float[] getStatFlatBonus() {
+        return calculateTotals().copyStatFlat();
+    }
+
+    public float getMultiBonusForStat(int statID) {
+        return calculateTotals().getStatPercentage(statID);
+    }
+
+    public float getFlatBonusForStat(int statID) {
+        return calculateTotals().getStatFlat(statID);
     }
 
     public void saveBonusNBT(NBTTagCompound nbt) {
@@ -93,10 +130,18 @@ public class DBCDataBonus {
         private final float[] flatAdditions;
         private final float[] multiplicative;
 
-        private BonusTotals(float[] percentage, float[] flatAdditions, float[] multiplicative) {
+        private final float[] statPercentage;
+        private final float[] statFlatAdditions;
+        private final float[] statMultiplicative;
+
+        private BonusTotals(float[] percentage, float[] flatAdditions, float[] multiplicative,
+                            float[] statPercentage, float[] statFlatAdditions, float[] statMultiplicative) {
             this.percentage = percentage;
             this.flatAdditions = flatAdditions;
             this.multiplicative = multiplicative;
+            this.statPercentage = statPercentage;
+            this.statFlatAdditions = statFlatAdditions;
+            this.statMultiplicative = statMultiplicative;
         }
 
         public float[] copyPercentage() {
@@ -148,6 +193,30 @@ public class DBCDataBonus {
             return index >= 0 ? multiplicative[index] : 1.0f;
         }
 
+        public float[] copyStatPercentage() {
+            return statPercentage.clone();
+        }
+
+        public float[] copyStatFlat() {
+            return statFlatAdditions.clone();
+        }
+
+        public float[] copyStatMultiplicative() {
+            return statMultiplicative.clone();
+        }
+
+        public float getStatPercentage(int statID) {
+            return isStat(statID) ? statPercentage[statID] : 0.0F;
+        }
+
+        public float getStatFlat(int statID) {
+            return isStat(statID) ? statFlatAdditions[statID] : 0.0F;
+        }
+
+        public float getStatMultiplicative(int statID) {
+            return isStat(statID) ? statMultiplicative[statID] : 1.0F;
+        }
+
         /**
          * Applies all bonus types to an attribute value in the correct order:
          * <ol>
@@ -167,25 +236,62 @@ public class DBCDataBonus {
             if (index < 0)
                 return currentValue;
 
-            // Type 2: Multiplicative (applied first)
-            if (multiplicative[index] != 1.0f)
-                currentValue = Math.round(currentValue * multiplicative[index]);
+            return applyStack(currentValue, baseAttribute,
+                multiplicative[index], percentage[index], flatAdditions[index]);
+        }
 
-            // Type 0: Percentage (additive stacking)
-            if (percentage[index] != 0.0f)
-                currentValue += Math.round(baseAttribute * percentage[index]);
+        /**
+         * Applies all bonus types to a statistic value in the same order as {@link #applyAll(int, int, int)}.
+         * Statistics outside the DBC stat pipeline are returned unchanged.
+         *
+         * @param statID       The {@link kamkeel.npcdbc.constants.DBCStatistics} ID
+         * @param baseStat     The stat value before any form or bonus modification (used for percentage calc)
+         * @param currentValue The current computed stat value
+         * @return The modified stat value, minimum 1
+         */
+        public int applyAllStats(int statID, int baseStat, int currentValue) {
+            if (!isStat(statID))
+                return currentValue;
 
-            // Type 1: Flat
-            if (flatAdditions[index] != 0.0f)
-                currentValue += Math.round(flatAdditions[index]);
+            return applyStack(currentValue, baseStat,
+                statMultiplicative[statID], statPercentage[statID], statFlatAdditions[statID]);
+        }
 
-            return Math.max(currentValue, 1);
+        /**
+         * Runs the multiplicative, percentage and flat stack in double precision so large
+         * DBC values are not truncated by float's 24-bit mantissa, then rounds and clamps once.
+         */
+        private static int applyStack(int currentValue, int base, float multi, float percent, float flat) {
+            double result = currentValue;
+
+            if (multi != 1.0F)
+                result *= multi;
+
+            if (percent != 0.0F)
+                result += (double) base * percent;
+
+            if (flat != 0.0F)
+                result += flat;
+
+            if (Double.isNaN(result))
+                return 1;
+
+            long rounded = Math.round(result);
+            if (rounded < 1L)
+                return 1;
+            if (rounded > Integer.MAX_VALUE)
+                return Integer.MAX_VALUE;
+            return (int) rounded;
         }
 
         private float getValue(int attributeID, float[] values) {
             int index = toBonusIndex(attributeID);
             return index >= 0 ? values[index] : 0.0F;
         }
+    }
+
+    private static boolean isStat(int statID) {
+        return statID >= 0 && statID < STAT_COUNT;
     }
 
     private static int toBonusIndex(int attributeID) {

@@ -189,6 +189,23 @@ public class MixinJRMCoreEH {
         return false;
     }
 
+    /**
+     * fixDamagedEventDBCDamage writes the fully scaled DBC damage into the NPC's damage local before
+     * the hurt event is fired, so DBC would compute its ki costs from an already-scaled number. The
+     * costs that scale with damage - Ki Infuse on projectiles above all - came out several times too
+     * high as a result. The NPC's actual damage comes from npcLastSetDamage in NPCDamaged, so handing
+     * DBC the unmodified amount here changes only its own bookkeeping.
+     */
+    @Inject(method = "Sd35MR", at = @At("HEAD"))
+    public void restoreRawAmountForNPCTarget(LivingHurtEvent event, CallbackInfo ci) {
+        if (!DBCUtils.insideAttackEntityFrom || DBCUtils.rawIncomingAmount == null)
+            return;
+        if (!(event.entityLiving instanceof EntityNPCInterface) || DBCUtils.npcLastSetDamage == null)
+            return;
+
+        event.ammount = DBCUtils.rawIncomingAmount;
+    }
+
     @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;a1t3(Lnet/minecraft/entity/player/EntityPlayer;)V", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
     public void dbcAttackFromPlayer(LivingHurtEvent event, CallbackInfo ci, @Local(name = "dam") LocalFloatRef dam, @Local(name = "targetPlayer") LocalRef<EntityPlayer> targetPlayer, @Local(name = "source") LocalRef<DamageSource> damageSource) {
         handleDBCPlayerDamage(targetPlayer.get(), dam.get(), damageSource.get(), ci);

@@ -5,6 +5,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.data.ability.DBCAbilityStats;
+import kamkeel.npcdbc.util.AbilityDamageSource;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcs.controllers.data.energy.IEnergyExtender;
 import kamkeel.npcs.entity.EntityEnergyAbility;
@@ -46,7 +47,7 @@ public class DBCEnergyExtender implements IEnergyExtender {
         if (owner instanceof EntityNPCInterface) {
             source = new NpcDamageSource("mob", (EntityNPCInterface) owner);
         } else if (owner instanceof EntityPlayer) {
-            source = DamageSource.causePlayerDamage((EntityPlayer) owner);
+            source = new AbilityDamageSource(owner);
         } else {
             source = DamageSource.causeMobDamage(owner);
         }

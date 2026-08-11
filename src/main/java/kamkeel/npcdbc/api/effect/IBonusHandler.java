@@ -11,18 +11,26 @@ import noppes.npcs.api.entity.IPlayer;
  * <p>
  * <b>Bonus Types:</b>
  * <ul>
- *   <li><b>Type 0 - Percentage:</b> Modifies attributes by a percentage of the base value.
- *       Multiple percentage bonuses stack additively (e.g. two {@code +25} bonuses = {@code +50%}).
- *       The total percentage is clamped to {@code -100%} minimum to prevent negative attributes.</li>
- *   <li><b>Type 1 - Flat:</b> Adds a flat amount directly to the attribute.
+ *   <li><b>Type 0 - Percentage:</b> Values are a <b>fraction</b> of the base value, not a 0-100 percent.
+ *       {@code 1.2} adds {@code 120%} of the base, {@code -0.2} removes {@code 20%}.
+ *       Multiple percentage bonuses stack additively, and the total is clamped to {@code -1.0}
+ *       so it cannot remove more than the whole base value.</li>
+ *   <li><b>Type 1 - Flat:</b> Adds a flat amount directly.
  *       Multiple flat bonuses stack additively.</li>
- *   <li><b>Type 2 - Multiplicative:</b> Modifies attributes by a compounding percentage.
+ *   <li><b>Type 2 - Multiplicative:</b> Values are a <b>0-100 style percent</b> that compounds.
  *       Each bonus is converted to a factor ({@code 1 + value/100}) and all factors are
  *       multiplied together. Two {@code -50} bonuses = {@code 0.5 * 0.5 = 0.25} (75% reduction).
  *       Applied <b>before</b> Percentage and Flat bonuses.</li>
  * </ul>
+ * Note that Type 0 and Type 2 use different scales: Type 0 takes {@code 0.5} for half, Type 2 takes {@code 50}.
  * <p>
  * <b>Order of application:</b> Multiplicative (Type 2) → Percentage (Type 0) → Flat (Type 1).
+ * <p>
+ * A bonus can also modify statistics (Melee, Defense, Body, Stamina, EnergyPower, EnergyPool,
+ * MaxSkills) instead of, or alongside, attributes. Use {@link #createBonus(String, int)} and the
+ * statistic setters on {@link IPlayerBonus} for that. Attribute bonuses feed the start of the
+ * calculation and are amplified by everything downstream; statistic bonuses are applied to the
+ * finished statistic, which is what you want for a direct "+N melee damage" style bonus.
  *
  * @see IPlayerBonus
  */
@@ -39,12 +47,12 @@ public interface IBonusHandler {
      * Creates a Percentage bonus (type 0) with Strength, Dexterity, and Willpower modifiers.
      * Constitution and Spirit default to {@code 0}.
      * <p>
-     * Values are percentage modifiers: {@code 50} = +50% of base, {@code -30} = -30% of base.
+     * Values are fractions of the base: {@code 0.5} = +50% of base, {@code -0.3} = -30% of base.
      *
      * @param name Unique name for this bonus
-     * @param str  Strength percentage modifier
-     * @param dex  Dexterity percentage modifier
-     * @param wil  Willpower percentage modifier
+     * @param str  Strength fraction of base
+     * @param dex  Dexterity fraction of base
+     * @param wil  Willpower fraction of base
      * @return The created bonus (not yet applied)
      */
     IPlayerBonus createBonus(String name, float str, float dex, float wil);
@@ -67,9 +75,9 @@ public interface IBonusHandler {
      * Creates a bonus with a specified type and all five attribute modifiers.
      *
      * @param name Unique name for this bonus
-     * @param type {@code 0} for Percentage (values are % of base attribute, additive stacking),
+     * @param type {@code 0} for Percentage (values are a fraction of the base, additive stacking),
      *             {@code 1} for Flat (values are added directly),
-     *             {@code 2} for Multiplicative (values are compounding %, each converts to factor {@code 1 + value/100})
+     *             {@code 2} for Multiplicative (values are a compounding 0-100 percent, each converts to factor {@code 1 + value/100})
      * @param str  Strength modifier
      * @param dex  Dexterity modifier
      * @param wil  Willpower modifier
@@ -78,6 +86,24 @@ public interface IBonusHandler {
      * @return The created bonus (not yet applied)
      */
     IPlayerBonus createBonus(String name, int type, float str, float dex, float wil, float con, float spi);
+
+    /**
+     * Creates an empty bonus of the given type, with every attribute and statistic at {@code 0}.
+     * Set the values you want through the {@link IPlayerBonus} setters, then apply it with
+     * {@link #applyBonus(IPlayer, IPlayerBonus)}.
+     * <p>
+     * This is the entry point for statistic bonuses, for example a flat melee increase:
+     * <pre>
+     * var bonus = handler.createBonus("angel_tunic", 1);
+     * bonus.setMelee(500);
+     * handler.applyBonus(player, bonus);
+     * </pre>
+     *
+     * @param name Unique name for this bonus
+     * @param type {@code 0} for Percentage, {@code 1} for Flat, {@code 2} for Multiplicative
+     * @return The created bonus (not yet applied)
+     */
+    IPlayerBonus createBonus(String name, int type);
 
     /**
      * Checks if the player has an active bonus with the given name.
@@ -100,12 +126,14 @@ public interface IBonusHandler {
     /**
      * Creates and applies a Percentage bonus (type 0) with Strength, Dexterity, and Willpower modifiers.
      * If a bonus with the same name already exists, it will be overwritten.
+     * <p>
+     * Values are fractions of the base: {@code 0.5} = +50% of base, {@code -0.3} = -30% of base.
      *
      * @param player The player to apply the bonus to
      * @param name   Unique name for this bonus
-     * @param str    Strength percentage modifier
-     * @param dex    Dexterity percentage modifier
-     * @param wil    Willpower percentage modifier
+     * @param str    Strength fraction of base
+     * @param dex    Dexterity fraction of base
+     * @param wil    Willpower fraction of base
      */
     void applyBonus(IPlayer player, String name, float str, float dex, float wil);
 

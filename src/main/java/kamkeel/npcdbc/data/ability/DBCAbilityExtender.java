@@ -5,6 +5,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.util.AbilityDamageSource;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcs.controllers.data.ability.Ability;
 import kamkeel.npcs.util.AttributeAttackUtil;
@@ -13,6 +14,7 @@ import kamkeel.npcs.controllers.data.ability.conditions.ConditionHPThreshold;
 import kamkeel.npcs.controllers.data.ability.conditions.ConditionThreshold;
 import kamkeel.npcs.controllers.data.ability.enums.AbilityPhase;
 import kamkeel.npcs.controllers.data.ability.extender.IAbilityExtender;
+import kamkeel.npcs.entity.EntityEnergyBarrier;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
@@ -108,6 +110,20 @@ public class DBCAbilityExtender implements IAbilityExtender {
         return true;
     }
 
+    /**
+     * A barrier is not a living entity, so no LivingHurtEvent fires for it and DBC never scales
+     * the hit - vanilla hands over the bare attackDamage attribute. Add the attacker's melee
+     * damage here so a dome takes DBC-scale damage instead of a point per swing.
+     */
+    @Override
+    public float modifyBarrierMeleeDamage(EntityEnergyBarrier barrier, EntityLivingBase attacker, float baseDamage) {
+        if (!(attacker instanceof EntityPlayer))
+            return baseDamage;
+
+        float melee = DBCUtils.calculatePlayerMeleeDamage((EntityPlayer) attacker);
+        return melee > 0 ? baseDamage + melee : baseDamage;
+    }
+
     @Override
     public float modifyBarrierHealth(Ability ability, EntityLivingBase caster, float baseHealth) {
         if (!(caster instanceof EntityPlayer))
@@ -184,7 +200,7 @@ public class DBCAbilityExtender implements IAbilityExtender {
         if (caster instanceof EntityNPCInterface) {
             source = new NpcDamageSource("mob", (EntityNPCInterface) caster);
         } else if (caster instanceof EntityPlayer) {
-            source = DamageSource.causePlayerDamage((EntityPlayer) caster);
+            source = new AbilityDamageSource(caster);
         } else {
             source = DamageSource.causeMobDamage(caster);
         }
