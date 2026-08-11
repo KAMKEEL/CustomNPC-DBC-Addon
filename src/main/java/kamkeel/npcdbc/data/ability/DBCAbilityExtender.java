@@ -14,6 +14,7 @@ import kamkeel.npcs.controllers.data.ability.conditions.ConditionHPThreshold;
 import kamkeel.npcs.controllers.data.ability.conditions.ConditionThreshold;
 import kamkeel.npcs.controllers.data.ability.enums.AbilityPhase;
 import kamkeel.npcs.controllers.data.ability.extender.IAbilityExtender;
+import kamkeel.npcs.entity.EntityEnergyBarrier;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
@@ -107,6 +108,20 @@ public class DBCAbilityExtender implements IAbilityExtender {
             data.stats.restoreStaminaFlat(-actualStaminaDrain);
 
         return true;
+    }
+
+    /**
+     * A barrier is not a living entity, so no LivingHurtEvent fires for it and DBC never scales
+     * the hit - vanilla hands over the bare attackDamage attribute. Add the attacker's melee
+     * damage here so a dome takes DBC-scale damage instead of a point per swing.
+     */
+    @Override
+    public float modifyBarrierMeleeDamage(EntityEnergyBarrier barrier, EntityLivingBase attacker, float baseDamage) {
+        if (!(attacker instanceof EntityPlayer))
+            return baseDamage;
+
+        float melee = DBCUtils.calculatePlayerMeleeDamage((EntityPlayer) attacker);
+        return melee > 0 ? baseDamage + melee : baseDamage;
     }
 
     @Override

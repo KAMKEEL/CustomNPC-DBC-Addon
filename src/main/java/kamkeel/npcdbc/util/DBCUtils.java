@@ -845,6 +845,24 @@ public class DBCUtils {
     }
 
     /**
+     * The player's plain DBC melee damage, i.e. what a normal punch adds on top of the weapon.
+     * Used where no LivingHurtEvent fires for the target, so DBC never gets to scale the hit
+     * itself - barriers being the case that matters, since they are not living entities.
+     */
+    public static float calculatePlayerMeleeDamage(EntityPlayer attacker) {
+        DBCPlayerContext ctx = DBCPlayerContext.create(attacker);
+        if (ctx.isFusionSpectator() || !ctx.isPowerTypeKi())
+            return 0;
+
+        int modifiedSTR = ctx.getModifiedAttribute(DBCAttribute.Strength);
+        int meleeStat = stat(attacker, DBCAttribute.Strength, ctx.powerType, DBCStatistics.Melee,
+            modifiedSTR, ctx.race, ctx.classID, 0.0F);
+        double baseMeleeDmg = (double) meleeStat * ctx.release * 0.01 * weightPerc(0, attacker);
+
+        return (float) (baseMeleeDmg + computeKiFistBonus(ctx, false) + computeKiWeaponBonus(ctx, false));
+    }
+
+    /**
      * MELEE FORMULA: Chosen attribute through Melee stat type
      * + Ki Fist bonus (from SPI) + Ki Weapon bonus (from WIL).
      */
