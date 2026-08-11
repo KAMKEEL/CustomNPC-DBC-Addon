@@ -58,6 +58,16 @@ public final class DBCSaveRaceProperties extends AbstractPacket {
         payload = ByteBufUtils.readBigNBT(in);
 
         DBCData data = DBCData.get(player);
+        if (data == null)
+            return;
+
+        // Creator-finalize only — same gate as DBCSelectRace.
+        if (data.Accept != 0) {
+            LogWriter.error("[NPCDBC] Player " + player.getCommandSenderName()
+                + " sent race properties outside character creation; ignoring.");
+            return;
+        }
+
         Race race = data.addonRace.getRace();
         if (race == null) {
             LogWriter.error("[NPCDBC] Player " + player.getCommandSenderName()

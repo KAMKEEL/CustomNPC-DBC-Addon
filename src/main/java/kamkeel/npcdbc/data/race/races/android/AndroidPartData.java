@@ -143,8 +143,7 @@ public class AndroidPartData {
         }
 
         public Builder matchSlot(boolean match) {
-            if (overlays != null)
-                this.matchSlot = match;
+            this.matchSlot = match;
             return this;
         }
 

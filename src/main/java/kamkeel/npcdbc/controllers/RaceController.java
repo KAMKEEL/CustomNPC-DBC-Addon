@@ -99,8 +99,10 @@ public class RaceController {
      * Add 6 to get the absolute GUI index.
      */
     public int getIndex(String name) {
+        // Exact match: races are keyed case-sensitively in `races`, so matching
+        // loosely here would hand back an index that getByName() cannot resolve.
         for (int i = 0; i < raceOrder.size(); i++)
-            if (raceOrder.get(i).getName().equalsIgnoreCase(name))
+            if (raceOrder.get(i).getName().equals(name))
                 return i;
         return -1;
     }
@@ -233,9 +235,18 @@ public class RaceController {
      */
     public void put(Race race) {
         Race existing = getByName(race.getName());
-        if (existing != null) raceOrder.remove(existing);
         races.put(race.getName(), race);
-        raceOrder.add(race);
+
+        // Replace in place. raceOrder defines the GUI index the client selects by, so
+        // appending a replaced race would silently renumber every race after it and
+        // desync the client's race list from the server's.
+        int index = existing != null ? raceOrder.indexOf(existing) : -1;
+        if (index >= 0) {
+            raceOrder.set(index, race);
+        } else {
+            raceOrder.add(race);
+        }
+
         RaceSelectorHelper.markDirty();
     }
 

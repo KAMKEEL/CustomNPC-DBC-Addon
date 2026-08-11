@@ -9,12 +9,14 @@ import kamkeel.npcdbc.data.race.races.android.DBCDataAndroid;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.PacketChannel;
+import kamkeel.npcdbc.items.android.ItemAndroidPart;
 import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
+import kamkeel.npcs.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import noppes.npcs.LogWriter;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Client -> Server packet sent when the player equips or unequips
@@ -48,19 +50,14 @@ public final class AndroidEquipPart extends AbstractPacket {
     @Override
     public void sendData(ByteBuf out) throws IOException {
         out.writeInt(slot.ordinal());
-
-        byte[] bytes = partId.getBytes(StandardCharsets.UTF_8);
-        out.writeInt(bytes.length);
-        out.writeBytes(bytes);
+        ByteBufUtils.writeUTF8String(out, partId != null ? partId : "");
     }
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
         int slotOrdinal = in.readInt();
-        int len = in.readInt();
-        byte[] bytes = new byte[len];
-        in.readBytes(bytes);
-        partId = new String(bytes, StandardCharsets.UTF_8);
+        partId = ByteBufUtils.readUTF8String(in);
+        if (partId == null) partId = "";
 
         AndroidPartSlot[] slots = AndroidPartSlot.values();
         if (slotOrdinal < 0 || slotOrdinal >= slots.length) {
@@ -104,11 +101,38 @@ public final class AndroidEquipPart extends AbstractPacket {
                 return;
             }
 
+            // The selection GUI only offers parts out of the player's own inventory, so
+            // require that server-side too — otherwise any client can equip any registered
+            // part without ever obtaining the item.
+            if (!hasPartItem(player, type)) {
+                LogWriter.error("[NPCDBC] Player " + player.getCommandSenderName()
+                        + " tried to equip android part " + partId + " they do not have");
+                return;
+            }
+
             data.equip(slot, type);
         } else {
             data.unequip(slot);
         }
 
         dbcData.saveNBTData(true);
+    }
+
+    /**
+     * Mirrors {@code SubGuiSelectAndroidPart.isValid}: the player must be carrying a
+     * matching {@link ItemAndroidPart} stack. Creative-mode players are exempt, matching
+     * how the rest of the addon treats creative access.
+     */
+    private static boolean hasPartItem(EntityPlayer player, AndroidPartType type) {
+        if (player.capabilities.isCreativeMode)
+            return true;
+
+        for (ItemStack stack : player.inventory.mainInventory) {
+            if (stack == null || !(stack.getItem() instanceof ItemAndroidPart))
+                continue;
+            if (type.equals(ItemAndroidPart.getPartType(stack)))
+                return true;
+        }
+        return false;
     }
 }

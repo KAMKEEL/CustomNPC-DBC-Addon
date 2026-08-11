@@ -6,8 +6,10 @@ import kamkeel.npcdbc.constants.enums.EnumDBCStats;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.race.Race;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import JinRyuu.JRMCore.ComJrmcaBonus;
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.server.JGMathHelper;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCGoD;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import net.minecraft.entity.player.EntityPlayer;
@@ -113,6 +115,11 @@ public class RaceStatCalculator {
      */
     public static int computeStat(ClassStats stats, int statIndex, int attributeIndex, int attributeValue,
                                   float skillBonus) {
+        return computeStat(null, stats, statIndex, attributeIndex, attributeValue, skillBonus);
+    }
+
+    public static int computeStat(EntityPlayer player, ClassStats stats, int statIndex, int attributeIndex,
+                                  int attributeValue, float skillBonus) {
         // Clamp statIndex to valid enum range (mirrors DBC's bounds check:
         //   stat = attributes.length > stat ? stat : attributes.length - 1)
         EnumDBCStats[] allStats = EnumDBCStats.values();
@@ -134,16 +141,16 @@ public class RaceStatCalculator {
         //   returns 0 for DBC power type, since it's already baked in.
         double statBonus = stats.getStatBonus(statEnum);
 
-        if(statEnum == EnumDBCStats.ENERGY_POOL){
-           // statAttMulti = 5;
-            //statBonus = 2;
-            int x = 20;
-
-        }
         // Step 3: combine (mirrors DBC's round(...) call)
         //   value = statAttMulti + (statBonus * 0.01 * statAttMulti) + (classBonus * 0.01 * statAttMulti) + (statAttMulti * skillBonus)
         //   For powerType=1, classBonus is always 0 (baked into statBonus), so we omit it.
         int value = (int) Math.round(statAttMulti + statBonus * 0.01 * statAttMulti + statAttMulti * skillBonus);
+
+        // Step 3b: /jrmca attribute bonuses (mirrors JRMCoreH.stat lines 5527-5555).
+        //   Because the stat() injection cancels DBC's method wholesale, this block would
+        //   otherwise be skipped entirely for custom races — the stat sheet would show the
+        //   bonus while the actual stat ignored it.
+        value = applyJrmcaAttributeBonus(player, attributeIndex, value);
 
         // Step 4: attribute multiplier (mirrors CONFIG_RACES_ATTRIBUTE_MULTI[race][class][attr])
         //   Applied as a final multiplier on the entire stat value.
@@ -155,6 +162,56 @@ public class RaceStatCalculator {
         }
 
         return value;
+    }
+
+    /**
+     * Applies DBC's {@code /jrmca bonus} attribute bonuses to an already-computed stat.
+     *
+     * <p>1:1 port of the {@code JRMCoreConfig.JRMCABonusOn} block inside
+     * {@code JRMCoreH.stat(Entity,IIIIIIF)}. The bonus string is a {@code |}-separated list
+     * of {@code name;<op><number>} entries, where {@code <op>} is one of {@code + - * / %}.
+     * Malformed entries are skipped, matching DBC's swallow-and-continue behaviour.
+     *
+     * @param player         the player, or {@code null} to skip (non-player callers)
+     * @param attributeIndex DBC attributeID; the bonus only applies for 0..5
+     * @param value          the stat value computed so far
+     * @return the stat value with bonuses applied
+     */
+    private static int applyJrmcaAttributeBonus(EntityPlayer player, int attributeIndex, int value) {
+        if (player == null || !JRMCoreConfig.JRMCABonusOn)
+            return value;
+        if (attributeIndex < 0 || attributeIndex > 5)
+            return value;
+
+        String nbtValue;
+        if (!player.worldObj.isRemote) {
+            nbtValue = JRMCoreH.nbt(player, "pres")
+                .getString("jrmcAttrBonus" + ComJrmcaBonus.ATTRIBUTES_SHORT[attributeIndex]);
+        } else {
+            nbtValue = JRMCoreH.getBonusAttributes(player.getCommandSenderName(), attributeIndex);
+        }
+
+        if (nbtValue == null || nbtValue.equals("NONE") || nbtValue.equals("n"))
+            return value;
+
+        double result = value;
+        String[] entries = nbtValue.split("\\|");
+        if (entries.length == 0 || entries[0].isEmpty())
+            return value;
+
+        for (String entry : entries) {
+            if (entry.length() <= 1)
+                continue;
+            try {
+                String operand = entry.split("\\;")[1];
+                double amount = Double.parseDouble(operand.substring(1));
+                result = JGMathHelper.StringMethod(operand.substring(0, 1), result, amount);
+            } catch (Exception ignored) {
+                // Matches DBC: a malformed bonus entry is skipped, not fatal.
+            }
+        }
+
+        return (int) result;
     }
 
     /**

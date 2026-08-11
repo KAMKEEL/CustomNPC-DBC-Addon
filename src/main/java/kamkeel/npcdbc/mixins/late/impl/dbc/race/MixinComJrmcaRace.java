@@ -21,14 +21,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = ComJrmca.class, remap = false)
 public class MixinComJrmcaRace {
 
+    /** Thread-scoped for the same reason as {@code MixinJRMCorePacHanSRace}: the command
+     *  instance is a shared singleton, so this hand-off must not be plain instance state. */
     @Unique
-    private Race npcdbc$cachedCommandRace;
+    private static final ThreadLocal<Race> npcdbc$cachedCommandRace = new ThreadLocal<>();
 
     @Inject(method = "processCommand", at = @At("HEAD"))
     private void npcdbc$cacheCommandRace(net.minecraft.command.ICommandSender commandSender,
                                          String[] stringArray,
                                          CallbackInfo ci) {
-        npcdbc$cachedCommandRace = null;
+        npcdbc$cachedCommandRace.remove();
 
         EntityPlayerMP targetPlayer;
         try {
@@ -43,8 +45,17 @@ public class MixinComJrmcaRace {
 
         PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(targetPlayer);
         if (info != null && info.isCustomRace()) {
-            npcdbc$cachedCommandRace = info.getRace();
+            Race race = info.getRace();
+            if (race != null)
+                npcdbc$cachedCommandRace.set(race);
         }
+    }
+
+    @Inject(method = "processCommand", at = @At("RETURN"))
+    private void npcdbc$clearCommandRace(net.minecraft.command.ICommandSender commandSender,
+                                         String[] stringArray,
+                                         CallbackInfo ci) {
+        npcdbc$cachedCommandRace.remove();
     }
 
     @Redirect(
@@ -52,7 +63,8 @@ public class MixinComJrmcaRace {
         at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;attributeStart(IIII)I")
     )
     private int npcdbc$passCustomRaceId(int powerType, int attribute, int race, int classID) {
-        int effectiveRace = npcdbc$cachedCommandRace != null ? npcdbc$cachedCommandRace.id : race;
+        Race cached = npcdbc$cachedCommandRace.get();
+        int effectiveRace = cached != null ? cached.id : race;
         return JRMCoreH.attributeStart(powerType, attribute, effectiveRace, classID);
     }
 }

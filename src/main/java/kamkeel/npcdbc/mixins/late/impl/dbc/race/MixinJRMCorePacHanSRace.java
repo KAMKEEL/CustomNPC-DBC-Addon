@@ -21,12 +21,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = JRMCorePacHanS.class, remap = false)
 public class MixinJRMCorePacHanSRace {
 
+    /**
+     * {@code JRMCore.phs} is a single shared instance and FML 1.7.10 message handlers run
+     * on per-connection netty threads, so this hand-off between the HEAD inject and the
+     * redirect below must not be plain instance state — two players finalizing character
+     * creation at once would otherwise cross wires and hand one player the other's race ID.
+     */
     @Unique
-    private Race npcdbc$cachedCreationRace;
+    private static final ThreadLocal<Race> npcdbc$cachedCreationRace = new ThreadLocal<>();
 
     @Inject(method = "handleChar", at = @At("HEAD"), remap = false)
     private void npcdbc$cacheCreationRace(byte b, int b2, EntityPlayer p, CallbackInfo ci) {
-        npcdbc$cachedCreationRace = null;
+        npcdbc$cachedCreationRace.remove();
 
         if (p == null || p.worldObj == null || p.worldObj.isRemote) {
             return;
@@ -37,7 +43,14 @@ public class MixinJRMCorePacHanSRace {
             return;
         }
 
-        npcdbc$cachedCreationRace = data.addonRace.getRace();
+        Race race = data.addonRace.getRace();
+        if (race != null)
+            npcdbc$cachedCreationRace.set(race);
+    }
+
+    @Inject(method = "handleChar", at = @At("RETURN"), remap = false)
+    private void npcdbc$clearCreationRace(byte b, int b2, EntityPlayer p, CallbackInfo ci) {
+        npcdbc$cachedCreationRace.remove();
     }
 
     @Redirect(
@@ -46,7 +59,8 @@ public class MixinJRMCorePacHanSRace {
         remap = false
     )
     private int npcdbc$passCustomRaceIdToAttributeStart(int powerType, int attribute, int race, int classID) {
-        int effectiveRace = npcdbc$cachedCreationRace != null ? npcdbc$cachedCreationRace.id : race;
+        Race cached = npcdbc$cachedCreationRace.get();
+        int effectiveRace = cached != null ? cached.id : race;
         return JRMCoreH.attributeStart(powerType, attribute, effectiveRace, classID);
     }
 
@@ -70,15 +84,16 @@ public class MixinJRMCorePacHanSRace {
 
         DBCData data = DBCData.get(p);
         PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(p);
-        if (data == null || !info.isCustomRace())
+        if (data == null || info == null || !info.isCustomRace())
             return;
 
         Race race = info.getRace();
         if (race == null || race.skill == null)
             return;
 
+        // substring(0, 2) below needs at least the 2-char TRn prefix.
         String currentSkill = data.RacialSkills;
-        if (currentSkill == null || currentSkill.isEmpty() || currentSkill.contains("pty"))
+        if (currentSkill == null || currentSkill.length() < 2 || currentSkill.contains("pty"))
             return;
 
         if (!JRMCoreConfig.dat5711) {
@@ -107,9 +122,9 @@ public class MixinJRMCorePacHanSRace {
             return;
         }
 
-        // SklLvlX returns 1-based (1 + raw TRn suffix), but TRn storage is 0-based.
-        // Convert back: rawNextLevel = nextLevel - 1.
-        int rawNextLevel = nextLevel - 1;
+        // TRn format is a 2-char prefix followed by the level suffix. SklLvlX returns
+        // 1 + suffix, and getRacialSkillLevel() subtracts that 1 back off, so storing
+        // nextLevel verbatim round-trips to nextLevel.
         String upgradedSkill = currentSkill.substring(0, 2) + nextLevel;
         data.getRawCompound().setString("jrmcSSltX", data.RacialSkills = upgradedSkill);
         data.getRawCompound().setInteger("jrmcTpint", data.TP = data.TP - tpCost);

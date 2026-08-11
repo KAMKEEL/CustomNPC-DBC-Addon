@@ -266,7 +266,8 @@ public class RaceSkill implements DataSerializable {
 
     /**
      * Returns the global index of the next unlocked branch after the current one,
-     * wrapping around. Returns {@code -1} if there is only one unlocked branch.
+     * wrapping around. Returns {@code -1} if no branch is unlocked. With exactly one
+     * unlocked branch this returns that branch's own index.
      */
     public int getNextUnlockedBranchIndex(FormTree tree, int skillLevel, int selectedBranchIndex) {
         if (tree == null)

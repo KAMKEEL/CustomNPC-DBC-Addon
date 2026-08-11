@@ -7,11 +7,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.CustomNpcsPermissions;
 import noppes.npcs.entity.EntityNPCInterface;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.zip.GZIPOutputStream;
 
 public abstract class AbstractPacket {
 
@@ -57,20 +55,6 @@ public abstract class AbstractPacket {
     }
 
     public abstract void sendData(ByteBuf out) throws IOException;
-    
-public void sendData1(ByteBuf out) throws IOException {
-    
-    // Create a temporary buffer to hold compressed data
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    try (GZIPOutputStream gzip = new GZIPOutputStream(baos)) {
-        //gzip.write(jsonBytes);
-    }
-    byte[] compressed = baos.toByteArray();
-
-    // Write the length of compressed data so the receiver knows how much to read
-    out.writeInt(compressed.length);
-    out.writeBytes(compressed);
-}
 
     //"player" on the server side is the client who sent this packet
     //"player" on the client side is the client player

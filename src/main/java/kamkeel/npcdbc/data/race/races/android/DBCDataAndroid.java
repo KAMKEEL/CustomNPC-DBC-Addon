@@ -63,7 +63,9 @@ public class DBCDataAndroid extends RaceDataHolder {
         IPlayer player = PlayerDataUtil.getIPlayer(dbcData.player);
         DBCPlayerEvent.AndroidPartEvent event = new DBCPlayerEvent.AndroidPartEvent.Equip(player, part.getId(), slot.ordinal());
 
-        DBCEventHooks.onAndroidPartEvent(event);
+        if (DBCEventHooks.onAndroidPartEvent(event))
+            return;
+
         equippedParts.put(slot, part.getId());
         part.onEquip(dbcData.player);
     }
@@ -76,7 +78,9 @@ public class DBCDataAndroid extends RaceDataHolder {
         IPlayer player = PlayerDataUtil.getIPlayer(dbcData.player);
         DBCPlayerEvent.AndroidPartEvent event = new DBCPlayerEvent.AndroidPartEvent.Unequip(player, partId, slot.ordinal());
 
-        DBCEventHooks.onAndroidPartEvent(event);
+        if (DBCEventHooks.onAndroidPartEvent(event))
+            return;
+
         equippedParts.put(slot, "");
         part.onUnequip(dbcData.player);
     }

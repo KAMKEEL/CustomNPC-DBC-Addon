@@ -40,7 +40,7 @@ public class Race implements DataSerializable {
         this.skill = skill;
         this.formTree = formTree;
         this.attributeConfig = attributeConfig;
-        this.properties = properties;
+        this.properties = properties != null ? properties : new RaceProperties();
         this.dataHolder = dataHolder;
     }
 
@@ -142,7 +142,14 @@ public class Race implements DataSerializable {
             form.willMulti     = formData.getFloat("willMulti",      form.willMulti);
         }
 
-        properties = RaceController.getInstance().getProperties(this.name);
+        // Races with no property definitions are never entered into RaceController's
+        // property map, so getProperties returns null for them. Keep the existing
+        // (empty) container in that case — nulling it here would strand every
+        // consumer that treats properties as non-null.
+        RaceProperties registered = RaceController.getInstance().getProperties(this.name);
+        if (registered != null)
+            properties = registered;
+
         dataHolder = RaceController.Instance.getDataHolder(this.name);
     }
 }

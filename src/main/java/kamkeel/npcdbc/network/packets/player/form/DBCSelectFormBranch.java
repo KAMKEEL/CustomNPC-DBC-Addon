@@ -48,16 +48,29 @@ public final class DBCSelectFormBranch extends AbstractPacket {
             return;
 
         PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
+        DBCData dbcData = DBCData.get(player);
+        if (info == null || dbcData == null)
+            return;
+
+        DBCDataRace raceData = dbcData.addonRace;
+        if (raceData == null || !raceData.isCustomRace())
+            return;
+
+        Race race = raceData.getRace();
+        if (race == null || race.skill == null || race.formTree == null)
+            return;
+
+        // Reject out-of-range indices rather than persisting them — resolveActiveBranch
+        // would silently fall back to branch 0 and the stored value would never be valid.
+        if (branchIndex >= race.formTree.branchCount())
+            return;
+
         info.setSelectedFormBranch(branchIndex);
 
-        DBCDataRace raceData = DBCData.get(player).addonRace;
-        if (raceData != null && raceData.isCustomRace()) {
-            Race race = raceData.getRace();
-            Form firstForm = race.skill.getFirstUnlockedFormInBranch(race.formTree, raceData.getRacialSkillLevel(),branchIndex);
-            if (firstForm != null) 
-                info.setSelectedForm(firstForm);
-            
-        }
+        Form firstForm = race.skill.getFirstUnlockedFormInBranch(race.formTree, raceData.getRacialSkillLevel(), branchIndex);
+        if (firstForm != null)
+            info.setSelectedForm(firstForm);
+
         info.updateClient();
 
     }

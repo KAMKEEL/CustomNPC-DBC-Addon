@@ -81,7 +81,7 @@ public class MixinJRMCoreHRaceStats {
         // Replace the entire stat() computation for this custom race player.
         // The race param is 0 (Human carrier), but we bypass all config array lookups
         // and compute directly from the addon's ClassStats data model.
-        cir.setReturnValue(RaceStatCalculator.computeStat(stats, stat, attributeID, attribute, skillBonus));
+        cir.setReturnValue(RaceStatCalculator.computeStat((EntityPlayer) player, stats, stat, attributeID, attribute, skillBonus));
     }
 
     // ─── Injection B: attributeStart() — character creation ──────────────

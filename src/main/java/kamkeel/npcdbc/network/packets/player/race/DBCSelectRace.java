@@ -10,11 +10,11 @@ import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.PacketChannel;
 import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcs.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.LogWriter;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Client -> Server packet sent during character creator finalize
@@ -52,19 +52,13 @@ public final class DBCSelectRace extends AbstractPacket {
 
     @Override
     public void sendData(ByteBuf out) throws IOException {
-        String toSend = raceKey != null ? raceKey : "";
-        byte[] bytes = toSend.getBytes(StandardCharsets.UTF_8);
-        out.writeInt(bytes.length);
-        out.writeBytes(bytes);
+        ByteBufUtils.writeUTF8String(out, raceKey != null ? raceKey : "");
     }
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        int len = in.readInt();
-        byte[] bytes = new byte[len];
-        in.readBytes(bytes);
-        raceKey = new String(bytes, StandardCharsets.UTF_8);
-        if (raceKey.isEmpty()) raceKey = null;
+        raceKey = ByteBufUtils.readUTF8String(in);
+        if (raceKey == null || raceKey.isEmpty()) raceKey = null;
 
         // Validate: either null (clear) or a registered custom race name
         if (raceKey != null && !RaceController.getInstance().hasName(raceKey)) {
@@ -75,6 +69,19 @@ public final class DBCSelectRace extends AbstractPacket {
 
         PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
         DBCData data = DBCData.get(player);
+        if (info == null || data == null)
+            return;
+
+        // Only valid while the character is still being created. DBC gates every one of its
+        // own creation writes on jrmcAccept == 0 (JRMCorePacHanS.handleChar), and all three
+        // send sites for this packet are in the creator, so mirror that gate here — without
+        // it any client could swap race at will and skip DBC's race-change flow entirely.
+        if (data.Accept != 0) {
+            LogWriter.error("[NPCDBC] Player " + player.getCommandSenderName()
+                    + " sent a race selection outside character creation; ignoring.");
+            return;
+        }
+
         Race race = raceKey != null ? RaceController.getInstance().getByName(raceKey) : null;
         if (race != null) {
             info.setCurrentRace(race);
