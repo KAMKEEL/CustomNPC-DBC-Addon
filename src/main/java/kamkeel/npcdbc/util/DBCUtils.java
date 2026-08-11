@@ -102,6 +102,8 @@ public class DBCUtils {
     public static boolean insideAttackEntityFrom = false;
     /** Pre-calculated DBC attack damage from the current attacker (set at HEAD of attackEntityFrom). */
     public static Float preCalculatedAttackerDamage = null;
+    /** Unmodified damage passed to attackEntityFrom, before any DBC scaling was written into it. */
+    public static Float rawIncomingAmount = null;
 
     public static String[] CONFIG_UI_NAME;
     public static String[] cCONFIG_UI_NAME;
