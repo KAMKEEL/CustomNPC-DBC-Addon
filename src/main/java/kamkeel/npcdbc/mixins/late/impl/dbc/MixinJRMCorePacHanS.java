@@ -22,10 +22,11 @@ public abstract class MixinJRMCorePacHanS {
 
     /**
      * Sync DBC menu setting changes to the ability toggle system.
-     * Injects at the end of handleTri so DBC has already applied the setting.
+     * Injects at the end of handleStats3, where DBC handles setting operations 6 and 8,
+     * so the setting has already been applied.
      * Uses setToggleEntryDirect to avoid re-triggering onToggle/applyState.
      */
-    @Inject(method = "handleTri", at = @At("TAIL"), remap = false)
+    @Inject(method = "handleStats3", at = @At("TAIL"), remap = false)
     private void syncDBCSettingToAbilityToggle(byte b, byte b2, byte b3, EntityPlayer p, CallbackInfo ci) {
         if (b != 6 && b != 8) return;
         if (p.worldObj.isRemote) return;
